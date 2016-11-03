@@ -6,8 +6,8 @@
         font: 10px sans-serif;
     }
 
-    .shift {
-        fill: none;
+    .my {
+        fill: red;
         stroke: #000;
 
     }
@@ -16,41 +16,45 @@
 <script src="d3.js"></script>
 <script>
 
-    d3.json('spawncircle/data/data.json', function(json) {
-   console.log(json);
-});
 
-    var circleData = [
-        {"cx": 230, "cy": 200, "radius": 20, "color": "green"},
-        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
-        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
-        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
-        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
-        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
-        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
-        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"}
-    ];
+    var data,companies;
+d3.json('spawncircle/data/data.json', function(json) {
+       data =json;
+
+d3.json('spawncircle/data/companies.json', function(json) {
+
+    companies=json;
+
 
     var rectangleData = [
         {"rx": 110, "ry": 110, "height": 30, "width": 30, "color": "blue"},
         {"rx": 160, "ry": 160, "height": 30, "width": 30, "color": "red"}];
 
-    var width = 200;
-    var height = 200;
+    var width = 1200;
+    var height = 800;
 
-    var originX = 200;
-    var originY = 200;
+    var originX = 300;
+    var originY = 300;
     var innerCircleRadius = 40;
-    var outerCircleRadius = 60;
+    var outerCircleRadius = 200;
 
     var svgContainer = d3.select("body").append("svg")
-            .attr("width", 600)
-            .attr("height", 400);
+            .attr("width", width)
+            .attr("height", height);
+
+    var svgwindow = svgContainer.append('rect').attr({
+        x:0,
+        y:0,
+        width:width,
+        height:height,
+        stroke:'red',
+        fill:'none'
+    });
 
     var innerCircle = svgContainer.append("circle").attr({
         cx: originX,
         cy: originY,
-        r: 40,
+        r: innerCircleRadius,
         fill: "white",
         stroke: "black"
     });
@@ -64,16 +68,20 @@
         stroke: "black"
     });
 
-    var chairOriginX = originX + ((60) * Math.sin(0));
-    var chairOriginY = originY - ((60) * Math.cos(0));
+
+
+
+    var chairOriginX = originX + ((outerCircleRadius) * Math.sin(0));
+    var chairOriginY = originY - ((outerCircleRadius) * Math.cos(0));
 
     var circleGroup = svgContainer.append("g");
 
     var circles = circleGroup.selectAll('circle')
-            .data(circleData)
+            .data(data)
             .enter()
             .append('circle')
 
+    var smallradius=5;
     var circleAttributes = circles.attr("cx", function (d) {
         return chairOriginX;
     })
@@ -81,36 +89,88 @@
                 return chairOriginY;
             })
             .attr("r", function (d, i) {
-                return 5;
+                return smallradius;
             })
+            .attr('data-index',function (d, i) {return i;})
             .style("fill", 'black')
             .attr('transform', function (d, i) {
 
-                return 'rotate(' + (35 * i) + ', 200, 200)';
-
+                return 'rotate(' + (360/(data.length) * i) + ', '+originX+','+ originY+')';
             });
-//
-//    var rectangles = svgContainer.selectAll("rect")
-//            .data(rectangleData)
-//            .enter()
-//            .append("rect");
-//
-//    var rectangleAttributes = rectangles
-//            .attr("x", function (d) {
-//                return d.rx;
-//            })
-//            .attr("y", function (d) {
-//                return d.ry;
-//            })
-//            .attr("height", function (d) {
-//                return d.height;
-//            })
-//            .attr("width", function (d) {
-//                return d.width;
-//            })
-//            .style("fill", function (d) {
-//                return d.color;
-//            });
+
+ var circleGroup1 = svgContainer.append("g")
+         .attr('class','my')
+         .attr("transform", "translate(80,0)");
+
+//    var outerCircle = circleGroup1.append("circle").attr({
+//        cx: originX,
+//        cy: originY,
+//        r: outerCircleRadius,
+//        fill: "none",
+//        stroke: "red"
+//    });
+
+        var circles1 = circleGroup1.selectAll('g.my')
+            .data(data)
+            .enter()
+            .append('g')
+            .attr('class','my1')
+
+
+      var circles2 = circles1.selectAll('g.my1')
+            .data(data)
+            .enter()
+              .append('g')
+              .attr('class','my2')
+
+    var circles3 = circles2.selectAll('g.my1')
+            .data(data)
+            .enter()
+              .append('circle')
+
+        var smallradius=15;
+    var circleAttributes1 = circles3
+            .attr("cx", function (d,i) {
+
+
+        return chairOriginX;
+    })
+            .attr("cy", function (d) {
+                return chairOriginY;
+            })
+            .attr("r", function (d, i) {
+                return smallradius;
+            })
+            .attr('data-index',function (d, i) {return i;})
+            .style("fill", 'none')
+            .style('stroke','red')
+            .attr('transform', function (d, i) {
+
+                return 'rotate(' + (360/(data.length) * i) + ', '+originX+','+ originY+')';
+            });
+
+
+ var text = circles2.selectAll('g.my1')
+            .data(data)
+            .enter()
+              .append('text')
+
+            text.attr("x", function (d,i) {return chairOriginX; })
+                .attr("y",function (d) {
+                return chairOriginY;
+            })
+	            .text('a')
+            .attr("font-family", "sans-serif")
+                .attr("font-size", "20px")
+                 .attr("fill", "red")
+            .attr('transform', function (d, i) {
+
+                return 'rotate(' + (360/(data.length) * i) + ', '+originX+','+ originY+')';
+            });
+
+
+});
+});
 
 
 </script>
