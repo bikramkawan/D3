@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+    body {
+        font: 10px sans-serif;
+    }
+
+    .shift {
+        fill: none;
+        stroke: #000;
+
+    }
+</style>
+<body>
+<script src="d3.js"></script>
+<script>
+
+    d3.json('spawncircle/data/data.json', function(json) {
+   console.log(json);
+});
+
+    var circleData = [
+        {"cx": 230, "cy": 200, "radius": 20, "color": "green"},
+        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
+        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
+        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
+        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
+        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
+        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"},
+        {"cx": 300, "cy": 130, "radius": 20, "color": "purple"}
+    ];
+
+    var rectangleData = [
+        {"rx": 110, "ry": 110, "height": 30, "width": 30, "color": "blue"},
+        {"rx": 160, "ry": 160, "height": 30, "width": 30, "color": "red"}];
+
+    var width = 200;
+    var height = 200;
+
+    var originX = 200;
+    var originY = 200;
+    var innerCircleRadius = 40;
+    var outerCircleRadius = 60;
+
+    var svgContainer = d3.select("body").append("svg")
+            .attr("width", 600)
+            .attr("height", 400);
+
+    var innerCircle = svgContainer.append("circle").attr({
+        cx: originX,
+        cy: originY,
+        r: 40,
+        fill: "white",
+        stroke: "black"
+    });
+
+
+    var outerCircle = svgContainer.append("circle").attr({
+        cx: originX,
+        cy: originY,
+        r: outerCircleRadius,
+        fill: "none",
+        stroke: "black"
+    });
+
+    var chairOriginX = originX + ((60) * Math.sin(0));
+    var chairOriginY = originY - ((60) * Math.cos(0));
+
+    var circleGroup = svgContainer.append("g");
+
+    var circles = circleGroup.selectAll('circle')
+            .data(circleData)
+            .enter()
+            .append('circle')
+
+    var circleAttributes = circles.attr("cx", function (d) {
+        return chairOriginX;
+    })
+            .attr("cy", function (d) {
+                return chairOriginY;
+            })
+            .attr("r", function (d, i) {
+                return 5;
+            })
+            .style("fill", 'black')
+            .attr('transform', function (d, i) {
+
+                return 'rotate(' + (35 * i) + ', 200, 200)';
+
+            });
+//
+//    var rectangles = svgContainer.selectAll("rect")
+//            .data(rectangleData)
+//            .enter()
+//            .append("rect");
+//
+//    var rectangleAttributes = rectangles
+//            .attr("x", function (d) {
+//                return d.rx;
+//            })
+//            .attr("y", function (d) {
+//                return d.ry;
+//            })
+//            .attr("height", function (d) {
+//                return d.height;
+//            })
+//            .attr("width", function (d) {
+//                return d.width;
+//            })
+//            .style("fill", function (d) {
+//                return d.color;
+//            });
+
+
+</script>
+
