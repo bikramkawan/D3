@@ -229,6 +229,7 @@ console.log(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11);
             .attr('data-index',function (d, i) {return i;})
             .style("fill", 'none')
             .style('stroke','red')
+
             .attr('transform', function (d, i) {
 
                 return 'rotate(' + (360/(data.length) * i) + ', '+originX+','+ originY+')';
@@ -250,10 +251,14 @@ console.log(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11);
             .attr("font-family", "sans-serif")
                 .attr("font-size", "20px")
                  .attr("fill", "red")
+
             .attr('transform', function (d, i) {
 
                 return 'rotate(' + (360/(data.length) * i) + ', '+originX+','+ originY+')';
-            });
+            })
+
+
+      .attr('text-anchor,"middle')
 
 
 

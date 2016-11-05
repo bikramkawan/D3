@@ -1,190 +1,217 @@
 <!DOCTYPE html>
-<html>
+<meta charset="utf-8">
+<style>
 
-<head>
-    <meta charset="UTF-8">
-    <title>psd3 - Complex Multi-level Donut Chart</title>
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script type="text/javascript" src=".https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+.a text {
+  font: 10px sans-serif;
+  text-anchor: middle;
+}
 
-    <script type="text/javascript" src="d3.js"></script>
+.a path {
+  stroke: #fff;
+}
 
-    <script type="text/javascript" src="../psd3.js"></script>
-    <link rel="stylesheet" type="text/css" href="../psd3.css" />
-</head>
+</style>
+<body>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
 
-<body style="margin: 15px;">
+var width = 960,
+    height = 560,
+    o_radius = 50;
+    radiusincrease=40;
 
-    <div class="container">
-        <div class="well">
-            <h2><a href="../index.html">psd3</a> - Multi-level Donut Chart</h2>
-            <ul>
-                <li><a href="https://github.com/pshivale/psd3/blob/gh-pages/samples/donut_chart_multilevel.html">View source on github</a></li>
-                <li>Double click a section to drill down!</li>
-                <li>Double click center section to drill back up!</li>
-            </ul>
-        </div>
 
-        <div id="chartContainer" class="well"></div>
-    </div>
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+        .attr('class','main')
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
 
-    <script type="text/javascript">
-        var sampleData = [{
-            noOfColleges: 25,
-            place: "Maharashtra",
-            drilldown: [{
-                noOfColleges: 15,
-                place: "Pune",
-                drilldown: [{
-                    noOfColleges: 10,
-                    place: "Yerawada",
-                    drilldown: []
-                }, {
-                    noOfColleges: 5,
-                    place: "Kothrud",
-                    drilldown: []
-                }]
-            }, {
-                noOfColleges: 10,
-                place: "Mumbai",
-                drilldown: [{
-                    noOfColleges: 8,
-                    place: "Bandra",
-                    drilldown: []
-                }, {
-                    noOfColleges: 2,
-                    place: "Varali",
-                    drilldown: []
-                }]
-            }]
-        }, {
-            noOfColleges: 50,
-            place: "Gujarat",
-            drilldown: [{
-                noOfColleges: 20,
-                place: "Surat",
-                drilldown: [{
-                    noOfColleges: 15,
-                    place: "Danti",
-                    drilldown: []
-                }, {
-                    noOfColleges: 5,
-                    place: "Hajira",
-                    drilldown: []
-                }]
-            }, {
-                noOfColleges: 30,
-                place: "Rajkot",
-                drilldown: [{
-                    noOfColleges: 12,
-                    place: "Patan",
-                    drilldown: []
-                }, {
-                    noOfColleges: 18,
-                    place: "Modhera",
-                    drilldown: []
-                }]
-            }, {
-                noOfColleges: 4,
-                place: "Godhra",
-                drilldown: [{
-                    place: "Barda",
-                    noOfColleges: 2,
-                    drilldown: []
-                }, {
-                    place: "Porbandar",
-                    noOfColleges: 2,
-                    drilldown: []
-                }]
-            }]
-        }, {
-            noOfColleges: 20,
-            place: "MP",
-            drilldown: [{
-                noOfColleges: 4,
-                place: "Indore",
-                drilldown: [{
-                    place: "Devas",
-                    noOfColleges: 2,
-                    drilldown: []
-                }, {
-                    place: "Dhar",
-                    noOfColleges: 2,
-                    drilldown: []
-                }]
-            }, {
-                noOfColleges: 5,
-                place: "Bhopal",
-                drilldown: [{
-                    place: "Vidish",
-                    noOfColleges: 3,
-                    drilldown: []
-                }, {
-                    place: "Raisen",
-                    noOfColleges: 2,
-                    drilldown: []
-                }]
-            }, {
-                noOfColleges: 8,
-                place: "Ujjain",
-                drilldown: [{
-                    place: "Shajapur",
-                    noOfColleges: 2,
-                    drilldown: []
-                }, {
-                    place: "Ratlam",
-                    noOfColleges: 6,
-                    drilldown: []
-                }]
-            }, {
-                noOfColleges: 3,
-                place: "Sachi",
-                drilldown: [{
-                    place: "Sagar",
-                    noOfColleges: 1,
-                    drilldown: []
-                }, {
-                    place: "Ashoknagar",
-                    noOfColleges: 2,
-                    drilldown: []
-                }]
-            }]
-        }];
+//a_data =[{name:'A1',color:'green'},{name:'A2',color:'red'},{name:'A3',color:'black'},{name:'A4',color:'blue'}];
+b_data=[{name:'B1',color:'green'},{name:'B2',color:'red'},{name:'B3',color:'khaki'},{name:'B4',color:'black'},{name:'B5',color:'black'}]
+a_data =['A1','A2','A3','A4'];
+b_data =['B1','B2','B3','B4','B5'];
+c_data=['C1','C2','C3','C4','C5','C6','C7','C8'];
+d_data=['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10'];
+e_data=['E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12'];
 
-        var config = {
-            containerId: "chartContainer",
-            width: 500,
-            height: 500,
-            data: sampleData,
-            heading: {
-                text: "Medical Colleges in India",
-                pos: "top"
-            },
-            label: function(d) {
-                return d.data.place + ":" + d.data.noOfColleges;
-            },
-            value: "noOfColleges",
-            inner: "drilldown",
-            tooltip: function(d) {
-                return "<div style='background-color: #4a4; color: white; padding: 15px; text-align: middle; border: dotted 1px black;'><strong>" + d.place + "</strong> has " + d.noOfColleges + " medical colleges.</div>";
-            },
-            transition: "linear",
-            transitionDuration: 500,
-            donutRadius: 50,
-            gradient: true,
-            colors: d3.scale.category20(),
-            labelColor: "white",
-            stroke: "#eee",
-            strokeWidth: 3,
-            drilldownTransition: "linear",
-            drilldownTransitionDuration: 0,
-            highlightColor: "#c00"
-        };
+a_color =['green','red','black','blue'];
+b_color=['green','red','khaki','black','blue'];
+c_color=['purple','purple','purple','purple','purple','purple','purple','purple'];
+d_color =['green','green','red','red','khaki','khaki','black','black','blue','blue'];
+e_color=['green','green','khaki','red','red','khaki','black','black','khaki','blue','blue','khaki'];
 
-        var samplePie = new psd3.Pie(config);
-    </script>
 
-</body>
+var origin = svg.append("circle").attr({
+        cx: 0,
+        cy: 0,
+        r: o_radius,
+        fill: "none",
+        stroke: "blue"
+    });
 
-</html>
+
+var cat1 = svg.append("circle").attr({
+        cx: 0,
+        cy: 0,
+        r: o_radius+radiusincrease,
+        fill: "none",
+        stroke: "blue"
+    });
+var cat2 = svg.append("circle").attr({
+        cx: 0,
+        cy: 0,
+        r: o_radius+radiusincrease*2,
+        fill: "none",
+        stroke: "blue"
+    });
+
+var cat3 = svg.append("circle").attr({
+        cx: 0,
+        cy: 0,
+        r: o_radius+radiusincrease*3,
+        fill: "none",
+        stroke: "blue"
+    });
+
+var cat4 = svg.append("circle").attr({
+        cx: 0,
+        cy: 0,
+        r: o_radius+radiusincrease*4,
+        fill: "none",
+        stroke: "blue"
+    });
+
+var cat5 = svg.append("circle").attr({
+        cx: 0,
+        cy: 0,
+        r: o_radius+radiusincrease*5,
+        fill: "none",
+        stroke: "blue"
+    });
+
+   var createNodes = function (numNodes, radius,catdata,catcolor) {
+         var nodes = [],
+            text,
+             color,
+             angle,
+             x,
+             y,
+             i;
+         for (i=0; i<numNodes; i++) {
+          angle = (i / (numNodes/2)) * Math.PI; // Calculate the angle at which the element will be placed.
+                                                // For a semicircle, we would use (i / numNodes) * Math.PI.
+          x = (radius * Math.sin(angle)-8); // Calculate the x position of the element.
+          y = -1*(radius * Math.cos(angle)); // Calculate the y position of the element.
+          text=catdata[i];
+             color=catcolor[i];
+             nodes.push({'id': i, 'x': x, 'y': y,'text':text,'color':color});
+         }
+         return nodes;
+       }
+    var createElements = function (svg, nodes, elementRadius) {
+         element = svg.selectAll('text')
+                        .data(nodes)
+                      .enter().append('text')
+                        .attr('r', elementRadius)
+                        .attr('x', function (d, i) {
+                          return d.x;
+                        })
+                        .attr('y', function (d, i) {
+                          return d.y;
+                        })
+                          .attr("transform",'rotate(90)')
+                 .attr('stroke',function ( d) { return d.color; })
+                  .attr('fill','none')
+                     .text(function(d,i){  return d.text;})
+
+
+
+       }
+
+     var createSvg = function (radius, callback) {
+        var svg = d3.selectAll('g.main').append('g').attr('class','cat1').attr("transform",'rotate(-90)');
+         callback(svg);
+       }
+
+var a_draw = function () {
+         var numNodes = a_data.length;
+         var radius =  o_radius+radiusincrease-15;
+           var catcolor=a_color;
+    var catdata=a_data;
+         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         createSvg(radius, function (svg) {
+           createElements(svg, nodes, 1);
+         });
+
+       }
+
+a_draw();
+
+var b_draw = function () {
+    var catdata=b_data;
+    var catcolor =b_color;
+    var numNodes = catdata.length;
+         var radius =  o_radius+(radiusincrease*2)-15;
+
+         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         createSvg(radius, function (svg) {
+           createElements(svg, nodes, 1);
+         });
+
+       }
+
+b_draw();
+
+
+var c_draw = function () {
+    var catdata=c_data;
+    var catcolor = c_color;
+    var numNodes = catdata.length;
+         var radius =  o_radius+(radiusincrease*3)-15;
+
+         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         createSvg(radius, function (svg) {
+           createElements(svg, nodes, 1);
+         });
+
+       }
+
+c_draw();
+
+var d_draw = function () {
+    var catdata=d_data;
+    var numNodes = catdata.length;
+    var catcolor = d_color;
+         var radius =  o_radius+(radiusincrease*4)-15;
+
+         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         createSvg(radius, function (svg) {
+           createElements(svg, nodes, 1);
+         });
+
+       }
+
+d_draw();
+
+var e_draw = function () {
+    var catdata=e_data;
+    var catcolor = e_color;
+    var numNodes = catdata.length;
+         var radius =  o_radius+(radiusincrease*5)-15;
+
+
+         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         createSvg(radius, function (svg) {
+           createElements(svg, nodes, 1);
+         });
+
+       }
+
+e_draw();
+
+
+
+</script>
