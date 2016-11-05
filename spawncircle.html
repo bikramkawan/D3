@@ -25,6 +25,87 @@ d3.json('spawncircle/data/companies.json', function(json) {
 
     companies=json;
 
+//console.log(data);
+
+    var companies=[];
+
+
+
+    data.sort(function (a,b) {
+
+
+       // console.log(a.companies.length -b.companies.length);
+
+        return (a.companies.length -b.companies.length);
+        
+    });
+
+console.log(data);
+
+ var a1=['Score Assured'],
+         a2=['Trusting Social'],a3=['Friendly Score'],a4=['Kreditech'],a5=['InVenture'],a6=["Affirm"];
+    var a7=["Branch"],a8=["Vouch"],a9=["Moven"],a10=["Lenddo"],a11=["Jubao"];
+var c=0;
+for (var i =0;i<data.length;i++)
+{
+    for (var j=0;j<data[i].companies.length;j++)
+    {
+        //console.log(data[i].companies.length,j,data[i].companies[j]);
+        var name=data[i].companies[j];
+
+
+             (a1[0] == name) ? a1.push(1) : 0;
+            (a2[0] == name) ? a2.push(1) : 0;
+            (a3[0] == name) ? a3.push(1) : 0;
+            (a4[0] == name) ? a4.push(1) : 0;
+            (a5[0] == name) ? a5.push(1) : 0;
+            (a6[0] == name) ? a6.push(1) : 0;
+            (a7[0] == name) ? a7.push(1) : 0;
+            (a8[0] == name) ? a8.push(1) : 0;
+            (a9[0] == name) ? a9.push(1) : 0;
+            (a10[0] == name) ? a10.push(1) : 0;
+            (a11[0] == name) ? a11.push(1) : 0;
+        }
+
+
+    }
+
+    a1.splice(1, 0, (a1.length)-1);
+    a1.splice(2,a1.length-2)
+
+    a2.splice(1, 0, (a2.length)-1);
+    a2.splice(2,a2.length-2)
+
+    a3.splice(1, 0, (a3.length)-1);
+    a3.splice(2,a3.length-2)
+
+     a4.splice(1, 0, (a4.length)-1);
+    a4.splice(2,a4.length-2)
+
+     a5.splice(1, 0, (a5.length)-1);
+    a5.splice(2,a5.length-2)
+
+ a6.splice(1, 0, (a6.length)-1);
+    a6.splice(2,a6.length-2)
+
+ a7.splice(1, 0, (a7.length)-1);
+    a7.splice(2,a7.length-2)
+
+ a8.splice(1, 0, (a8.length)-1);
+    a8.splice(2,a8.length-2)
+
+     a9.splice(1, 0, (a9.length)-1);
+    a9.splice(2,a9.length-2)
+
+     a10.splice(1, 0, (a10.length)-1);
+    a10.splice(2,a10.length-2)
+
+     a11.splice(1, 0, (a11.length)-1);
+    a11.splice(2,a11.length-2)
+
+console.log(a1);
+console.log(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11);
+
 
     var rectangleData = [
         {"rx": 110, "ry": 110, "height": 30, "width": 30, "color": "blue"},
@@ -51,7 +132,61 @@ d3.json('spawncircle/data/companies.json', function(json) {
         fill:'none'
     });
 
-    var innerCircle = svgContainer.append("circle").attr({
+
+
+
+//    var outerCircle = svgContainer.append("circle").attr({
+//        cx: originX,
+//        cy: originY,
+//        r: outerCircleRadius,
+//        fill: "none",
+//        stroke: "black"
+//    });
+
+
+
+
+    var chairOriginX = originX + ((outerCircleRadius) * Math.sin(0));
+    var chairOriginY = originY - ((outerCircleRadius) * Math.cos(0));
+
+//    var circleGroup = svgContainer.append("g");
+//
+//    var circles = circleGroup.selectAll('circle')
+//            .data(data)
+//            .enter()
+//            .append('circle')
+//
+//    var smallradius=5;
+//    var circleAttributes = circles.attr("cx", function (d) {
+//        return chairOriginX;
+//    })
+//            .attr("cy", function (d) {
+//                return chairOriginY;
+//            })
+//            .attr("r", function (d, i) {
+//                return smallradius;
+//            })
+//            .attr('data-index',function (d, i) {return i;})
+//            .style("fill", 'black')
+//            .attr('transform', function (d, i) {
+//
+//                return 'rotate(' + (360/(data.length) * i) + ', '+originX+','+ originY+')';
+//            });
+
+ var svg= svgContainer.append("g")
+         .attr('class','my')
+         .attr("transform", "translate(80,0)");
+
+    var outerCircle = svg.selectAll('g.my').data([1]).enter().append('circle').attr({
+        class:'outercircle',
+        cx: originX,
+        cy: originY,
+        r: outerCircleRadius,
+        fill: "none",
+        stroke: "red"
+    });
+
+       var innerCircle = svg.append("circle").attr({
         cx: originX,
         cy: originY,
         r: innerCircleRadius,
@@ -60,76 +195,26 @@ d3.json('spawncircle/data/companies.json', function(json) {
     });
 
 
-    var outerCircle = svgContainer.append("circle").attr({
-        cx: originX,
-        cy: originY,
-        r: outerCircleRadius,
-        fill: "none",
-        stroke: "black"
-    });
-
-
-
-
-    var chairOriginX = originX + ((outerCircleRadius) * Math.sin(0));
-    var chairOriginY = originY - ((outerCircleRadius) * Math.cos(0));
-
-    var circleGroup = svgContainer.append("g");
-
-    var circles = circleGroup.selectAll('circle')
-            .data(data)
-            .enter()
-            .append('circle')
-
-    var smallradius=5;
-    var circleAttributes = circles.attr("cx", function (d) {
-        return chairOriginX;
-    })
-            .attr("cy", function (d) {
-                return chairOriginY;
-            })
-            .attr("r", function (d, i) {
-                return smallradius;
-            })
-            .attr('data-index',function (d, i) {return i;})
-            .style("fill", 'black')
-            .attr('transform', function (d, i) {
-
-                return 'rotate(' + (360/(data.length) * i) + ', '+originX+','+ originY+')';
-            });
-
- var circleGroup1 = svgContainer.append("g")
-         .attr('class','my')
-         .attr("transform", "translate(80,0)");
-
-//    var outerCircle = circleGroup1.append("circle").attr({
-//        cx: originX,
-//        cy: originY,
-//        r: outerCircleRadius,
-//        fill: "none",
-//        stroke: "red"
-//    });
-
-        var circles1 = circleGroup1.selectAll('g.my')
-            .data(data)
+        var circlesgroup = svg.selectAll('g.my')
+            .data([1])
             .enter()
             .append('g')
             .attr('class','my1')
 
 
-      var circles2 = circles1.selectAll('g.my1')
-            .data(data)
+      var circlesgr2 = circlesgroup.selectAll('g.my1')
+            .data([1])
             .enter()
               .append('g')
               .attr('class','my2')
 
-    var circles3 = circles2.selectAll('g.my1')
+    var circlegrp = circlesgr2.selectAll('g.my1')
             .data(data)
             .enter()
               .append('circle')
 
         var smallradius=15;
-    var circleAttributes1 = circles3
+    var circleAttributes1 = circlegrp
             .attr("cx", function (d,i) {
 
 
@@ -150,7 +235,7 @@ d3.json('spawncircle/data/companies.json', function(json) {
             });
 
 
- var text = circles2.selectAll('g.my1')
+ var text = circlesgr2.selectAll('g.my1')
             .data(data)
             .enter()
               .append('text')
@@ -159,7 +244,9 @@ d3.json('spawncircle/data/companies.json', function(json) {
                 .attr("y",function (d) {
                 return chairOriginY;
             })
-	            .text('a')
+	            .text( function (d,i) { return i;
+
+                })
             .attr("font-family", "sans-serif")
                 .attr("font-size", "20px")
                  .attr("fill", "red")
@@ -167,6 +254,26 @@ d3.json('spawncircle/data/companies.json', function(json) {
 
                 return 'rotate(' + (360/(data.length) * i) + ', '+originX+','+ originY+')';
             });
+
+
+
+      var circlesgr3 = circlesgroup.selectAll('g.my1')
+            .data([1])
+            .enter()
+              .append('g')
+              .attr('class','my3')
+
+    var circlegrp = circlesgr2.selectAll('g.my1')
+            .data([1])
+            .enter()
+              .append('circle')
+        var innerCircle = svg.append("circle").attr({
+        cx: originX,
+        cy: originY,
+        r: innerCircleRadius,
+        fill: "white",
+        stroke: "black"
+    });
 
 
 });

@@ -1,0 +1,13 @@
+cat5,cat5data,cat5color,cat4,cat4data,cat4color,cat3,cat3data,cat3color,cat2,cat2data,cat2color,cat1,cat1data,cat1color
+E1,1,#10E617,D1,1,#10E617,C1,1,purple,B1,1,green,A1,1,green
+E2,1,#10E618,D2,1,#10E618,C2,1,purple,B2,1,red,A2,1,red
+E3,1,#FCDB03,D3,1,#FC2C03,C3,1,purple,B3,1,khaki,A3,1,black
+E4,1,#FC2C03,D4,1,#FC2C04,C4,1,purple,B4,1,black,A4,1,blue
+E5,1,#FC2C04,D5,1,#FCDB03,C5,1,purple,B5,1,blue
+E6,1,#FCDB03,D6,1,#FCDB04,C6,1,purple
+E7,1,#000000,D7,1,#000000,C7,1,purple
+E8,1,#000001,D8,1,#000001,C8,1,purple
+E9,1,#FCDB03,D9,1,#0330FC
+E10,1,#0330FC,D10,1,#331FC
+E11,1,#331FC
+E12,1,#FCDB04
