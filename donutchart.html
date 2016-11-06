@@ -31,17 +31,17 @@ var svg = d3.select("body").append("svg")
 
 //a_data =[{name:'A1',color:'green'},{name:'A2',color:'red'},{name:'A3',color:'black'},{name:'A4',color:'blue'}];
 b_data=[{name:'B1',color:'green'},{name:'B2',color:'red'},{name:'B3',color:'khaki'},{name:'B4',color:'black'},{name:'B5',color:'black'}]
-a_data =['A1','A2','A3','A4'];
-b_data =['B1','B2','B3','B4','B5'];
-c_data=['C1','C2','C3','C4','C5','C6','C7','C8'];
-d_data=['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10'];
-e_data=['E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12'];
+a_data =['A3','A4','A1','A2'];
+b_data =['B3','B4','B5','B1','B2'];
+c_data=['C6','C7','C8','C1','C2','C3','C4','C5'];
+d_data=['D5','D7','D8','D9','D10','D1','D2','D3','D4','D5'];
+e_data=['E8','E9','E10','E11','E12','E1','E2','E3','E4','E5','E6','E7'];
 
-a_color =['green','red','black','blue'];
-b_color=['green','red','khaki','black','blue'];
+a_color =['black','blue','green','red'];
+b_color=['khaki','black','blue','green','red'];
 c_color=['purple','purple','purple','purple','purple','purple','purple','purple'];
-d_color =['green','green','red','red','khaki','khaki','black','black','blue','blue'];
-e_color=['green','green','khaki','red','red','khaki','black','black','khaki','blue','blue','khaki'];
+d_color =['khaki','black','black','blue','blue','green','green','red','red','khaki'];
+e_color=['black','khaki','blue','blue','khaki','green','green','khaki','red','red','khaki','black'];
 
 
 var origin = svg.append("circle").attr({
@@ -103,8 +103,8 @@ var cat5 = svg.append("circle").attr({
          for (i=0; i<numNodes; i++) {
           angle = (i / (numNodes/2)) * Math.PI; // Calculate the angle at which the element will be placed.
                                                 // For a semicircle, we would use (i / numNodes) * Math.PI.
-          x = (radius * Math.sin(angle)-8); // Calculate the x position of the element.
-          y = -1*(radius * Math.cos(angle)); // Calculate the y position of the element.
+          x = (radius * Math.cos(angle)-10); // Calculate the x position of the element.
+          y = (radius * Math.sin(angle)); // Calculate the y position of the element.
           text=catdata[i];
              color=catcolor[i];
              nodes.push({'id': i, 'x': x, 'y': y,'text':text,'color':color});
