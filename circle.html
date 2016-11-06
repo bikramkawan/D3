@@ -67,7 +67,29 @@
 
 
     }
+var createElements1 = function (svg, nodes, elementRadius) {
+        element = svg.selectAll('text')
+                .data(nodes)
+                .enter().append('text')
+                .attr('r', elementRadius)
+                .attr('x', function (d, i) {
 
+                    return d.x;
+                })
+                .attr('y', function (d, i) {
+                    return d.y;
+                })
+                .attr("transform", 'rotate(90)')
+                .attr('stroke', function (d) {
+                    return d.color;
+                })
+                .attr('fill', 'none')
+                .text(function (d, i) {
+                    return d.text;
+                })
+
+
+    }
 
     var createSvg = function (radius, callback) {
         var svg = d3.selectAll('g.main').append('g').attr('class', 'cat1');
@@ -92,7 +114,7 @@
             angle = degtorad; // Calculate the angle at which the element will be placed.
             //angle = (i * 2* Math.PI/numNodes); // Calculate the angle at which the element will be placed.
             // For a semicircle, we would use (i / numNodes) * Math.PI.
-            x = (radius * Math.cos(angle) - 10); // Calculate the x position of the element.
+            x = (radius * Math.cos(angle)); // Calculate the x position of the element.
             y = -1 * (radius * Math.sin(angle)); // Calculate the y position of the element.
             console.log(angle * 180 / Math.PI, x, y, i, angle, degree, degtorad);
             text = catdata[i];
@@ -106,12 +128,12 @@
 
     var a_draw = function () {
         var numNodes = a_data.length;
-        var radius = o_radius + radiusincrease - 15;
+        var radius = o_radius + radiusincrease ;
         var catcolor = a_color;
         var catdata = a_data;
         var nodes = createNodesa(numNodes, radius, catdata, catcolor);
         createSvg(radius, function (svg) {
-            createElements(svg, nodes, 10);
+            createElements(svg, nodes, 15);
         });
 
     }
