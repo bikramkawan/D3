@@ -31,17 +31,17 @@ var svg = d3.select("body").append("svg")
 
 //a_data =[{name:'A1',color:'green'},{name:'A2',color:'red'},{name:'A3',color:'black'},{name:'A4',color:'blue'}];
 b_data=[{name:'B1',color:'green'},{name:'B2',color:'red'},{name:'B3',color:'khaki'},{name:'B4',color:'black'},{name:'B5',color:'black'}]
-a_data =['A3','A4','A1','A2'];
-b_data =['B3','B4','B5','B1','B2'];
-c_data=['C6','C7','C8','C1','C2','C3','C4','C5'];
-d_data=['D5','D7','D8','D9','D10','D1','D2','D3','D4','D5'];
-e_data=['E8','E9','E10','E11','E12','E1','E2','E3','E4','E5','E6','E7'];
+a_data =['A1','A2','A3','A4'];
+b_data =['B1','B2','B3','B4','B5'];
+c_data=['C1','C2','C3','C4','C5','C6','C7','C8'];
+d_data=['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10'];
+e_data=['E1','E2','E3','E4','E5','E6','E7','E8','E9','E10','E11','E12'];
 
-a_color =['black','blue','green','red'];
-b_color=['khaki','black','blue','green','red'];
+a_color =['green','red','black','blue'];
+b_color=['green','red','khaki','black','blue'];
 c_color=['purple','purple','purple','purple','purple','purple','purple','purple'];
-d_color =['khaki','black','black','blue','blue','green','green','red','red','khaki'];
-e_color=['black','khaki','blue','blue','khaki','green','green','khaki','red','red','khaki','black'];
+d_color =['green','green','red','red','khaki','khaki','black','black','blue','blue'];
+e_color=['green','green','green','red','red','khaki','black','black','khaki','blue','blue','khaki'];
 
 
 var origin = svg.append("circle").attr({
@@ -51,6 +51,7 @@ var origin = svg.append("circle").attr({
         fill: "none",
         stroke: "blue"
     });
+
 
 
 var cat1 = svg.append("circle").attr({
@@ -91,32 +92,13 @@ var cat5 = svg.append("circle").attr({
         fill: "none",
         stroke: "blue"
     });
-
-   var createNodes = function (numNodes, radius,catdata,catcolor) {
-         var nodes = [],
-            text,
-             color,
-             angle,
-             x,
-             y,
-             i;
-         for (i=0; i<numNodes; i++) {
-          angle = (i / (numNodes/2)) * Math.PI; // Calculate the angle at which the element will be placed.
-                                                // For a semicircle, we would use (i / numNodes) * Math.PI.
-          x = (radius * Math.cos(angle)-10); // Calculate the x position of the element.
-          y = (radius * Math.sin(angle)); // Calculate the y position of the element.
-          text=catdata[i];
-             color=catcolor[i];
-             nodes.push({'id': i, 'x': x, 'y': y,'text':text,'color':color});
-         }
-         return nodes;
-       }
-    var createElements = function (svg, nodes, elementRadius) {
+ var createElements = function (svg, nodes, elementRadius) {
          element = svg.selectAll('text')
                         .data(nodes)
                       .enter().append('text')
                         .attr('r', elementRadius)
                         .attr('x', function (d, i) {
+
                           return d.x;
                         })
                         .attr('y', function (d, i) {
@@ -131,17 +113,161 @@ var cat5 = svg.append("circle").attr({
 
        }
 
+
+
      var createSvg = function (radius, callback) {
         var svg = d3.selectAll('g.main').append('g').attr('class','cat1').attr("transform",'rotate(-90)');
          callback(svg);
        }
 
+
+   var createNodesa = function (numNodes, radius,catdata,catcolor) {
+         var nodes = [],
+            text,
+             color,
+             angle, degtorad,
+             x,
+             y, degree,
+                 startangle=-180,
+             i;
+         for (i=0; i<numNodes; i++) {
+
+           degree= startangle+(90*i);
+
+            degtorad= (Math.PI/180*degree)
+          angle = degtorad; // Calculate the angle at which the element will be placed.
+          //angle = (i * 2* Math.PI/numNodes); // Calculate the angle at which the element will be placed.
+                                                // For a semicircle, we would use (i / numNodes) * Math.PI.
+          x = (radius * Math.cos(angle)-10); // Calculate the x position of the element.
+          y = -1*(radius * Math.sin(angle)); // Calculate the y position of the element.
+         console.log(angle*180/Math.PI,x,y,i,angle,degree,degtorad);
+          text=catdata[i];
+             color=catcolor[i];
+             nodes.push({'id': i, 'x': x, 'y': y,'text':text,'color':color});
+         }
+         nodes1=nodes;
+       console.log(nodes)
+         return nodes;
+       }
+
+       var createNodesb = function (numNodes, radius,catdata,catcolor) {
+         var nodes = [],
+            text,
+             color,
+             angle, degtorad,
+             x,
+             y, degree,
+                 startangle=-162,
+             i;
+         for (i=0; i<numNodes; i++) {
+
+           degree= startangle+(72*i);
+
+            degtorad= (Math.PI/180*degree)
+          angle = degtorad; // Calculate the angle at which the element will be placed.
+          //angle = (i * 2* Math.PI/numNodes); // Calculate the angle at which the element will be placed.
+                                                // For a semicircle, we would use (i / numNodes) * Math.PI.
+          x = (radius * Math.cos(angle)-10); // Calculate the x position of the element.
+          y = -1*(radius * Math.sin(angle)); // Calculate the y position of the element.
+         console.log(angle*180/Math.PI,x,y,i,angle,degree,degtorad);
+          text=catdata[i];
+             color=catcolor[i];
+             nodes.push({'id': i, 'x': x, 'y': y,'text':text,'color':color});
+         }
+         nodes1=nodes;
+       console.log(nodes)
+         return nodes;
+       }
+   var createNodesc = function (numNodes, radius,catdata,catcolor) {
+         var nodes = [],
+            text,
+             color,
+             angle, degtorad,
+             x,
+             y, degree,
+                 startangle=-157.5,
+             i;
+         for (i=0; i<numNodes; i++) {
+
+           degree= startangle+(45*i);
+
+            degtorad= (Math.PI/180*degree)
+          angle = degtorad; // Calculate the angle at which the element will be placed.
+          //angle = (i * 2* Math.PI/numNodes); // Calculate the angle at which the element will be placed.
+                                                // For a semicircle, we would use (i / numNodes) * Math.PI.
+          x = (radius * Math.cos(angle)-10); // Calculate the x position of the element.
+          y = -1*(radius * Math.sin(angle)); // Calculate the y position of the element.
+         console.log(angle*180/Math.PI,x,y,i,angle,degree,degtorad);
+          text=catdata[i];
+             color=catcolor[i];
+             nodes.push({'id': i, 'x': x, 'y': y,'text':text,'color':color});
+         }
+         nodes1=nodes;
+       console.log(nodes)
+         return nodes;
+       }
+       var createNodesd = function (numNodes, radius,catdata,catcolor) {
+         var nodes = [],
+            text,
+             color,
+             angle, degtorad,
+             x,
+             y, degree,
+                 startangle=-180,
+             i;
+         for (i=0; i<numNodes; i++) {
+
+           degree= startangle+(36*i);
+
+            degtorad= (Math.PI/180*degree)
+          angle = degtorad; // Calculate the angle at which the element will be placed.
+          //angle = (i * 2* Math.PI/numNodes); // Calculate the angle at which the element will be placed.
+                                                // For a semicircle, we would use (i / numNodes) * Math.PI.
+          x = (radius * Math.cos(angle)-10); // Calculate the x position of the element.
+          y = -1*(radius * Math.sin(angle)); // Calculate the y position of the element.
+         console.log(angle*180/Math.PI,x,y,i,angle,degree,degtorad);
+          text=catdata[i];
+             color=catcolor[i];
+             nodes.push({'id': i, 'x': x, 'y': y,'text':text,'color':color});
+         }
+         nodes1=nodes;
+       console.log(nodes)
+         return nodes;
+       }
+       var createNodese = function (numNodes, radius,catdata,catcolor) {
+         var nodes = [],
+            text,
+             color,
+             angle, degtorad,
+             x,
+             y, degree,
+                 startangle=-150,
+             i;
+         for (i=0; i<numNodes; i++) {
+
+           degree= startangle+(30*i);
+
+            degtorad= (Math.PI/180*degree)
+          angle = degtorad; // Calculate the angle at which the element will be placed.
+          //angle = (i * 2* Math.PI/numNodes); // Calculate the angle at which the element will be placed.
+                                                // For a semicircle, we would use (i / numNodes) * Math.PI.
+          x = (radius * Math.cos(angle)-10); // Calculate the x position of the element.
+          y = -1*(radius * Math.sin(angle)); // Calculate the y position of the element.
+         console.log(angle*180/Math.PI,x,y,i,angle,degree,degtorad);
+          text=catdata[i];
+             color=catcolor[i];
+             nodes.push({'id': i, 'x': x, 'y': y,'text':text,'color':color});
+         }
+         nodes1=nodes;
+       console.log(nodes)
+         return nodes;
+       }
 var a_draw = function () {
          var numNodes = a_data.length;
          var radius =  o_radius+radiusincrease-15;
            var catcolor=a_color;
     var catdata=a_data;
-         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         var nodes = createNodesa(numNodes, radius,catdata,catcolor);
          createSvg(radius, function (svg) {
            createElements(svg, nodes, 1);
          });
@@ -156,7 +282,7 @@ var b_draw = function () {
     var numNodes = catdata.length;
          var radius =  o_radius+(radiusincrease*2)-15;
 
-         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         var nodes = createNodesb(numNodes, radius,catdata,catcolor);
          createSvg(radius, function (svg) {
            createElements(svg, nodes, 1);
          });
@@ -172,7 +298,7 @@ var c_draw = function () {
     var numNodes = catdata.length;
          var radius =  o_radius+(radiusincrease*3)-15;
 
-         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         var nodes = createNodesc(numNodes, radius,catdata,catcolor);
          createSvg(radius, function (svg) {
            createElements(svg, nodes, 1);
          });
@@ -187,7 +313,7 @@ var d_draw = function () {
     var catcolor = d_color;
          var radius =  o_radius+(radiusincrease*4)-15;
 
-         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         var nodes = createNodesd(numNodes, radius,catdata,catcolor);
          createSvg(radius, function (svg) {
            createElements(svg, nodes, 1);
          });
@@ -203,7 +329,7 @@ var e_draw = function () {
          var radius =  o_radius+(radiusincrease*5)-15;
 
 
-         var nodes = createNodes(numNodes, radius,catdata,catcolor);
+         var nodes = createNodese(numNodes, radius,catdata,catcolor);
          createSvg(radius, function (svg) {
            createElements(svg, nodes, 1);
          });

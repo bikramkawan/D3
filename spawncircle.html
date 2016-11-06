@@ -170,7 +170,7 @@ for (var i =0;i<data.length;i++)
             });
 
 
- var datatypegrouptext = maingroup.selectAll('g.datatype').data(data).enter().append('text')
+ var datatypegrouptext = datatypegroup.selectAll('g.datatype').data(data).enter().append('text')
          .attr("x", function (d,i) {return chairOriginX; })
          .attr("y",function (d) {  return chairOriginY; })
          .text( function (d,i) {console.log(i); return i;})
