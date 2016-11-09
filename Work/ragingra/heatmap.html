@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+
+<!--Created by Bikram Kawan on 28.10.2016.-->
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D3 Simple Heat Map Example</title>
+</head>
+<script src="../../d3.js"></script>
+
+
+<body>
+<script>
+     var width = 1300;
+    var height = 500;
+    var numberofcores=10;
+    var numberofenergy=6;
+    var enegyjoules=[];
+    var core1=[],core2=[],core3=[],core4=[],core5=[],core6=[],core7=[],core8=[];
+    d3.csv('data.csv',function (data) {
+
+        console.log(data)
+        data.forEach(function (d) {
+
+          enegyjoules.push(parseFloat(d.energyjoules));
+          core1.push(d.core1)
+            core2.push(d.core2)
+            core3.push(d.core3)
+            core4.push(d.core4)
+            core5.push(d.core5)
+            core6.push(d.core6)
+            core7.push(d.core7)
+            core8.push(d.core8)
+
+
+
+      })
+ var color1=[];
+        var codeblock=[];
+d3.csv('colours.csv',function (data) {
+
+
+
+    data.forEach(function (d,i) {
+
+        color1.push(d.colour);
+        codeblock.push(d.codeblock);
+            });
+
+
+ var svg = d3.select("body")
+            .append("svg")
+            .attr("class", "chart")
+            .attr("width", width)
+            .attr("height", height);
+
+
+
+
+
+    var heatmapdata=[];
+     for (var i = 0; i < numberofenergy; i++) {
+         console.log(i,heatmapdata);
+
+            heatmapdata.push([enegyjoules[i],core1[i],core2[i],core3[i],core4[i],core5[i],core6[i],core7[i],core8[i]]);
+
+
+        }
+
+
+heatmapdata.push(['Energy','Core 1','Core 2','Core 3','Core 4','Core 5','Core 6','Core 7','Core 8']);
+console.log(heatmapdata);
+   var rows = heatmapdata.length;
+    var cols = heatmapdata[0].length+1;
+ var colwidth = (width / cols)
+
+    var row_height = (height / rows);
+
+
+
+    var svg_enter = svg.selectAll('g.my').data(heatmapdata)
+            .enter()
+            .append('g')
+            .attr('class','rect')
+            .attr('transform','translate('+colwidth+',0)')
+
+    var rect = svg_enter.selectAll('g.rect').data(function (d, i) {
+
+        return d;
+    });
+
+    var text = svg_enter.selectAll('text').data(function (d, i) {
+
+        return d;
+    }).attr('class','text')
+
+    var y = [];
+    heatmapdata.forEach(function (d, i) {
+        y.push(i * row_height);
+
+    })
+
+
+
+
+    var  count=0
+    rect.enter().append('rect')
+            .attr('width', colwidth)
+            .attr('height', row_height)
+            .attr('x', function (d) {
+                var that =this;
+                var prev = that.previousSibling; // One previous step information.
+                return (prev === null) ? 0 : parseFloat(d3.select(prev).attr('x')) + parseFloat(d3.select(prev).attr('width'))
+            })
+            .attr('y', function (d, i) {
+
+                if (i == 0) {
+                    count = count + 1;
+                }
+                return (count - 1) * row_height;
+
+            })
+            .attr('fill', function (d) { return color1[codeblock.indexOf(d)];
+
+            });
+
+
+console.log(colwidth)
+
+
+ var counter = 0;
+          text.enter().append('text')
+            .attr('x', function (d,i) {
+
+
+              //var prev = thi.previousSibling; // One previous step information.
+                return (i === 0) ? 20 : (colwidth*i)+20 ;
+            })
+
+            .attr('y', function (d, i) {
+
+                if (i == 0) {
+                    //console.log(i);
+                    counter = counter + 1;
+                }
+                return ((counter *1) * row_height)-(row_height/2);
+
+            })
+            .text( function (d) { return d })
+            .attr("fill", "white")
+            .attr("font-size", "20px")
+    .attr("font-family", "sans-serif")
+
+
+
+console.log(enegyjoules);
+//
+//    var count=0
+//    svg.selectAll('g.my').data(enegyjoules)
+//            .enter()
+//            .append('rect')
+//
+//
+//    .attr("width", 50)
+//            .attr("height", row_height)
+//   .attr('x', function (d) {
+//                var that =this;
+//                var prev = that.previousSibling; // One previous step information.
+//                return (prev === null) ? 0 : parseFloat(d3.select(prev).attr('x')) + parseFloat(d3.select(prev).attr('width'))
+//            })
+//
+//      .attr('y', function (d, i) {
+//
+//                if (i == 0) {
+//                    count = count + 1;
+//                }
+//                return (count - 1) * row_height;
+//
+//            })
+
+
+
+})
+
+
+
+
+    })
+
+
+
+</script>
+
+
+</body>
+</html>
