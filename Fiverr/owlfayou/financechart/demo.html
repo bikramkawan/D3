@@ -1,0 +1,290 @@
+<head>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+
+        h1 {
+            font-family: Helvetica, Arial;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        body, p {
+            font-family: Helvetica, Arial;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+<h1>
+    <div id="sliderdiv">Payment Amount</div>
+    <input type="text" id="currentslide"><br>
+     <div id="calcualtion"></div>
+    <input id="defaultSlider" type="range" min="0" max="36000" value="3000" step="3000" width="100" height="50">
+</h1>
+<div id="myDiv" style="width: 700px; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+<div id="myDiv1" class="js-plotly-plot"
+     style="width: 750px; height: 500px; margin-top: 0px; margin-left: 50px; position: absolute; top: 80px; left: 650px;"></div>
+<script>
+
+    $(document).ready(function () {
+
+
+        // Plot for 1 % Impact  //
+        Plotly.d3.csv("data1.csv", function (data) {
+
+            var endingbalance = [];
+            var endingbalance4 = [];
+            var year = [];
+            data.forEach(function (d) {
+
+                var number = Number(d.endingbalance.replace(/[^0-9\.]+/g, ""));
+                endingbalance.push(number);
+                var number1 = Number(d.endingbalance4.replace(/[^0-9\.]+/g, ""));
+                endingbalance4.push(number1)
+                year.push(parseFloat(d.Year));
+            });
+
+            endingbalance4.pop();
+            year.pop();
+            endingbalance.pop();
+
+
+            var endingbalancedata = {
+                x: year,
+                y: endingbalance,
+                fill: 'tonexty',
+                type: 'scatter',
+                name: 'Ending Balance',
+                marker: {
+                    color: 'blue'        // If you want to change color of line please change change e.g. 'black', 'green'
+                    //.You can do similarly for all graph //12 means the size just change the value to incraese area.
+                }
+            };
+            var endingbalance4data = {
+                x: year,
+                y: endingbalance4,
+                fill: 'tonexty',
+                type: 'scatter',
+                marker: {
+                    color: 'red'
+
+                },
+                name: 'Ending Balance 4'
+            };
+            var data = [endingbalancedata, endingbalance4data];
+            var layout = {
+                title: '1% Impact',
+                xaxis: {
+                    title: 'Years',
+                    showgrid: false
+                },
+                yaxis: {
+                    title: '$',
+                    showgrid: false
+                }
+            };
+            Plotly.newPlot('myDiv', data, layout);
+
+        });
+
+        // End of plot for  1 % Impact
+
+
+
+
+
+        // Additional Plot start from here
+        $(function () {
+            var currentValue = $('#currentValue');
+             var initialprinciple = 10000;   // Specify the intial principle.
+            var initialprinciple100 = 10000;  // Specify the intial principle ($100)
+            var grossrate = 0.075;
+
+            var numberofyears = 38;   // Specify the numnber of years
+            var year = [];
+
+            $('#defaultSlider').change(function () {
+                currentValue.html(this.value);
+                 var principle = [];
+            var earningsaving = [];
+            var endingbalance = [];
+            var principle100 = [];
+            var earning3 = [];
+            var moresavings = [];
+            var difference = [];
+
+                      $('#calcualtion').html('Gross Rate = '+ grossrate+' Payment Amount = '+ defaultSlider.value);
+                $('#currentslide').val(defaultSlider.value);
+                   console.log(defaultSlider.value);
+
+                for (var i = 1; i < numberofyears + 1; i++) {
+
+
+                    if (i===1)
+                    {
+                        console.log(i,(initialprinciple))
+                       initialprinciple=10000;
+                        initialprinciple100=10000;
+                        var p = initialprinciple;   // Calculate principle.
+                    principle.push(p);
+                    var f = grossrate * initialprinciple;  // Column f or earnings plus savings
+                    earningsaving.push(f);
+                    var g = p + f;                          // Ending balance calculation
+                    endingbalance.push(g);
+                    var h = initialprinciple100;
+
+                    initialprinciple = g;
+                    principle100.push(h);
+                    var ii = grossrate * h;                 // Earnings 3 Calculation
+                    earning3.push(ii);
+
+                    var j = h + ii;                         // Ending balance (more savings) calculation
+                    moresavings.push(j);
+
+                    var m = j - g;                          // Difference
+                    difference.push(m);
+
+                        initialprinciple100 = j + (parseFloat(defaultSlider.value));
+
+                    }
+                    else
+                    {
+                        console.log(i,(initialprinciple))
+                        p = initialprinciple;   // Calculate principle.
+                        principle.push(p);
+                        f = grossrate * initialprinciple;  // Column f or earnings plus savings
+                        earningsaving.push(f);
+                        g = p + f;                          // Ending balance calculation
+                        endingbalance.push(g);
+                        h = initialprinciple100;
+                        initialprinciple = g;
+
+                    principle100.push(h);
+                    var ii = grossrate * h;                 // Earnings 3 Calculation
+                    earning3.push(ii);
+
+                    var j = h + ii;                         // Ending balance (more savings) calculation
+                    moresavings.push(j);
+
+                    var m = j - g;                          // Difference
+                    difference.push(m);
+
+                        initialprinciple100 = j + (parseFloat(defaultSlider.value));
+
+                    }
+
+                    year.push(i);
+
+
+                }
+
+                console.log(principle100);
+
+
+
+
+                var principledata = {
+                    x: year,
+                    y: principle,
+
+                    fill: 'tonexty',
+                    type: 'scatter',
+                    marker: {
+                        color: 'red'
+
+                    },
+                    name: 'Principle'
+                };
+                var earningsavingdata = {
+                    x: year,
+                    y: earningsaving,
+                    fill: 'tonexty',
+                    type: 'scatter',
+                    marker: {
+                        color: 'green'
+
+                    },
+                    name: 'Earnings+Savings'
+                };
+                var endingbalancedata = {
+                    x: year,
+                    y: endingbalance,
+                    fill: 'tonexty',
+                    type: 'scatter',
+                    marker: {
+                        color: 'grey'
+
+                    },
+                    name: 'Ending Balance '
+                };
+
+               // Uncomment this if you want to see all lines
+                var principle100data = {
+                    x: year,
+                    y: principle100,
+                    fill: 'tonexty',
+                    type: 'scatter',
+                    name: 'Principle ($100)'
+                };
+                var earning3data = {
+                    x: year,
+                    y: earning3,
+                    fill: 'tonexty',
+                    type: 'scatter',
+                    name: 'Earnings 3'
+                };
+
+                var moresavingdata = {
+                    x: year,
+                    y: moresavings,
+                    fill: 'tonexty',
+                    type: 'scatter',
+                    name: 'Ending Balance (More Savings)'
+                };
+                var differencedata = {
+                    x: year,
+                    y: difference,
+                    fill: 'tonexty',
+                    type: 'scatter',
+                    name: 'Difference(0,1000)'
+                };
+               // var data = [principledata, earningsavingdata, endingbalancedata, principle100data, earning3data, moresavingdata, differencedata];
+
+                var data = [principledata, earningsavingdata, endingbalancedata,principle100data];
+                var layout = {
+                    title: 'Additional Savings',
+                    xaxis: {
+                        title: 'Years',
+                        showgrid: false
+                    },
+                    yaxis: {
+                        title: '$',
+                        showgrid: false
+                    }
+                };
+                Plotly.newPlot('myDiv1', data, layout);
+
+
+            });// End of slider function .
+
+            // Trigger the event on load, so
+            // the value field is populated:
+
+            $('#defaultSlider').change();
+
+        });
+
+        // End of Additional Plot start from here
+
+    });
+</script>
+
+
+</body>
