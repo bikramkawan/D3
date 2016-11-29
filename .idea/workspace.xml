@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="48226e10-42ca-4527-814b-1684a137ec6b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Work/Bargraph/15218592_10157782294875263_624131785_n.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Work/Bargraph/1525_not_in_employment_or_training_neets1.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Work/Bargraph/bargraph.html" afterPath="$PROJECT_DIR$/Work/Bargraph/bargraph.html" />
     </list>
     <ignored path="D3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -89,8 +88,8 @@
       <file leaf-file-name="bargraph.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Work/Bargraph/bargraph.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="567">
-              <caret line="68" column="21" selection-start-line="68" selection-start-column="21" selection-end-line="68" selection-end-column="21" />
+            <state relative-caret-position="207">
+              <caret line="46" column="0" selection-start-line="42" selection-start-column="16" selection-end-line="46" selection-end-column="0" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#body#0;n#!!top" expanded="true" />
               </folding>
@@ -816,8 +815,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Work/Bargraph/bargraph.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="567">
-          <caret line="68" column="21" selection-start-line="68" selection-start-column="21" selection-end-line="68" selection-end-column="21" />
+        <state relative-caret-position="207">
+          <caret line="46" column="0" selection-start-line="42" selection-start-column="16" selection-end-line="46" selection-end-column="0" />
           <folding>
             <element signature="n#style#0;n#div#0;n#body#0;n#!!top" expanded="true" />
           </folding>
