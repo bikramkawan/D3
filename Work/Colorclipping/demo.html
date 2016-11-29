@@ -1,0 +1,81 @@
+<head>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+
+        h1 {
+            font-family: Helvetica, Arial;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        body, p {
+            font-family: Helvetica, Arial;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div id="myDiv" style="width: 700px; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+<div id="myDiv1" class="js-plotly-plot"
+     style="width: 750px; height: 500px; margin-top: 0px; margin-left: 50px; position: absolute; top: 80px; left: 650px;"></div>
+<script>
+
+    $(document).ready(function () {
+
+        function splitValue(value, index) {
+    return value.substring(0, index);
+}
+
+
+
+        // Plot for 1 % Impact  //
+        Plotly.d3.csv("data.csv", function (data) {
+         console.log(data)
+            var year =[];
+            var month = [];
+            var colors =[];
+            var temp =[];
+            data.forEach(function (d,i) {
+
+                year.push(d.date);
+
+                temp.push(parseFloat(d.temperature));
+                colors.push('red')
+
+            })
+            
+
+            var trace1 = {
+  x: year,
+  y: temp,
+ mode: 'scatter',
+  marker: {
+    color: colors,
+    size: 12
+  }
+};
+
+
+
+var data = [trace1];
+
+Plotly.newPlot('myDiv', data);
+
+
+        });
+
+        // End of Additional Plot start from here
+
+    });
+</script>
+
+
+</body>
