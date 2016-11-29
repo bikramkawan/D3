@@ -11,17 +11,23 @@
 </head>
 
 <style>
-    .index{
+    .index {
         padding-right: 10px
     }
 </style>
 <body>
 
 <!--<div id="myDiv" style="width: 480px; height: 400px;">&lt;!&ndash; Plotly chart will be drawn inside this DIV &ndash;&gt;</div>-->
-
+<center>
+    <h4>Chose Orientation</h4>
+    <label><input type="radio" name="colorRadio" value="horizontal"> horizontal</label>
+    <label><input type="radio" name="colorRadio" value="vertical"> vertical</label>
+</center>
 <div class="container" style="margin-top: 50px">
-<div class="row" id="hDiv" style="width: 600px; height: 500px;display: none"><!-- Plotly chart will be drawn inside this DIV --></div>
-<div class="row" id="vDiv" style="width: 600px; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <div class="row" id="hDiv" style="width: 900px; height: 600px;display: none">
+        <!-- Plotly chart will be drawn inside this DIV --></div>
+    <div class="row" id="vDiv" style="width: 900px; height: 600px;">
+        <!-- Plotly chart will be drawn inside this DIV --></div>
 
     <div style="padding-top: 50px; padding-left: 50px">
         <i class="fa fa-circle index" aria-hidden="true" style="color: rgb(56, 147, 115)"></i>2012
@@ -31,9 +37,7 @@
     </div>
     <div>
         <hr>
-        <h4>Chose Orientation</h4>
-<label><input type="radio" name="colorRadio" value="horizontal"> horizontal</label>
-<label><input type="radio" name="colorRadio" value="vertical"> vertical</label>
+
     </div>
 </div>
 
@@ -65,8 +69,6 @@
 
 
             });
-
-
 
 
             var vdata = [{
@@ -117,7 +119,7 @@
                 },
                 name: "2012",
                 type: "bar",
-                orientation:"h"
+                orientation: "h"
 
             }, {
                 x: year_13,
@@ -127,7 +129,7 @@
                 },
                 name: "2013",
                 type: 'bar',
-                orientation:"h"
+                orientation: "h"
 
 
             }, {
@@ -139,7 +141,7 @@
                 },
                 name: "2014",
                 type: 'bar',
-                orientation:"h"
+                orientation: "h"
 
 
             }, {
@@ -150,17 +152,15 @@
                 },
                 name: "2015",
                 type: 'bar',
-                orientation:"h",
+                orientation: "h",
 
 
             }
             ];
 
 
-
-
             var vlayout = {
-                showlegend:false,
+                showlegend: false,
                 barmode: 'group',
                 bargap: 0.5,
                 bargroupgap: 0.3,
@@ -168,38 +168,49 @@
                 yaxis: {
                     title: "%"
                 },
-                xaxis:{
-                    title:"Tara"
-                }
+                xaxis: {
+                    title: "Tara",
 
+
+                }, font: {
+                    family: 'sans-serif',
+                    size: 12,
+                    color: '#000'
+                }
 
 
             };
             var hlayout = {
-                showlegend:false,
+                showlegend: false,
                 barmode: 'group',
                 bargap: 0.5,
                 bargroupgap: 0.3,
                 title: '% 15-25 not in employment or training (NEETS)',
                 xaxis: {
-                    title: "%"
+                    title: "Tara"
                 },
-                yaxis:{
-                    title:"Tara"
+                yaxis: {
+                    title: "%",
+                    margin: {
+                        l: 200
+                    }
+                },
+                margin: {
+                    l: 200
                 }
 
 
             };
 
 
-            $('input[type="radio"]').click(function(){
-                if($(this).attr("value")=="horizontal"){
+            $('input[type="radio"]').click(function () {
+                if ($(this).attr("value") == "horizontal") {
 
                     $("#hDiv").show();
                     $("#vDiv").hide();
 
                 }
-                if($(this).attr("value")=="vertical"){
+                if ($(this).attr("value") == "vertical") {
                     $("#hDiv").hide();
                     $("#vDiv").show();
 
@@ -212,14 +223,6 @@
             Plotly.newPlot('hDiv', hdata, hlayout);
 //
             Plotly.newPlot('vDiv', vdata, vlayout);
-
-
-
-
-
-
-
-
 
 
         });
