@@ -1,13 +1,11 @@
-<head>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
 
-
-    <style>
-
-       path {
+path {
     fill:none;
-    stroke:white;
+    stroke:blue;
     stroke-width:2px;
 }
 .axis path, .axis line {
@@ -20,45 +18,41 @@
     fill-opacity: .125;
     shape-rendering: crispEdges;
 }
-.path_green {
-    stroke:green;
+.grey {
+    stroke:grey;
+    fill: grey;
+
 }
 .path_red {
-    stroke:red;
+    fill: none;
+  stroke: url(#line-gradient);
+  stroke-width: 2px;
 }
 .path_yellow {
     stroke:yellow;
 }
 
-    </style>
+</style>
 
-</head>
-
-
-<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
 
 <div id='dashboardChart'>
-    <svg    id="svg"> </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg">
 </div>
 <script>
-    function drawChart() {
-    var margin = {
-        top: 5,
-        right: 10,
-        bottom: 100,
-        left: 50
-    },
-    margin2 = {
-        top: 200,
-        right: 10,
-        bottom: 20,
-        left: 50
-    },
-    width = 1075 - margin.left - margin.right,
-        height = 280 - margin.top - margin.bottom,
-        height2 = 280 - margin2.top - margin2.bottom;
+function drawChart() {
+    d3.tsv('temp_data.tsv',function (tsvdata) {
 
-    var parseDate = d3.time.format("%Y-%m-%d").parse;
+
+  var margin = {top: 20, right: 20, bottom: 110, left: 40},
+    margin2 = {top: 430, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom,
+        height2 = 500 - margin2.top - margin2.bottom;
+        console.log(height2,height,width)
+
+    var parseDate = d3.time.format("%Y%m%d").parse;
+
 
     var x = d3.time.scale().range([0, width]),
         x2 = d3.time.scale().range([0, width]),
@@ -113,187 +107,205 @@
     var context = svg.append("g")
         .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
-    var data = [{
-        "date": "2013-02-08T05:00:00.000Z",
+
+
+    var data= [];
+        tsvdata.forEach(function (d) {
+        data.push( {
+            "date": parseDate(d.date),
             "data": null,
-            "red": 0,
+            "red": parseFloat(d.temperature),
             "yellow": 0,
             "green": 1
-    }, {
-        "date": "2013-02-07T05:00:00.000Z",
-            "data": null,
-            "red": 485,
-            "yellow": 0,
-            "green": 491
-    }, {
-        "date": "2013-02-06T05:00:00.000Z",
-            "data": null,
-            "red": 2884,
-            "yellow": 0,
-            "green": 288
-    }, {
-        "date": "2013-02-05T05:00:00.000Z",
-            "data": null,
-            "red": 3191,
-            "yellow": 0,
-            "green": 3188
-    }, {
-        "date": "2013-02-04T05:00:00.000Z",
-            "data": null,
-            "red": 180,
-            "yellow": 0,
-            "green": 184
-    }, {
-        "date": "2013-02-03T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-02-02T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-02-01T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-31T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-30T05:00:00.000Z",
-            "data": null,
-            "red": 1,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-29T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 2
-    }, {
-        "date": "2013-01-28T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-27T05:00:00.000Z",
-            "data": null,
-            "red": 1,
-            "yellow": 1,
-            "green": 1
-    }, {
-        "date": "2013-01-26T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 1
-    }, {
-        "date": "2013-01-25T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-24T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-23T05:00:00.000Z",
-            "data": null,
-            "red": 49,
-            "yellow": 0,
-            "green": 45
-    }, {
-        "date": "2013-01-22T05:00:00.000Z",
-            "data": null,
-            "red": 59,
-            "yellow": 0,
-            "green": 64
-    }, {
-        "date": "2013-01-21T05:00:00.000Z",
-            "data": null,
-            "red": 119,
-            "yellow": 1,
-            "green": 125
-    }, {
-        "date": "2013-01-20T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 1,
-            "green": 0
-    }, {
-        "date": "2013-01-19T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-18T05:00:00.000Z",
-            "data": null,
-            "red": 84,
-            "yellow": 10,
-            "green": 1
-    }, {
-        "date": "2013-01-17T05:00:00.000Z",
-            "data": null,
-            "red": 76,
-            "yellow": 1,
-            "green": 77
-    }, {
-        "date": "2013-01-16T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 1,
-            "green": 0
-    }, {
-        "date": "2013-01-15T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 1000,
-            "green": 10
-    }, {
-        "date": "2013-01-14T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-13T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-12T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }, {
-        "date": "2013-01-11T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 10,
-            "green": 0
-    }, {
-        "date": "2013-01-10T05:00:00.000Z",
-            "data": null,
-            "red": 0,
-            "yellow": 0,
-            "green": 0
-    }];
+             })
+
+
+        })
+
+
+//    var data1 = [{
+//        "date": "2013-02-08T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 1
+//    }, {
+//        "date": "2013-02-07T05:00:00.000Z",
+//            "data": null,
+//            "red": 485,
+//            "yellow": 0,
+//            "green": 491
+//    }, {
+//        "date": "2013-02-06T05:00:00.000Z",
+//            "data": null,
+//            "red": 2884,
+//            "yellow": 0,
+//            "green": 288
+//    }, {
+//        "date": "2013-02-05T05:00:00.000Z",
+//            "data": null,
+//            "red": 3191,
+//            "yellow": 0,
+//            "green": 3188
+//    }, {
+//        "date": "2013-02-04T05:00:00.000Z",
+//            "data": null,
+//            "red": 180,
+//            "yellow": 0,
+//            "green": 184
+//    }, {
+//        "date": "2013-02-03T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-02-02T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-02-01T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-31T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-30T05:00:00.000Z",
+//            "data": null,
+//            "red": 1,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-29T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 2
+//    }, {
+//        "date": "2013-01-28T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-27T05:00:00.000Z",
+//            "data": null,
+//            "red": 1,
+//            "yellow": 1,
+//            "green": 1
+//    }, {
+//        "date": "2013-01-26T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 1
+//    }, {
+//        "date": "2013-01-25T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-24T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-23T05:00:00.000Z",
+//            "data": null,
+//            "red": 49,
+//            "yellow": 0,
+//            "green": 45
+//    }, {
+//        "date": "2013-01-22T05:00:00.000Z",
+//            "data": null,
+//            "red": 59,
+//            "yellow": 0,
+//            "green": 64
+//    }, {
+//        "date": "2013-01-21T05:00:00.000Z",
+//            "data": null,
+//            "red": 119,
+//            "yellow": 1,
+//            "green": 125
+//    }, {
+//        "date": "2013-01-20T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 1,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-19T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-18T05:00:00.000Z",
+//            "data": null,
+//            "red": 84,
+//            "yellow": 10,
+//            "green": 1
+//    }, {
+//        "date": "2013-01-17T05:00:00.000Z",
+//            "data": null,
+//            "red": 76,
+//            "yellow": 1,
+//            "green": 77
+//    }, {
+//        "date": "2013-01-16T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 1,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-15T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 1000,
+//            "green": 10
+//    }, {
+//        "date": "2013-01-14T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-13T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-12T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-11T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 10,
+//            "green": 0
+//    }, {
+//        "date": "2013-01-10T05:00:00.000Z",
+//            "data": null,
+//            "red": 0,
+//            "yellow": 0,
+//            "green": 0
+//    }];
+//console.log(data1,data)
+
 
     data.map(function (t) {
         t.date = new Date(t.date);
@@ -308,9 +320,27 @@
 
     x2.domain(x.domain());
     y2.domain(y.domain());
+      focus.append("linearGradient")
+    .attr("id", "line-gradient")
+    .attr("gradientUnits", "userSpaceOnUse")
+    .attr("x1", 0).attr("y1", y(0))
+    .attr("x2", 0).attr("y2", y(100))
+  .selectAll("stop")
+    .data([
+      {offset: "0%", color: "red"},
+      {offset: "50%", color: "red"},
+      {offset: "50%", color: "black"},
+      {offset: "55%", color: "black"},
+      {offset: "55%", color: "red"},
+      {offset: "100%", color: "red"}
+    ])
+  .enter().append("stop")
+    .attr("offset", function(d) { return d.offset; })
+    .attr("stop-color", function(d) { return d.color; });
+
 
     focus.selectAll('path')
-        .data(['red', 'yellow', 'green'])
+        .data(['red'])
       .enter()
         .append('path')
         .attr('clip-path', 'url(#clip)')
@@ -331,15 +361,14 @@
         .call(yAxis);
 
     context.selectAll('path')
-        .data(['red', 'yellow', 'green'])
+        .data(['red'])
       .enter()
         .append('path')
         .attr('d', function (col) {
+            console.log(area2(col)(data))
           return area2(col)(data);
         })
-        .attr('class', function (col) {
-          return "path_" + col;
-        });
+        .attr('class','grey');
 
     context.append("g")
         .attr("class", "x axis")
@@ -358,7 +387,9 @@
         focus.selectAll("path.data").attr("d", function (col) { return area(col)(data); });
         focus.select(".x.axis").call(xAxis);
     }
+    })
     }
+
     drawChart();
+
 </script>
-</body>
