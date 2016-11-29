@@ -1,102 +1,177 @@
-
 <head>
-  <!-- Plotly.js -->
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 
 <body>
 
-  <div id="myDiv" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-  <script>
-    <!-- JAVASCRIPT CODE GOES HERE -->
-  </script>
+<div id="myDiv" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+
+
+<input name="" value="h" type="radio" checked="checked">Horizontal <br>
+<input name="" value="v" type="radio" > Vertical <br>
+
+
+
 
 <script>
-      $(document).ready(function () {
+    <!-- JAVASCRIPT CODE GOES HERE -->
+</script>
+
+<script>
+    $(document).ready(function () {
 
         function splitValue(value, index) {
-    return value.substring(0, index);
-}
-
-
+            return value.substring(0, index);
+        }
 
         // Plot for 1 % Impact  //
         Plotly.d3.json("data.json", function (data) {
-
-console.log(data)
-            var countries =[];
-            var year_12 =[];
-            var year_13=[];
-            var year_14=[];
-            var year_15=[];
-            var bargraph=[];
-            data.forEach(function (d,i) {
+            var countries = [];
+            var year_12 = [];
+            var year_13 = [];
+            var year_14 = [];
+            var year_15 = [];
+            var bargraph = [];
+            data.forEach(function (d, i) {
                 countries.push(d.Country);
-                   year_12.push(d['2012'])
+                year_12.push(d['2012']);
                 year_13.push(d['2013']);
                 year_14.push(d['2014']);
                 year_15.push(d['2015']);
 
-                bargraph.push({x: ['2012', '2013', '2014','2015'],
-  y: [d['2012'], d['2013'], d['2014'],d['2015']],
-  name: (d.Country),
-  type: 'bar'
-
-                })
-            })
-
-
-console.log(bargraph)
-
-
-
-var data = bargraph;
-
-var layout = {barmode: 'group',barmode: 'group',
-  bargap: 0.5,
-  bargroupgap: 0.1};
-
-Plotly.newPlot('myDiv', data, layout);
-
-// var trace1 = {
-//  x: [20, 14, 23],
-//  y: ['giraffes', 'orangutans', 'monkeys'],
-//  name: 'SF Zoo',
-//  orientation: 'h',
-//  marker: {
-//    color: 'rgba(55,128,191,0.6)',
-//    width: 1
-//  },
-//  type: 'bar'
-//};
-//
-//var trace2 = {
-//  x: [12, 18, 29],
-//  y: ['giraffes', 'orangutans', 'monkeys'],
-//  name: 'LA Zoo',
-//  orientation: 'h',
-//  type: 'bar',
-//  marker: {
-//    color: 'rgba(255,153,51,0.6)',
-//    width: 1
-//  }
-//};
-//
-//var data = [trace1, trace2];
-//
-//var layout = {
-//  title: 'Colored Bar Chart',
-//  barmode: 'group',barmode: 'group',
-//  bargap: 0.5,
-// bargroupgap: 0.1
-//};
-
-//Plotly.newPlot('myDiv', data, layout);
 
             });
-               });
+
+
+
+
+            var vdata = [{
+                x: countries,
+                y: year_12,
+                marker: {
+                    color: "rgb(56, 147, 115)"
+                },
+                name: "2012",
+                type: "bar",
+
+            }, {
+                y: year_13,
+                x: countries,
+                marker: {
+                    color: "red"
+                },
+                name: "2013",
+                type: 'bar',
+
+            }, {
+                y: year_14,
+                x: countries,
+
+                marker: {
+                    color: "orange"
+                },
+                name: "2014",
+                type: 'bar',
+
+            }, {
+                y: year_15,
+                x: countries,
+                marker: {
+                    color: "rgb(63, 148, 150)"
+                },
+                name: "2015",
+                type: 'bar',
+
+            }
+            ];
+
+            var hdata = [{
+                y: countries,
+                x: year_12,
+                marker: {
+                    color: "rgb(56, 147, 115)"
+                },
+                name: "2012",
+                type: "bar",
+                orientation:"h"
+
+            }, {
+                x: year_13,
+                y: countries,
+                marker: {
+                    color: "red"
+                },
+                name: "2013",
+                type: 'bar',
+                orientation:"h"
+
+
+            }, {
+                x: year_14,
+                y: countries,
+
+                marker: {
+                    color: "orange"
+                },
+                name: "2014",
+                type: 'bar',
+                orientation:"h"
+
+
+            }, {
+                x: year_15,
+                y: countries,
+                marker: {
+                    color: "rgb(63, 148, 150)"
+                },
+                name: "2015",
+                type: 'bar',
+                orientation:"h"
+
+
+            }
+            ];
+
+
+
+
+            var layout = {
+                barmode: 'group',
+                bargap: 0.5,
+                bargroupgap: 0.3,
+                title: '% 15-25 not in employment or training (NEETS)',
+                yaxis: {
+                    title: "%"
+                }
+
+
+            };
+
+
+
+            $("input[value='h']").click(function() {
+                Plotly.newPlot('myDiv', hdata, layout);
+
+            });
+            $("input[value='v']").click(function() {
+
+                Plotly.newPlot('myDiv', vdata, layout);
+
+            });
+
+
+
+
+//            Plotly.newPlot('myDiv', vdata, layout);
+
+
+
+
+        });
+    });
 </script>
 </body>
