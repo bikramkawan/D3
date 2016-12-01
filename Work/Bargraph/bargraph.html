@@ -21,20 +21,22 @@
 <center>
     <h4>Chose Orientation</h4>
     <label><input type="radio" name="colorRadio" value="horizontal"> horizontal</label>
-    <label><input type="radio" name="colorRadio" value="vertical"> vertical</label>
+    <label><input type="radio" name="colorRadio" value="vertical" checked> vertical</label>
 </center>
 <div class="container" style="margin-top: 50px">
-    <div class="row" id="hDiv" style="width: 900px; height: 600px;display: none">
+    <div class="row" id="hDiv" style="width: 900px; height: 600px;display: none; margin:0 auto;">
         <!-- Plotly chart will be drawn inside this DIV --></div>
-    <div class="row" id="vDiv" style="width: 900px; height: 600px;">
+    <div class="row" id="vDiv" style="width: 900px; height: 600px; margin:0 auto;">
         <!-- Plotly chart will be drawn inside this DIV --></div>
 
-    <div style="padding-top: 50px; padding-left: 50px">
+<center>
+    <div style="margin:0 auto;" ;>
         <i class="fa fa-circle index" aria-hidden="true" style="color: rgb(56, 147, 115)"></i>2012
         <i class="fa fa-circle index" aria-hidden="true" style="color: red;"></i>2013
         <i class="fa fa-circle index" aria-hidden="true" style="color: orange"></i>2014
         <i class="fa fa-circle index" aria-hidden="true" style="color: cornflowerblue"></i>2015
     </div>
+    </center>
     <div>
         <hr>
 
@@ -169,7 +171,7 @@
                     title: "%"
                 },
                 xaxis: {
-                    title: "Tara",
+                    title: "Countries",
 
 
                 }, font: {
@@ -187,10 +189,10 @@
                 bargroupgap: 0.3,
                 title: '% 15-25 not in employment or training (NEETS)',
                 xaxis: {
-                    title: "Tara"
+                    title: "%"
                 },
                 yaxis: {
-                    title: "%",
+                    title: "Countries",
                     margin: {
                         l: 200
                     }
