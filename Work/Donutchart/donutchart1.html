@@ -11,9 +11,34 @@
         stroke: #fff;
     }
 
+
+
+.red {
+  border: 18px solid #d50f1c;
+  animation: redanim linear 6s;
+  animation-iteration-count: infinite;
+}
+
+
+@keyframes redanim {
+  0% {
+    transform: rotate(0deg) scaleX(0.9) scaleY(1);
+  }
+  50% {
+    transform: rotate(180deg) scaleX(0.9) scaleY(1);
+  }
+  100% {
+    transform: rotate(360deg) scaleX(0.9) scaleY(1);
+  }
+}
+
+
+
+
+
 </style>
 <body>
-<div id="donutchart"></div>
+<div id="donutchart" ></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <input id="defaultSlider" type="range" min="0" max="1" value="0.5" step="0.1" width="100" height="50">
@@ -57,24 +82,23 @@
             var g = svg.selectAll(".arc")
                     .data(pie(data))
                     .enter().append("g")
-                    .attr("class", "arc");
-
+                    .attr("class", "red");
 
             g.append("path")
                     .attr("d", arc)
-                    .style("fill", 'black')
+                    .style("fill", 'red')
                     .style('opacity', function (d) {
                         return (parseFloat(d.data.colorfill) == 0) ? 0.1 : 0.2;
                     })
-                    .transition()
-                    .ease("exp")
-                    .duration(2000)
-                    .attrTween("d", tweenPie);
+//                    .transition()
+//                    .ease("exp")
+//                    .duration(2000)
+//                   // .attrTween("d", tweenPie);
 
 
             g.append("text")
-                    .transition()
-                    .duration(3000)
+                   // .transition()
+                    //.duration(3000)
                     .attr("transform", function (d) {
                         return "translate(" + arc.centroid(d) + ")";
                     })
@@ -98,9 +122,9 @@
 
                     .attr("d", arc1)
                     .style('opacity', 0)
-                    .transition()
-                    .duration(2000)
-                    .delay(2000)
+                    //.transition()
+                    //.duration(2000)
+                    //.delay(2000)
                     .style('opacity', 1)
                     .attr("fill", "blue")
 
