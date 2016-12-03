@@ -21,6 +21,10 @@ var width = 960,
     height = 500,
     radius = Math.min(width, height) / 2;
 
+var min_val = 0;
+var max_val= 1;
+var pointer = 0.7;
+
 var color = d3.scale.ordinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
@@ -55,10 +59,10 @@ d3.csv("data1.csv", type, function(error, data) {
 
            if (parseFloat(d.data.colorfill) < 4){
 
-                return (parseFloat(d.data.colorfill)==0)?0.1:0.3;
+                return (parseFloat(d.data.colorfill)==0)?0.1:0.2;
            }else {
 
-               return 0.6;
+               return 0.5;
            }
 
     })
@@ -67,6 +71,25 @@ d3.csv("data1.csv", type, function(error, data) {
       .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
       .attr("dy", ".35em")
       .text(function(d) { return d.data.colorfill; });
+
+    var pi = Math.PI;
+
+    var scale = d3.scale.linear().domain([min_val,max_val]).range([0,360]);
+    var arc1 = d3.svg.arc()
+    .outerRadius(radius-10 )
+    .innerRadius(radius - 70)
+    .startAngle(scale(pointer) * (pi/180)) //converting from degs to radians
+    .endAngle((scale(pointer)+1)*(pi/180)) //just radians
+
+            g.append("path")
+    .attr("d", arc1)
+    .attr("fill", "blue")
+
+
+
+
+
+
 });
 
 function type(d) {
