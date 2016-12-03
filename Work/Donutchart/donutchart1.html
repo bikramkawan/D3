@@ -14,8 +14,15 @@
 
 </style>
 <body>
+ <div id ="donutchart"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <input id="defaultSlider" type="range" min="0" max="1" value="0.5" step="0.1" width="100" height="50">
 <script>
+
+
+  $(document).ready(function () {
+
 
 var width = 960,
     height = 500,
@@ -23,7 +30,6 @@ var width = 960,
 
 var min_val = 0;
 var max_val= 1;
-var pointer = 0.7;
 
 var color = d3.scale.ordinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
@@ -36,12 +42,73 @@ var pie = d3.layout.pie()
     .sort(null)
     .value(function(d) { return d.data; });
 
-var svg = d3.select("body").append("svg")
+var svg;
+ var currentValue = $('#currentValue');
+
+
+d3.csv("data1.csv", type, function(error, data) {
+  if (error) throw error;
+ svg = d3.select("#donutchart").append("svg")
     .attr("width", width)
     .attr("height", height)
   .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+  var g = svg.selectAll(".arc")
+      .data(pie(data))
+    .enter().append("g")
+      .attr("class", "arc");
 
+  g.append("path")
+      .attr("d", arc)
+      .style("fill", 'black')
+       .style('opacity',function (d) {
+
+
+           if (parseFloat(d.data.colorfill) < 4){
+
+                return (parseFloat(d.data.colorfill)==0)?0.1:0.2;
+           }else {
+
+               return 0.5;
+           }
+
+    });
+
+  g.append("text")
+      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+      .attr("dy", ".35em")
+      .text(function(d) { return d.data.colorfill; });
+
+
+
+       var pi = Math.PI;
+
+    var scale = d3.scale.linear().domain([min_val,max_val]).range([0,360]);
+    var arc1 = d3.svg.arc()
+    .outerRadius(radius-10 )
+    .innerRadius(radius - 70)
+    .startAngle(scale((defaultSlider.value)) * (pi/180)) //converting from degs to radians
+    .endAngle((scale((defaultSlider.value))+1)*(pi/180)) //just radians
+
+   g.append("path")
+    .attr("d", arc1)
+    .attr("fill", "blue")
+
+});
+
+ $('#defaultSlider').change(function () {
+
+
+     update();
+ })
+
+function update() {
+    d3.select("svg").remove();
+    svg = d3.select("#donutchart").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 d3.csv("data1.csv", type, function(error, data) {
   if (error) throw error;
 
@@ -54,7 +121,6 @@ d3.csv("data1.csv", type, function(error, data) {
       .attr("d", arc)
       .style("fill", 'black')
        .style('opacity',function (d) {
-           console.log(d)
 
 
            if (parseFloat(d.data.colorfill) < 4){
@@ -65,36 +131,34 @@ d3.csv("data1.csv", type, function(error, data) {
                return 0.5;
            }
 
-    })
+    });
 
   g.append("text")
       .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
       .attr("dy", ".35em")
       .text(function(d) { return d.data.colorfill; });
 
-    var pi = Math.PI;
+       var pi = Math.PI;
 
     var scale = d3.scale.linear().domain([min_val,max_val]).range([0,360]);
     var arc1 = d3.svg.arc()
     .outerRadius(radius-10 )
     .innerRadius(radius - 70)
-    .startAngle(scale(pointer) * (pi/180)) //converting from degs to radians
-    .endAngle((scale(pointer)+1)*(pi/180)) //just radians
+    .startAngle(scale((defaultSlider.value)) * (pi/180)) //converting from degs to radians
+    .endAngle((scale((defaultSlider.value))+1)*(pi/180)) //just radians
 
-            g.append("path")
+   g.append("path")
     .attr("d", arc1)
     .attr("fill", "blue")
 
 
 
-
-
-
 });
+}
 
 function type(d) {
   d.data = +d.data;
   return d;
 }
-
+  });
 </script>
