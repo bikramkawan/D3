@@ -1,0 +1,188 @@
+.chart-horiz-container {
+    position: relative;
+}
+.chart-horiz-container .chart-horiz {
+    width: 60%;
+    text-align: left;
+    margin: 0 auto;
+    padding: 0;
+}
+.chart-horiz-container .chart-horiz .hoverValue {
+    visibility: hidden;
+}
+.chart-horiz-container .chart-horiz li {
+    display: block;
+    height: 10px;
+    margin-top: 50px;
+}
+.chart-horiz-container .chart-horiz li:before {
+    color: #fff;
+    content: attr(title);
+    left: 5px;
+    position: absolute;
+}
+.chart-horiz-container .chart-horiz .title:before {
+    color: black;
+    font-weight: bold;
+    left: 0;
+}
+.chart-horiz-container .chart-horiz li:first-child {
+    margin-top: 0;
+}
+.chart-horiz-container .chart-horiz li .bar {
+    background: black;
+    height: 100%;
+}
+.chart-horiz-container .chart-horiz li .number-label {
+    font-weight: normal;
+    position: absolute;
+    top: 0;
+    width: 65%;
+    margin: 0px 15px 0px 15px;
+}
+.chart-horiz-container .chart-horiz li.past .bar {
+    background: #aaaaaa;
+}
+.chart-horiz-container .chart-horiz li.past .number-label {
+    color: #aaaaaa;
+}
+.posValue, .negValue {
+    border-radius: 3px;
+    height: 30px;
+    width: 50%;
+    position: relative;
+    color: #666;
+}
+.posValue .bar, .negValue .bar {
+    border-radius: 3px;
+    display: inline-block;
+}
+.posValue .number-label {
+    font-size: 16px;
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+}
+.negValue {
+    float: left;
+    text-align: right;
+    background: #eee;
+}
+.negValue .number-label {
+    font-size: 16px;
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    padding-right: 5px;
+    /*color: #d2d2d2;*/
+    right: 100%;
+}
+.posValue {
+    float: right;
+    text-align: left;
+    background: #eee;
+}
+.posValue .number-label {
+    /*color: #d2d2d2;*/
+    left: 100%;
+    padding-left: 5px;
+}
+
+.valueLabel {
+    position: absolute;
+    height: 24px;
+    top: -16px;
+    font-size: 15px;
+    color: #595959;
+    font-weight: lighter;
+    margin-top: -3px;
+}
+.valueLabel.left {
+    border-right: 1px solid;
+    margin-right: -1px;
+    right: 0;
+    padding-right: 4px;
+}
+.valueLabel.right {
+    border-left: 1px solid;
+    margin-left: -1px;
+    left: 0;
+    padding-left: 4px;
+}
+.label-left {
+    left: -100% !important;
+    text-align: right;
+    padding-right: 5px;
+    width: 90%!important;
+}
+@media screen and (max-width: 1200px) {
+    .chart-horiz-container .chart-horiz {
+        width: 100%;
+        margin-top: 90px;
+        padding: 0;
+    }
+    .chart-horiz-container .chart-horiz li {
+        height: 90px;
+    }
+    .chart-horiz-container .chart-horiz li .number-label {
+        top: -40px;
+        width: 225px;
+        font-size: 15px;
+        text-align: left;
+        left: 16px;
+    }
+    .negValue .number-label {
+        right: -4%;
+    }
+    .posValue .number-label {
+        left: 4%;
+    }
+    .divider-line {
+        top: -10%;
+        margin-left: 0;
+    }
+    .big5Titles {
+        width: 100%;
+        float: none;
+        text-align: left;
+        margin-top: 0;
+        margin-right: 0;
+        color: #000;
+        font-weight: 100;
+        font-size: 15px;
+        position: absolute;
+        top: -85px;
+    }
+    .big5Titles ul {
+        border-right: none;
+    }
+    .big5Titles ul li {
+        height: 90px;
+        color: #5c5c5c;
+        text-decoration: underline;
+    }
+}
+@media screen and (max-width: 480px) {
+    .chart-horiz-container .chart-horiz {
+        width: 100%;
+        margin-top: 90px;
+        padding: 0;
+    }
+    .chart-horiz-container .chart-horiz li {
+        height: 95px;
+    }
+    .chart-horiz-container .chart-horiz li .posValue .number-label {
+        text-align: right;
+    }
+    .chart-horiz-container .chart-horiz li .negValue .number-label {
+        text-align: left;
+    }
+
+    .chart-horiz-container .chart-horiz li .number-label {
+        top: -60px;
+        width: 170px;
+        font-size: 13px;
+        text-align: left;
+        left: 0;
+    }
+}

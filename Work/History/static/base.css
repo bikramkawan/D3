@@ -1,0 +1,16 @@
+/* Some (really) basic CSS for the map.  Expand me. */
+
+body {
+    padding-left: 1rem;
+    background-color: #ddd;
+}
+
+polygon {
+    fill: white;
+    stroke: #ddd;
+    stroke-width: 2px;
+}
+
+polygon.active {
+    fill: black;
+}

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.1.0/milligram.min.css"/>
+    <link rel="stylesheet" href="static/base.css"/>
+    <meta charset="UTF-8">
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        .axis text {
+        font: 50px;
+        stroke: white;
+        font-family: fantasy;
+
+        }
+
+        .axis line,
+        .axis path {
+            fill: white;
+            stroke: white;
+            shape-rendering: crisp-edges;
+        }
+
+        h1 {
+            text-shadow: 2px 2px 8px white;
+        }
+
+        .columndiv {
+            height: 70px;
+            width: 120px;
+
+        }
+
+        body {
+            background-image: url("http://meanspirited.net/people/2010/apr/cityscape.jpeg");
+        }
+
+    </style>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/prettyPhoto.css" rel="stylesheet">
+    <link href="css/price-range.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/responsive.css" rel="stylesheet">
+
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+     <script src="js/jquery-1.6.1.min.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" href="css/prettyPhoto.css" type="text/css" media="screen" charset="utf-8" />
+<script src="js/jquery.prettyPhoto.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function(){
+    $("a[rel^='prettyPhoto']").prettyPhoto();
+  });
+</script>
+</head>
+<body>
+<h1 style=" text-align: center; color: black; font-weight: bold;text-decoration: underline; font-family: fantasy;">
+    Project3</h1>
+
+<div class="container" style=" position: fixed; padding:0px; ">
+    <div class="row">
+        <div class="column" id="map">
+        </div>
+        <!-- <div class="column" id="controls">
+            <h4>Last clicked: <span id="output_tile_name"></span></h4> -->
+        <div id="timeline">
+        </div>
+        <!-- </div> -->
+    </div>
+
+    <script>
+
+
+        // import
+        d3.xml("static/map.svg", "image/svg+xml", function(error, xml) {
+            if (error) throw error;
+
+            // svg into dom
+            var div_map = document.getElementById("map")
+            var importedNode = document.importNode(xml.documentElement, true)
+            div_map.appendChild(importedNode)
+
+            // svg w/h on page
+            var w = 650;
+            var h = 690;
+
+            // select svg for d3
+            var svg = d3.select("svg")
+                .attr("width", w)
+                .attr("height", h)
+
+            // init output
+            output_tile_name()
+
+            // give hover feedback
+            var polygons = d3.selectAll("polygon")
+                .on('mouseover', function(d){
+                    d3.select(this).classed("active", true)
+                })
+                .on('mouseout', function(d) {
+                    d3.select(this).classed("active", false)
+                })
+                .on('click', function(d) {
+                    var parent_id  = d3.select(this.parentNode).attr("id")
+                    var polygon_id = d3.select(this).attr("id")
+                    output_tile_name(parent_id + "-" + polygon_id)
+                })
+        })
+
+        function output_tile_name(value) {
+            // default
+            var value = typeof value !== 'undefined' ? value : "None."
+
+            // get control, set output
+            var output = d3.select('#output_tile_name')
+            output.html(value)
+        }
+    </script>
+
+
+    <div class="column" style="margin-left: 700px; margin-top: -600px; width:700px;">
+        <!--<div id="columndiv" class="columndiv">-->
+            <!--<center>-->
+                <!--<div id="lincolndivname"> Lincoln Park</div>-->
+                <!--<div id="lincolndiv"> Lincoln Park</div>-->
+                <!--<div id="westsidedivname"> West Side</div>-->
+                <!--<div id='westsidediv'> West Side</div>-->
+                <!--<div id="englewooddivname"> EngleWood</div>-->
+                <!--<div id='englewooddiv'> EngleWood</div>-->
+
+
+            <!--</center>-->
+        <!--</div>-->
+        <div class="column align-self-middle" class="container">
+
+            <div class="category-tab" class="row">
+                <div class="col-sm-10">
+                    <ul class="nav nav-justified">
+
+                        <li class="animate">
+
+                            <a href="#LincolnPark" data-toggle="tab" id="lincolnmenu" class="onclick">Lincoln Park</a>
+
+                        </li>
+
+                        <li><a href="#WestSide" data-toggle="tab" id="westsidemenu" class="onclick">West Side</a></li>
+                        <li><a href="#Englewood" data-toggle="tab" id="englewoodmenu" class="onclick">Englewood</a></li>
+
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade active in" id="LincolnPark2">
+                        <div class="col-sm-3">
+                            <div class="floating-box"></div>
+                            <div class="single-products">
+                                <div class="productinfo text-center" id="imagepos0">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="floating-box"></div>
+                        <div class="single-products">
+                            <div class="productinfo text-center" id="imagepos1">
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="floating-box"></div>
+                    <div class="single-products">
+                        <div class="productinfo text-center" id="imagepos2">
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane fade active in" id="LincolnPark1">
+                    <div class="col-sm-3">
+                        <div class="floating-box"></div>
+                        <div class="single-products">
+                            <div class="productinfo text-center" id="imagepos3">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="floating-box"></div>
+                    <div class="single-products">
+                        <div class="productinfo text-center" id="imagepos4">
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="floating-box"></div>
+                <div class="single-products">
+                    <div class="productinfo text-center" id="imagepos5">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+</body>
+<script>
+
+    var lincolnimages = ['1950LP.jpg', '1970LP.jpg', '1990LP.jpg', '1950LPA.jpg', '1970LPA.jpg','1990LPA.jpg'];
+    var westsideimages = ['1950WL.jpg', '1970WL.jpg','1990WL.jpg','1950WLA.jpg', '1970WLA.jpg','1990WLA.jpg'];
+    var englewoodimages = ['1950EW.jpg','1970EW.jpg','1990EW.jpg','1950EWA.jpg','1970EWA.jpg','1990EWA.jpg'];
+    $('#lincolndiv').hide();
+    $('#westsidediv').hide();
+    $('#englewooddiv').hide();
+
+    $("#lincolnmenu").click(function () {
+        $('#westsidedivname').show();
+        $('#englewooddivname').show();
+        $('#lincolndivname').hide();
+        $('#lincolndiv').hide();
+            $('#westsidediv').hide();
+            $('#englewooddiv').hide();
+
+
+        $('#lincolndiv').css("background-color", "#ffa500");
+
+
+        var menu = $(this).attr('id');
+        $menuname = '#' + menu;
+        console.log($menuname);
+        lincolnimages.forEach(function (d, i) {
+            var filename = d.split('.');
+            $img = d;
+            $id = '#imagepos' + i;
+            $filename = filename[0];
+            $($id).html("<img id='theImg' src=" + $img + " class='img-rounded'/>");
+            $($id).append("<h3>" + $filename + "</h3>");
+
+
+        })
+
+    });
+
+
+    $("#westsidemenu").click(function () {
+        $('#lincolndivname').show();
+        $('#westsidedivname').hide();
+        $('#westsidediv').show();
+        $('#westsidediv').css("background-color", "#ffa500");
+        $('#lincolndiv').hide();
+        $('#englewooddiv').hide();
+        var menu = $(this).attr('id');
+        $menuname = '#' + menu;
+        console.log($menuname);
+        westsideimages.forEach(function (d, i) {
+
+            var filename = d.split('.');
+            $img = d;
+            $id = '#imagepos' + i;
+            $filename = filename[0];
+
+            $($id).append("<h3>" + $filename + "</h3>");
+        })
+
+    });
+
+
+    $("#englewoodmenu").click(function () {
+        $('#lincolndivname').show();
+        $('#westsidedivname').show();
+        $('#englewooddivname').hide();
+        $('#westsidediv').hide();
+        $('#lincolndiv').hide();
+        $('#englewooddiv').show();
+        $('#englewooddiv').css("background-color", "#ffa500");
+
+        var menu = $(this).attr('id');
+        $menuname = '#' + menu;
+
+        englewoodimages.forEach(function (d, i) {
+            var filename = d.split('.');
+            $img = d;
+            $id = '#imagepos' + i;
+            $filename = filename[0];
+            console.log($id, $img, i, $filename)
+            $($id).html("<img id='theImg' src=" + $img + " class='img-rounded'/>");
+            $($id).append("<h3>" + $filename + "</h3>");
+
+        })
+
+    });
+
+</script>
+
+<script>
+
+var margin = {top: 100, right: 0, bottom: 50, left: 700},
+    width = 1300 - margin.left - margin.right,
+    height = 650 - margin.top - margin.bottom;
+
+var x = d3.time.scale()
+    .domain([new Date(1950, 0, 1), new Date(1990, 0, 1)])
+    .range([0, width]);
+
+var xAxis = d3.svg.axis()
+    .scale(x);
+
+var svg = d3.select("body").select("#timeline").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  	.append("g")
+    .attr("transform", "translate(" + 20 + "," + margin.top + ")");
+
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
+  .selectAll("text")
+    .attr("y", 0)
+    .attr("x", 9)
+    .attr("dy", "1.0em")
+    .attr("transform", "rotate(45)")
+    .style("text-anchor", "start");
+
+svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "30px")
+        .style("font-family","fantasy")
+        .style("text-shadow", "2px 2px 8px white")
+        .text("Timeline");
+
+    </script>
+<style>
+
+
+</html>
