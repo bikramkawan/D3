@@ -10,12 +10,13 @@
     <meta charset="UTF-8">
     <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" href="css/lightbox.min.css">
+    <script src=" js/lightbox-plus-jquery.min.js"></script>
     <style>
         .axis text {
-        font: 50px;
-        stroke: white;
-        font-family: fantasy;
+            font: 50px;
+            stroke: white;
+            font-family: fantasy;
 
         }
 
@@ -52,14 +53,14 @@
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-     <script src="js/jquery-1.6.1.min.js" type="text/javascript" charset="utf-8"></script>
-<link rel="stylesheet" href="css/prettyPhoto.css" type="text/css" media="screen" charset="utf-8" />
-<script src="js/jquery.prettyPhoto.js" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript" charset="utf-8">
-  $(document).ready(function(){
-    $("a[rel^='prettyPhoto']").prettyPhoto();
-  });
-</script>
+    <script src="js/jquery-1.6.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="css/prettyPhoto.css" type="text/css" media="screen" charset="utf-8"/>
+    <script src="js/jquery.prettyPhoto.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            $("a[rel^='prettyPhoto']").prettyPhoto();
+        });
+    </script>
 </head>
 <body>
 <h1 style=" text-align: center; color: black; font-weight: bold;text-decoration: underline; font-family: fantasy;">
@@ -80,7 +81,7 @@
 
 
         // import
-        d3.xml("static/map.svg", "image/svg+xml", function(error, xml) {
+        d3.xml("static/map.svg", "image/svg+xml", function (error, xml) {
             if (error) throw error;
 
             // svg into dom
@@ -94,25 +95,25 @@
 
             // select svg for d3
             var svg = d3.select("svg")
-                .attr("width", w)
-                .attr("height", h)
+                    .attr("width", w)
+                    .attr("height", h)
 
             // init output
             output_tile_name()
 
             // give hover feedback
             var polygons = d3.selectAll("polygon")
-                .on('mouseover', function(d){
-                    d3.select(this).classed("active", true)
-                })
-                .on('mouseout', function(d) {
-                    d3.select(this).classed("active", false)
-                })
-                .on('click', function(d) {
-                    var parent_id  = d3.select(this.parentNode).attr("id")
-                    var polygon_id = d3.select(this).attr("id")
-                    output_tile_name(parent_id + "-" + polygon_id)
-                })
+                    .on('mouseover', function (d) {
+                        d3.select(this).classed("active", true)
+                    })
+                    .on('mouseout', function (d) {
+                        d3.select(this).classed("active", false)
+                    })
+                    .on('click', function (d) {
+                        var parent_id = d3.select(this.parentNode).attr("id")
+                        var polygon_id = d3.select(this).attr("id")
+                        output_tile_name(parent_id + "-" + polygon_id)
+                    })
         })
 
         function output_tile_name(value) {
@@ -128,16 +129,16 @@
 
     <div class="column" style="margin-left: 700px; margin-top: -600px; width:700px;">
         <!--<div id="columndiv" class="columndiv">-->
-            <!--<center>-->
-                <!--<div id="lincolndivname"> Lincoln Park</div>-->
-                <!--<div id="lincolndiv"> Lincoln Park</div>-->
-                <!--<div id="westsidedivname"> West Side</div>-->
-                <!--<div id='westsidediv'> West Side</div>-->
-                <!--<div id="englewooddivname"> EngleWood</div>-->
-                <!--<div id='englewooddiv'> EngleWood</div>-->
+        <!--<center>-->
+        <!--<div id="lincolndivname"> Lincoln Park</div>-->
+        <!--<div id="lincolndiv"> Lincoln Park</div>-->
+        <!--<div id="westsidedivname"> West Side</div>-->
+        <!--<div id='westsidediv'> West Side</div>-->
+        <!--<div id="englewooddivname"> EngleWood</div>-->
+        <!--<div id='englewooddiv'> EngleWood</div>-->
 
 
-            <!--</center>-->
+        <!--</center>-->
         <!--</div>-->
         <div class="column align-self-middle" class="container">
 
@@ -220,14 +221,12 @@
         </div>
 
 
-
-
 </body>
 <script>
 
-    var lincolnimages = ['1950LP.jpg', '1970LP.jpg', '1990LP.jpg', '1950LPA.jpg', '1970LPA.jpg','1990LPA.jpg'];
-    var westsideimages = ['1950WL.jpg', '1970WL.jpg','1990WL.jpg','1950WLA.jpg', '1970WLA.jpg','1990WLA.jpg'];
-    var englewoodimages = ['1950EW.jpg','1970EW.jpg','1990EW.jpg','1950EWA.jpg','1970EWA.jpg','1990EWA.jpg'];
+    var lincolnimages = ['1950LP.jpg', '1970LP.jpg', '1990LP.jpg', '1950LPA.jpg', '1970LPA.jpg', '1990LPA.jpg'];
+    var westsideimages = ['1950WL.jpg', '1970WL.jpg', '1990WL.jpg', '1950WLA.jpg', '1970WLA.jpg', '1990WLA.jpg'];
+    var englewoodimages = ['1950EW.jpg', '1970EW.jpg', '1990EW.jpg', '1950EWA.jpg', '1970EWA.jpg', '1990EWA.jpg'];
     $('#lincolndiv').hide();
     $('#westsidediv').hide();
     $('#englewooddiv').hide();
@@ -237,13 +236,13 @@
         $('#englewooddivname').show();
         $('#lincolndivname').hide();
         $('#lincolndiv').hide();
-            $('#westsidediv').hide();
-            $('#englewooddiv').hide();
+        $('#westsidediv').hide();
+        $('#englewooddiv').hide();
 
 
         $('#lincolndiv').css("background-color", "#ffa500");
 
-
+//<a href="images/image-1.jpg" data-lightbox="image-1" data-title="My caption">Image #1</a>
         var menu = $(this).attr('id');
         $menuname = '#' + menu;
         console.log($menuname);
@@ -252,8 +251,16 @@
             $img = d;
             $id = '#imagepos' + i;
             $filename = filename[0];
-            $($id).html("<img id='theImg' src=" + $img + " class='img-rounded'/>");
+            $datalightbox = 'image-1';
+            console.log($id, $img, i, $filename)
+            $($id).html("<a href=" + $img + " data-lightbox=" + $datalightbox + "><img id='theImg' src=" + $img + " class='img-rounded'/></a>");
             $($id).append("<h3>" + $filename + "</h3>");
+
+
+//<a href="images/fullscreen/2.jpg" rel="prettyPhoto"><img src="images/thumbnails/t_2.jpg" width="60" height="60" alt="Picture alone 1" /></a>
+
+
+            //   $($id).html("<img id='theImg' src=" + $img + " class='img-rounded'/>");
 
 
         })
@@ -272,13 +279,15 @@
         $menuname = '#' + menu;
         console.log($menuname);
         westsideimages.forEach(function (d, i) {
-
             var filename = d.split('.');
             $img = d;
             $id = '#imagepos' + i;
             $filename = filename[0];
-
+            $datalightbox = 'image-1';
+            console.log($id, $img, i, $filename)
+            $($id).html("<a href=" + $img + " data-lightbox=" + $datalightbox + "><img id='theImg' src=" + $img + " class='img-rounded'/></a>");
             $($id).append("<h3>" + $filename + "</h3>");
+
         })
 
     });
@@ -301,9 +310,11 @@
             $img = d;
             $id = '#imagepos' + i;
             $filename = filename[0];
+            $datalightbox = 'image-1';
             console.log($id, $img, i, $filename)
-            $($id).html("<img id='theImg' src=" + $img + " class='img-rounded'/>");
+            $($id).html("<a href=" + $img + " data-lightbox=" + $datalightbox + "><img id='theImg' src=" + $img + " class='img-rounded'/></a>");
             $($id).append("<h3>" + $filename + "</h3>");
+
 
         })
 
@@ -313,45 +324,46 @@
 
 <script>
 
-var margin = {top: 100, right: 0, bottom: 50, left: 700},
-    width = 1300 - margin.left - margin.right,
-    height = 650 - margin.top - margin.bottom;
+    var margin = {top: 100, right: 0, bottom: 50, left: 700},
+            width = 1300 - margin.left - margin.right,
+            height = 650 - margin.top - margin.bottom;
 
-var x = d3.time.scale()
-    .domain([new Date(1950, 0, 1), new Date(1990, 0, 1)])
-    .range([0, width]);
+    var x = d3.time.scale()
+            .domain([new Date(1950, 0, 1), new Date(1990, 0, 1)])
+            .range([0, width]);
 
-var xAxis = d3.svg.axis()
-    .scale(x);
+    var xAxis = d3.svg.axis()
+            .scale(x);
 
-var svg = d3.select("body").select("#timeline").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  	.append("g")
-    .attr("transform", "translate(" + 20 + "," + margin.top + ")");
+    var svg = d3.select("body").select("#timeline").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + 20 + "," + margin.top + ")");
 
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis)
-  .selectAll("text")
-    .attr("y", 0)
-    .attr("x", 9)
-    .attr("dy", "1.0em")
-    .attr("transform", "rotate(45)")
-    .style("text-anchor", "start");
+    svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .attr("y", 0)
+            .attr("x", 9)
+            .attr("dy", "1.0em")
+            .attr("transform", "rotate(45)")
+            .style("text-anchor", "start");
 
-svg.append("text")
-        .attr("x", (width / 2))
-        .attr("y", 0 - (margin.top / 2))
-        .attr("text-anchor", "middle")
-        .style("font-size", "30px")
-        .style("font-family","fantasy")
-        .style("text-shadow", "2px 2px 8px white")
-        .text("Timeline");
+    svg.append("text")
+            .attr("x", (width / 2))
+            .attr("y", 0 - (margin.top / 2))
+            .attr("text-anchor", "middle")
+            .style("font-size", "30px")
+            .style("font-family", "fantasy")
+            .style("text-shadow", "2px 2px 8px white")
+            .text("Timeline");
 
-    </script>
+</script>
 <style>
 
-
-</html>
+    <
+    /
+    html >
