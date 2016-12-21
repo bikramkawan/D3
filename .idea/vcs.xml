@@ -2,15 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/chemdoodleclj" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/chemistry/chemdoodle" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/chemistry/chemdoodleclj" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/chemistry/jsme" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/chemistry/jsme-for-wordpress" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/chemistry/smiles" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/map/Leaflet.heat" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/map/conrec.js" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/map/d3-contouring-example" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/map/nepalMapTest" vcs="Git" />
   </component>
 </project>
