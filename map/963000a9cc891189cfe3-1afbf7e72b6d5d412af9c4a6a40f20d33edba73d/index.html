@@ -1,0 +1,189 @@
+<!doctype html>
+<meta charset='utf-8'>
+<style>
+.beaufort--n0 {display:none;}
+.beaufort--n1 {background-color:#cff;}
+.beaufort--n2 {background-color:#9fc;}
+.beaufort--n3 {background-color:#9f9;}
+.beaufort--n4 {background-color:#9f6;}
+.beaufort--n5 {background-color:#9f0;}
+.beaufort--n6 {background-color:#cf0;}
+.beaufort--n7 {background-color:#ff0;}
+.beaufort--n8 {background-color:#fc0;}
+.beaufort--n9 {background-color:#f90;}
+.beaufort--n10 {background-color:#f60;}
+.beaufort--n11 {background-color:#f30;}
+.beaufort--n12 {background-color:#f00;}
+
+</style>
+
+<body>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js'></script>
+<script src='conrec.js'></script>
+
+<script>
+var height = 600
+var map_url = '/mbostock/raw/4090846/us.json'
+var width = 960
+
+// ****************************************************************************
+
+function getDataUrl() {
+  var ts_begin = new Date()
+  ts_begin.setMinutes(ts_begin.getMinutes() - 1)
+  var ts_end = new Date()
+
+  var base = 'http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php'
+
+  // per http://qr.ae/7Zohpm
+  var bounding_box = [-124.848974, 24.396308, -66.885444, 49.384358]
+
+  // http://graphical.weather.gov/xml/rest.php
+  var params = {
+    begin: ts_begin.toISOString().split('.')[0],
+    end: ts_end.toISOString().split('.')[0],
+    lat1: bounding_box[1],
+    lat2: bounding_box[3],
+    lon1: bounding_box[0],
+    lon2: bounding_box[2],
+    product: 'time-series',
+    // km
+    resolutionSub: 100.0,
+    wspd: 'wspd'
+  }
+
+  var out_params = _.map(params, function (v, k) { return k + '=' + v }).
+      join('&')
+
+  var url = base + '?' + out_params
+
+  // The AirNow servers don’t set CORS headers, so the XHR fails. Work around
+  // it by proxying through YQL: http://stackoverflow.com/a/8579158/672403
+  var yql_query = 'select * from xml where url="' + url + '"'
+  yql_query = encodeURIComponent(yql_query)
+  var proxied = 'http://query.yahooapis.com/v1/public/yql?q=' + yql_query +
+     '&format=json'
+
+  return proxied
+}
+
+// ****************************************************************************
+
+function getContours(data) {
+  c = new Conrec()
+
+  var conrec_data = _.map(data, function (p) { return [p.lat, p.lng, p.value] })
+
+  // ###
+  console.log(conrec_data, conrec_data.length)
+
+  return data
+}
+
+function processData(data) {
+  var points = {}
+  var processed = {}
+  var root = data.dwml.data
+
+  _.each(root.location, function (location) {
+    points[location['location-key']] = {
+      lat: parseFloat(location.point.latitude),
+      lng: parseFloat(location.point.longitude)
+    }
+  })
+
+  _.each(root.parameters, function (parameter) {
+    var speed = parameter['wind-speed']
+    
+    if (_.isUndefined(speed)) value = 0
+    else value = parseInt(speed.value, 10)
+
+    points[parameter['applicable-location']].value = value
+  })
+
+  return points
+}
+
+// ****************************************************************************
+
+var svg = d3.select('body').append('svg').
+    attr('height', height).
+    attr('width', width)
+
+var project = d3.geo.albersUsa().
+    scale(1000).
+    translate([width / 2, height / 2])
+var path = d3.geo.path().
+    projection(project)
+
+var quantize = d3.scale.quantize().
+    domain([0, 0.3, 3, 6.4, 10.6, 15.5, 21, 26.9, 33.4, 40.3, 47.6, 55.3, 63.4, 10000]).
+    range(d3.range(14))
+
+function renderData(data) {
+  var contours = getContours(data)
+
+  var g = svg.append('g')
+
+  // ###
+  console.log('rendering:', contours)
+
+  g.selectAll('circle').
+      data(contours).
+      enter().
+      append('circle').
+      attr('cx', function (d) { return project([d.lng, d.lat])[0] }).
+      attr('cy', function (d) { return project([d.lng, d.lat])[1] }).
+      attr('r', 1).
+      attr('class', function (d) { return 'beaufort beaufort--n' + quantize(d.value) + ' raw--' + d.value })
+}
+
+function renderMap() {
+  var map = svg.append('path')
+
+  d3.json(map_url, function (error, data) {
+    if (error) throw error;
+
+    map.datum(topojson.feature(data, data.objects.land)).
+        attr('class', 'land').
+        attr('d', path)
+  })
+}
+
+function render(data) {
+  renderMap()
+  renderData(data)
+
+  d3.select(self.frameElement).style('height', height + 'px')
+}
+
+// ****************************************************************************
+
+var data_url = getDataUrl()
+var max_requests = 5
+// First request usually passes YQL’s 5 second timeout, so allow re-requests.
+function request(n) {
+  if (!n) n = 0
+  else if (n === max_requests) throw new Error('unable to get data')
+
+  console.log('attempt ' + (n + 1))
+
+  d3.json(data_url, function (response) {
+    var data = response.query.results
+
+    if (!data) {
+      request(n + 1)
+
+      return
+    }
+
+    var processed = processData(data)
+
+    render(processed)
+  })
+}
+request()
+</script>
+</body>
