@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>nepal</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+    #map {
+      /* mostly a copy of bootstrap's .well */
+      background-color: #f5f5f5;
+      border: 1px solid #e3e3e3;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+      -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+      box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 960px;
+      height: 500px;
+    }
+    .background {
+      fill: none;
+      pointer-events: all;
+    }
+    #districts, #vdcs {
+      fill: #cde;
+      stroke: #fff;
+      /*fill: red;
+      stroke: red;*/
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    #healthcenters {
+      fill: #f00;
+    }
+    #districts .active, #vdcs .active, .active {
+      fill: #89a;
+    }
+    .lighten {
+      fill: #cde;
+    }
+    .invisible {
+      display:none;
+    }
+    #cities {
+      stroke-width: 0;
+    }
+    .city {
+      fill: #345;
+      stroke: #fff;
+    }
+    pre.prettyprint {
+      border: 1px solid #ccc;
+      margin-bottom: 0;
+      padding: 9.5px;
+    }
+    div.tiptool  { color: #222; background: #fff; padding: .5em; text-shadow: #f5f5f5 0 1px 0;
+                   border-radius: 2px; box-shadow: 0px 0px 2px 0px #a6a6a6; opacity: 0.9; position: absolute; }
+    div.tiptool .sep { color: #444; font-weight: 300; }
+    </style>
+
+<body>
+    <div id="map">
+    </div>
+
+<script>
+var width = 960,
+    height = 500,
+    centered,
+    district,
+    vdc;
+
+var tooltip = d3.select("body")
+  .append("div")
+  .attr("class", "tiptool");
+
+var controls = d3.select("body")
+  .append("div")
+  .attr("class", "controls")
+    .append("a")
+      .attr("id", "reset")
+      .attr("class", "invisible")
+      .attr("href", "#")
+      .text("reset")
+      .on("click", click_reset);
+
+var svg = d3.select("#map")
+  .append("svg")
+    .attr("preserveAspectRatio", "xMidYMid")
+    .attr("viewBox", "0 0 " + width + " " + height)
+    .attr("width", width)
+    .attr("height", height);
+
+svg.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height);
+
+var g = svg.append("g")
+    .attr("id", "country");
+
+// TODO albers
+var projection = d3.geo.mercator()
+    // LONG, LAT
+    .center([85.33, 27.70])
+    // LONG, LAT, ROLL
+    .rotate([13.65, -23, -0.4])
+    //.parallels([27.6, 28.3])
+    .translate([width / 2, height / 1.5])
+    .scale(40000);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+/*
+d3.select("svg").on("mousedown.log", function() {
+    console.log(projection.invert(d3.mouse(this)));
+});
+*/
+
+
+d3.json("district.geojson", function(shape) {
+  g.append("g")
+    .attr("id", "districts")
+    .selectAll("path")
+      .data(shape.features)
+    .enter().append("path")
+      .attr("id", function(d) {d['properties']['id']=d['properties']['NAME_3']; d['properties']['level']='district'; return d['properties']['NAME_3'];})
+      .attr("class", "district")
+      .attr("class", "active")
+      .attr("d", path)
+
+
+
+      .on("mousemove", update_tooltip)
+      // using mouseover for fill is less painful than css hover bc
+      // svgs for district/vdc are not hierarchal in the DOM
+      .on("mouseover", update_fill)
+      .on("mouseout", hide_tooltip)
+      .on("click", click_district);
+
+});
+
+// preload vdcs
+d3.json("nepal_vdc.json", function(error, shape) {
+  g.append("g")
+    .attr("id", "vdcs")
+    .attr("class", "invisible")
+    .selectAll("path")
+      .data(shape.features)
+    .enter()
+      .append("path")
+        .attr("id", function(d) {d['properties']['id']=d['properties']['VDC_NAME']; d['properties']['level']='vdc'; return d.properties['VDC_NAME']; })
+        .attr("class", function(d) {
+            return "vdc lighten " + d.properties['VDC_NAME'];
+          })
+        .attr("d", path)
+    .on("mousemove", update_tooltip)
+    .on("mouseover", update_fill)
+    .on("mouseout", hide_tooltip);
+});
+
+function update_vdcs(xyz) {
+  g.selectAll(["#districts"]).classed("invisible", true);
+  g.select("#vdcs").classed("invisible", false);
+  g.selectAll(".vdc")
+    .attr("class", function(v) {
+      if (v.properties['DIST_NAME'] == district.properties['NAME_3']) {
+        return "vdc active " + v.properties['DIST_NAME'];
+      } else {
+        return "vdc lighten " + v.properties['DIST_NAME'];
+      }})
+  zoom(xyz);
+}
+
+
+function click_district(d) {
+  vdc = null;
+  tooltip.classed("invisible", true)
+  controls.classed("invisible", false)
+  if (district) {
+    g.selectAll("#" + district.properties['NAME_3']).style('display', null);
+  }
+  if (d && district !== d) {
+    var xyz = get_xyz(d);
+    district = d;
+    if (d['properties']['level']  == 'district') {
+      update_vdcs(xyz);
+    } else {
+      zoom(xyz);
+    }
+  } else {
+    var xyz = [width / 2, height / 2, 1];
+    district = null;
+    zoom(xyz);
+  }
+}
+
+
+function click_reset(d) {
+    vdc = null;
+    district = null;
+    controls.classed("invisible", true)
+    g.selectAll(["#districts", "#vdcs"]).classed("active", false)
+    g.selectAll("#districts").classed('invisible', false)
+    g.selectAll(["#vdcs"]).classed('invisible', true)
+    var xyz = [width / 2, height / 1.5, 1];
+    zoom(xyz);
+}
+
+function zoom(xyz) {
+  g.transition()
+    .duration(1250)
+    .attr("transform", "translate(" + projection.translate() + ")scale(" + xyz[2] + ")translate(-" + xyz[0] + ",-" + xyz[1] + ")")
+    .selectAll(["#districts", "#vdcs"])
+    .style("stroke-width", 1.0 / xyz[2] + "px")
+}
+
+function get_xyz(d) {
+  var bounds = path.bounds(d);
+  var w_scale = (bounds[1][0] - bounds[0][0]) / width;
+  var h_scale = (bounds[1][1] - bounds[0][1]) / height;
+  var z = .96 / Math.max(w_scale, h_scale);
+  var x = (bounds[1][0] + bounds[0][0]) / 2;
+  var y = (bounds[1][1] + bounds[0][1]) / 2 + (height / z / 6);
+  return [x, y, z];
+}
+
+function update_tooltip(d) {
+  var prop;
+  if (d.properties['VDC_NAME']) {
+    prop = 'VDC_NAME';
+  }
+  if (d.properties['NAME_3']) {
+    prop = 'NAME_3';
+  }
+  var mouse = d3.mouse(svg.node()).map( function(d) { return parseInt(d); } );
+  var display = d.properties[prop];
+
+  if (d3.select(this).classed('active')) {
+    tooltip
+      .classed("invisible", false)
+      .attr("style", "left:"+(mouse[0]+15)+"px;top:"+(mouse[1]+20)+"px")
+      .html(d.properties[prop])
+  }
+};
+
+function update_fill(d){
+  if (d3.select(this).classed('active')) {
+    d3.select(this).style("fill", "#ffa")
+  }
+}
+
+function hide_tooltip(d){
+  tooltip.classed("invisible", true);
+  // let css rules determine fill color
+  d3.select(this).style("fill", "")
+};
+</script>
+</body>
+</html>
