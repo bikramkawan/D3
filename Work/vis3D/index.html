@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+  <title>3D Stacked Bar Graph</title>
+
+  <style>
+    body {font: 10pt arial;}
+  </style>
+
+  <script type="text/javascript" src="scripts/vis-graph3d.min.js"></script>
+  
+  <script type="text/javascript" src="scripts/d3.min.js"></script>
+
+  <script type="text/javascript">
+    var data = null;
+    var graph = null;
+
+    function custom(x, y) {
+      return (-Math.sin(x/Math.PI) * Math.cos(y/Math.PI) * 10 + 15) * 1000;
+    }
+    // Called when the Visualization API is loaded.
+    function drawVisualization() {
+      var style = document.getElementById('style').value;
+      var withValue = ['bar-color', 'bar-size', 'dot-size', 'dot-color'].indexOf(style) != -1;
+
+      // Create and populate a data table.
+      var CSVdata;
+        
+      d3.csv("data/UnEvenData.csv", function(dataCSV) {
+           data2 = new vis.DataSet();
+          this.CSVdata = dataCSV;
+          for(item in dataCSV){
+            console.log(dataCSV[item]);
+              var zRes = +dataCSV[item]["Z_primary_Res B"];
+              zRes = zRes + (+dataCSV[item]["Z_Solar_Res_B"]);
+              zRes = zRes + (+dataCSV[item]["Z_wasted_Res_B"]); 
+              zRes = zRes + (+dataCSV[item]["Z_Nuclear_Res_B"]);
+              zRes = zRes + (+dataCSV[item]["Z_Hydro_Res_B"]);
+              zRes = zRes + (+dataCSV[item]["Z_Wind_Res_B"]);
+              zRes = zRes + (+dataCSV[item]["Z_Geothermal_Res_B"]);
+              zRes = zRes + (+dataCSV[item]["Z_Biomass_Res_B"]);
+            data2.add({x:+item, y: 0, z: zRes});
+               var zCom  = +dataCSV[item]["Z_primary_Com B"];
+              zCom = zCom + (+dataCSV[item]["Z_Solar_Com_B"]);
+              zCom = zCom + (+dataCSV[item]["Z_wasted_Com_B"]); 
+              zCom = zCom + (+dataCSV[item]["Z_Nuclear_Com_B"]);
+              zCom = zCom + (+dataCSV[item]["Z_Hydro_Com_B"]);
+              zCom = zCom + (+dataCSV[item]["Z_Wind_Com_B"]);
+              zCom = zCom + (+dataCSV[item]["Z_Geothermal_Com_B"]);
+              zCom = zCom + (+dataCSV[item]["Z_Biomass_Com_B"]);
+            data2.add({x:+item, y: 1, z: zCom});
+               var zTrans  = +dataCSV[item]["Z_primary_Trans B"];
+              zTrans = zTrans + (+dataCSV[item]["Z_Solar_Trans_B"]);
+              zTrans = zTrans + (+dataCSV[item]["Z_wasted_Trans_B"]); 
+              zTrans = zTrans + (+dataCSV[item]["Z_Nuclear_Trans_B"]);
+              zTrans = zTrans + (+dataCSV[item]["Z_Hydro_Trans_B"]);
+              zTrans = zTrans + (+dataCSV[item]["Z_Wind_Trans_B"]);
+              zTrans = zTrans + (+dataCSV[item]["Z_Geothermal_Trans_B"]);
+              zTrans = zTrans + (+dataCSV[item]["Z_Biomass_Trans_B"]);
+              
+               var value = custom(0, 2);
+            data2.add({x:+item, y: 2, z: zTrans, style: value});
+          }
+             
+          var camera = graph ? graph.getCameraPosition() : null;
+
+          // create our graph
+          var container = document.getElementById('mygraph');
+          graph = new vis.Graph3d(container, data2, options);
+
+          if (camera) graph.setCameraPosition(camera); // restore camera position
+
+          document.getElementById('style').onchange = drawVisualization;
+        });
+        
+        
+     //Labels for X and Y axis
+      var Ylabel = ["Res","Com","Trans"];
+      var Xlabel = ["Coal","Petrolium","Gas"];
+        
+      var self = this;    
+      // specify options
+      var options = {
+        width:  '600px',
+        height: '600px',
+        style: style,
+        showPerspective: true,
+        showGrid: true,
+        showShadow: true,
+
+        // Option tooltip can be true, false, or a function returning a string with HTML contents
+        //tooltip: true,
+        tooltip: function (point) {
+          // parameter point contains properties x, y, z
+          return 'X label: <b>'+ Xlabel[point.x] + '</b></br>' +
+                 'Y label: <b>'+ Ylabel[point.y] + '</b></br>' +
+                 'value: <b>' + point.z + '</b></br>' + 
+                 'Z_primary_'+ Ylabel[point.y] +' B: <b>' + self.CSVdata[point.x]["Z_primary_"+ Ylabel[point.y] +" B"] + '</b></br>' +
+                 'Z_wasted_'+ Ylabel[point.y] +'_B: <b>' + self.CSVdata[point.x]["Z_wasted_"+ Ylabel[point.y] +"_B"] + '</b></br>' +
+                 'Z_Solar_'+ Ylabel[point.y] +'_B: <b>' + self.CSVdata[point.x]["Z_Solar_"+ Ylabel[point.y] +"_B"] + '</b></br>' +
+                 'Z_Nuclear_'+ Ylabel[point.y] +'_B: <b>' + self.CSVdata[point.x]["Z_Nuclear_"+ Ylabel[point.y] +"_B"] + '</b></br>' +
+                 'Z_Hydro_'+ Ylabel[point.y] +'_B: <b>' + self.CSVdata[point.x]["Z_Hydro_"+ Ylabel[point.y] +"_B"] + '</b></br>' +
+                 'Z_Wind_'+ Ylabel[point.y] +'_B: <b>' + self.CSVdata[point.x]["Z_Wind_"+ Ylabel[point.y] +"_B"] + '</b></br>' +
+                 'Z_Geothermal_'+ Ylabel[point.y] +'_B: <b>' + self.CSVdata[point.x]["Z_Geothermal_"+ Ylabel[point.y] +"_B"] + '</b></br>' +
+                 'Z_Biomass_'+ Ylabel[point.y] +'_B: <b>' + self.CSVdata[point.x]["Z_Biomass_"+ Ylabel[point.y] +"_B"] + '</b></br>' ;
+        },
+        
+        xValueLabel: function(value) {
+             if(Xlabel[value] != undefined)
+                return Xlabel[value];
+            else
+                return "";
+        },
+        
+        yValueLabel: function(value) {
+            if(Ylabel[value] != undefined)
+                return Ylabel[value];
+            else
+                return "";
+        },
+
+        zValueLabel: function(value) {
+            return value ;
+        },
+
+        keepAspectRatio: true,
+        verticalRatio: 0.5
+      };
+        
+    }
+  </script>
+ 
+</head>
+
+<body onload="drawVisualization()">
+
+<p>
+  <label for="style"> Style:
+    <select id="style">
+      <option value="bar">bar</option>
+    </select>
+  </label>
+</p>
+
+<div id="mygraph"></div>
+
+<div id="info"></div>
+</body>
+</html>
