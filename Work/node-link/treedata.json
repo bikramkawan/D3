@@ -1,0 +1,100 @@
+{
+    "name": "ComicBook Cinematic Universe",
+    "children": [
+      {
+        "name": "DC Extended Universe",
+        "children": [
+
+          { "name": "Black Adam" },
+		  { "name": "Justice League","children": [
+          { "name": "Aquaman" },
+          { "name": "Batman" ,"children": [
+          { "name": "Batgirl" },
+          { "name": "Batman v Superman: Dawn of Justice" },
+		  { "name": "Gotham City Sirens" },
+		  { "name": "The Batman" }
+		  ] },
+		  { "name": "Cyborg" },
+		  { "name": "Flashpoint" },
+		  { "name": "Green Lantern Corps" },
+		  { "name": "Justice League","children": [
+          { "name": "Justice League" },
+          { "name": "Justice League 2" },
+		  { "name": "Justice League Dark" }
+		  ] },
+		  { "name": "Superman","children": [
+          { "name": "Man of Steel" },
+          { "name": "Man of Steel 2" },
+		  { "name": "Batman v Superman: Dawn of Justice" }
+		  ] },
+		  { "name": "Wonder Woman","children": [
+          { "name": "Wonder Woman" },
+          { "name": "Wonder Woman 2" },
+		  { "name": "Batman v Superman: Dawn of Justice" }
+		  ] }
+		  ] },
+		  { "name": "Lobo" },
+		  { "name": "Nightwing" },
+		  { "name": "Shazam" },
+		  { "name": "Suicide Squad","children": [
+          { "name": "Suicide Squad" },
+          { "name": "Suicide Squad 2" },
+		  { "name": "Deadshot" }
+		  ] }
+        ]
+      },
+      { "name": "Marvel Cinematic Universe",
+        "children": [
+          { "name": "Doctor Strange","children": [
+          { "name": "Doctor Strange" },
+          { "name": "Doctor Strange 2" }
+		  ] },
+          { "name": "Guardians of the Galaxy","children": [
+          { "name": "Guardians of the Galaxy" },
+          { "name": "Guardians of the Galaxy Vol. 2" },
+		  { "name": "Guardians of The Galaxy Vol. 3" }
+		  ] },
+		  { "name": "Kraven The Hunter" },
+		  { "name": "Namor" },
+		  { "name": "Silver and Black" },
+		  { "name": "The Avengers","children": [
+          { "name": "Ant-Man","children": [
+          { "name": "Ant-Man" },
+          { "name": "Ant-Man and the Wasp" }
+		  ] },
+          { "name": "Black Panther" },
+		  { "name": "Black Widow" },
+		  { "name": "Captain America","children": [
+          { "name": "Captain America: The First Avenger" },
+          { "name": "Captain America: The Winter Soldier" },
+          { "name": "Captain America: Civil War" }
+		  ] },
+		  { "name": "Captain Marvel" },
+		  { "name": "Iron Man","children": [
+          { "name": "Iron Man" },
+          { "name": "Iron Man 2" },
+          { "name": "Iron Man 3" }
+		  ] },
+		  { "name": "Spider-Man","children": [
+          { "name": "Spider-Man: Homecoming" },
+          { "name": "Untitled Spider-Man Sequel" }
+		  ] },
+		  { "name": "The Avengers","children": [
+          { "name": "The Avengers" },
+          { "name": "Avengers: Age of Ultron" },
+          { "name": "Avengers: Infinity War" },
+          { "name": "Untitled Avengers film" }
+		  ] },
+		  { "name": "The Incredible Hulk" },
+		  { "name": "Thor","children": [
+          { "name": "Thor" },
+          { "name": "Thor: The Dark World" },
+          { "name": "Thor: Ragnarok" }
+		  ] }
+		  ] },
+		  { "name": "Venom" }
+
+    ]
+	}
+	]
+   }
