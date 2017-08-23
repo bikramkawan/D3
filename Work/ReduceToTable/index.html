@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <style>
+        .row {
+            height: 30px;
+            font-size: 20px;
+            white-space: nowrap;
+            /* width: 12em; */
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .col-md-3 {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .container {
+            text-align: center;
+            border: 1px solid;
+        }
+
+        .row.header {
+            height: 60px;
+            background: grey !important;
+            color: white;
+        }
+
+        .row:nth-child(even) {
+            background: #CCC
+        }
+
+        .row:nth-child(odd) {
+            background: #FFF
+        }
+
+        .weekly, .monthly {
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+<script>
+    d3.csv('data.csv', function (csvdata) {
+        console.log(csvdata)
+        const reduceByUniqueSKU = _(csvdata)
+                .map('SKU')
+                .uniq()
+                .map((SKUKey) => {
+                    const index = _.findIndex(csvdata, ['SKU', SKUKey]);
+                    return {
+                        productTitle: csvdata[index]['Product Title'],
+                        SKU: SKUKey,
+                        monthly: parseFloat(_(csvdata).filter({SKU: SKUKey}).sumBy('Monthly total units sold')),
+                        weekly: parseFloat(_(csvdata).filter({SKU: SKUKey}).sumBy('Weekly total units sold'))
+                    }
+                })
+                .value();
+
+        const filterPK102 = reduceByUniqueSKU.filter((d)=>d.SKU === 'PK102');
+        const slicedUniqueArr = reduceByUniqueSKU.slice();
+        filterPK102.forEach((d)=> {
+            const id = slicedUniqueArr.indexOf(d);
+            slicedUniqueArr.splice(id, 1);
+
+        });
+
+        let finalSummedArr = slicedUniqueArr.slice();
+        filterPK102.forEach((d)=> {
+            finalSummedArr = finalSummedArr.map((item)=> {
+                if (item.SKU === 'PK100' || item.SKU === 'PK101' || item.SKU === 'PKSS') {
+                    item.monthly = item.monthly + d.monthly;
+                    item.weekly = item.weekly + d.weekly;
+                    return item;
+                }
+                return item;
+            })
+        })
+
+        renderRows(finalSummedArr);
+
+        function renderRows(rowdata) {
+            const enterDiv = d3.select('.container')
+                    .selectAll('div')
+                    .data(rowdata)
+                    .enter();
+            const row = enterDiv.append('div').classed('row data', true)
+            row.append('div').classed('col-md-3', true).text((d=>d.productTitle)).attr('title', (d=>d.productTitle))
+            row.append('div').classed('col-md-2', true).text((d=>d.SKU))
+            row.append('div').classed('col-md-3', true).text((d=>d.monthly))
+            row.append('div').classed('col-md-3', true).text((d=>d.weekly))
+        }
+
+        let sortMonthlyByASC = null;
+        d3.select('.monthly').on('click', function () {
+            sortMonthlyByASC = _.isNull(sortMonthlyByASC) ? true : !sortMonthlyByASC;
+            const sortedData = _.orderBy(finalSummedArr.slice(), ['monthly'], [sortMonthlyByASC ? 'asc' : 'desc'])
+            d3.selectAll('.row.data').remove();
+            renderRows(sortedData)
+        })
+
+        let sortWeeklyByASC = null;
+        d3.select('.weekly').on('click', function () {
+            sortWeeklyByASC = _.isNull(sortWeeklyByASC) ? true : !sortWeeklyByASC;
+            const sortedData = _.orderBy(finalSummedArr.slice(), ['weekly'], [sortWeeklyByASC ? 'asc' : 'desc'])
+            d3.selectAll('.row.data').remove();
+            renderRows(sortedData)
+        })
+
+
+    })
+</script>
+
+<div class="container">
+    <div class="row header">
+
+        <div class="col-md-3">
+            <h3>Product Title</h3>
+        </div>
+        <div class="col-md-2">
+            <h3>SKU</h3>
+        </div>
+        <div class="col-md-3">
+            <h3 class="monthly">Monthly total units sold</h3>
+        </div>
+        <div class="col-md-3">
+            <h3 class="weekly"> Weekly total units sold</h3>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>
