@@ -55,21 +55,28 @@
 <script>
     d3.csv('data.csv', function (csvdata) {
         console.log(csvdata)
-        const reduceByUniqueSKU = _(csvdata)
+        const parsedCsvData = csvdata.map((item)=> {
+            item['Monthly total units sold'] = parseFloat(item['Monthly total units sold']);
+            item['Weekly total units sold'] = parseFloat(item['Weekly total units sold']);
+            return item;
+        })
+        const reduceByUniqueSKU = _(parsedCsvData)
                 .map('SKU')
                 .uniq()
                 .map((SKUKey) => {
-                    const index = _.findIndex(csvdata, ['SKU', SKUKey]);
+                    const index = _.findIndex(parsedCsvData, ['SKU', SKUKey]);
                     return {
-                        productTitle: csvdata[index]['Product Title'],
+                        productTitle: parsedCsvData[index]['Product Title'],
                         SKU: SKUKey,
-                        monthly: parseFloat(_(csvdata).filter({SKU: SKUKey}).sumBy('Monthly total units sold')),
-                        weekly: parseFloat(_(csvdata).filter({SKU: SKUKey}).sumBy('Weekly total units sold'))
+                        monthly: parseFloat(_(parsedCsvData).filter({SKU: SKUKey}).sumBy('Monthly total units sold')),
+                        weekly: parseFloat(_(parsedCsvData).filter({SKU: SKUKey}).sumBy('Weekly total units sold'))
                     }
                 })
                 .value();
 
         const filterPK102 = reduceByUniqueSKU.filter((d)=>d.SKU === 'PK102');
+        const filterPK100 = reduceByUniqueSKU.filter((d)=>d.SKU === 'PR100');
+        console.log(filterPK100)
         const slicedUniqueArr = reduceByUniqueSKU.slice();
         filterPK102.forEach((d)=> {
             const id = slicedUniqueArr.indexOf(d);
