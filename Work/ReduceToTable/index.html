@@ -99,7 +99,7 @@
         renderRows(finalSummedArr);
 
         function renderRows(rowdata) {
-            const enterDiv = d3.select('.container')
+            const enterDiv = d3.select('.container.data')
                     .selectAll('div')
                     .data(rowdata)
                     .enter();
@@ -147,6 +147,9 @@
         </div>
 
     </div>
+</div>
+<div class="container data">
+
 </div>
 
 
