@@ -486,7 +486,7 @@ function path_orig(d, ctx, color) {
         x0 = x;
         y0 = y;
     });
-    ctx.lineTo(x0 + 00, y0);                               // right edge
+    ctx.lineTo(x0 + '00', y0);                               // right edge
     ctx.stroke();
 };
 
