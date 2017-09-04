@@ -35,14 +35,30 @@
   margin: 1px 4px 1px 0px;
 }
 .scatterPlot {
-  width: 100%;
+  width: 70%;
   height: 100%;
+  display: flex;
+  justify-content: space-around;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 .scatterPlot .bwcorr {
   float: left;
-  width: 23%;
-  height: 23%;
-  margin: 1 1%;
+  flex-basis: 100%;
+  flex-grow: 1;
+  margin: 1%;
+  height: 100%;
+  position: relative;
+}
+.scatterPlot .bwcorr #plot1,
+.scatterPlot .bwcorr #plot2,
+.scatterPlot .bwcorr #plot3 {
+  float: left;
+  width: 100%;
+  min-width: 200px;
+  height: 30%;
+  min-height: 200px;
+  margin: 0 1%;
   position: relative;
 }
 .scatterPlot .latcorr {
@@ -51,79 +67,6 @@
   height: 20%;
   margin: 0 1%;
   position: relative;
-}
-.scatterPlot .plot1 {
-  float: left;
-  width: 20%;
-  height: 20%;
-  margin: 0 1%;
-  position: relative;
-}
-.scatterPlot .plot2 {
-  float: left;
-  width: 20%;
-  height: 20%;
-  margin: 0 1%;
-  position: relative;
-}
-html,
-body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-}
-body {
-  font-family: Ubuntu, Tahoma, Helvetica, sans-serif;
-  font-size: 12px;
-  line-height: 1.4em;
-  background: #f7f7f7;
-  color: #404040;
-}
-body.dark {
-  background: #131313;
-  color: #e3e3e3;
-}
-body.dark a {
-  color: #5ae;
-}
-h3 {
-  margin: 12px 0 9px;
-}
-h3 small {
-  color: #888;
-  font-weight: normal;
-}
-p {
-  margin: 0.6em 0;
-}
-small {
-  line-height: 1.2em;
-}
-a {
-  text-decoration: none;
-}
-#wrap {
-  padding: 0 3.5%;
-  width: 100%;
-  height: 100%;
-  display: flex;
-}
-svg {
-  font-family: Ubuntu, Tahoma, Helvetica, sans-serif;
-}
-canvas,
-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-#chart {
-  position: relative;
-}
-.brush rect.extent {
-  fill: rgba(100, 100, 100, 0.15);
-  stroke: #fff;
 }
 .dark .background {
   fill: none;
@@ -146,18 +89,23 @@ svg {
 .dark .off {
   color: #555;
 }
-.brush:hover rect.extent {
-  stroke: #222;
-  stroke-dasharray: 5, 5;
+.dark .baxis path,
+.dark .baxis line {
+  stroke: #777;
 }
-.brush rect.extent:hover {
-  stroke-dasharray: none;
+.dark .baxis text {
+  fill: #f2f2f2;
+  text-shadow: 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000;
 }
-.resize rect {
-  fill: none;
+.dark #legend {
+  border-left: 1px solid #777;
 }
-.background {
-  fill: none;
+.dark #header {
+  background: #040404;
+  color: #f3f3f3;
+}
+.dark button[disabled=disabled] {
+  opacity: 0.2;
 }
 .axis line,
 .axis path {
@@ -185,10 +133,6 @@ svg {
   stroke: #777;
   stroke-width: 1;
 }
-.dark .baxis line,
-.dark .baxis path {
-  stroke: #777;
-}
 .baxis .tick {
   width: 200px;
 }
@@ -203,9 +147,77 @@ svg {
   cursor: move;
   padding-bottom: 24px;
 }
-.dark .baxis text {
-  fill: #f2f2f2;
-  text-shadow: 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000;
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+body {
+  font-family: Ubuntu, Tahoma, Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1.4em;
+  background: #f7f7f7;
+  color: #404040;
+}
+body.dark {
+  background: #131313;
+  color: #e3e3e3;
+}
+body.dark a {
+  color: #5ae;
+}
+body h3 {
+  margin: 12px 0 9px;
+}
+body h3 small {
+  color: #888;
+  font-weight: normal;
+}
+body p {
+  margin: 0.6em 0;
+}
+body small {
+  line-height: 1.2em;
+}
+body a {
+  text-decoration: none;
+}
+#wrap {
+  padding: 0 3.5%;
+  width: 100%;
+  height: 70%;
+  display: flex;
+}
+svg {
+  font-family: Ubuntu, Tahoma, Helvetica, sans-serif;
+}
+canvas,
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#chart {
+  position: relative;
+}
+.brush rect.extent {
+  fill: rgba(100, 100, 100, 0.15);
+  stroke: #fff;
+}
+.brush rect.extent:hover {
+  stroke-dasharray: none;
+}
+.brush:hover rect.extent {
+  stroke: #222;
+  stroke-dasharray: 5, 5;
+}
+.resize rect {
+  fill: none;
+}
+.background {
+  fill: none;
 }
 .quarter {
   float: left;
@@ -229,9 +241,6 @@ button[disabled=disabled] {
 .settings button[disabled=disabled] {
   display: none;
 }
-.dark button[disabled=disabled] {
-  opacity: 0.2;
-}
 button#keep-data,
 button#exclude-data {
   font-weight: bold;
@@ -244,9 +253,6 @@ button#exclude-data:hover {
 }
 .off {
   color: #999;
-}
-.dark #legend {
-  border-left: 1px solid #777;
 }
 .color-bar {
   display: inline-block;
@@ -283,10 +289,6 @@ button#exclude-data:hover {
   background: #e2e2e2;
   padding: 6px 24px 4px;
   line-height: 24px;
-}
-.dark #header {
-  background: #040404;
-  color: #f3f3f3;
 }
 #header h1 {
   display: inline-block;

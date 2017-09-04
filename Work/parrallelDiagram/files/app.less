@@ -1,5 +1,7 @@
 @import "fifteen";
 @import "scatterplot";
+@import "dark";
+@import "axis";
 
 html, body {
   margin: 0;
@@ -21,34 +23,32 @@ body {
       color: #5ae;
     }
   }
+  h3 {
+    margin: 12px 0 9px;
+  }
+  h3 small {
+    color: #888;
+    font-weight: normal;
+  }
 
-}
+  p {
+    margin: 0.6em 0;
+  }
 
-h3 {
-  margin: 12px 0 9px;
-}
+  small {
+    line-height: 1.2em;
+  }
 
-h3 small {
-  color: #888;
-  font-weight: normal;
-}
+  a {
+    text-decoration: none;
+  }
 
-p {
-  margin: 0.6em 0;
-}
-
-small {
-  line-height: 1.2em;
-}
-
-a {
-  text-decoration: none;
 }
 
 #wrap {
   padding: 0 3.5%;
   width: 100%;
-  height: 100%;
+  height: 70%;
   display: flex;
 
 }
@@ -67,50 +67,22 @@ canvas, svg {
   position: relative;
 }
 
-.brush rect.extent {
-  fill: rgba(100, 100, 100, 0.15);
-  stroke: #fff;
-}
-
-.dark {
-  .background {
-    fill: none;
+.brush {
+  rect.extent {
+    fill: rgba(100, 100, 100, 0.15);
+    stroke: #fff;
+    &:hover {
+      stroke-dasharray: none;
+    }
   }
-  .brush {
+
+  &:hover {
     rect.extent {
-      fill: rgba(100, 100, 100, 0.15);
-      stroke: red;
+      stroke: #222;
+      stroke-dasharray: 5, 5;
     }
   }
 
-  .axis {
-    line, path {
-      stroke: #777;
-    }
-
-    text {
-      fill: #f2f2f2;
-      text-shadow: 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000;
-      &.label {
-        fill: #ddd;
-      }
-    }
-
-  }
-
-  .off {
-    color: #555;
-  }
-
-}
-
-.brush:hover rect.extent {
-  stroke: #222;
-  stroke-dasharray: 5, 5;
-}
-
-.brush rect.extent:hover {
-  stroke-dasharray: none;
 }
 
 .resize rect {
@@ -119,61 +91,6 @@ canvas, svg {
 
 .background {
   fill: none;
-}
-
-.axis line, .axis path {
-  fill: none;
-  stroke: #777;
-  stroke-width: 1;
-}
-
-.axis .tick {
-  width: 200px;
-}
-
-.axis text {
-  fill: #111;
-  text-anchor: right;
-  font-size: 11px;
-  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-}
-
-.axis text.label {
-  font-size: 12px;
-  cursor: move;
-  padding-bottom: 24px;
-}
-
-.baxis line, .baxis path {
-  fill: none;
-  stroke: #777;
-  stroke-width: 1;
-}
-
-.dark .baxis line, .dark .baxis path {
-  stroke: #777;
-}
-
-.baxis .tick {
-  width: 200px;
-}
-
-.baxis text {
-  fill: #111;
-  text-anchor: right;
-  font-size: 11px;
-  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-}
-
-.baxis text.label {
-  font-size: 12px;
-  cursor: move;
-  padding-bottom: 24px;
-}
-
-.dark .baxis text {
-  fill: #f2f2f2;
-  text-shadow: 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000;
 }
 
 .quarter {
@@ -203,10 +120,6 @@ button[disabled=disabled] {
   display: none;
 }
 
-.dark button[disabled=disabled] {
-  opacity: 0.2;
-}
-
 button#keep-data,
 button#exclude-data {
   font-weight: bold
@@ -222,10 +135,6 @@ button#exclude-data:hover {
 
 .off {
   color: #999;
-}
-
-.dark #legend {
-  border-left: 1px solid #777;
 }
 
 .color-bar {
@@ -269,11 +178,6 @@ button#exclude-data:hover {
   background: #e2e2e2;
   padding: 6px 24px 4px;
   line-height: 24px;
-}
-
-.dark #header {
-  background: #040404;
-  color: #f3f3f3;
 }
 
 #header h1 {

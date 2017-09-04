@@ -1,0 +1,53 @@
+.dark {
+  .background {
+    fill: none;
+  }
+  .brush {
+    rect.extent {
+      fill: rgba(100, 100, 100, 0.15);
+      stroke: red;
+    }
+  }
+
+  .axis {
+    line, path {
+      stroke: #777;
+    }
+
+    text {
+      fill: #f2f2f2;
+      text-shadow: 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000;
+      &.label {
+        fill: #ddd;
+      }
+    }
+
+  }
+
+  .off {
+    color: #555;
+  }
+
+  .baxis {
+    path, line {
+      stroke: #777;
+    }
+    text {
+      fill: #f2f2f2;
+      text-shadow: 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000;
+    }
+  }
+  #legend {
+    border-left: 1px solid #777;
+  }
+
+  #header {
+    background: #040404;
+    color: #f3f3f3;
+  }
+
+  button[disabled=disabled] {
+    opacity: 0.2;
+  }
+
+}

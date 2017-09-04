@@ -1,13 +1,28 @@
 .scatterPlot {
-  width: 100%;
+  width: 70%;
   height: 100%;
-
+  display: flex;
+  justify-content: space-around;
+  overflow-x: auto;
+  overflow-y: hidden;
   .bwcorr {
     float: left;
-    width: 23%;
-    height: 23%;
-    margin: 1 1%;
+    flex-basis: 100%;
+    flex-grow: 1;
+    margin: 1%;
+    height: 100%;
     position: relative;
+
+    #plot1, #plot2, #plot3 {
+      float: left;
+      width: 100%;
+      min-width: 200px;
+      height: 30%;
+      min-height: 200px;
+      margin: 0 1%;
+      position: relative;
+    }
+
   }
 
   .latcorr {
@@ -18,20 +33,4 @@
     position: relative;
   }
 
-  .plot1 {
-    float: left;
-    width: 20%;
-    height: 20%;
-    margin: 0 1%;
-    position: relative;
-  }
-
-  .plot2 {
-    float: left;
-    width: 20%;
-    height: 20%;
-    margin: 0 1%;
-    position: relative;
-
-  }
 }
