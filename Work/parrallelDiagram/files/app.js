@@ -1,8 +1,8 @@
-var width = document.body.clientWidth,
+let width = document.body.clientWidth,
     height = d3.max([document.body.clientHeight - 540, 240]);
 //height = d3.max([document.body.clientHeight-0, 240]);
 
-var m = [60, 0, 10, 0],
+let m = [60, 0, 10, 0],
     w = width - m[1] - m[3],
     h = height - m[0] - m[2],
     xscale = d3.scale.ordinal().rangePoints([0, w], 1),
@@ -30,7 +30,7 @@ var m = [60, 0, 10, 0],
 // colors here by initiator group
 // key is "initiator"
 // value is "color"
-var colors = {
+const colors = {
     "cpu0": [185, 56, 73],
     "cpu1": [37, 50, 75],
     "cpu2": [325, 50, 39],
@@ -88,17 +88,16 @@ background.strokeStyle = "rgba(0,100,160,0.1)";
 background.lineWidth = 1.7;
 
 // SVG for ticks, labels, and interactions
-var svg = d3.select("svg")
+const svg = d3.select("svg")
     .attr("width", w + m[1] + m[3])
     .attr("height", h + m[0] + m[2])
     .append("svg:g")
     .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
 // Load the data and visualization
-d3.csv("results.csv", function (raw_data) {
-
+d3.csv("results.csv", (raw_data) => {
     // Convert quantitative scales to floats
-    data = raw_data.map(function (d) {
+    data = raw_data.map((d) => {
         for (var k in d) {
             if (!_.isNaN(raw_data[0][k] - 0) && k != 'id') {
                 d[k] = parseFloat(d[k]) || 0;
@@ -109,16 +108,14 @@ d3.csv("results.csv", function (raw_data) {
     });
 
     // 1. Extract the list of numerical dimensions and create a scale for each.
-    xscale.domain(dimensions = d3.keys(data[0]).filter(function (k) {
+    xscale.domain(dimensions = d3.keys(data[0]).filter((k) => {
         console.log('-----');
         console.log(k);
         //console.log(data[0][k]);
 
         isNumber = _.isNumber(data[0][k]);
         yscale[k] = d3.scale.linear()
-            .domain(d3.extent(data, function (d) {
-                return +d[k];
-            }))
+            .domain(d3.extent(data, (d) =>+d[k]))
             .range([h, 0]);
 
         if (k.indexOf("supply") !== -1) {
@@ -138,24 +135,18 @@ d3.csv("results.csv", function (raw_data) {
         .data(dimensions)
         .enter().append("svg:g")
         .attr("class", "dimension")
-        .attr("transform", function (d) {
-            return "translate(" + xscale(d) + ")";
-        })
+        .attr("transform", (d)=> "translate(" + xscale(d) + ")")
         .call(d3.behavior.drag()
-            .on("dragstart", function (d) {
+            .on("dragstart", (d) => {
                 dragging[d] = this.__origin__ = xscale(d);
                 this.__dragged__ = false;
                 d3.select("#foreground").style("opacity", "0.35");
             })
-            .on("drag", function (d) {
+            .on("drag", (d)=> {
                 dragging[d] = Math.min(w, Math.max(0, this.__origin__ += d3.event.dx));
-                dimensions.sort(function (a, b) {
-                    return position(a) - position(b);
-                });
+                dimensions.sort((a, b) =>position(a) - position(b));
                 xscale.domain(dimensions);
-                g.attr("transform", function (d) {
-                    return "translate(" + position(d) + ")";
-                });
+                g.attr("transform", (d) => "translate(" + position(d) + ")");
                 brush_count++;
                 this.__dragged__ = true;
 
@@ -166,7 +157,7 @@ d3.csv("results.csv", function (raw_data) {
                     d3.select(this).select(".background").style("fill", null);
                 }
             })
-            .on("dragend", function (d) {
+            .on("dragend", (d)=> {
                 if (!this.__dragged__) {
                     // no movement, invert axis
                     var extent = invert_axis(d);
@@ -204,9 +195,7 @@ d3.csv("results.csv", function (raw_data) {
         })
         .append("svg:text")
         .attr("text-anchor", "middle")
-        .attr("y", function (d, i) {
-            return i % 2 == 0 ? -14 : -30
-        })
+        .attr("y", (d, i) => i % 2 == 0 ? -14 : -30)
         .attr("x", 0)
         .attr("class", "label")
         .text(String)
@@ -253,7 +242,7 @@ function create_legend(colors, brush) {
     var legend = legend_data
         .enter().append("div")
         .attr("title", "Hide group")
-        .on("click", function (d) {
+        .on("click", (d)=> {
             // toggle food group
             if (_.contains(excluded_groups, d)) {
                 //In excluded group, so remove
@@ -269,23 +258,17 @@ function create_legend(colors, brush) {
 
     legend
         .append("span")
-        .style("background", function (d, i) {
-            return color(d, 1)
-        })
+        .style("background", (d, i)=> color(d, 1))
         .attr("class", "color-bar");
 
     legend
         .append("span")
         .attr("class", "tally")
-        .text(function (d, i) {
-            return 0
-        });
+        .text(()=> 0);
 
     legend
         .append("span")
-        .text(function (d, i) {
-            return " " + d
-        });
+        .text((d, i)=> " " + d);
 
     return legend;
 }
@@ -300,7 +283,7 @@ function render_range(selection, i, max, opacity) {
 // simple data table
 function data_table(sample) {
     // sort by first column
-    var sample = sample.sort(function (a, b) {
+    var sample = sample.sort((a, b) => {
         if (a.name < b.name) return -1;
         if (a.name > b.name) return 1;
         return 0;
@@ -314,19 +297,15 @@ function data_table(sample) {
         .attr("class", "data-row")
         .on("mouseover", highlight)
         .on("mouseout", unhighlight);
-    console.log(sample)
-    table
-        .append("span")
-        .attr("class", "color-block")
-        .style("background", function (d) {
-            return color(d.group, 0.85)
-        })
 
     table
         .append("span")
-        .text(function (d) {
-            return d.name;
-        })
+        .attr("class", "color-block")
+        .style("background", (d) =>color(d.group, 0.85))
+
+    table
+        .append("span")
+        .text((d)=>d.name)
 }
 
 // Adjusts rendering speed 
@@ -379,9 +358,7 @@ function addTextLabels(d) {
 
 function highlight(d) {
     d3.select("#foreground").style("opacity", "0.25");
-    d3.selectAll(".row").style("opacity", function (p) {
-        return (d.group == p) ? null : "0.3"
-    });
+    d3.selectAll(".row").style("opacity", (p)=> (d.group == p) ? null : "0.3");
     //console.log(d);
     path(d, highlighted, color(d.group, 1));
     //addTextLabels(d, 1);
@@ -404,17 +381,13 @@ function invert_axis(d) {
     if (yscale[d].inverted == true) {
         yscale[d].range([h, 0]);
         d3.selectAll('.label')
-            .filter(function (p) {
-                return p == d;
-            })
+            .filter((p)=>p == d)
             .style("text-decoration", null);
         yscale[d].inverted = false;
     } else {
         yscale[d].range([0, h]);
         d3.selectAll('.label')
-            .filter(function (p) {
-                return p == d;
-            })
+            .filter((p)=> p == d)
             .style("text-decoration", "underline");
         yscale[d].inverted = true;
     }
@@ -534,7 +507,7 @@ function brush() {
 
     // bold dimensions with label
     d3.selectAll('.label')
-        .style("font-weight", function (dimension) {
+        .style("font-weight", (dimension) => {
             if (_.include(actives, dimension)) return "bold";
             return null;
         });
@@ -542,11 +515,9 @@ function brush() {
     // Get lines within extents
     var selected = [];
     data
-        .filter(function (d) {
-            return !_.contains(excluded_groups, d.group);
-        })
-        .map(function (d) {
-            return actives.every(function (p, dimension) {
+        .filter((d) =>!_.contains(excluded_groups, d.group))
+        .map((d)=> {
+            return actives.every((p, dimension) => {
                 return extents[dimension][0] <= d[p] && d[p] <= extents[dimension][1];
             }) ? selected.push(d) : null;
         });
@@ -568,34 +539,20 @@ function brush() {
 
     // total by food group
     var tallies = _(selected)
-        .groupBy(function (d) {
-            return d.group;
-        })
+        .groupBy((d)=>d.group)
 
     // include empty groups
-    _(colors).each(function (v, k) {
-        tallies[k] = tallies[k] || [];
-    });
+    _(colors).each((v, k)=> tallies[k] = tallies[k] || []);
 
     legend
-        .style("text-decoration", function (d) {
-            return _.contains(excluded_groups, d) ? "line-through" : null;
-        })
-        .attr("class", function (d) {
-            return (tallies[d].length > 0)
-                ? "row"
-                : "row off";
-        });
+        .style("text-decoration", (d)=> _.contains(excluded_groups, d) ? "line-through" : null)
+        .attr("class", (d)=> (tallies[d].length > 0) ? "row" : "row off");
 
     legend.selectAll(".color-bar")
-        .style("width", function (d) {
-            return Math.ceil(1200 * tallies[d].length / data.length) + "px"
-        });
+        .style("width", (d) => Math.ceil(1200 * tallies[d].length / data.length) + "px");
 
     legend.selectAll(".tally")
-        .text(function (d, i) {
-            return tallies[d].length
-        });
+        .text((d, i)=>tallies[d].length);
 
     // Render selected lines
     paths(selected, foreground, brush_count, true);
@@ -640,9 +597,7 @@ function update_ticks(d, extent) {
     // update brushes
     if (d) {
         var brush_el = d3.selectAll(".brush")
-            .filter(function (key) {
-                return key == d;
-            });
+            .filter((key)=> key == d);
         // single tick
         if (extent) {
             // restore previous extent
@@ -688,19 +643,15 @@ function update_ticks(d, extent) {
 // Rescale to new dataset domain
 function rescale() {
     // reset yscales, preserving inverted state
-    dimensions.forEach(function (d, i) {
+    dimensions.forEach((d, i)=> {
         if (yscale[d].inverted) {
             yscale[d] = d3.scale.linear()
-                .domain(d3.extent(data, function (p) {
-                    return +p[d];
-                }))
+                .domain(d3.extent(data, (p)=> +p[d]))
                 .range([0, h]);
             yscale[d].inverted = true;
         } else {
             yscale[d] = d3.scale.linear()
-                .domain(d3.extent(data, function (p) {
-                    return +p[d];
-                }))
+                .domain(d3.extent(data, (p) => +p[d]))
                 .range([h, 0]);
         }
     });
@@ -713,23 +664,15 @@ function rescale() {
 
 // Get polylines within extents
 function actives() {
-    var actives = dimensions.filter(function (p) {
-            return !yscale[p].brush.empty();
-        }),
-        extents = actives.map(function (p) {
-            return yscale[p].brush.extent();
-        });
+    var actives = dimensions.filter((p) =>!yscale[p].brush.empty()),
+        extents = actives.map((p)=>yscale[p].brush.extent());
 
     // filter extents and excluded groups
     var selected = [];
     data
-        .filter(function (d) {
-            return !_.contains(excluded_groups, d.group);
-        })
-        .map(function (d) {
-            return actives.every(function (p, i) {
-                return extents[i][0] <= d[p] && d[p] <= extents[i][1];
-            }) ? selected.push(d) : null;
+        .filter((d)=>!_.contains(excluded_groups, d.group))
+        .map((d)=> {
+            return actives.every((p, i) => extents[i][0] <= d[p] && d[p] <= extents[i][1]) ? selected.push(d) : null;
         });
 
     // free text search
@@ -744,10 +687,8 @@ function actives() {
 // Export data
 function export_csv() {
     var keys = d3.keys(data[0]);
-    var rows = actives().map(function (row) {
-        return keys.map(function (k) {
-            return row[k];
-        })
+    var rows = actives().map((row)=> {
+        return keys.map((k)=> row[k])
     });
     var csv = d3.csv.format([keys].concat(rows)).replace(/\n/g, "<br/>\n");
     var styles = "<style>body { font-family: sans-serif; font-size: 12px; }</style>";
@@ -777,14 +718,10 @@ window.onresize = function () {
         .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
     xscale = d3.scale.ordinal().rangePoints([0, w], 1).domain(dimensions);
-    dimensions.forEach(function (d) {
-        yscale[d].range([h, 0]);
-    });
+    dimensions.forEach((d)=> yscale[d].range([h, 0]));
 
     d3.selectAll(".dimension")
-        .attr("transform", function (d) {
-            return "translate(" + xscale(d) + ")";
-        })
+        .attr("transform", (d)=> "translate(" + xscale(d) + ")")
     // update brush placement
     d3.selectAll(".brush")
         .each(function (d) {
@@ -828,12 +765,8 @@ function exclude_data() {
 function remove_axis(d, g) {
     dimensions = _.difference(dimensions, [d]);
     xscale.domain(dimensions);
-    g.attr("transform", function (p) {
-        return "translate(" + position(p) + ")";
-    });
-    g.filter(function (p) {
-        return p == d;
-    }).remove();
+    g.attr("transform", (p) => "translate(" + position(p) + ")");
+    g.filter((p) =>p == d).remove();
     update_ticks();
 }
 
@@ -901,9 +834,7 @@ function light_theme() {
 
 function search(selection, str) {
     pattern = new RegExp(str, "i")
-    return _(selection).filter(function (d) {
-        return pattern.exec(d.name);
-    });
+    return _(selection).filter((d)=>pattern.exec(d.name));
 }
 
 
@@ -924,7 +855,7 @@ function showScatterPlot(selected, foreground, brush_count) {
     var width = chartDiv.clientWidth;
     var height = width;
 
-     console.log(width,height)
+    console.log(width, height)
     // just to have some space around items.
     var margins = {
         "left": 40,
@@ -982,21 +913,15 @@ function showScatterPlot(selected, foreground, brush_count) {
     svg.selectAll("g.y.baxis").call(yAxis1);
     svg.selectAll("g.x.baxis").call(xAxis1);
 
-    var dataset = svg.selectAll("g.node").data(selected, function (d) {
-        return d.name;
-    });
+    var dataset = svg.selectAll("g.node").data(selected, (d)=>d.name);
     var datasetGroup = dataset.enter().append("g").attr("class", "node")
         .on("mouseover", highlight)
         .on("mouseout", unhighlight)
-        .attr('transform', function (d) {
-            return "translate(" + x(d["Read BW % diff"]) + "," + y(d["Write BW % diff"]) + ")";
-        });
+        .attr('transform', (d)=> "translate(" + x(d["Read BW % diff"]) + "," + y(d["Write BW % diff"]) + ")");
     datasetGroup.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
-        .style("fill", function (d) {
-            return color(d.group, 1); // TODO 0.85
-        });
+        .style("fill", (d) =>color(d.group, 1));
 
 
     //
@@ -1053,20 +978,14 @@ function showScatterPlot(selected, foreground, brush_count) {
     svg.selectAll("g.y.baxis").call(yAxis1);
     svg.selectAll("g.x.baxis").call(xAxis1);
 
-    var dataset = svg.selectAll("g.node").data(selected, function (d) {
-        return d.name;
-    });
+    var dataset = svg.selectAll("g.node").data(selected, (d)=> d.name);
     var datasetGroup = dataset.enter().append("g").attr("class", "node").on("mouseover", highlight)
         .on("mouseout", unhighlight)
-        .attr('transform', function (d) {
-            return "translate(" + x(d["Read Latency"]) + "," + y(d["Write Latency"]) + ")";
-        });
+        .attr('transform', (d)=> "translate(" + x(d["Read Latency"]) + "," + y(d["Write Latency"]) + ")");
     datasetGroup.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
-        .style("fill", function (d) {
-            return color(d.group, 1); // TODO 0.85
-        });
+        .style("fill", (d)=> color(d.group, 1));
 
     //
     // Outstanding
@@ -1116,21 +1035,15 @@ function showScatterPlot(selected, foreground, brush_count) {
     svg.selectAll("g.y.baxis").call(yAxis1);
     svg.selectAll("g.x.baxis").call(xAxis1);
 
-    var dataset = svg.selectAll("g.node").data(selected, function (d) {
-        return d.name;
-    });
+    var dataset = svg.selectAll("g.node").data(selected, (d)=> d.name);
     var datasetGroup = dataset.enter().append("g").attr("class", "node")
         .on("mouseover", highlight)
         .on("mouseout", unhighlight)
-        .attr('transform', function (d) {
-            return "translate(" + x(d["Read Outstanding"]) + "," + y(d["Write Outstanding"]) + ")";
-        });
+        .attr('transform', (d) =>"translate(" + x(d["Read Outstanding"]) + "," + y(d["Write Outstanding"]) + ")");
     datasetGroup.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
-        .style("fill", function (d) {
-            return color(d.group, 1); // TODO 0.85
-        });
+        .style("fill", (d)=> color(d.group, 1));
 
 
 }
