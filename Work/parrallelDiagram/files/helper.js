@@ -46,8 +46,6 @@ function create_legend(colors, brush) {
 }
 
 
-
-
 // render polylines i to i+render_speed
 function render_range(selection, i, max, opacity) {
     selection.slice(i, max).forEach(function (d) {
@@ -70,8 +68,19 @@ function data_table(sample) {
         .data(sample)
         .enter().append("div")
         .attr("class", "data-row")
-        .on("mouseover", highlight)
-        .on("mouseout", unhighlight);
+        .on("mouseover", function (d) {
+            d3.selectAll('.node1').attr('opacity', '0.05')
+            d3.selectAll('.node2').attr('opacity', '0.05')
+            d3.selectAll('.node3').attr('opacity', '0.05')
+            d3.selectAll(`[data-attr="${d.name}"]`).attr('opacity', '1')
+            return highlight(d);
+        })
+        .on("mouseout", function (d) {
+            d3.selectAll('.node1').attr('opacity', '1')
+            d3.selectAll('.node2').attr('opacity', '1')
+            d3.selectAll('.node3').attr('opacity', '1')
+            return unhighlight(d)
+        });
 
     table
         .append("span")
@@ -665,10 +674,20 @@ function showScatterPlot(selected, foreground, brush_count) {
     svg.selectAll("g.y.baxis").call(yAxis1);
     svg.selectAll("g.x.baxis").call(xAxis1);
 
-    var dataset = svg.selectAll("g.node").data(selected, (d)=>d.name);
-    var datasetGroup = dataset.enter().append("g").attr("class", "node")
-        .on("mouseover", highlight)
-        .on("mouseout", unhighlight)
+    var dataset = svg.selectAll("g.node1").data(selected, (d)=>d.name);
+    var datasetGroup = dataset.enter().append("g")
+        .attr("class", "node1")
+        .attr('data-attr', (d)=>d.name)
+        .on("mouseover", function (d) {
+            d3.selectAll('.node1').attr('opacity', '0.05')
+            d3.select(this).attr('class', 'node selected').attr('opacity', '1')
+            return highlight(d)
+        })
+        .on("mouseout", function (d) {
+            d3.select(this).attr('class', 'node1')
+            d3.selectAll('.node1').attr('opacity', '1')
+            unhighlight(d)
+        })
         .attr('transform', (d)=> "translate(" + x(d["Read BW % diff"]) + "," + y(d["Write BW % diff"]) + ")");
     datasetGroup.append("circle")
         .attr("r", 5)
@@ -730,9 +749,19 @@ function showScatterPlot(selected, foreground, brush_count) {
     svg.selectAll("g.y.baxis").call(yAxis1);
     svg.selectAll("g.x.baxis").call(xAxis1);
 
-    var dataset = svg.selectAll("g.node").data(selected, (d)=> d.name);
-    var datasetGroup = dataset.enter().append("g").attr("class", "node").on("mouseover", highlight)
-        .on("mouseout", unhighlight)
+    var dataset = svg.selectAll("g.node2").data(selected, (d)=> d.name);
+    var datasetGroup = dataset.enter().append("g")
+        .attr("class", "node2")
+        .attr('data-attr', (d)=>d.name)
+        .on("mouseover", function (d) {
+            d3.selectAll('.node2').attr('opacity', '0.05')
+            d3.select(this).attr('opacity', '1')
+            return highlight(d)
+        })
+        .on("mouseout", function (d) {
+            d3.selectAll('.node2').attr('opacity', '1')
+            unhighlight(d)
+        })
         .attr('transform', (d)=> "translate(" + x(d["Read Latency"]) + "," + y(d["Write Latency"]) + ")");
     datasetGroup.append("circle")
         .attr("r", 5)
@@ -787,10 +816,19 @@ function showScatterPlot(selected, foreground, brush_count) {
     svg.selectAll("g.y.baxis").call(yAxis1);
     svg.selectAll("g.x.baxis").call(xAxis1);
 
-    var dataset = svg.selectAll("g.node").data(selected, (d)=> d.name);
-    var datasetGroup = dataset.enter().append("g").attr("class", "node")
-        .on("mouseover", highlight)
-        .on("mouseout", unhighlight)
+    var dataset = svg.selectAll("g.node3").data(selected, (d)=> d.name);
+    var datasetGroup = dataset.enter().append("g")
+        .attr("class", "node3")
+        .attr('data-attr', (d)=>d.name)
+        .on("mouseover", function (d) {
+            d3.selectAll('.node3').attr('opacity', '0.05')
+            d3.select(this).attr('opacity', '1')
+            return highlight(d)
+        })
+        .on("mouseout", function (d) {
+            d3.selectAll('.node3').attr('opacity', '1')
+            unhighlight(d)
+        })
         .attr('transform', (d) =>"translate(" + x(d["Read Outstanding"]) + "," + y(d["Write Outstanding"]) + ")");
     datasetGroup.append("circle")
         .attr("r", 5)
@@ -799,7 +837,6 @@ function showScatterPlot(selected, foreground, brush_count) {
 
 
 }
-
 
 
 // TODO below. Add text to axis-line crossings.

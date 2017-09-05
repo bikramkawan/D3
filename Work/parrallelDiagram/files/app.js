@@ -103,7 +103,6 @@ d3.csv("results.csv", (raw_data) => {
                 d[k] = parseFloat(d[k]) || 0;
             }
         }
-        ;
         return d;
     });
 
