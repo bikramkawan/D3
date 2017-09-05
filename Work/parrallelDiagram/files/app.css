@@ -61,6 +61,11 @@
   margin: 0 1%;
   position: relative;
 }
+.dark .scatterPlot .bwcorr #plot1 text,
+.dark .scatterPlot .bwcorr #plot2 text,
+.dark .scatterPlot .bwcorr #plot3 text {
+  fill: white;
+}
 .scatterPlot .latcorr {
   float: left;
   width: 20%;
@@ -80,11 +85,11 @@
   stroke: #777;
 }
 .dark .axis text {
-  fill: #f2f2f2;
+  fill: white;
   text-shadow: 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000;
 }
 .dark .axis text.label {
-  fill: #ddd;
+  fill: white;
 }
 .dark .off {
   color: #555;
