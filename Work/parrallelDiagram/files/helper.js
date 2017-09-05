@@ -14,7 +14,7 @@ function create_legend(colors, brush) {
     var legend = legend_data
         .enter().append("div")
         .attr("title", "Hide group")
-        .on("click", (d)=> {
+        .on("click", function(d) {
             // toggle food group
             if (_.contains(excluded_groups, d)) {
                 //In excluded group, so remove
