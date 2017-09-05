@@ -14,7 +14,7 @@ function create_legend(colors, brush) {
     var legend = legend_data
         .enter().append("div")
         .attr("title", "Hide group")
-        .on("click", function(d) {
+        .on("click", function (d) {
             // toggle food group
             if (_.contains(excluded_groups, d)) {
                 //In excluded group, so remove
@@ -68,19 +68,8 @@ function data_table(sample) {
         .data(sample)
         .enter().append("div")
         .attr("class", "data-row")
-        .on("mouseover", function (d) {
-            d3.selectAll('.node1').attr('opacity', '0.05')
-            d3.selectAll('.node2').attr('opacity', '0.05')
-            d3.selectAll('.node3').attr('opacity', '0.05')
-            d3.selectAll(`[data-attr="${d.name}"]`).attr('opacity', '1')
-            return highlight(d);
-        })
-        .on("mouseout", function (d) {
-            d3.selectAll('.node1').attr('opacity', '1')
-            d3.selectAll('.node2').attr('opacity', '1')
-            d3.selectAll('.node3').attr('opacity', '1')
-            return unhighlight(d)
-        });
+        .on("mouseover", (d)=> highlightScatter(d))
+        .on("mouseout", (d)=> removeHighlightScatter(d));
 
     table
         .append("span")
@@ -616,7 +605,7 @@ function showScatterPlot(selected, foreground, brush_count) {
     var width = chartDiv.clientWidth;
     var height = width;
 
-    console.log(width, height)
+
     // just to have some space around items.
     var margins = {
         "left": 40,
@@ -678,17 +667,9 @@ function showScatterPlot(selected, foreground, brush_count) {
     var datasetGroup = dataset.enter().append("g")
         .attr("class", "node1")
         .attr('data-attr', (d)=>d.name)
-        .on("mouseover", function (d) {
-            d3.selectAll('.node1').attr('opacity', '0.05')
-            d3.select(this).attr('class', 'node selected').attr('opacity', '1')
-            return highlight(d)
-        })
-        .on("mouseout", function (d) {
-            d3.select(this).attr('class', 'node1')
-            d3.selectAll('.node1').attr('opacity', '1')
-            unhighlight(d)
-        })
-        .attr('transform', (d)=> "translate(" + x(d["Read BW % diff"]) + "," + y(d["Write BW % diff"]) + ")");
+        .attr('transform', (d)=> "translate(" + x(d["Read BW % diff"]) + "," + y(d["Write BW % diff"]) + ")")
+        .on("mouseover", (d)=> highlightScatter(d))
+        .on("mouseout", (d)=> removeHighlightScatter(d));
     datasetGroup.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
@@ -753,15 +734,8 @@ function showScatterPlot(selected, foreground, brush_count) {
     var datasetGroup = dataset.enter().append("g")
         .attr("class", "node2")
         .attr('data-attr', (d)=>d.name)
-        .on("mouseover", function (d) {
-            d3.selectAll('.node2').attr('opacity', '0.05')
-            d3.select(this).attr('opacity', '1')
-            return highlight(d)
-        })
-        .on("mouseout", function (d) {
-            d3.selectAll('.node2').attr('opacity', '1')
-            unhighlight(d)
-        })
+        .on("mouseover", (d)=> highlightScatter(d))
+        .on("mouseout", (d)=> removeHighlightScatter(d))
         .attr('transform', (d)=> "translate(" + x(d["Read Latency"]) + "," + y(d["Write Latency"]) + ")");
     datasetGroup.append("circle")
         .attr("r", 5)
@@ -820,21 +794,32 @@ function showScatterPlot(selected, foreground, brush_count) {
     var datasetGroup = dataset.enter().append("g")
         .attr("class", "node3")
         .attr('data-attr', (d)=>d.name)
-        .on("mouseover", function (d) {
-            d3.selectAll('.node3').attr('opacity', '0.05')
-            d3.select(this).attr('opacity', '1')
-            return highlight(d)
-        })
-        .on("mouseout", function (d) {
-            d3.selectAll('.node3').attr('opacity', '1')
-            unhighlight(d)
-        })
+        .on("mouseover", (d)=> highlightScatter(d))
+        .on("mouseout", (d)=> removeHighlightScatter(d))
         .attr('transform', (d) =>"translate(" + x(d["Read Outstanding"]) + "," + y(d["Write Outstanding"]) + ")");
     datasetGroup.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
         .style("fill", (d)=> color(d.group, 1));
 
+
+}
+
+function highlightScatter(d) {
+    d3.selectAll('.node1').attr('opacity', '0.05')
+    d3.selectAll('.node2').attr('opacity', '0.05')
+    d3.selectAll('.node3').attr('opacity', '0.05')
+    d3.selectAll(`[data-attr="${d.name}"]`).attr('opacity', '1')
+    return highlight(d);
+
+}
+
+
+function removeHighlightScatter(d) {
+    d3.selectAll('.node1').attr('opacity', '1')
+    d3.selectAll('.node2').attr('opacity', '1')
+    d3.selectAll('.node3').attr('opacity', '1')
+    return unhighlight(d)
 
 }
 
