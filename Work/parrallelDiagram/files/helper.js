@@ -1,6 +1,3 @@
-/**
- * Created by bikramkawan on 9/5/17.
- */
 function create_legend(colors, brush) {
     // create legend
     var legend_data = d3.select("#legend")
@@ -110,7 +107,7 @@ function highlight(d) {
     d3.selectAll(".row").style("opacity", (p)=> (d.group == p) ? null : "0.3");
     //console.log(d);
     path(d, highlighted, color(d.group, 1));
-    //addTextLabels(d, 1);
+    addTextLabels(d, 1);
 
 
 }
@@ -120,6 +117,7 @@ function unhighlight() {
     d3.select("#foreground").style("opacity", null);
     d3.selectAll(".row").style("opacity", null);
     highlighted.clearRect(0, 0, w, h);
+    d3.selectAll('.textHighlight').remove();
 }
 
 
@@ -556,6 +554,8 @@ function selectAll() {
 
 function hide_ticks() {
     d3.selectAll(".axis g").style("display", "none");
+    d3.selectAll("g.x.baxis").style("display", "none");
+    d3.selectAll("g.y.baxis").style("display", "none");
 //d3.selectAll(".axis path").style("display", "none");
     d3.selectAll(".background").style("visibility", "hidden");
     d3.selectAll("#hide-ticks").attr("disabled", "disabled");
@@ -564,6 +564,8 @@ function hide_ticks() {
 
 function show_ticks() {
     d3.selectAll(".axis g").style("display", null);
+    d3.selectAll("g.x.baxis").style("display", null);
+    d3.selectAll("g.y.baxis").style("display", null);
 //d3.selectAll(".axis path").style("display", null);
     d3.selectAll(".background").style("visibility", null);
     d3.selectAll("#show-ticks").attr("disabled", "disabled");
@@ -667,13 +669,23 @@ function showScatterPlot(selected, foreground, brush_count) {
     var datasetGroup = dataset.enter().append("g")
         .attr("class", "node1")
         .attr('data-attr', (d)=>d.name)
-        .attr('transform', (d)=> "translate(" + x(d["Read BW % diff"]) + "," + y(d["Write BW % diff"]) + ")")
-        .on("mouseover", (d)=> highlightScatter(d))
-        .on("mouseout", (d)=> removeHighlightScatter(d));
+        .attr('transform', (d)=> "translate(" + x(d["Read BW % diff"]) + "," + y(d["Write BW % diff"]) + ")");
+
     datasetGroup.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
-        .style("fill", (d) =>color(d.group, 1));
+        .attr('data-attr', (d)=>d.name)
+        .style("fill", (d)=> color(d.group, 1));
+
+    datasetGroup.append("text")
+        .attr("text-anchor", "middle")
+        .attr('data-attr-t1', (d)=>d.name)
+        .style("visibility", "hidden")
+        .text((d)=>d.name);
+
+    datasetGroup
+        .on("mouseover", (d)=> highlightScatter(d))
+        .on("mouseout", (d)=> removeHighlightScatter(d))
 
 
     //
@@ -734,13 +746,24 @@ function showScatterPlot(selected, foreground, brush_count) {
     var datasetGroup = dataset.enter().append("g")
         .attr("class", "node2")
         .attr('data-attr', (d)=>d.name)
-        .on("mouseover", (d)=> highlightScatter(d))
-        .on("mouseout", (d)=> removeHighlightScatter(d))
         .attr('transform', (d)=> "translate(" + x(d["Read Latency"]) + "," + y(d["Write Latency"]) + ")");
+
     datasetGroup.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
+        .attr('data-attr', (d)=>d.name)
         .style("fill", (d)=> color(d.group, 1));
+
+    datasetGroup.append("text")
+        .attr("text-anchor", "middle")
+        .attr('data-attr-t2', (d)=>d.name)
+        .style("visibility", "hidden")
+        .text((d)=>d.name);
+
+    datasetGroup
+        .on("mouseover", (d)=> highlightScatter(d))
+        .on("mouseout", (d)=> removeHighlightScatter(d))
+
 
     //
     // Outstanding
@@ -794,22 +817,38 @@ function showScatterPlot(selected, foreground, brush_count) {
     var datasetGroup = dataset.enter().append("g")
         .attr("class", "node3")
         .attr('data-attr', (d)=>d.name)
-        .on("mouseover", (d)=> highlightScatter(d))
-        .on("mouseout", (d)=> removeHighlightScatter(d))
         .attr('transform', (d) =>"translate(" + x(d["Read Outstanding"]) + "," + y(d["Write Outstanding"]) + ")");
+
     datasetGroup.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
+        .attr('data-attr', (d)=>d.name)
         .style("fill", (d)=> color(d.group, 1));
+
+    datasetGroup.append("text")
+        .attr("text-anchor", "middle")
+        .attr('data-attr-t3', (d)=>d.name)
+        .style("visibility", "hidden")
+        .text((d)=>d.name);
+
+    datasetGroup
+        .on("mouseover", (d)=> highlightScatter(d))
+        .on("mouseout", (d)=> removeHighlightScatter(d))
 
 
 }
 
 function highlightScatter(d) {
-    d3.selectAll('.node1').attr('opacity', '0.05')
-    d3.selectAll('.node2').attr('opacity', '0.05')
-    d3.selectAll('.node3').attr('opacity', '0.05')
+    d3.selectAll('.node1').attr('opacity', 0.015)
+    d3.selectAll('.node2').attr('opacity', 0.015)
+    d3.selectAll('.node3').attr('opacity', 0.015)
     d3.selectAll(`[data-attr="${d.name}"]`).attr('opacity', '1')
+    d3.selectAll(`[data-attr="${d.name}"]`).attr('r', 8)
+
+    d3.selectAll(`[data-attr-t1="${d.name}"]`).style("visibility", "visible")
+    d3.selectAll(`[data-attr-t2="${d.name}"]`).style("visibility", "visible")
+    d3.selectAll(`[data-attr-t3="${d.name}"]`).style("visibility", "visible")
+
     return highlight(d);
 
 }
@@ -819,31 +858,41 @@ function removeHighlightScatter(d) {
     d3.selectAll('.node1').attr('opacity', '1')
     d3.selectAll('.node2').attr('opacity', '1')
     d3.selectAll('.node3').attr('opacity', '1')
+    d3.selectAll(`[data-attr="${d.name}"]`).attr('r', 5)
+
+    d3.selectAll(`[data-attr-t1="${d.name}"]`).style("visibility", "hidden")
+    d3.selectAll(`[data-attr-t2="${d.name}"]`).style("visibility", "hidden")
+    d3.selectAll(`[data-attr-t3="${d.name}"]`).style("visibility", "hidden")
+
     return unhighlight(d)
 
 }
 
 
 // TODO below. Add text to axis-line crossings.
-function addTextLabels(d) {
-    coords = new Array(dimensions.length);
+function addTextLabels(data) {
 
-    for (i = 0; i < dimensions.length; i++) {
-        coords[i] = new Array(3);
-        p = dimensions[i];
-        x = xscale(p),
-            y = yscale[p](d[p]);
-        coords[i][0] = x;
-        coords[i][1] = y;
-        coords[i][2] = d[p].toFixed(2);
+    const textGroup = svg.append("g").classed('textHighlight', true);
+    const coords = Array.from({length: dimensions.length}, (v, i) => i)
+        .map((e, i)=> {
+            const p = dimensions[i];
+            const x = xscale(p);
+            const y = yscale[p](data[p]);
+            const pval = data[p].toFixed(2);
+            return {x, y, pval}
+        });
 
-        svg.append("text")
-            .attr("transform", "translate(" + x + "," + y + ")")
-            .attr("dy", ".35em")
-            .attr("text-anchor", "start")
-            .style("fill", "black")
-            .text(d[p].toFixed(2));
-    }
-    ;
+
+    textGroup.selectAll('text')
+        .data(coords)
+        .enter()
+        .append("text")
+        .attr("transform", (d)=> "translate(" + d.x + "," + d.y + ")")
+        .attr("dy", ".35em")
+        .attr("text-anchor", "start")
+        .style("fill", "black")
+        .text((d)=> d.pval);
+
+
 }
 
