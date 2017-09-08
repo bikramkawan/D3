@@ -117,7 +117,7 @@ function unhighlight() {
     d3.select("#foreground").style("opacity", null);
     d3.selectAll(".row").style("opacity", null);
     highlighted.clearRect(0, 0, w, h);
-    d3.selectAll('.textHighlight').remove();
+     d3.selectAll('.textHighlight').remove();
 }
 
 
@@ -887,10 +887,10 @@ function addTextLabels(data) {
         .data(coords)
         .enter()
         .append("text")
+        .classed('tooltopText', true)
         .attr("transform", (d)=> "translate(" + d.x + "," + d.y + ")")
         .attr("dy", ".35em")
         .attr("text-anchor", "start")
-        .style("fill", "black")
         .text((d)=> d.pval);
 
 
