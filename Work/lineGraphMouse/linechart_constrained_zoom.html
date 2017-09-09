@@ -5,6 +5,7 @@
 <style>
     body {
         font: 10px Arial;
+        display: flex;
     }
 
     .view {
@@ -26,16 +27,20 @@
     }
 
     button {
-        position: absolute;
-        top: 20px;
-        left: 80px;
+        height: 50px;
+        font-size: 31px;
     }
 
     .score {
-        position: absolute;
-        top: 20px;
-        left: 200px;
+
+        margin: 20px;
         display: block;
+        font-size: 20px;
+        border: 1px solid;
+        border-radius: 10%;
+        padding: 5px;
+        text-align: center;
+        background: lightblue;
     }
 
     div.tooltip {
@@ -52,39 +57,92 @@
     }
 
     .delete {
-        display: flex;
+        display: none;
+        flex-direction: column;
         justify-content: space-around;
         position: absolute;
         text-align: center;
-        width: 100px;
-        height: 28px;
+        width: 150px;
+        height: 50px;
         padding: 2px;
-        font: 12px sans-serif;
+        font: 21px sans-serif;
         background: lightsteelblue;
         border: 0px;
         border-radius: 8px;
 
     }
 
+    .panel {
+        background: lightgray;
+        display: flex;
+        flex-direction: column;
+        height: 300px;
+        width: 400px;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .panel > h1 {
+        font-size: 35px;
+    }
+
+    .panel > div, button {
+        margin-bottom: 15px;
+    }
+
+    .action {
+        display: flex;
+    }
+
+    .headerDelete {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .confirm {
+        flex: 1;
+        font-size: 24px;
+    }
+
+    .cancel {
+        margin-right: 7px;
+        cursor: pointer;
+    }
+
     .yes, .no {
         flex: 1;
+        cursor: pointer;
     }
 
 </style>
 <body>
-<button>Reset</button>
-<div class="score"></div>
+<div class="panel"><h1>Support Panel</h1>
+
+    <div class="score">
+        <div class="dataScore"></div>
+        <div class="priceScore"></div>
+    </div>
+    <button class="reset">Reset</button>
+    <button class="toggleDraw">Draw Circle</button>
+
+</div>
+
+
 <div class="delete">
-    <div class="yes">Yes</div>
-    <div class="no">No</div>
+    <div class="confirm">Confirm</div>
+
+    <div class="action">
+        <div class="yes">Yes</div>
+        <div class="no">No</div>
+    </div>
 </div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script>
 
     var margin = {top: 20, right: 20, bottom: 50, left: 50},
             width = 1000 - margin.left - margin.right,
             height = 500 - margin.top - margin.bottom;
+    var toogleDrawCircle = false;
     var stored = new Map();
     var parseTime = d3.timeParse("%b %Y");
     bisectDate = d3.bisector(function (d) {
@@ -135,7 +193,8 @@
 
     var focusClick = svg.append("g").classed('focusedClicked', true)
 
-    var scoreBoard = d3.select('.score');
+    var dateScore = d3.select('.dataScore');
+    var priceScore = d3.select('.priceScore');
 
     // Get the data
     d3.csv("data.csv", function (error, data) {
@@ -223,7 +282,7 @@
         focus.append("text")
                 .attr("dy", ".35em")
                 .attr("clip-path", "url(#clip)");
-        var DELAY = 200, clicks = 0, timer = null;
+        var DELAY = 300, clicks = 0, timer = null;
         // appending of rect to svg on which to call zoom method
         svg.append("rect")
                 .attr("id", "rect")
@@ -238,62 +297,7 @@
                     focus.style("display", "none");
                 })
                 .on("mousemove", mouseMove)
-                .on("click", function (e) {
-                    const that = this;
-                    clicks++;  //count clicks
 
-                    if (clicks === 1) {
-
-                        timer = setTimeout(function () {
-                            clicks = 0;
-                            var transform = d3.zoomTransform(this);
-                            var xt = transform.rescaleX(x), yt = transform.rescaleY(y);
-                            console.log(transform)
-                            ef = mouseDate(xt);
-
-                            const cx = transform.applyX(x(d.dt))
-                            const cy = transform.applyY(y(d.price));
-                            const obj = {...d, cx, cy}
-                            stored.set(d.price, obj)
-                            focusClick.append("circle")
-                                    .attr("class", "clicked")
-                                    .attr('data-attr', (e)=>d.price)
-                                    .style("fill", "none")
-                                    .style("stroke", "steelblue")
-                                    .attr("r", 4)
-                                    .attr('cx', function () {
-                                        return transform.applyX(x(d.dt));
-                                    })
-                                    .attr('cy', function () {
-                                        return transform.applyY(y(d.price));
-                                    })
-                                    .style('fill', 'red')
-                                    .on('click', function (e) {
-                                        console.log('click circle', e)
-
-                                    })
-
-
-//            })
-
-                        }, DELAY);
-
-                    } else {
-
-                        clearTimeout(timer);    //prevent single-click action
-
-                        var transform = d3.zoomTransform(this);
-                        var xt = transform.rescaleX(x), yt = transform.rescaleY(y);
-                        const findSelect = d3.selectAll(`[data-attr="${d.price}"]`).node();
-                        if (findSelect !== null) {
-                            deletediv.style("left", (d3.event.pageX + 20) + "px")
-                                    .style("top", (d3.event.pageY - 28) + "px");
-                        }
-                        currentSelect = d.price;
-                        clicks = 0;             //after action performed, reset counter
-                    }
-
-                })
 //                .on("dblclick", function (e) {
 //                    e.preventDefault();  //cancel system double-click event
 //                });
@@ -329,8 +333,12 @@
         d3.select("#rect").call(zoom).on("dblclick.zoom", null);
 
         // assign zoom reset on click of button
-        d3.select("button").on("click", resetted);
+        d3.select(".reset").on("click", resetted);
+        d3.select(".toggleDraw").on("click", ()=> {
+            toogleDrawCircle = !toogleDrawCircle;
+            d3.select('.toggleDraw').style('background', ()=>toogleDrawCircle ? 'lightsteelblue' : '');
 
+        });
         // mouseDate function. Returns the data for
         // the corresponding point over which the cursor
         // is currently placed.
@@ -354,19 +362,16 @@
         // current zoom extent parameters and applies
         // these to circle and text objects
         var currentSelect = null;
-        var currenSelection = null;
+
 
         function mouseMove() {
 
             var transform = d3.zoomTransform(this);
-
             var xt = transform.rescaleX(x), yt = transform.rescaleY(y);
-
-
             d = mouseDate(xt);
-            console.log(transform, d)
             //    console.log(d,xt)
-            scoreBoard.text(`Date:${d.date}  Price:${d.price}`)
+            dateScore.text(`Date:${d.date}`)
+            priceScore.text(` Price:${d.price}`)
             focus.select("circle.y")
                     .attr('cx', function () {
                         return transform.applyX(x(d.dt));
@@ -374,106 +379,76 @@
                     .attr('cy', function () {
                         return transform.applyY(y(d.price));
                     });
-            //  focus.select("circle.y").style('fill', 'red');
-
-//
-
-            //  insertDoubleClick(this);
 
 
-//            if(
-//            )
+            d3.select(this).on('click', function () {
+                if (!toogleDrawCircle) return;
+                clicks++;  //count clicks
+                if (clicks === 1) {
+                    timer = setTimeout(function () {
+                        clicks = 0;
+                        stored.set(d.price, d)
+                        focusClick.append("circle")
+                                .attr("class", "clicked")
+                                .attr('data-attr', (e)=>d.price)
+                                .style("fill", "none")
+                                .style("stroke", "steelblue")
+                                .attr("r", 4)
+                                .attr('cx', function () {
+                                    return transform.applyX(x(d.dt));
+                                })
+                                .attr('cy', function () {
+                                    return transform.applyY(y(d.price));
+                                })
+                                .style('fill', 'red')
+                        //            })
+
+                    }, DELAY);
+
+                } else {
+
+                    clearTimeout(timer);    //prevent single-click action
+                    const findSelect = d3.selectAll(`[data-attr="${d.price}"]`).node();
+                    if (findSelect !== null) {
+                        deletediv.style('display', 'flex')
+                                .style("left", (d3.event.pageX + 20) + "px")
+                                .style("top", (d3.event.pageY - 28) + "px");
+                    }
+                    currentSelect = d.price;
+                    clicks = 0;             //after action performed, reset counter
+                }
+
+
+            })
+
+            d3.select(this).on("dblclick", function (e) {
+                d3.event.stopPropagation() //cancel system double-click event
+            });
 
 
         }
 
 
-        function insertDoubleClick(sel) {
-            d3.select(sel).on('dblclick', doubeClick)
-
-        }
-
-        function inserClick(that) {
-
-            var transform = d3.zoomTransform(that);
-            var xt = transform.rescaleX(x), yt = transform.rescaleY(y);
-            console.log('clocl', d, xt)
-            d = mouseDate(xt);
-            //   d3.select(that).on('click', function (e) {
-            const cx = transform.applyX(x(d.dt))
-            const cy = transform.applyY(y(d.price));
-            const obj = {...d, cx, cy}
-            stored.set(d.price, obj)
-            console.log('clocl')
-            focusClick.append("circle")
-                    .attr("class", "clicked")
-                    .attr('data-attr', (e)=>d.price)
-                    .style("fill", "none")
-                    .style("stroke", "steelblue")
-                    .attr("r", 4)
-                    .attr('cx', function () {
-                        return transform.applyX(x(d.dt));
-                    })
-                    .attr('cy', function () {
-                        return transform.applyY(y(d.price));
-                    })
-                    .style('fill', 'red')
-                    .on('click', function (e) {
-                        console.log('click circle', e)
-
-                    })
-
-
-//            })
-        }
-
-        function doubeClick() {
-            console.log(d)
-            var transform = d3.zoomTransform(this);
-            var xt = transform.rescaleX(x), yt = transform.rescaleY(y);
-            d = mouseDate(xt);
-            var xt = transform.rescaleX(x), yt = transform.rescaleY(y);
-            d = mouseDate(xt);
-            console.log(currenSelection)
-            const findSelect = d3.selectAll(`[data-attr="${currentSelect}"]`).node();
-            console.log(findSelect)
-            deletediv.style("left", (d3.event.pageX + 20) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
-            currentSelect = d.price;
-
-
-            //  })
-
-        }
-
-        d3.select('.yes')
-                .on('click', function (e) {
-                    console.log('yes click')
-                    console.log(currentSelect)
-                    d3.selectAll(`[data-attr="${currentSelect}"]`).remove();
-
-                })
-        d3.select('.no').on('click', function (e) {
-
-            console.log('no click')
+        d3.select('.yes').on('click', function (e) {
+            d3.selectAll(`[data-attr="${currentSelect}"]`).remove();
+            stored.delete(currentSelect);
+            deletediv.style('display', 'none')
 
         })
-        // zoomed function to define behaviour of d3.zoom()
-        // rescales x and y axis & gridlines
-        // rescales the price series
-        // rescales the hovertool and accompanying text
-        function zoomed() {
-            console.log('zoom')
-            a = mouseDate(x);
 
+        d3.select('.no').on('click', function (e) {
+            deletediv.style('display', 'none')
+
+        })
+
+
+        function zoomed() {
+            a = mouseDate(x);
             gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
             gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
             var t = d3.event.transform, xt = t.rescaleX(x), yt = t.rescaleY(y)
-            console.log(a, t.applyX(x(d.dt)))
-            console.log(stored)
             d3.selectAll('.clicked').remove()
             stored.forEach(e=> {
-
                 focusClick.append("circle")
                         .attr("class", "clicked")
                         .attr('data-attr', ()=>e.price)
@@ -506,14 +481,14 @@
                     .attr('cy', function () {
                         return t.applyY(y(d.price));
                     });
-            focus.select("text")
-                    .text(formatCurrency(d.price))
-                    .attr('x', function () {
-                        return t.applyX(x(d.dt)) + 10;
-                    })
-                    .attr('y', function () {
-                        return t.applyY(y(d.price));
-                    });
+//            focus.select("text")
+//                    .text(formatCurrency(d.price))
+//                    .attr('x', function () {
+//                        return t.applyX(x(d.dt)) + 10;
+//                    })
+//                    .attr('y', function () {
+//                        return t.applyY(y(d.price));
+//                    });
         }
 
         // function defining behaviour on click of the reset button
