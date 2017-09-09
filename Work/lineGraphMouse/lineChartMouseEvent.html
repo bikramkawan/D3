@@ -26,6 +26,13 @@
         stroke-width: 1.5px;
     }
 
+    text {
+        font-size: 12px;
+        font-family: sans-serif;
+        text-anchor: middle;
+        dy: 1em;
+    }
+
     button {
         height: 50px;
         font-size: 31px;
@@ -79,24 +86,31 @@
         display: flex;
     }
 
-    .headerDelete {
-        display: flex;
-        justify-content: space-around;
-    }
-
     .confirm {
         flex: 1;
         font-size: 24px;
     }
 
-    .cancel {
-        margin-right: 7px;
-        cursor: pointer;
-    }
-
     .yes, .no {
         flex: 1;
         cursor: pointer;
+    }
+
+    .circleFocus {
+        fill: none;
+        stroke: steelblue;
+        r: 4;
+    }
+
+    #rect {
+        fill: none;
+        pointer-events: all;
+    }
+
+    .clickedCircle {
+        stroke: steelblue;
+        r: 4;
+        fill: red;
     }
 
 </style>
@@ -125,116 +139,87 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
-    var margin = {top: 20, right: 20, bottom: 50, left: 50},
+    const margin = {top: 20, right: 20, bottom: 50, left: 50},
             width = 1000 - margin.left - margin.right,
             height = 500 - margin.top - margin.bottom;
-    var toogleDrawCircle = false;
-    var stored = new Map();
-    var parseTime = d3.timeParse("%b %Y");
-    bisectDate = d3.bisector(function (d) {
-        return d.dt;
-    }).left;
-    formatValue = d3.format(",.2f"),
-            formatCurrency = function (d) {
-                return "£" + formatValue(d);
-            };
+    let toogleDrawCircle = false;
+    const circleDrawnDict = new Map();
+    const parseTime = d3.timeParse("%b %Y");
+    const bisectDate = d3.bisector((d) =>d.dt).left;
 
     // initial x-scale
-    var x = d3.scaleTime()
+    const x = d3.scaleTime()
             .range([0, width]);
 
-
     //initial y-scale
-    var y = d3.scaleLinear()
+    const y = d3.scaleLinear()
             .range([height, 0]);
 
     // initial d3.line() object
-    var priceSeries = d3.line()
-            .defined(function (d) {
-                return d.price != 0;
-            })
-            .x(function (d) {
-                return x(d.dt);
-            })
-            .y(function (d) {
-                return y(d.price);
-            });
+    const priceSeries = d3.line()
+            .defined((d) =>d.price != 0)
+            .x((d)=> x(d.dt))
+            .y((d)=>y(d.price));
 
     // svg element
-    svg = d3.select('#chart')
+    const svg = d3.select('#chart')
             .append("svg:svg")
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
             .append("svg:g")
             .attr("id", "group")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    var div = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0);
 
-    var deletediv = d3.select('.delete')
-    // Hovertool element holder
-    var focus = svg.append("g")
+    const deleteMeDialog = d3.select('.delete');
+
+    const focusOverMouseMove = svg.append("g")
             .style("display", "block")
 
-    var focusClick = svg.append("g").classed('focusedClicked', true)
+    const focusedCircleGroup = svg.append("g").classed('focusedClicked', true)
 
-    var dateScore = d3.select('.dataScore');
-    var priceScore = d3.select('.priceScore');
+    const dateScore = d3.select('.dataScore');
+    const priceScore = d3.select('.priceScore');
 
-    // Get the data
     d3.csv("data.csv", function (error, data) {
         if (error) throw error;
         // format the data
-        data.forEach(function (d, i) {
+        data.forEach((d, i) => {
             d.dt = parseTime(d.date);
             d.price = +d.price;
         });
 
         // Scale the range of the data
-        var date_max = d3.max(data, function (d) {
-            return d.dt;
-        });
-        console.log("Date range: ", d3.extent(data, function (d) {
-            return d.dt;
-        }));
-        console.log("Price range: ", d3.extent(data, function (d) {
-            return +d.price;
-        }));
-        x.domain(d3.extent(data, function (d) {
-            return d.dt;
-        }));
-        y.domain(d3.extent(data, function (d) {
-            return d.price;
-        }));
+        const date_max = d3.max(data, (d)=>d.dt);
+        x.domain(d3.extent(data, (d) => d.dt));
+        y.domain(d3.extent(data, (d)=> d.price));
 
         // Zoom variable [defines how far you can zoom (scaleExtent) and pan (translateExtent)]
-        var zoom = d3.zoom()
+        const zoom = d3.zoom()
                 .scaleExtent([0.75, 15000])
                 .translateExtent([[-10000, -10000], [10000, 10000]])
                 .on("zoom", zoomed)
 
 
         // x-axis variable
-        var xAxis = d3.axisBottom(x)
+        const xAxis = d3.axisBottom(x)
                 .ticks((width + 2) / (height + 2) * 5)
                 .tickSize(-height)
                 .tickPadding(10);
 
         // y-axis variable
-        var yAxis = d3.axisRight(y)
+        const yAxis = d3.axisRight(y)
                 .ticks(5)
                 .tickSize(width)
                 .tickPadding(-20 - width);
 
         // g-element for storing x-axis gridlines
-        var gX = svg.append("g")
+        const gX = svg.append("g")
                 .attr("class", "axis axis--x")
                 .attr("transform", "translate(0," + height + ")")
                 .call(xAxis);
 
         // y-element for storing y-axis gridlines
-        var gY = svg.append("g")
+        const gY = svg.append("g")
                 .attr("class", "axis axis--y")
                 .call(yAxis);
 
@@ -245,7 +230,7 @@
                 .attr("width", width)
                 .attr("height", height);
 
-        var chartBody = svg.append("g")
+        const chartBody = svg.append("g")
                 .attr("class", "chartBody")
                 .attr("clip-path", "url(#clip)");
 
@@ -256,62 +241,36 @@
                 .attr("d", priceSeries);
 
         // appening a circle object to hovertool placeholder
-        focus.append("circle")
-                .attr("class", "y")
-                .style("fill", "none")
-                .style("stroke", "steelblue")
-                .attr("r", 4)
+        focusOverMouseMove.append("circle")
+                .attr("class", "circleFocus");
 
-        //  .attr("clip-path", "url(#clip)");
 
-        // appending text next to circle hovertool
-        focus.append("text")
-                .attr("dy", ".35em")
-                .attr("clip-path", "url(#clip)");
-        var DELAY = 300, clicks = 0, timer = null;
+        const DELAY = 300;
+        let clicks = 0, timer = null;
         // appending of rect to svg on which to call zoom method
         svg.append("rect")
                 .attr("id", "rect")
                 .attr("width", width)
                 .attr("height", height)
-                .style("fill", "none")
-                .style("pointer-events", "all")
-                .on("mouseover", function () {
-                    focus.style("display", null);
-                })
-                .on("mouseout", function () {
-                    focus.style("display", "none");
-                })
+                .on("mouseover", () => focusOverMouseMove.style("display", null))
+                .on("mouseout", () => focusOverMouseMove.style("display", "none"))
                 .on("mousemove", mouseMove)
 
-//                .on("dblclick", function (e) {
-//                    e.preventDefault();  //cancel system double-click event
-//                });
-        // g element to store actual x-axis
-        var xAxisLine = svg.append("g")
+        svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x).ticks(0));
 
-        // element to store actual y-axis
-        var yAxisLine = svg.append("g")
+        svg.append("g")
                 .call(d3.axisLeft(y).ticks(0));
 
-        // x-axis label
         svg.append("text")
                 .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 20) + ")")
-                .style("font-size", "12px")
-                .style("font-family", "sans-serif")
-                .style("text-anchor", "middle")
                 .text("Date/Time");
 
-        // y-axis label
         svg.append("text")
                 .attr("transform", "rotate(-90)")
                 .attr("y", 0 - margin.left / 1.2)
                 .attr("x", 0 - (height / 2))
-                .attr("dy", "1em")
-                .style("font-size", "12px")
-                .style("text-anchor", "middle")
                 .text("Price");
 
         // call zoom function on #rect
@@ -322,7 +281,8 @@
         d3.select(".reset").on("click", resetted);
         d3.select(".toggleDraw").on("click", ()=> {
             toogleDrawCircle = !toogleDrawCircle;
-            d3.select('.toggleDraw').style('background', ()=>toogleDrawCircle ? 'lightsteelblue' : '');
+            d3.select('.toggleDraw')
+                    .style('background', ()=>toogleDrawCircle ? 'lightsteelblue' : '');
 
         });
         // mouseDate function. Returns the data for
@@ -347,28 +307,20 @@
         // defines movement of hovertool after extracting
         // current zoom extent parameters and applies
         // these to circle and text objects
-        var currentSelect = null;
-
+        let currentSelect = null;
 
         function mouseMove() {
 
-            var transform = d3.zoomTransform(this);
-            var xt = transform.rescaleX(x), yt = transform.rescaleY(y);
+            const transform = d3.zoomTransform(this);
+            const xt = transform.rescaleX(x), yt = transform.rescaleY(y);
             d = mouseDate(xt);
-            //    console.log(d,xt)
             dateScore.text(`Date:${d.date}`)
             priceScore.text(` Price:${d.price}`)
-            focus.select("circle.y")
-                    .attr('cx', function () {
-                        return transform.applyX(x(d.dt));
-                    })
-                    .attr('cy', function () {
-                        return transform.applyY(y(d.price));
-                    });
-
+            focusOverMouseMove.select("circle.circleFocus")
+                    .attr('cx', ()=> transform.applyX(x(d.dt)))
+                    .attr('cy', ()=>transform.applyY(y(d.price)));
 
             d3.select(this).on('click', function () {
-
 
                 if (!toogleDrawCircle) return;
 
@@ -376,23 +328,13 @@
                 if (clicks === 1) {
                     timer = setTimeout(function () {
                         clicks = 0;
-                        stored.set(d.price, d)
-                        d3.select('.circleDrawn').text(`Count Circles: ${stored.size}`);
-                        focusClick.append("circle")
-                                .attr("class", "clicked")
+                        circleDrawnDict.set(d.price, d)
+                        d3.select('.circleDrawn').text(`Count Circles: ${circleDrawnDict.size}`);
+                        focusedCircleGroup.append("circle")
+                                .attr("class", "clickedCircle")
                                 .attr('data-attr', (e)=>d.price)
-                                .style("fill", "none")
-                                .style("stroke", "steelblue")
-                                .attr("r", 4)
-                                .attr('cx', function () {
-                                    return transform.applyX(x(d.dt));
-                                })
-                                .attr('cy', function () {
-                                    return transform.applyY(y(d.price));
-                                })
-                                .style('fill', 'red')
-                        //            })
-
+                                .attr('cx', ()=>transform.applyX(x(d.dt)))
+                                .attr('cy', ()=>transform.applyY(y(d.price)))
                     }, DELAY);
 
                 } else {
@@ -400,37 +342,32 @@
                     clearTimeout(timer);    //prevent single-click action
                     const findSelect = d3.selectAll(`[data-attr="${d.price}"]`).node();
                     if (findSelect !== null) {
-                        deletediv.style('display', 'flex')
+                        deleteMeDialog.style('display', 'flex')
                                 .style("left", (d3.event.pageX + 20) + "px")
                                 .style("top", (d3.event.pageY - 28) + "px");
                     }
                     currentSelect = d.price;
-                    clicks = 0;             //after action performed, reset counter
+                    clicks = 0;         //after action performed, reset counter
                 }
 
 
-            })
-
-            d3.select(this).on("dblclick", function (e) {
-                d3.event.stopPropagation()
             });
+
+
+            d3.select(this).on("dblclick", (e)=> d3.event.stopPropagation());
 
 
         }
 
-
-        d3.select('.yes').on('click', function (e) {
+        d3.select('.yes').on('click', ()=> {
             d3.selectAll(`[data-attr="${currentSelect}"]`).remove();
-            stored.delete(currentSelect);
-            deletediv.style('display', 'none');
-            d3.select('.circleDrawn').text(`Count Circles: ${stored.size}`);
+            circleDrawnDict.delete(currentSelect);
+            deleteMeDialog.style('display', 'none');
+            d3.select('.circleDrawn').text(`Count Circles: ${circleDrawnDict.size}`);
 
         })
 
-        d3.select('.no').on('click', function (e) {
-            deletediv.style('display', 'none')
-
-        })
+        d3.select('.no').on('click', ()=> deleteMeDialog.style('display', 'none'))
 
 
         function zoomed() {
@@ -438,48 +375,27 @@
             gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
             gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
             var t = d3.event.transform, xt = t.rescaleX(x), yt = t.rescaleY(y)
-            d3.selectAll('.clicked').remove()
-            stored.forEach(e=> {
-                focusClick.append("circle")
-                        .attr("class", "clicked")
+            d3.selectAll('.clickedCircle').remove()
+
+            circleDrawnDict.forEach(e=> {
+                focusedCircleGroup.append("circle")
+                        .attr("class", "clickedCircle")
                         .attr('data-attr', ()=>e.price)
-                        .style("fill", "none")
-                        .style("stroke", "steelblue")
-                        .attr("r", 4)
-                        .attr('cx', function () {
-                            return t.applyX(x(e.dt));
-                        })
-                        .attr('cy', function () {
-                            return t.applyY(y(e.price));
-                        })
-                        .style('fill', 'red')
-            })
+                        .attr('cx', ()=> t.applyX(x(e.dt)))
+                        .attr('cy', ()=> t.applyY(y(e.price)))
+
+            });
 
             svg.select(".line")
-                    .attr("d", priceSeries.x(function (d) {
-                        return xt(d.dt);
-                    })
-                            .y(function (d) {
-                                return yt(d.price);
-                            }));
+                    .attr("d", priceSeries
+                            .x((d)=>xt(d.dt))
+                            .y((d)=> yt(d.price)));
 
-            focus.select("circle.y")
+            focusOverMouseMove.select("circle.y")
                     .classed("zoomed", true)
                     .attr("id", "one")
-                    .attr('cx', function () {
-                        return t.applyX(x(d.dt));
-                    })
-                    .attr('cy', function () {
-                        return t.applyY(y(d.price));
-                    });
-//            focus.select("text")
-//                    .text(formatCurrency(d.price))
-//                    .attr('x', function () {
-//                        return t.applyX(x(d.dt)) + 10;
-//                    })
-//                    .attr('y', function () {
-//                        return t.applyY(y(d.price));
-//                    });
+                    .attr('cx', ()=>t.applyX(x(d.dt)))
+                    .attr('cy', ()=>t.applyY(y(d.price)));
         }
 
         // function defining behaviour on click of the reset button
