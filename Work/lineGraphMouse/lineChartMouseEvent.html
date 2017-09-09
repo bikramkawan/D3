@@ -31,29 +31,15 @@
         font-size: 31px;
     }
 
-    .score {
-
+    .circleDrawn, .score {
         margin: 20px;
         display: block;
         font-size: 20px;
         border: 1px solid;
-        border-radius: 10%;
+        border-radius: 5px;
         padding: 5px;
         text-align: center;
         background: lightblue;
-    }
-
-    div.tooltip {
-        position: absolute;
-        text-align: center;
-        width: 60px;
-        height: 28px;
-        padding: 2px;
-        font: 12px sans-serif;
-        background: lightsteelblue;
-        border: 0px;
-        border-radius: 8px;
-        pointer-events: none;
     }
 
     .delete {
@@ -76,7 +62,6 @@
         background: lightgray;
         display: flex;
         flex-direction: column;
-        height: 300px;
         width: 400px;
         justify-content: center;
         text-align: center;
@@ -122,6 +107,7 @@
         <div class="dataScore"></div>
         <div class="priceScore"></div>
     </div>
+    <div class="circleDrawn">Count Circles: 0</div>
     <button class="reset">Reset</button>
     <button class="toggleDraw">Draw Circle</button>
 
@@ -382,12 +368,16 @@
 
 
             d3.select(this).on('click', function () {
+
+
                 if (!toogleDrawCircle) return;
+
                 clicks++;  //count clicks
                 if (clicks === 1) {
                     timer = setTimeout(function () {
                         clicks = 0;
                         stored.set(d.price, d)
+                        d3.select('.circleDrawn').text(`Count Circles: ${stored.size}`);
                         focusClick.append("circle")
                                 .attr("class", "clicked")
                                 .attr('data-attr', (e)=>d.price)
@@ -422,7 +412,7 @@
             })
 
             d3.select(this).on("dblclick", function (e) {
-                d3.event.stopPropagation() //cancel system double-click event
+                d3.event.stopPropagation()
             });
 
 
@@ -432,7 +422,8 @@
         d3.select('.yes').on('click', function (e) {
             d3.selectAll(`[data-attr="${currentSelect}"]`).remove();
             stored.delete(currentSelect);
-            deletediv.style('display', 'none')
+            deletediv.style('display', 'none');
+            d3.select('.circleDrawn').text(`Count Circles: ${stored.size}`);
 
         })
 
