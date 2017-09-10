@@ -124,6 +124,9 @@
     <div class="circleDrawn">Count Circles: 0</div>
     <button class="reset">Reset</button>
     <button class="toggleDraw">Draw Circle</button>
+    <button class="saveData">Save Circle Data</button>
+    <button class="plotCircles">Plot Circle Data</button>
+
 
 </div>
 
@@ -295,6 +298,32 @@
                     .style('background', ()=>toogleDrawCircle ? 'lightsteelblue' : '');
 
         });
+
+
+        //Action when user click on save button to download the data
+        d3.select('.saveData').on('click', ()=> {
+
+
+            alert(`There are ${circleDrawnDict.size} circle in dictionary`)
+
+            //circleDrawnDict -> is the variable which holds the circle drawn information
+            // You can add your logic here to to create data to store in CSV .
+
+
+        })
+
+
+        d3.select('.plotCircles').on('click', ()=> {
+
+            alert(`${circleDrawnDict.size} circles will be added to the plot fromdictionary`)
+
+            //circleDrawnDict -> is the variable which holds the circle drawn information
+            // You can add your logic here to to draw circle from CSV .
+
+
+        })
+
+
         // mouseDate function. Returns the data for
         // the corresponding point over which the cursor
         // is currently placed.
@@ -347,7 +376,7 @@
                         clicks = 0;
 
                         circleDrawnDict.set(d.date, d) // Store the information of circle drawn to the dict;
-                        console.log(circleDrawnDict,'Circle is added successfully!')
+                        console.log(circleDrawnDict, 'Circle is added successfully!')
                         d3.select('.circleDrawn')
                                 .text(`Count Circles: ${circleDrawnDict.size}`);  // Update the number of circles drawn on the board
 
@@ -391,7 +420,7 @@
             deleteMeDialog.style('display', 'none');
             d3.select('.circleDrawn').text(`Count Circles: ${circleDrawnDict.size}`);
 
-            console.log(circleDrawnDict,'Circle is deleted Successfully!')
+            console.log(circleDrawnDict, 'Circle is deleted Successfully!')
 
         });
 
