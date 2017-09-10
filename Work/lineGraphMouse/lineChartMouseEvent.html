@@ -171,7 +171,8 @@
             .attr('height', height + margin.top + margin.bottom)
             .append("svg:g")
             .attr("id", "group")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
 
     const deleteMeDialog = d3.select('.delete');  // Selector for delete dialog
 
@@ -201,8 +202,8 @@
 
         // Zoom variable [defines how far you can zoom (scaleExtent) and pan (translateExtent)]
         const zoom = d3.zoom()
-                .scaleExtent([0.75, 15000])
-                .translateExtent([[-10000, -10000], [10000, 10000]])
+                .scaleExtent([1, 5])
+                .translateExtent([[-1000, -1000], [1000, 1000]])
                 .on("zoom", zoomed)
 
 
@@ -334,8 +335,7 @@
                     .attr('cy', ()=>transform.applyY(y(d.price)));
 
 
-
-          // This is the method for detecting single click and double and do the action accordingly;
+            // This is the method for detecting single click and double and do the action accordingly;
             d3.select(this).on('click', function () {
 
                 // If Draw circle is false nothing will be drawn
@@ -346,15 +346,15 @@
                     timer = setTimeout(function () {
                         clicks = 0;
 
-                        circleDrawnDict.set(d.price, d) // Store the information of circle drawn to the dict;
-
+                        circleDrawnDict.set(d.date, d) // Store the information of circle drawn to the dict;
+                        console.log(circleDrawnDict,'Circle is added successfully!')
                         d3.select('.circleDrawn')
                                 .text(`Count Circles: ${circleDrawnDict.size}`);  // Update the number of circles drawn on the board
 
                         //Add red small circle after user perfom single click action
                         focusedCircleGroup.append("circle")
                                 .attr("class", "clickedCircle")
-                                .attr('data-attr', (e)=>d.price)
+                                .attr('data-attr', (e)=>d.date)
                                 .attr('cx', ()=>transform.applyX(x(d.dt)))
                                 .attr('cy', ()=>transform.applyY(y(d.price)))
                     }, DELAY);
@@ -363,15 +363,15 @@
                     // This is the block for double click event
 
                     clearTimeout(timer);    //prevent single-click action
-                    const findSelect = d3.selectAll(`[data-attr="${d.price}"]`).node(); // Gives the currenct selection DOM
+                    const findSelect = d3.selectAll(`[data-attr="${d.date}"]`).node(); // Gives the currenct selection DOM
 
-                   //If there is no circle drawn on this price value the dialog will not appear
+                    //If there is no circle drawn on this price value the dialog will not appear
                     if (findSelect !== null) {
                         deleteMeDialog.style('display', 'flex')
                                 .style("left", (d3.event.pageX + 20) + "px")
                                 .style("top", (d3.event.pageY - 28) + "px");
                     }
-                    currentSelect = d.price;
+                    currentSelect = d.date;
                     clicks = 0;         //after action performed, reset counter
                 }
 
@@ -391,10 +391,11 @@
             deleteMeDialog.style('display', 'none');
             d3.select('.circleDrawn').text(`Count Circles: ${circleDrawnDict.size}`);
 
+            console.log(circleDrawnDict,'Circle is deleted Successfully!')
+
         });
 
         d3.select('.no').on('click', ()=> deleteMeDialog.style('display', 'none'))
-
 
 
         // The function for zoom operation method
@@ -409,7 +410,7 @@
             circleDrawnDict.forEach(e=> {
                 focusedCircleGroup.append("circle")
                         .attr("class", "clickedCircle")
-                        .attr('data-attr', ()=>e.price)
+                        .attr('data-attr', ()=>e.date)
                         .attr('cx', ()=> t.applyX(x(e.dt)))
                         .attr('cy', ()=> t.applyY(y(e.price)))
 
