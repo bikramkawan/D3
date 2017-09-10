@@ -341,10 +341,7 @@
 
 
         d3.select('.plotCircles').on('click', ()=> {
-            const transform = d3.zoomTransform(this);
-            console.log(transform)
-            const xt = transform.rescaleX(x), yt = transform.rescaleY(y);
-            d = mouseDate(xt);
+
             // alert(`${circleDrawnDict.size} circles will be added to the plot from dictionary`)
             dummyDateToPlot.forEach((e, i)=> {
                 focusedCircleGroup.append("circle")
