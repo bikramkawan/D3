@@ -544,11 +544,13 @@
                 width = 600 - margin.left - margin.right,
                 height = 270 - margin.top - margin.bottom;
 
-// Parse the date / time
+        const brush = d3.brushX()
+                .extent([[0, 0], [width, height]])
+                .on("brush end", brushed);
 
 // Set the ranges
         const x = d3.scaleTime().range([0, width]);
-        var y = d3.scaleLinear().range([height, 0]);
+        const y = d3.scaleLinear().range([height, 0]);
 
 
 //// Define the axes
@@ -603,6 +605,18 @@
                 .attr("class", "y axis")
                 .call(yAxis);
 
+        svg2.append("g")
+                .attr("class", "brush")
+                .call(brush)
+                .call(brush.move, x.range());
+
+
+        function brushed() {
+            const xVal = d3.event.selection.map(x.invert)
+            console.log(xVal, 'data2')
+
+
+        }
 
     })
 
@@ -614,7 +628,9 @@
                 height = 270 - margin.top - margin.bottom;
 
 // Parse the date / time
-
+        const brush = d3.brushX()
+                .extent([[0, 0], [width, height]])
+                .on("brush end", brushed);
 // Set the ranges
         const x = d3.scaleTime().range([0, width]);
         const y = d3.scaleLinear().range([height, 0]);
@@ -671,6 +687,17 @@
         svg3.append("g")
                 .attr("class", "y axis")
                 .call(yAxis);
+
+        svg3.append("g")
+                .attr("class", "brush")
+                .call(brush)
+                .call(brush.move, x.range());
+        function brushed() {
+            const xVal = d3.event.selection.map(x.invert)
+            console.log(xVal, 'data3')
+
+
+        }
 
 
     })
