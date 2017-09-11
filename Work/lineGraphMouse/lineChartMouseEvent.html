@@ -64,18 +64,18 @@
     const plot2YScale = d3.scaleLinear().range([smallPlotHeight, 0]);
 
     // initial x-scale
-    const x = d3.scaleTime()
+    const plot1XScale = d3.scaleTime()
             .range([0, width]);
 
     //initial y-scale
-    const y = d3.scaleLinear()
+    const plot1YScale = d3.scaleLinear()
             .range([height, 0]);
 
     // initial d3.line() object
     const priceSeries = d3.line()
             .defined((d) =>d.price != 0)
-            .x((d)=> x(d.dt))
-            .y((d)=>y(d.price));
+            .x((d)=> plot1XScale(d.dt))
+            .y((d)=>plot1YScale(d.price));
 
 
     // Main SVG Selector
@@ -119,12 +119,15 @@
     const focusedCircleGroup = svg.append("g")          // Selector for the circles drawn after user clicks
             .classed('focusedClicked', true);
 
+    const dummyCirclePlot = svg.append("g")          // Selector for the circles drawn after user clicks
+            .classed('dummyCircle', true);
+
     const dateScore = d3.select('.dataScore');   // Selector for the date value on the panel
     const priceScore = d3.select('.priceScore');  // Selector for price text on the panel
 
     const dummyDateToPlot = [{
-        date: 'Jan 2000',
-        price: 1394.46
+        date: '2016-07-11',
+        price: 6682.899902
     }, {
         date: 'Jan 2000',
         price: 1394.46
@@ -142,6 +145,7 @@
 
 
     dummyDateToPlot.forEach((d, i) => {
+
         d.dt = parseTime(d.date);
         d.price = +d.price;
     });
@@ -161,8 +165,8 @@
 
         // Scale the range of the data  to find max and min range to map when zoom in and zoom out
         const date_max = d3.max(data, (d)=>d.dt);
-        x.domain(d3.extent(data, (d) => d.dt));
-        y.domain(d3.extent(data, (d)=> d.price));
+        plot1XScale.domain(d3.extent(data, (d) => d.dt));
+        plot1YScale.domain(d3.extent(data, (d)=> d.price));
 
         data1 = data;
         dateExtent = d3.extent(data, (d) => d.dt)
@@ -175,13 +179,13 @@
 
 
         // x-axis variable
-        const xAxis = d3.axisBottom(x)
+        const xAxis = d3.axisBottom(plot1XScale)
                 .ticks((width + 2) / (height + 2) * 5)
                 .tickSize(-height)
                 .tickPadding(10);
 
         // y-axis variable
-        const yAxis = d3.axisRight(y)
+        const yAxis = d3.axisRight(plot1YScale)
                 .ticks(5)
                 .tickSize(width)
                 .tickPadding(-20 - width);
@@ -235,10 +239,10 @@
 
         svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x).ticks(0));
+                .call(d3.axisBottom(plot1XScale).ticks(0));
 
         svg.append("g")
-                .call(d3.axisLeft(y).ticks(0));
+                .call(d3.axisLeft(plot1YScale).ticks(0));
 
         svg.append("text")
                 .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 20) + ")")
@@ -277,25 +281,6 @@
         })
 
 
-        d3.select('.plotCircles').on('click', ()=> {
-
-            // alert(`${circleDrawnDict.size} circles will be added to the plot from dictionary`)
-            dummyDateToPlot.forEach((e, i)=> {
-                focusedCircleGroup.append("circle")
-                        .attr("class", "clickedCircle")
-                        .attr('data-attr', ()=>e.date)
-                        .attr('cx', ()=>(Math.random() * 300))
-                        .attr('cy', ()=>(Math.random() * 300))
-
-            });
-
-            //circleDrawnDict -> is the variable which holds the circle drawn information
-            // You can add your logic here to to draw circle from CSV .
-
-
-        })
-
-
         // mouseDate function. Returns the data for
         // the corresponding point over which the cursor
         // is currently placed.
@@ -324,7 +309,7 @@
 
             const transform = d3.zoomTransform(this);
 
-            const xt = transform.rescaleX(x), yt = transform.rescaleY(y);
+            const xt = transform.rescaleX(plot1XScale), yt = transform.rescaleY(plot1YScale);
             d = mouseDate(xt);
 
             // Update the score on the board with latest date and price
@@ -333,8 +318,8 @@
 
 
             focusOverMouseMove.select("circle.circleFocus")
-                    .attr('cx', ()=> transform.applyX(x(d.dt)))
-                    .attr('cy', ()=>transform.applyY(y(d.price)));
+                    .attr('cx', ()=> transform.applyX(plot1XScale(d.dt)))
+                    .attr('cy', ()=>transform.applyY(plot1YScale(d.price)));
 
 
             // This is the method for detecting single click and double and do the action accordingly;
@@ -359,7 +344,7 @@
                     timer = setTimeout(function () {
                         clicks = 0;
 
-                        console.log(y(d.price), x(d.dt))
+                        console.log(plot1YScale(d.price), plot1XScale(d.dt))
 
                         circleDrawnDict.set(d.date, d) // Store the information of circle drawn to the dict;
                         console.log(circleDrawnDict, 'Circle is added successfully!')
@@ -373,8 +358,8 @@
                         focusedCircleGroup.append("circle")
                                 .attr("class", "clickedCircle")
                                 .attr('data-attr', (e)=>d.date)
-                                .attr('cx', ()=>transform.applyX(x(d.dt)))
-                                .attr('cy', ()=>transform.applyY(y(d.price)))
+                                .attr('cx', ()=>transform.applyX(plot1XScale(d.dt)))
+                                .attr('cy', ()=>transform.applyY(plot1YScale(d.price)))
                     }, DELAY);
 
                 } else {
@@ -418,10 +403,10 @@
 
         // The function for zoom operation method
         function zoomed() {
-            a = mouseDate(x);
-            gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
-            gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
-            var t = d3.event.transform, xt = t.rescaleX(x), yt = t.rescaleY(y)
+            a = mouseDate(plot1XScale);
+            gX.call(xAxis.scale(d3.event.transform.rescaleX(plot1XScale)));
+            gY.call(yAxis.scale(d3.event.transform.rescaleY(plot1YScale)));
+            var t = d3.event.transform, xt = t.rescaleX(plot1XScale), yt = t.rescaleY(plot1YScale)
             d3.selectAll('.clickedCircle').remove()
 
             // Update all the circles which are in dict
@@ -429,8 +414,8 @@
                 focusedCircleGroup.append("circle")
                         .attr("class", "clickedCircle")
                         .attr('data-attr', ()=>e.date)
-                        .attr('cx', ()=> t.applyX(x(e.dt)))
-                        .attr('cy', ()=> t.applyY(y(e.price)))
+                        .attr('cx', ()=> t.applyX(plot1XScale(e.dt)))
+                        .attr('cy', ()=> t.applyY(plot1YScale(e.price)))
 
             });
 
@@ -444,8 +429,8 @@
             focusOverMouseMove.select("circle.y")
                     .classed("zoomed", true)
                     .attr("id", "one")
-                    .attr('cx', ()=>t.applyX(x(d.dt)))
-                    .attr('cy', ()=>t.applyY(y(d.price)));
+                    .attr('cx', ()=>t.applyX(plot1XScale(d.dt)))
+                    .attr('cy', ()=>t.applyY(plot1YScale(d.price)));
         }
 
         // function defining behaviour on click of the reset button
@@ -644,6 +629,35 @@
 
 
         }
+
+
+    })
+
+    d3.csv("dummyRandomData.csv", function (error, dummyData) {
+
+        dummyData.forEach((d, i) => {
+            d.dt = parseTime(d.date);
+            d.price = +d.price;
+        });
+
+
+        d3.select('.plotCircles').on('click', ()=> {
+
+            // alert(`${circleDrawnDict.size} circles will be added to the plot from dictionary`)
+            dummyData.forEach((e, i)=> {
+                console.log(plot1XScale(e.dt), e)
+                dummyCirclePlot.append("circle")
+                        .attr('data-attr', ()=>e.date)
+                        .attr('cx', ()=>plot1XScale(e.dt))
+                        .attr('cy', ()=>plot1YScale(e.price))
+
+            });
+
+            //circleDrawnDict -> is the variable which holds the circle drawn information
+            // You can add your logic here to to draw circle from CSV .
+
+
+        })
 
 
     })

@@ -126,18 +126,24 @@ button {
     fill: red;
 }
 
+.dummyCircle circle {
+    stroke: steelblue;
+    r: 4;
+    fill: black;
+}
+
 .circleFocus2 {
     stroke: steelblue;
     r: 4;
-    fill: green;
-    display:none;
+    fill: lightgreen;
+    display: none;
 }
 
 .circleFocus3 {
     stroke: steelblue;
     r: 4;
-    fill: green;
-    display:none;
+    fill: lightgreen;
+    display: none;
 }
 
 .top {
