@@ -125,30 +125,6 @@
     const dateScore = d3.select('.dataScore');   // Selector for the date value on the panel
     const priceScore = d3.select('.priceScore');  // Selector for price text on the panel
 
-    const dummyDateToPlot = [{
-        date: '2016-07-11',
-        price: 6682.899902
-    }, {
-        date: 'Jan 2000',
-        price: 1394.46
-    }, {
-        date: 'Feb 2000',
-        price: 1366.42
-    }
-        , {
-            date: 'Mar 2000',
-            price: 1498.58
-        }, {
-            date: 'Jun 2000',
-            price: 1454.6
-        }]
-
-
-    dummyDateToPlot.forEach((d, i) => {
-
-        d.dt = parseTime(d.date);
-        d.price = +d.price;
-    });
 
     let dateExtent = null;
 
@@ -170,7 +146,7 @@
 
         data1 = data;
         dateExtent = d3.extent(data, (d) => d.dt)
-        console.log(d3.extent(data, (d) => d.dt))
+
         // Zoom variable [defines how far you can zoom (scaleExtent) and pan (translateExtent)]
         const zoom = d3.zoom()
                 .scaleExtent([1, 5])
@@ -344,7 +320,7 @@
                     timer = setTimeout(function () {
                         clicks = 0;
 
-                        console.log(plot1YScale(d.price), plot1XScale(d.dt))
+
 
                         circleDrawnDict.set(d.date, d) // Store the information of circle drawn to the dict;
                         console.log(circleDrawnDict, 'Circle is added successfully!')
@@ -480,7 +456,7 @@
         });
 
 
-        //  console.log(data2, data1)
+
         // Scale the range of the data
         plot2XScale.domain(d3.extent(data2, function (d) {
 
@@ -515,11 +491,11 @@
 
         focusCirclePlot2.append("circle")
                 .attr("class", "circleFocus2");
-        console.log(plot2XScale.range())
+
 
         function brushed() {
             const xVal = d3.event.selection.map(plot2XScale.invert)
-            //console.log((xVal[0]), 'data2', (xVal[0]))
+
 
             const collect = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
@@ -614,7 +590,6 @@
 
         function brushed3() {
             const xVal = d3.event.selection.map(plot3Xscale.invert)
-            // console.log(xVal, 'data3')
             const collect = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
@@ -645,7 +620,7 @@
 
             // alert(`${circleDrawnDict.size} circles will be added to the plot from dictionary`)
             dummyData.forEach((e, i)=> {
-                console.log(plot1XScale(e.dt), e)
+
                 dummyCirclePlot.append("circle")
                         .attr('data-attr', ()=>e.date)
                         .attr('cx', ()=>plot1XScale(e.dt))
