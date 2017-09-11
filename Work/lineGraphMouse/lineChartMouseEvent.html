@@ -110,6 +110,12 @@
     const focusOverMouseMove = svg.append("g")    // Selector for mouseover small circle which runs over the line
             .style("display", "block")
 
+    const focusCirclePlot2 = svg2.append("g")    // Selector for mouseover small circle which runs over the line
+
+
+    const focusCirclePlot3 = svg3.append("g")    // Selector for mouseover small circle which runs over the line
+
+
     const focusedCircleGroup = svg.append("g")          // Selector for the circles drawn after user clicks
             .classed('focusedClicked', true);
 
@@ -334,6 +340,17 @@
             // This is the method for detecting single click and double and do the action accordingly;
             d3.select(this).on('click', function () {
 
+
+                focusCirclePlot2.select("circle.circleFocus2")
+                        .style("display", "block")
+                        .attr('cx', ()=> plot2XScale(d.dt))
+                        .attr('cy', ()=>plot2YScale(d.price));
+
+
+                focusCirclePlot3.select("circle.circleFocus3")
+                        .style("display", "block")
+                        .attr('cx', ()=> plot3Xscale(d.dt))
+                        .attr('cy', ()=>plot3Yscale(d.price));
                 // If Draw circle is false nothing will be drawn
                 if (!toogleDrawCircle) return;
 
@@ -342,8 +359,11 @@
                     timer = setTimeout(function () {
                         clicks = 0;
 
+                        console.log(y(d.price), x(d.dt))
+
                         circleDrawnDict.set(d.date, d) // Store the information of circle drawn to the dict;
                         console.log(circleDrawnDict, 'Circle is added successfully!')
+
 
                         const temp = localStorage.getItem(circleDrawnDict);
                         d3.select('.circleDrawn')
@@ -491,6 +511,7 @@
                 .attr("class", "line2")
                 .attr("d", valueline(data2));
 
+
         // Add the X Axis
         svg2.append("g")
                 .attr("class", "x axis")
@@ -506,6 +527,9 @@
                 .attr("class", "brush2")
                 .call(brush)
                 .call(brush.move, xDateRange);
+
+        focusCirclePlot2.append("circle")
+                .attr("class", "circleFocus2");
         console.log(plot2XScale.range())
 
         function brushed() {
@@ -597,6 +621,12 @@
                 .attr("class", "brush3")
                 .call(brush)
                 .call(brush.move, xDateRange);
+
+
+        focusCirclePlot3.append("circle")
+                .attr("class", "circleFocus3");
+
+
         function brushed3() {
             const xVal = d3.event.selection.map(plot3Xscale.invert)
             // console.log(xVal, 'data3')

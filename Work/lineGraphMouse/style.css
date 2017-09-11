@@ -126,6 +126,20 @@ button {
     fill: red;
 }
 
+.circleFocus2 {
+    stroke: steelblue;
+    r: 4;
+    fill: green;
+    display:none;
+}
+
+.circleFocus3 {
+    stroke: steelblue;
+    r: 4;
+    fill: green;
+    display:none;
+}
+
 .top {
     display: flex;
 }
