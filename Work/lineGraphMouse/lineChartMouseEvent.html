@@ -33,8 +33,10 @@
         </div>
     </div>
 </div>
-<div id="chart2"></div>
-<div id="chart3"></div>
+<div class="chartBottom">
+    <div id="chart2"></div>
+    <div id="chart3"></div>
+</div>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
@@ -50,6 +52,17 @@
 
     const xAxixText = "Date/Time";
     const yAxixText = "Price";
+
+    const smallPlotWidth = 600,
+            smallPlotHeight = 270;
+
+    const plot3Xscale = d3.scaleTime().range([0, smallPlotWidth]);
+    const plot3Yscale = d3.scaleLinear().range([smallPlotHeight, 0]);
+
+    // Set the ranges
+    const plot2XScale = d3.scaleTime().range([0, smallPlotWidth]);
+    const plot2YScale = d3.scaleLinear().range([smallPlotHeight, 0]);
+
     // initial x-scale
     const x = d3.scaleTime()
             .range([0, width]);
@@ -64,6 +77,7 @@
             .x((d)=> x(d.dt))
             .y((d)=>y(d.price));
 
+
     // Main SVG Selector
     const svg = d3.select('#chart')
             .append("svg:svg")
@@ -76,16 +90,16 @@
     const svg2 = d3.select('#chart2')
             .append("svg")
             .attr('width', 600)
-            .attr('height', 600)
+            .attr('height', 400)
             .append("svg:g")
             .attr("id", "group2")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
 
-    const svg3 = d3.select('#chart2')
+    const svg3 = d3.select('#chart3')
             .append("svg")
-            .attr('width', 600)
-            .attr('height', 600)
+            .attr('width', 800)
+            .attr('height', 400)
             .append("svg:g")
             .attr("id", "group3")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -128,6 +142,7 @@
 
     let dateExtent = null;
 
+    let data1 = [];
     // Load CSV
     d3.csv("testdata1.csv", function (error, data) {
         if (error) throw error;
@@ -143,6 +158,7 @@
         x.domain(d3.extent(data, (d) => d.dt));
         y.domain(d3.extent(data, (d)=> d.price));
 
+        data1 = data;
         dateExtent = d3.extent(data, (d) => d.dt)
         console.log(d3.extent(data, (d) => d.dt))
         // Zoom variable [defines how far you can zoom (scaleExtent) and pan (translateExtent)]
@@ -386,7 +402,6 @@
             gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
             gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
             var t = d3.event.transform, xt = t.rescaleX(x), yt = t.rescaleY(y)
-            console.log(t)
             d3.selectAll('.clickedCircle').remove()
 
             // Update all the circles which are in dict
@@ -425,29 +440,21 @@
 
     d3.csv("testdata2.csv", function (error, data2) {
 
-        const margin = {top: 30, right: 20, bottom: 30, left: 50},
-                width = 600 - margin.left - margin.right,
-                height = 270 - margin.top - margin.bottom;
-
         const brush = d3.brushX()
-                .extent([[0, 0], [width, height]])
+                .extent([[0, 0], [smallPlotWidth, smallPlotHeight]])
                 .on("brush end", brushed);
-
-// Set the ranges
-        const x = d3.scaleTime().range([0, width]);
-        const y = d3.scaleLinear().range([height, 0]);
 
 
 //// Define the axes
-        const xAxis = d3.axisBottom(x)
+        const xAxis = d3.axisBottom(plot2XScale)
                 .ticks(6)
-                .tickSize(-height)
+                .tickSize(-smallPlotHeight)
                 .tickPadding(10);
 
-        const yAxis = d3.axisRight(y)
+        const yAxis = d3.axisRight(plot2YScale)
                 .ticks(5)
-                .tickSize(width)
-                .tickPadding(-20 - width);
+                .tickSize(smallPlotWidth)
+                .tickPadding(-20 - smallPlotWidth);
 
 // Define the line
 
@@ -455,28 +462,30 @@
         const valueline = d3.line()
                 .x(function (d) {
 
-                    return x(d.date);
+                    return plot2XScale(d.dt);
                 })
                 .y(function (d) {
-                    return y(d.price);
+                    return plot2YScale(d.price);
                 });
 
 
         data2.forEach(function (d) {
-            d.date = parseTime(d.date);
+            d.dt = parseTime(d.date);
             d.price = +d.price;
         });
 
-        // Scale the range of the data
-        x.domain(d3.extent(data2, function (d) {
 
-            return d.date;
+        //  console.log(data2, data1)
+        // Scale the range of the data
+        plot2XScale.domain(d3.extent(data2, function (d) {
+
+            return d.dt;
         }));
-        y.domain([0, d3.max(data2, function (d) {
+        plot2YScale.domain([0, d3.max(data2, function (d) {
             return d.price;
         })]);
 
-        const xDateRange = [x(dateExtent[0]), x(dateExtent[1])]
+        const xDateRange = [plot2XScale(dateExtent[0]), plot2XScale(dateExtent[1])]
         // Add the valueline path.
         svg2.append("path")
                 .attr("class", "line2")
@@ -485,7 +494,7 @@
         // Add the X Axis
         svg2.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", "translate(0," + smallPlotHeight + ")")
                 .call(xAxis);
 
         // Add the Y Axis
@@ -494,15 +503,26 @@
                 .call(yAxis);
 
         svg2.append("g")
-                .attr("class", "brush")
+                .attr("class", "brush2")
                 .call(brush)
                 .call(brush.move, xDateRange);
-        console.log(x.range())
+        console.log(plot2XScale.range())
 
         function brushed() {
+            const xVal = d3.event.selection.map(plot2XScale.invert)
+            //console.log((xVal[0]), 'data2', (xVal[0]))
 
-            const xVal = d3.event.selection.map(x.invert)
-            //  console.log(xVal[0], 'data2',x(xVal[0]))
+            const collect = data1.filter((fd)=> {
+                return fd.dt >= xVal[0] && fd.dt <= xVal[1];
+
+            })
+
+            const diffwidth = plot3Xscale(xVal[1]) - plot3Xscale(xVal[0]);
+            svg.select(".line")
+                    .attr("d", priceSeries(collect));
+            svg3.select('.brush3')
+                    .select('.selection')
+                    .attr('x', plot3Xscale(xVal[0])).attr('width', diffwidth)
 
 
         }
@@ -510,67 +530,62 @@
     })
 
 
-    d3.csv("testdata3.csv", function (error, data2) {
+    d3.csv("testdata3.csv", function (error, data3) {
 
-        const margin = {top: 30, right: 20, bottom: 30, left: 50},
-                width = 600 - margin.left - margin.right,
-                height = 270 - margin.top - margin.bottom;
 
 // Parse the date / time
         const brush = d3.brushX()
-                .extent([[0, 0], [width, height]])
-                .on("brush end", brushed);
-// Set the ranges
-        const x = d3.scaleTime().range([0, width]);
-        const y = d3.scaleLinear().range([height, 0]);
+                .extent([[0, 0], [smallPlotWidth, smallPlotHeight]])
+                .on("brush end", brushed3);
 
 
 //// Define the axes
-        const xAxis = d3.axisBottom(x)
+        const xAxis = d3.axisBottom(plot3Xscale)
                 .ticks(6)
-                .tickSize(-height)
+                .tickSize(-smallPlotHeight)
                 .tickPadding(10);
 
-        const yAxis = d3.axisRight(y)
-                .ticks(5)
-                .tickSize(width)
-                .tickPadding(-20 - width);
+        const yAxis = d3.axisRight(plot3Yscale)
+                .ticks(2)
+                .tickSize(smallPlotWidth)
+                .tickPadding(-20 - smallPlotWidth);
 
 // Define the line
 
 
         const valueline = d3.line()
                 .x(function (d) {
-                    return x(d.date);
+                    return plot3Xscale(d.date);
                 })
                 .y(function (d) {
-                    return y(d.price);
+                    return plot3Yscale(d.price);
                 });
 
 
-        data2.forEach(function (d) {
+        data3.forEach(function (d) {
             d.date = parseTime(d.date);
             d.price = +d.price;
         });
 
+
         // Scale the range of the data
-        x.domain(d3.extent(data2, function (d) {
+        plot3Xscale.domain(d3.extent(data3, function (d) {
             return d.date;
         }));
-        y.domain([0, d3.max(data2, function (d) {
+        plot3Yscale.domain([0, d3.max(data3, function (d) {
             return d.price;
         })]);
 
-        const xDateRange = [x(dateExtent[0]), x(dateExtent[1])]
+        const xDateRange = [plot3Xscale(dateExtent[0]), plot3Xscale(dateExtent[1])]
         // Add the valueline path.
         svg3.append("path")
                 .attr("class", "line3")
-                .attr("d", valueline(data2));
+                .attr("d", valueline(data3));
 
         // Add the X Axis
         svg3.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", "translate(0," + smallPlotHeight + ")")
                 .call(xAxis);
 
         // Add the Y Axis
@@ -579,12 +594,23 @@
                 .call(yAxis);
 
         svg3.append("g")
-                .attr("class", "brush")
+                .attr("class", "brush3")
                 .call(brush)
                 .call(brush.move, xDateRange);
-        function brushed() {
-            const xVal = d3.event.selection.map(x.invert)
-            console.log(xVal, 'data3')
+        function brushed3() {
+            const xVal = d3.event.selection.map(plot3Xscale.invert)
+            // console.log(xVal, 'data3')
+            const collect = data1.filter((fd)=> {
+                return fd.dt >= xVal[0] && fd.dt <= xVal[1];
+
+            })
+
+            const diffwidth = plot2XScale(xVal[1]) - plot2XScale(xVal[0]);
+            svg.select(".line")
+                    .attr("d", priceSeries(collect));
+            svg2.select('.brush2')
+                    .select('.selection')
+                    .attr('x', plot2XScale(xVal[0])).attr('width', diffwidth)
 
 
         }
