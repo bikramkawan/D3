@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 
-<div id="chart"></div>
 <style>
     body {
         font: 10px Arial;
         display: flex;
+        flex-direction: column;
     }
 
     .view {
@@ -72,6 +72,7 @@
         width: 400px;
         justify-content: center;
         text-align: center;
+        height: 600px;
     }
 
     .panel > h1 {
@@ -113,32 +114,45 @@
         fill: red;
     }
 
+    .top {
+        display: flex;
+    }
+
 </style>
 <body>
-<div class="panel"><h1>Support Panel</h1>
 
-    <div class="score">
-        <div class="dataScore"></div>
-        <div class="priceScore"></div>
+
+<div class="top">
+
+    <div id="chart"></div>
+    <div class="panel"><h1>Support Panel</h1>
+
+        <div class="score">
+            <div class="dataScore"></div>
+            <div class="priceScore"></div>
+        </div>
+        <div class="circleDrawn">Count Circles: 0</div>
+        <button class="reset">Reset</button>
+        <button class="toggleDraw">Draw Circle</button>
+        <button class="saveData">Save Circle Data</button>
+        <button class="plotCircles">Plot Circle Data</button>
+
+
     </div>
-    <div class="circleDrawn">Count Circles: 0</div>
-    <button class="reset">Reset</button>
-    <button class="toggleDraw">Draw Circle</button>
-    <button class="saveData">Save Circle Data</button>
-    <button class="plotCircles">Plot Circle Data</button>
 
 
-</div>
+    <div class="delete">
+        <div class="confirm">Confirm</div>
 
-
-<div class="delete">
-    <div class="confirm">Confirm</div>
-
-    <div class="action">
-        <div class="yes">Yes</div>
-        <div class="no">No</div>
+        <div class="action">
+            <div class="yes">Yes</div>
+            <div class="no">No</div>
+        </div>
     </div>
 </div>
+<div id="chart2"></div>
+<div id="chart3"></div>
+
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
@@ -148,7 +162,7 @@
             height = 500 - margin.top - margin.bottom;
     let toogleDrawCircle = false;
     const circleDrawnDict = new Map(); // Will store the information of circles drawn after clicked with date and price
-    const parseTime = d3.timeParse("%b %Y");  // Date parser for D3;
+    const parseTime = d3.timeParse("%Y-%m-%d");  // Date parser for D3;
     const bisectDate = d3.bisector((d) =>d.dt).left;
 
     const xAxixText = "Date/Time";
@@ -174,6 +188,23 @@
             .attr('height', height + margin.top + margin.bottom)
             .append("svg:g")
             .attr("id", "group")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+    const svg2 = d3.select('#chart2')
+            .append("svg")
+            .attr('width', 600)
+            .attr('height', 600)
+            .append("svg:g")
+            .attr("id", "group2")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+
+    const svg3 = d3.select('#chart2')
+            .append("svg")
+            .attr('width', 600)
+            .attr('height', 600)
+            .append("svg:g")
+            .attr("id", "group3")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
 
@@ -216,7 +247,7 @@
 
 
     // Load CSV
-    d3.csv("data.csv", function (error, data) {
+    d3.csv("testdata1.csv", function (error, data) {
         if (error) throw error;
         // format the data
 
@@ -505,7 +536,145 @@
         }
 
     })
-    ;
+
+
+    d3.csv("testdata2.csv", function (error, data2) {
+
+        const margin = {top: 30, right: 20, bottom: 30, left: 50},
+                width = 600 - margin.left - margin.right,
+                height = 270 - margin.top - margin.bottom;
+
+// Parse the date / time
+
+// Set the ranges
+        const x = d3.scaleTime().range([0, width]);
+        var y = d3.scaleLinear().range([height, 0]);
+
+
+//// Define the axes
+        const xAxis = d3.axisBottom(x)
+                .ticks(6)
+                .tickSize(-height)
+                .tickPadding(10);
+
+        const yAxis = d3.axisRight(y)
+                .ticks(5)
+                .tickSize(width)
+                .tickPadding(-20 - width);
+
+// Define the line
+
+
+        const valueline = d3.line()
+                .x(function (d) {
+                    return x(d.date);
+                })
+                .y(function (d) {
+                    return y(d.price);
+                });
+
+
+        data2.forEach(function (d) {
+            d.date = parseTime(d.date);
+            d.price = +d.price;
+        });
+
+        // Scale the range of the data
+        x.domain(d3.extent(data2, function (d) {
+            return d.date;
+        }));
+        y.domain([0, d3.max(data2, function (d) {
+            return d.price;
+        })]);
+
+        // Add the valueline path.
+        svg2.append("path")
+                .attr("class", "line")
+                .attr("d", valueline(data2));
+
+        // Add the X Axis
+        svg2.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+        // Add the Y Axis
+        svg2.append("g")
+                .attr("class", "y axis")
+                .call(yAxis);
+
+
+    })
+
+
+    d3.csv("testdata3.csv", function (error, data2) {
+
+        const margin = {top: 30, right: 20, bottom: 30, left: 50},
+                width = 600 - margin.left - margin.right,
+                height = 270 - margin.top - margin.bottom;
+
+// Parse the date / time
+
+// Set the ranges
+        const x = d3.scaleTime().range([0, width]);
+        const y = d3.scaleLinear().range([height, 0]);
+
+
+//// Define the axes
+        const xAxis = d3.axisBottom(x)
+                .ticks(6)
+                .tickSize(-height)
+                .tickPadding(10);
+
+        const yAxis = d3.axisRight(y)
+                .ticks(5)
+                .tickSize(width)
+                .tickPadding(-20 - width);
+
+// Define the line
+
+
+        const valueline = d3.line()
+                .x(function (d) {
+                    return x(d.date);
+                })
+                .y(function (d) {
+                    return y(d.price);
+                });
+
+
+        data2.forEach(function (d) {
+            d.date = parseTime(d.date);
+            d.price = +d.price;
+        });
+
+        // Scale the range of the data
+        x.domain(d3.extent(data2, function (d) {
+            return d.date;
+        }));
+        y.domain([0, d3.max(data2, function (d) {
+            return d.price;
+        })]);
+
+        // Add the valueline path.
+        svg3.append("path")
+                .attr("class", "line")
+                .attr("d", valueline(data2));
+
+        // Add the X Axis
+        svg3.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+        // Add the Y Axis
+        svg3.append("g")
+                .attr("class", "y axis")
+                .call(yAxis);
+
+
+    })
+
 
 </script>
 </body>
