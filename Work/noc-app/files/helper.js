@@ -223,6 +223,10 @@ function position(d) {
 
 // Handles a brush event, toggling the display of foreground lines.
 // TODO refactor
+let selected = [];
+const tempdata = 1;
+
+
 function brush() {
     console.log("calling brush()..");
     //return;
@@ -261,7 +265,7 @@ function brush() {
         });
 
     // Get lines within extents
-    var selected = [];
+
     data
         .filter((d) =>!_.contains(excluded_groups, d.group))
         .map((d)=> {
@@ -597,16 +601,48 @@ function showScatterPlot_(selected, foreground, brush_count) {
 }
 
 
+const margins1 = {
+    "left": 40,
+    "right": 30,
+    "top": 30,
+    "bottom": 30
+};
+
+var margins2 = {
+    "left": 60,
+    "right": 30,
+    "top": 30,
+    "bottom": 30
+};
+
+
+var chartDiv = document.getElementById("plot1");
+var plot1Width = chartDiv.clientWidth;
+
+const constants = {
+    plot1XScale: ()=> d3.scale.linear().domain([-100, 100]).range([0, plot1Width - margins1.left - margins1.right]),
+
+    plot1YScale: ()=> d3.scale.linear().domain([-100, 100]).range([plot1Width - margins1.top - margins1.bottom, 0]),
+
+    plot2XScale: ()=> d3.scale.linear().domain([0, 3000]).range([0, plot1Width - margins2.left - margins2.right]),
+
+    plot2YScale: ()=> d3.scale.linear().domain([0, 8100]).range([plot1Width - margins2.top - margins2.bottom, 0]),
+
+    plot3XScale: () => d3.scale.linear().domain([0, 70]).range([0, plot1Width - margins2.left - margins2.right]),
+
+    plot3YScale: ()=> d3.scale.linear().domain([0, 40]).range([plot1Width - margins2.top - margins2.bottom, 0])
+
+
+}
+
+
 function showScatterPlot(selected, foreground, brush_count) {
 
     console.log("In showScatterPlot()...");
     var chartDiv = document.getElementById("plot1");
     // Extract the width and height that was computed by CSS.
-//  var width = 350;
-//  var height = 350;
     var width = chartDiv.clientWidth;
     var height = width;
-
 
     // just to have some space around items.
     var margins = {
@@ -616,10 +652,14 @@ function showScatterPlot(selected, foreground, brush_count) {
         "bottom": 30
     };
 
-
     //
     // Bandwidth plot
     //
+
+// this sets the scale that we're using for the X and y axis.
+
+    const plot1XScale = constants.plot1XScale();
+    const plot1YScale = constants.plot1YScale();
 
     d3.select("#plot1").html("");
     const svg1 = d3.select("#plot1")
@@ -629,14 +669,6 @@ function showScatterPlot(selected, foreground, brush_count) {
         .append("g")
         .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
-    // this sets the scale that we're using for the X and y axis.
-    const plot1XScale = d3.scale.linear()
-        .domain([-100, 100])
-        .range([0, width - margins.left - margins.right]);
-
-    const plot1YScale = d3.scale.linear()
-        .domain([-100, 100])
-        .range([height - margins.top - margins.bottom, 0]);
 
     // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
     svg1.append("g").attr("class", "x baxis").attr("transform", "translate(0," + plot1YScale.range()[0] + ")");
@@ -659,6 +691,11 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("transform", "rotate(-90)")
         .attr("class", "label")
         .text("Write % diff");
+
+    svg1.append('path')
+        .classed('plot1Line', true)
+        .attr("stroke-width", 2)
+        .attr("stroke", "black");
 
     const xAxis1 = d3.svg.axis().scale(plot1XScale).orient("bottom").tickPadding(2);
     const yAxis1 = d3.svg.axis().scale(plot1YScale).orient("left").tickPadding(2);
@@ -706,14 +743,14 @@ function showScatterPlot(selected, foreground, brush_count) {
         .append("g")
         .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
-    // this sets the scale that we're using for the X and y axis.
-    const plot2XScale = d3.scale.linear()
-        .domain([0, 3000])
-        .range([0, width - margins.left - margins.right]);
+    svg2.append('path')
+        .classed('plot2Line', true)
+        .attr("stroke-width", 2)
+        .attr("stroke", "black");
 
-    const plot2YScale = d3.scale.linear()
-        .domain([0, 8100])
-        .range([height - margins.top - margins.bottom, 0]);
+    // this sets the scale that we're using for the X and y axis.
+    const plot2XScale = constants.plot2XScale();
+    const plot2YScale = constants.plot2YScale();
 
     // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
     svg2.append("g").attr("class", "x baxis").attr("transform", "translate(0," + plot2YScale.range()[0] + ")");
@@ -776,15 +813,16 @@ function showScatterPlot(selected, foreground, brush_count) {
         .append("g")
         .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
+
+    svg3.append('path')
+        .classed('plot3Line', true)
+        .attr("stroke-width", 2)
+        .attr("stroke", "black");
+
+
     // this sets the scale that we're using for the X and y axis.
-    const plot3XScale = d3.scale.linear()
-        .domain([0, 70])
-        .range([0, width - margins.left - margins.right]);
-
-    const plot3YScale = d3.scale.linear()
-        .domain([0, 40])
-        .range([height - margins.top - margins.bottom, 0]);
-
+    const plot3XScale = constants.plot3XScale();
+    const plot3YScale = constants.plot3YScale();
     // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
     svg3.append("g").attr("class", "x baxis").attr("transform", "translate(0," + plot3YScale.range()[0] + ")");
     svg3.append("g").attr("class", "y baxis");
@@ -838,6 +876,8 @@ function showScatterPlot(selected, foreground, brush_count) {
 }
 
 function highlightScatter(d) {
+
+
     d3.selectAll('.node1').attr('opacity', 0.015)
     d3.selectAll('.node2').attr('opacity', 0.015)
     d3.selectAll('.node3').attr('opacity', 0.015)
@@ -847,6 +887,8 @@ function highlightScatter(d) {
     d3.selectAll(`[data-attr-t1="${d.name}"]`).style("visibility", "visible")
     d3.selectAll(`[data-attr-t2="${d.name}"]`).style("visibility", "visible")
     d3.selectAll(`[data-attr-t3="${d.name}"]`).style("visibility", "visible")
+
+    updateScatterLines(d);
 
     return highlight(d);
 
@@ -862,8 +904,47 @@ function removeHighlightScatter(d) {
     d3.selectAll(`[data-attr-t1="${d.name}"]`).style("visibility", "hidden")
     d3.selectAll(`[data-attr-t2="${d.name}"]`).style("visibility", "hidden")
     d3.selectAll(`[data-attr-t3="${d.name}"]`).style("visibility", "hidden")
+    d3.selectAll('.plot1Line').style('display', 'none');
+    d3.selectAll('.plot2Line').style('display', 'none');
+    d3.selectAll('.plot3Line').style('display', 'none');
+
 
     return unhighlight(d)
+
+
+}
+
+function updateScatterLines(d) {
+
+    const plot1XScale = constants.plot1XScale();
+    const plot1YScale = constants.plot1YScale();
+    const plot1 = [plot1XScale(d["Read BW % diff"]), plot1YScale(d["Write BW % diff"])];
+
+    d3.select('.plot1Line')
+        .attr("d", `M0 ${plot1[1]} L${plot1[0]} ${plot1[1]} M${plot1[0]} ${plot1[1]} L${plot1[0]} ${plot1YScale.range()[0]}`)
+        .attr("stroke", ()=> color(d.group, 1))
+        .style('display', 'block');
+
+    const plot2XScale = constants.plot2XScale();
+    const plot2YScale = constants.plot2YScale();
+    const plot2 = [plot2XScale(d["Read Latency"]), plot2YScale(d["Write Latency"])]
+
+    d3.select('.plot2Line')
+        .attr("d", `M0 ${plot2[1]} L${plot2[0]} ${plot2[1]} M${plot2[0]} ${plot2[1]} L${plot2[0]} ${plot2YScale.range()[0]}`)
+        .attr("stroke", ()=> color(d.group, 1))
+        .style('display', 'block');
+
+
+    const plot3XScale = constants.plot3XScale();
+    const plot3YScale = constants.plot3YScale();
+
+    const plot3 = [plot3XScale(d["Read Outstanding"]), plot3YScale(d["Write Outstanding"])]
+
+    d3.select('.plot3Line')
+        .attr("d", `M0 ${plot3[1]} L${plot3[0]} ${plot3[1]} M${plot3[0]} ${plot3[1]} L${plot3[0]} ${plot3YScale.range()[0]}`)
+        .attr("stroke", ()=> color(d.group, 1))
+        .style('display', 'block');
+
 
 }
 
