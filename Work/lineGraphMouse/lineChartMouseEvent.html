@@ -50,6 +50,7 @@
     const parseTime = d3.timeParse("%Y-%m-%d");  // Date parser for D3;
     const bisectDate = d3.bisector((d) =>d.dt).left;
 
+    let initialState = true;
     const xAxixText = "Date/Time";
     const yAxixText = "Price";
 
@@ -89,7 +90,7 @@
 
     const svg2 = d3.select('#chart2')
             .append("svg")
-            .attr('width', 600)
+            .attr('width', smallPlotWidth)
             .attr('height', 400)
             .append("svg:g")
             .attr("id", "group2")
@@ -333,9 +334,6 @@
 
                         circleDrawnDict.set(d.date, d) // Store the information of circle drawn to the dict;
                         console.log(circleDrawnDict, 'Circle is added successfully!')
-
-
-                        const temp = localStorage.getItem(circleDrawnDict);
                         d3.select('.circleDrawn')
                                 .text(`Count Circles: ${circleDrawnDict.size}`);  // Update the number of circles drawn on the board
 
@@ -463,19 +461,17 @@
 
 
         // Scale the range of the data
-        plot2XScale.domain(d3.extent(data2, function (d) {
-
-            return d.dt;
-        }));
+        plot2XScale.domain(d3.extent(data2, (d)=> d.dt));
         plot2YScale.domain([0, d3.max(data2, function (d) {
             return d.price;
         })]);
 
-        const xDateRangePlot2 = [plot2XScale(dateExtent[0]), plot2XScale(dateExtent[1])]
-        // Add the valueline path.
-        svg2.append("path")
-                .attr("class", "line2")
-                .attr("d", lineValuesPlot2(data2));
+        let xDateRangePlot2 = [plot2XScale(dateExtent[0]), plot2XScale(dateExtent[1])]
+        const fixedRangePlots =
+                // Add the valueline path.
+                svg2.append("path")
+                        .attr("class", "line2")
+                        .attr("d", lineValuesPlot2(data2));
 
 
         // Add the X Axis
@@ -488,19 +484,21 @@
         svg2.append("g")
                 .attr("class", "y axis")
                 .call(yAxisPlot2);
-
+        console.log(xDateRangePlot2)
         svg2.append("g")
                 .attr("class", "brush2")
                 .call(brushPlot2)
                 .call(brushPlot2.move, xDateRangePlot2);
+
 
         focusCirclePlot2.append("circle")
                 .attr("class", "circleFocus2");
 
 
         function brushedPlot2() {
+            console.log('fsafa')
             const xVal = d3.event.selection.map(plot2XScale.invert)
-
+            console.log(xVal)
 
             const collect = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
@@ -592,17 +590,33 @@
 
         function brushed3() {
             const xVal = d3.event.selection.map(plot3Xscale.invert)
+            console.log(xVal, xDateRangePlot2)
             const collect = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
             })
 
+
             const diffwidth = plot2XScale(xVal[1]) - plot2XScale(xVal[0]);
+            console.log(diffwidth, plot2XScale(xVal[0]))
+            xDateRangePlot2 = [plot2XScale(xVal[0]), plot2XScale(xVal[1])]
+            console.log(xDateRangePlot2)
+            if (plot2XScale(xVal[0]) !== plot2XScale(dateExtent[0])) {
+                initialState = false;
+            }
             svg.select(".line")
                     .attr("d", priceSeries(collect));
+
+            console.log(initialState)
+            if (initialState) {
+                svg2.select('.brush2')
+                        .select('.selection')
+                        .attr('x', 0).attr('width', diffwidth)
+                return;
+            }
             svg2.select('.brush2')
                     .select('.selection')
-                    .attr('x', plot2XScale(xVal[0])).attr('width', diffwidth)
+                    .attr('x', plot2XScale(xVal[0]) < 0 ? 0 : plot2XScale(xVal[0])).attr('width', plot2XScale(xVal[1]) < 0 ? 0 : diffwidth)
 
 
         }
