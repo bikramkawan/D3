@@ -117,7 +117,7 @@ function unhighlight() {
     d3.select("#foreground").style("opacity", null);
     d3.selectAll(".row").style("opacity", null);
     highlighted.clearRect(0, 0, w, h);
-     d3.selectAll('.textHighlight').remove();
+    d3.selectAll('.textHighlight').remove();
 }
 
 
@@ -622,7 +622,7 @@ function showScatterPlot(selected, foreground, brush_count) {
     //
 
     d3.select("#plot1").html("");
-    var svg = d3.select("#plot1")
+    const svg1 = d3.select("#plot1")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -630,20 +630,20 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
     // this sets the scale that we're using for the X and y axis.
-    var x = d3.scale.linear()
+    const plot1XScale = d3.scale.linear()
         .domain([-100, 100])
         .range([0, width - margins.left - margins.right]);
 
-    var y = d3.scale.linear()
+    const plot1YScale = d3.scale.linear()
         .domain([-100, 100])
         .range([height - margins.top - margins.bottom, 0]);
 
     // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
-    svg.append("g").attr("class", "x baxis").attr("transform", "translate(0," + y.range()[0] + ")");
-    svg.append("g").attr("class", "y baxis");
+    svg1.append("g").attr("class", "x baxis").attr("transform", "translate(0," + plot1YScale.range()[0] + ")");
+    svg1.append("g").attr("class", "y baxis");
 
     // this is our X axis label. Nothing too special to see here.
-    svg.append("text")
+    svg1.append("text")
         .attr("fill", "#414241")
         .attr("text-anchor", "middle")
         .attr("x", width / 2)
@@ -651,7 +651,7 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("class", "label")
         .text("Read % diff");
 
-    svg.append("text")
+    svg1.append("text")
         .attr("fill", "#414241")
         .attr("text-anchor", "middle")
         .attr("x", -90)
@@ -660,30 +660,30 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("class", "label")
         .text("Write % diff");
 
-    var xAxis1 = d3.svg.axis().scale(x).orient("bottom").tickPadding(2);
-    var yAxis1 = d3.svg.axis().scale(y).orient("left").tickPadding(2);
-    svg.selectAll("g.y.baxis").call(yAxis1);
-    svg.selectAll("g.x.baxis").call(xAxis1);
+    const xAxis1 = d3.svg.axis().scale(plot1XScale).orient("bottom").tickPadding(2);
+    const yAxis1 = d3.svg.axis().scale(plot1YScale).orient("left").tickPadding(2);
+    svg1.selectAll("g.y.baxis").call(yAxis1);
+    svg1.selectAll("g.x.baxis").call(xAxis1);
 
-    var dataset = svg.selectAll("g.node1").data(selected, (d)=>d.name);
-    var datasetGroup = dataset.enter().append("g")
+    const dataset1 = svg1.selectAll("g.node1").data(selected, (d)=>d.name);
+    const datasetGroup1 = dataset1.enter().append("g")
         .attr("class", "node1")
         .attr('data-attr', (d)=>d.name)
-        .attr('transform', (d)=> "translate(" + x(d["Read BW % diff"]) + "," + y(d["Write BW % diff"]) + ")");
+        .attr('transform', (d)=> "translate(" + plot1XScale(d["Read BW % diff"]) + "," + plot1YScale(d["Write BW % diff"]) + ")");
 
-    datasetGroup.append("circle")
+    datasetGroup1.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
         .attr('data-attr', (d)=>d.name)
         .style("fill", (d)=> color(d.group, 1));
 
-    datasetGroup.append("text")
+    datasetGroup1.append("text")
         .attr("text-anchor", "middle")
         .attr('data-attr-t1', (d)=>d.name)
         .style("visibility", "hidden")
         .text((d)=>d.name);
 
-    datasetGroup
+    datasetGroup1
         .on("mouseover", (d)=> highlightScatter(d))
         .on("mouseout", (d)=> removeHighlightScatter(d))
 
@@ -699,7 +699,7 @@ function showScatterPlot(selected, foreground, brush_count) {
     };
 
     d3.select("#plot2").html("");
-    var svg = d3.select("#plot2")
+    const svg2 = d3.select("#plot2")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -707,20 +707,20 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
     // this sets the scale that we're using for the X and y axis.
-    var x = d3.scale.linear()
+    const plot2XScale = d3.scale.linear()
         .domain([0, 3000])
         .range([0, width - margins.left - margins.right]);
 
-    var y = d3.scale.linear()
+    const plot2YScale = d3.scale.linear()
         .domain([0, 8100])
         .range([height - margins.top - margins.bottom, 0]);
 
     // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
-    svg.append("g").attr("class", "x baxis").attr("transform", "translate(0," + y.range()[0] + ")");
-    svg.append("g").attr("class", "y baxis");
+    svg2.append("g").attr("class", "x baxis").attr("transform", "translate(0," + plot2YScale.range()[0] + ")");
+    svg2.append("g").attr("class", "y baxis");
 
     // this is our X axis label. Nothing too special to see here.
-    svg.append("text")
+    svg2.append("text")
         .attr("fill", "#414241")
         .attr("text-anchor", "middle")
         .attr("x", width / 2)
@@ -728,7 +728,7 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("class", "label")
         .text("Read");
 
-    svg.append("text")
+    svg2.append("text")
         .attr("fill", "#414241")
         .attr("text-anchor", "middle")
         .attr("x", -90)
@@ -737,30 +737,30 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("class", "label")
         .text("Write");
 
-    var xAxis1 = d3.svg.axis().scale(x).orient("bottom").tickPadding(2);
-    var yAxis1 = d3.svg.axis().scale(y).orient("left").tickPadding(2);
-    svg.selectAll("g.y.baxis").call(yAxis1);
-    svg.selectAll("g.x.baxis").call(xAxis1);
+    const plot2XAxix = d3.svg.axis().scale(plot2XScale).orient("bottom").tickPadding(2);
+    const plot2YAxix = d3.svg.axis().scale(plot2YScale).orient("left").tickPadding(2);
+    svg2.selectAll("g.y.baxis").call(plot2YAxix);
+    svg2.selectAll("g.x.baxis").call(plot2XAxix);
 
-    var dataset = svg.selectAll("g.node2").data(selected, (d)=> d.name);
-    var datasetGroup = dataset.enter().append("g")
+    const dataset2 = svg2.selectAll("g.node2").data(selected, (d)=> d.name);
+    const datasetGroup2 = dataset2.enter().append("g")
         .attr("class", "node2")
         .attr('data-attr', (d)=>d.name)
-        .attr('transform', (d)=> "translate(" + x(d["Read Latency"]) + "," + y(d["Write Latency"]) + ")");
+        .attr('transform', (d)=> "translate(" + plot2XScale(d["Read Latency"]) + "," + plot2YScale(d["Write Latency"]) + ")");
 
-    datasetGroup.append("circle")
+    datasetGroup2.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
         .attr('data-attr', (d)=>d.name)
         .style("fill", (d)=> color(d.group, 1));
 
-    datasetGroup.append("text")
+    datasetGroup2.append("text")
         .attr("text-anchor", "middle")
         .attr('data-attr-t2', (d)=>d.name)
         .style("visibility", "hidden")
         .text((d)=>d.name);
 
-    datasetGroup
+    datasetGroup2
         .on("mouseover", (d)=> highlightScatter(d))
         .on("mouseout", (d)=> removeHighlightScatter(d))
 
@@ -768,9 +768,8 @@ function showScatterPlot(selected, foreground, brush_count) {
     //
     // Outstanding
     //
-
     d3.select("#plot3").html("");
-    var svg = d3.select("#plot3")
+    const svg3 = d3.select("#plot3")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -778,20 +777,20 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
     // this sets the scale that we're using for the X and y axis.
-    var x = d3.scale.linear()
+    const plot3XScale = d3.scale.linear()
         .domain([0, 70])
         .range([0, width - margins.left - margins.right]);
 
-    var y = d3.scale.linear()
+    const plot3YScale = d3.scale.linear()
         .domain([0, 40])
         .range([height - margins.top - margins.bottom, 0]);
 
     // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
-    svg.append("g").attr("class", "x baxis").attr("transform", "translate(0," + y.range()[0] + ")");
-    svg.append("g").attr("class", "y baxis");
+    svg3.append("g").attr("class", "x baxis").attr("transform", "translate(0," + plot3YScale.range()[0] + ")");
+    svg3.append("g").attr("class", "y baxis");
 
     // this is our X axis label. Nothing too special to see here.
-    svg.append("text")
+    svg3.append("text")
         .attr("fill", "#414241")
         .attr("text-anchor", "middle")
         .attr("x", width / 2)
@@ -799,7 +798,7 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("class", "label")
         .text("Read");
 
-    svg.append("text")
+    svg3.append("text")
         .attr("fill", "#414241")
         .attr("text-anchor", "middle")
         .attr("x", -90)
@@ -808,30 +807,30 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("class", "baxis")
         .text("Write");
 
-    var xAxis1 = d3.svg.axis().scale(x).orient("bottom").tickPadding(2);
-    var yAxis1 = d3.svg.axis().scale(y).orient("left").tickPadding(2);
-    svg.selectAll("g.y.baxis").call(yAxis1);
-    svg.selectAll("g.x.baxis").call(xAxis1);
+    const plot3XAxix = d3.svg.axis().scale(plot3XScale).orient("bottom").tickPadding(2);
+    const plot3YAxix = d3.svg.axis().scale(plot3YScale).orient("left").tickPadding(2);
+    svg3.selectAll("g.y.baxis").call(plot3YAxix);
+    svg3.selectAll("g.x.baxis").call(plot3XAxix);
 
-    var dataset = svg.selectAll("g.node3").data(selected, (d)=> d.name);
-    var datasetGroup = dataset.enter().append("g")
+    const dataset3 = svg3.selectAll("g.node3").data(selected, (d)=> d.name);
+    const datasetGroup3 = dataset3.enter().append("g")
         .attr("class", "node3")
         .attr('data-attr', (d)=>d.name)
-        .attr('transform', (d) =>"translate(" + x(d["Read Outstanding"]) + "," + y(d["Write Outstanding"]) + ")");
+        .attr('transform', (d) =>"translate(" + plot3XScale(d["Read Outstanding"]) + "," + plot3YScale(d["Write Outstanding"]) + ")");
 
-    datasetGroup.append("circle")
+    datasetGroup3.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
         .attr('data-attr', (d)=>d.name)
         .style("fill", (d)=> color(d.group, 1));
 
-    datasetGroup.append("text")
+    datasetGroup3.append("text")
         .attr("text-anchor", "middle")
         .attr('data-attr-t3', (d)=>d.name)
         .style("visibility", "hidden")
         .text((d)=>d.name);
 
-    datasetGroup
+    datasetGroup3
         .on("mouseover", (d)=> highlightScatter(d))
         .on("mouseout", (d)=> removeHighlightScatter(d))
 
