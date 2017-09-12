@@ -639,43 +639,99 @@ const constants = {
 function showScatterPlot(selected, foreground, brush_count) {
 
     console.log("In showScatterPlot()...");
-    var chartDiv = document.getElementById("plot1");
-    // Extract the width and height that was computed by CSS.
-    var width = chartDiv.clientWidth;
-    var height = width;
 
     // just to have some space around items.
-    var margins = {
+    var margins1 = {
         "left": 40,
         "right": 30,
         "top": 30,
         "bottom": 30
     };
 
-    //
-    // Bandwidth plot
-    //
 
-// this sets the scale that we're using for the X and y axis.
+    const plot1 = {
+        xScale: constants.plot1XScale(),
+        yScale: constants.plot1YScale(),
+        dataset: selected,
+        margins: margins1,
+        svgSelector: 'plot1',
+        lineClassName: 'plot1Line',
+        groupNodeClassName: 'node1',
+        attributes: ["Read BW % diff", "Write BW % diff"]
 
-    const plot1XScale = constants.plot1XScale();
-    const plot1YScale = constants.plot1YScale();
+    }
+    const margins2 = {
+        "left": 60,
+        "right": 30,
+        "top": 30,
+        "bottom": 30
+    };
 
-    d3.select("#plot1").html("");
-    const svg1 = d3.select("#plot1")
+    const plot2 = {
+        xScale: constants.plot2XScale(),
+        yScale: constants.plot2YScale(),
+        dataset: selected,
+        margins: margins2,
+        svgSelector: 'plot2',
+        lineClassName: 'plot2Line',
+        groupNodeClassName: 'node2',
+        attributes: ["Read Latency", "Write Latency"]
+
+    };
+
+
+    const plot3 = {
+        xScale: constants.plot3XScale(),
+        yScale: constants.plot3YScale(),
+        dataset: selected,
+        margins: margins2,
+        svgSelector: 'plot3',
+        lineClassName: 'plot3Line',
+        groupNodeClassName: 'node3',
+        attributes: ["Read Outstanding", "Write Outstanding"]
+
+    }
+
+    plotScatterGlobal(plot1);
+
+    plotScatterGlobal(plot2);
+
+    plotScatterGlobal(plot3);
+
+
+
+}
+
+
+function plotScatterGlobal(plot) {
+
+    var chartDiv = document.getElementById("plot1");
+    // Extract the width and height that was computed by CSS.
+    const width = chartDiv.clientWidth;
+
+    const xScale = plot.xScale;
+    const yScale = plot.yScale;
+    const margins = plot.margins;
+    const selected = plot.dataset;
+    const svgSelect = plot.svgSelector;
+    const attributes = plot.attributes;
+    const {lineClassName, groupNodeClassName} = plot;
+
+    d3.select(`#${svgSelect}`).html("");
+    const svg = d3.select(`#${svgSelect}`)
         .append("svg")
         .attr("width", width)
-        .attr("height", height)
+        .attr("height", width)
         .append("g")
         .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
 
     // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
-    svg1.append("g").attr("class", "x baxis").attr("transform", "translate(0," + plot1YScale.range()[0] + ")");
-    svg1.append("g").attr("class", "y baxis");
+    svg.append("g").attr("class", "x baxis").attr("transform", "translate(0," + yScale.range()[0] + ")");
+    svg.append("g").attr("class", "y baxis");
 
     // this is our X axis label. Nothing too special to see here.
-    svg1.append("text")
+    svg.append("text")
         .attr("fill", "#414241")
         .attr("text-anchor", "middle")
         .attr("x", width / 2)
@@ -683,7 +739,7 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("class", "label")
         .text("Read % diff");
 
-    svg1.append("text")
+    svg.append("text")
         .attr("fill", "#414241")
         .attr("text-anchor", "middle")
         .attr("x", -90)
@@ -692,188 +748,41 @@ function showScatterPlot(selected, foreground, brush_count) {
         .attr("class", "label")
         .text("Write % diff");
 
-    svg1.append('path')
-        .classed('plot1Line', true)
+    svg.append('path')
+        .attr('class', lineClassName)
         .attr("stroke-width", 2)
         .attr("stroke", "black");
 
-    const xAxis1 = d3.svg.axis().scale(plot1XScale).orient("bottom").tickPadding(2);
-    const yAxis1 = d3.svg.axis().scale(plot1YScale).orient("left").tickPadding(2);
-    svg1.selectAll("g.y.baxis").call(yAxis1);
-    svg1.selectAll("g.x.baxis").call(xAxis1);
+    const xAxix = d3.svg.axis().scale(xScale).orient("bottom").tickPadding(2);
+    const yAxix = d3.svg.axis().scale(yScale).orient("left").tickPadding(2);
+    svg.selectAll("g.y.baxis").call(yAxix);
+    svg.selectAll("g.x.baxis").call(xAxix);
 
-    const dataset1 = svg1.selectAll("g.node1").data(selected, (d)=>d.name);
-    const datasetGroup1 = dataset1.enter().append("g")
-        .attr("class", "node1")
+    const dataset = svg.selectAll(`g.${groupNodeClassName}`).data(selected, (d)=>d.name);
+    const datasetGroup = dataset.enter().append("g")
+        .attr("class", groupNodeClassName)
         .attr('data-attr', (d)=>d.name)
-        .attr('transform', (d)=> "translate(" + plot1XScale(d["Read BW % diff"]) + "," + plot1YScale(d["Write BW % diff"]) + ")");
+        .attr('transform', (d)=> "translate(" + xScale(d[attributes[0]]) + "," + yScale(d[attributes[1]]) + ")");
 
-    datasetGroup1.append("circle")
+    datasetGroup.append("circle")
         .attr("r", 5)
         .attr("class", "dot")
         .attr('data-attr', (d)=>d.name)
         .style("fill", (d)=> color(d.group, 1));
 
-    datasetGroup1.append("text")
+    datasetGroup.append("text")
         .attr("text-anchor", "middle")
         .attr('data-attr-t1', (d)=>d.name)
         .style("visibility", "hidden")
         .text((d)=>d.name);
 
-    datasetGroup1
-        .on("mouseover", (d)=> highlightScatter(d))
-        .on("mouseout", (d)=> removeHighlightScatter(d))
-
-
-    //
-    // Latency plot
-    //
-    var margins = {
-        "left": 60,
-        "right": 30,
-        "top": 30,
-        "bottom": 30
-    };
-
-    d3.select("#plot2").html("");
-    const svg2 = d3.select("#plot2")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .append("g")
-        .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
-
-    svg2.append('path')
-        .classed('plot2Line', true)
-        .attr("stroke-width", 2)
-        .attr("stroke", "black");
-
-    // this sets the scale that we're using for the X and y axis.
-    const plot2XScale = constants.plot2XScale();
-    const plot2YScale = constants.plot2YScale();
-
-    // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
-    svg2.append("g").attr("class", "x baxis").attr("transform", "translate(0," + plot2YScale.range()[0] + ")");
-    svg2.append("g").attr("class", "y baxis");
-
-    // this is our X axis label. Nothing too special to see here.
-    svg2.append("text")
-        .attr("fill", "#414241")
-        .attr("text-anchor", "middle")
-        .attr("x", width / 2)
-        .attr("y", height - 30)
-        .attr("class", "label")
-        .text("Read");
-
-    svg2.append("text")
-        .attr("fill", "#414241")
-        .attr("text-anchor", "middle")
-        .attr("x", -90)
-        .attr("y", -40)
-        .attr("transform", "rotate(-90)")
-        .attr("class", "label")
-        .text("Write");
-
-    const plot2XAxix = d3.svg.axis().scale(plot2XScale).orient("bottom").tickPadding(2);
-    const plot2YAxix = d3.svg.axis().scale(plot2YScale).orient("left").tickPadding(2);
-    svg2.selectAll("g.y.baxis").call(plot2YAxix);
-    svg2.selectAll("g.x.baxis").call(plot2XAxix);
-
-    const dataset2 = svg2.selectAll("g.node2").data(selected, (d)=> d.name);
-    const datasetGroup2 = dataset2.enter().append("g")
-        .attr("class", "node2")
-        .attr('data-attr', (d)=>d.name)
-        .attr('transform', (d)=> "translate(" + plot2XScale(d["Read Latency"]) + "," + plot2YScale(d["Write Latency"]) + ")");
-
-    datasetGroup2.append("circle")
-        .attr("r", 5)
-        .attr("class", "dot")
-        .attr('data-attr', (d)=>d.name)
-        .style("fill", (d)=> color(d.group, 1));
-
-    datasetGroup2.append("text")
-        .attr("text-anchor", "middle")
-        .attr('data-attr-t2', (d)=>d.name)
-        .style("visibility", "hidden")
-        .text((d)=>d.name);
-
-    datasetGroup2
-        .on("mouseover", (d)=> highlightScatter(d))
-        .on("mouseout", (d)=> removeHighlightScatter(d))
-
-
-    //
-    // Outstanding
-    //
-    d3.select("#plot3").html("");
-    const svg3 = d3.select("#plot3")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .append("g")
-        .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
-
-
-    svg3.append('path')
-        .classed('plot3Line', true)
-        .attr("stroke-width", 2)
-        .attr("stroke", "black");
-
-
-    // this sets the scale that we're using for the X and y axis.
-    const plot3XScale = constants.plot3XScale();
-    const plot3YScale = constants.plot3YScale();
-    // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
-    svg3.append("g").attr("class", "x baxis").attr("transform", "translate(0," + plot3YScale.range()[0] + ")");
-    svg3.append("g").attr("class", "y baxis");
-
-    // this is our X axis label. Nothing too special to see here.
-    svg3.append("text")
-        .attr("fill", "#414241")
-        .attr("text-anchor", "middle")
-        .attr("x", width / 2)
-        .attr("y", height - 30)
-        .attr("class", "label")
-        .text("Read");
-
-    svg3.append("text")
-        .attr("fill", "#414241")
-        .attr("text-anchor", "middle")
-        .attr("x", -90)
-        .attr("y", -30)
-        .attr("transform", "rotate(-90)")
-        .attr("class", "baxis")
-        .text("Write");
-
-    const plot3XAxix = d3.svg.axis().scale(plot3XScale).orient("bottom").tickPadding(2);
-    const plot3YAxix = d3.svg.axis().scale(plot3YScale).orient("left").tickPadding(2);
-    svg3.selectAll("g.y.baxis").call(plot3YAxix);
-    svg3.selectAll("g.x.baxis").call(plot3XAxix);
-
-    const dataset3 = svg3.selectAll("g.node3").data(selected, (d)=> d.name);
-    const datasetGroup3 = dataset3.enter().append("g")
-        .attr("class", "node3")
-        .attr('data-attr', (d)=>d.name)
-        .attr('transform', (d) =>"translate(" + plot3XScale(d["Read Outstanding"]) + "," + plot3YScale(d["Write Outstanding"]) + ")");
-
-    datasetGroup3.append("circle")
-        .attr("r", 5)
-        .attr("class", "dot")
-        .attr('data-attr', (d)=>d.name)
-        .style("fill", (d)=> color(d.group, 1));
-
-    datasetGroup3.append("text")
-        .attr("text-anchor", "middle")
-        .attr('data-attr-t3', (d)=>d.name)
-        .style("visibility", "hidden")
-        .text((d)=>d.name);
-
-    datasetGroup3
+    datasetGroup
         .on("mouseover", (d)=> highlightScatter(d))
         .on("mouseout", (d)=> removeHighlightScatter(d))
 
 
 }
+
 
 function highlightScatter(d) {
 
