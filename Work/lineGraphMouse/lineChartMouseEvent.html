@@ -391,6 +391,7 @@
             gY.call(yAxis.scale(d3.event.transform.rescaleY(plot1YScale)));
             var t = d3.event.transform, xt = t.rescaleX(plot1XScale), yt = t.rescaleY(plot1YScale)
             d3.selectAll('.clickedCircle').remove()
+            d3.selectAll('.dumbCircles').remove();
 
             // Update all the circles which are in dict
             circleDrawnDict.forEach(e=> {
@@ -401,6 +402,17 @@
                         .attr('cy', ()=> t.applyY(plot1YScale(e.price)))
 
             });
+
+
+            dummyData.forEach((e, i)=> {
+                dummyCirclePlot.append("circle")
+                        .classed('dumbCircles', true)
+                        .attr('data-attr', ()=>e.date)
+                        .attr('cx', ()=> t.applyX(plot1XScale(e.dt)))
+                        .attr('cy', ()=> t.applyY(plot1YScale(e.price)))
+
+            });
+
 
             // Update the line
             svg.select(".line")
@@ -590,7 +602,7 @@
 
         function brushed3() {
             const xVal = d3.event.selection.map(plot3Xscale.invert)
-            console.log(xVal, xDateRangePlot2)
+
             const collect = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
@@ -598,16 +610,16 @@
 
 
             const diffwidth = plot2XScale(xVal[1]) - plot2XScale(xVal[0]);
-            console.log(diffwidth, plot2XScale(xVal[0]))
+
             xDateRangePlot2 = [plot2XScale(xVal[0]), plot2XScale(xVal[1])]
-            console.log(xDateRangePlot2)
+
             if (plot2XScale(xVal[0]) !== plot2XScale(dateExtent[0])) {
                 initialState = false;
             }
             svg.select(".line")
                     .attr("d", priceSeries(collect));
 
-            console.log(initialState)
+
             if (initialState) {
                 svg2.select('.brush2')
                         .select('.selection')
@@ -636,6 +648,7 @@
             dummyData.forEach((e, i)=> {
 
                 dummyCirclePlot.append("circle")
+                        .classed('dumbCircles', true)
                         .attr('data-attr', ()=>e.date)
                         .attr('cx', ()=>plot1XScale(e.dt))
                         .attr('cy', ()=>plot1YScale(e.price))
