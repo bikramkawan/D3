@@ -432,7 +432,6 @@
                     .y((d)=>yt(d.price));
 
 
-
             const maxDateIndex = data1.findIndex((el, i)=> {
 
                 const check = (el.date).slice(0, 4) === reverseDate(currentBrushDateRange[1]).toString();
@@ -473,11 +472,10 @@
             }
 
 
-
             svg.select(".line")
                     .attr("d", lineValuesPlot1(currentRange))
 
-            const zoomBrushed = [currentRange[0].dt,currentRange[currentRange.length-1].dt]
+            const zoomBrushed = [currentRange[0].dt, currentRange[currentRange.length - 1].dt]
 
 
             const diffwidthPlot2 = plot2XScale(zoomBrushed[1]) - plot2XScale(zoomBrushed[0]);
@@ -487,14 +485,11 @@
                     .attr('x', plot2XScale(zoomBrushed[0]) < 0 ? 0 : plot2XScale(zoomBrushed[0])).attr('width', plot2XScale(zoomBrushed[1]) < 0 ? 0 : diffwidthPlot2)
 
 
-
-
             const diffwidthPlot3 = plot3Xscale(zoomBrushed[1]) - plot3Xscale(zoomBrushed[0]);
 
             svg3.select('.brush3')
                     .select('.selection')
                     .attr('x', plot3Xscale(zoomBrushed[0])).attr('width', diffwidthPlot3)
-
 
 
             //Update the mouseover circle
@@ -559,10 +554,10 @@
 
         let xDateRangePlot2 = [plot2XScale(dateExtent[0]), plot2XScale(dateExtent[1])]
 
-                // Add the valueline path.
-                svg2.append("path")
-                        .attr("class", "line2")
-                        .attr("d", lineValuesPlot2(data2));
+        // Add the valueline path.
+        svg2.append("path")
+                .attr("class", "line2")
+                .attr("d", lineValuesPlot2(data2));
 
 
         // Add the X Axis
