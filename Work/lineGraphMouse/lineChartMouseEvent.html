@@ -160,8 +160,9 @@
 
         // Zoom variable [defines how far you can zoom (scaleExtent) and pan (translateExtent)]
         const zoom = d3.zoom()
+                .extent([[20, 20], [20, 20]])
                 .scaleExtent([1, 5])
-                .translateExtent([[-1000, -1000], [1000, 1000]])
+                .translateExtent([[-200, -200], [200, 200]])
                 .on("zoom", zoomed)
 
 
@@ -384,6 +385,17 @@
         d3.select('.no').on('click', ()=> deleteMeDialog.style('display', 'none'))
 
 
+        function move() {
+            var t = d3.event.transform,
+                    s = d3.event.transform.k;
+
+            t.x = Math.max(0, Math.min(t.x, width - s * 60));
+            t.y = Math.max(0, Math.min(t.y, height - s * 60));
+
+            svg.attr("transform", t);
+        }
+
+
         // The function for zoom operation method
         function zoomed() {
             a = mouseDate(plot1XScale);
@@ -426,6 +438,8 @@
                     .attr("id", "one")
                     .attr('cx', ()=>t.applyX(plot1XScale(d.dt)))
                     .attr('cy', ()=>t.applyY(plot1YScale(d.price)));
+
+
         }
 
         // function defining behaviour on click of the reset button
@@ -643,7 +657,6 @@
 
 
         d3.select('.plotCircles').on('click', ()=> {
-
             // alert(`${circleDrawnDict.size} circles will be added to the plot from dictionary`)
             dummyData.forEach((e, i)=> {
 
