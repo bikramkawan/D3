@@ -129,7 +129,7 @@
 
     let dateExtent = null;
 
-    let data1 = [];
+    let currentRange = null;
     // Load CSV
     d3.queue()
             .defer(d3.csv, 'testdata1_fmt.csv')
@@ -425,12 +425,18 @@
 
             });
 
+            if (currentRange === null) {
+                svg.select(".line")
+                        .attr("d", priceSeries.x((d)=>xt(d.dt))
+                                .y((d)=> yt(d.price)));
+            }  // Update the line
 
-            // Update the line
+            const lineValuesPlot1 = d3.line()
+                    .x((d)=>xt(d.dt))
+                    .y((d)=>yt(d.price));
+
             svg.select(".line")
-                    .attr("d", priceSeries
-                            .x((d)=>xt(d.dt))
-                            .y((d)=> yt(d.price)));
+                    .attr("d", lineValuesPlot1(currentRange))
 
             //Update the mouseover circle
             focusOverMouseMove.select("circle.y")
@@ -526,14 +532,15 @@
             const xVal = d3.event.selection.map(plot2XScale.invert)
             console.log(xVal)
 
-            const collect = data1.filter((fd)=> {
+
+            currentRange = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
             })
 
             const diffwidth = plot3Xscale(xVal[1]) - plot3Xscale(xVal[0]);
             svg.select(".line")
-                    .attr("d", priceSeries(collect));
+                    .attr("d", priceSeries(currentRange));
             svg3.select('.brush3')
                     .select('.selection')
                     .attr('x', plot3Xscale(xVal[0])).attr('width', diffwidth)
@@ -617,7 +624,7 @@
         function brushed3() {
             const xVal = d3.event.selection.map(plot3Xscale.invert)
 
-            const collect = data1.filter((fd)=> {
+            currentRange = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
             })
@@ -631,7 +638,7 @@
                 initialState = false;
             }
             svg.select(".line")
-                    .attr("d", priceSeries(collect));
+                    .attr("d", priceSeries(currentRange));
 
 
             if (initialState) {
