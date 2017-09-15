@@ -504,7 +504,7 @@
         svg2.append("g")
                 .attr("class", "brush2")
                 .call(brushPlot2)
-                .call(brushPlot2.move, xDateRangePlot2);
+                .call(brushPlot2.move, updateBrushedRect);
 
 
         focusCirclePlot2.append("circle")
@@ -512,10 +512,11 @@
 
 
         function brushedPlot2() {
-            console.log('fsafa')
+            console.log('fsafa',plot2XScale.invert)
             const xVal = d3.event.selection.map(plot2XScale.invert)
             console.log(xVal)
 
+            updateBrushedRect(xVal)
             const collect = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
@@ -604,6 +605,28 @@
                 .attr("class", "circleFocus3");
 
 
+
+        function updateBrushedRect(xVal){
+
+        console.log(xDateRangePlot2,xVal)
+            if(xVal===undefined){
+                return xDateRangePlot2;
+            }else {
+
+                const diffwidth = plot2XScale(xVal[1]) - plot2XScale(xVal[0]);
+                const plot2XCord = plot2XScale(xVal[0]) < 0 ? 0 : plot2XScale(xVal[0]);
+                const calcDiffWidth = plot2XScale(xVal[1]) < 0 ? 0 :diffwidth>plot2XScale.range()[1]?plot2XScale.range()[1]:diffwidth;
+
+                return [plot2XCord,calcDiffWidth]
+            }
+
+
+
+
+
+        }
+
+
         function brushed3() {
             const xVal = d3.event.selection.map(plot3Xscale.invert)
 
@@ -612,25 +635,26 @@
 
             })
 
+            const brush2Cord = updateBrushedRect(xVal)
 
-            const diffwidth = plot2XScale(xVal[1]) - plot2XScale(xVal[0]);
-
-            xDateRangePlot2 = [plot2XScale(xVal[0]), plot2XScale(xVal[1])]
 
             if (plot2XScale(xVal[0]) !== plot2XScale(dateExtent[0])) {
                 initialState = false;
             }
             svg.select(".line")
                     .attr("d", priceSeries(collect));
-            const calcDiffWidth = diffwidth>plot2XScale.range()[1]?plot2XScale.range()[1]:diffwidth;
+
 
             svg2.select('.brush2')
                     .select('.selection')
-                    .attr('x', plot2XScale(xVal[0]) < 0 ? 0 : plot2XScale(xVal[0]))
-                    .attr('width', plot2XScale(xVal[1]) < 0 ? 0 :calcDiffWidth)
+                    .attr('x',brush2Cord[0] )
+                    .attr('width', brush2Cord[1])
 
 
         }
+
+
+
 
 
         //Dummy Data Plot Starts here
