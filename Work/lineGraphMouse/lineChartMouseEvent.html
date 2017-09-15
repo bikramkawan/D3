@@ -128,9 +128,8 @@
 
 
     let dateExtent = null;
-    const reverseDate = d3.timeFormat("%Y")
-    let currentRange = null;
-    let currentBrushDateRange = null;
+
+    let data1 = [];
     // Load CSV
     d3.queue()
             .defer(d3.csv, 'testdata1_fmt.csv')
@@ -163,7 +162,7 @@
         const zoom = d3.zoom()
                 .extent([[20, 20], [20, 20]])
                 .scaleExtent([1, 5])
-                .translateExtent([[-500, -500], [500, 500]])
+                .translateExtent([[-200, -200], [200, 200]])
                 .on("zoom", zoomed)
 
 
@@ -384,17 +383,22 @@
         });
 
         d3.select('.no').on('click', ()=> deleteMeDialog.style('display', 'none'))
-        let increase = 0;
-        let currentXPost = 0;
-        let decrease = 0;
+
+
+        function move() {
+            var t = d3.event.transform,
+                    s = d3.event.transform.k;
+
+            t.x = Math.max(0, Math.min(t.x, width - s * 60));
+            t.y = Math.max(0, Math.min(t.y, height - s * 60));
+
+            svg.attr("transform", t);
+        }
+
+
         // The function for zoom operation method
         function zoomed() {
             a = mouseDate(plot1XScale);
-
-            const deltaX = (d3.event.transform).x > currentXPost ? 'right' : 'left';
-            currentXPost = (d3.event.transform).x;
-
-
             gX.call(xAxis.scale(d3.event.transform.rescaleX(plot1XScale)));
             gY.call(yAxis.scale(d3.event.transform.rescaleY(plot1YScale)));
             var t = d3.event.transform, xt = t.rescaleX(plot1XScale), yt = t.rescaleY(plot1YScale)
@@ -421,76 +425,12 @@
 
             });
 
-            if (currentRange === null) {
-                svg.select(".line")
-                        .attr("d", priceSeries.x((d)=>xt(d.dt))
-                                .y((d)=> yt(d.price)));
-            }  // Update the line
 
-            const lineValuesPlot1 = d3.line()
-                    .x((d)=>xt(d.dt))
-                    .y((d)=>yt(d.price));
-
-
-            const maxDateIndex = data1.findIndex((el, i)=> {
-
-                const check = (el.date).slice(0, 4) === reverseDate(currentBrushDateRange[1]).toString();
-
-
-                return check;
-
-            })
-            const minDateIndex = data1.findIndex((el)=> {
-
-                const check = (el.date).slice(0, 4) === reverseDate(currentBrushDateRange[0]).toString();
-
-                return check;
-
-            })
-
-
-            decrease = decrease === 0 ? minDateIndex : decrease;
-
-            if (deltaX === 'left' && maxDateIndex != -1 && minDateIndex != -1) {
-
-
-                increase = increase === 0 ? maxDateIndex : increase;
-                increase = increase + 10;
-                decrease = decrease === 0 ? minDateIndex : decrease;
-
-
-                currentRange = data1.slice(decrease < 0 ? 0 : decrease, increase)
-            }
-            if (deltaX === 'right' && maxDateIndex != -1 && minDateIndex != -1) {
-//
-
-                increase = increase === 0 ? maxDateIndex : increase;
-                decrease = decrease === 0 ? minDateIndex : decrease;
-                decrease = decrease - 10;
-
-                currentRange = data1.slice(decrease < 0 ? 0 : decrease, increase)
-            }
-
-
+            // Update the line
             svg.select(".line")
-                    .attr("d", lineValuesPlot1(currentRange))
-
-            const zoomBrushed = [currentRange[0].dt, currentRange[currentRange.length - 1].dt]
-
-
-            const diffwidthPlot2 = plot2XScale(zoomBrushed[1]) - plot2XScale(zoomBrushed[0]);
-
-            svg2.select('.brush2')
-                    .select('.selection')
-                    .attr('x', plot2XScale(zoomBrushed[0]) < 0 ? 0 : plot2XScale(zoomBrushed[0])).attr('width', plot2XScale(zoomBrushed[1]) < 0 ? 0 : diffwidthPlot2)
-
-
-            const diffwidthPlot3 = plot3Xscale(zoomBrushed[1]) - plot3Xscale(zoomBrushed[0]);
-
-            svg3.select('.brush3')
-                    .select('.selection')
-                    .attr('x', plot3Xscale(zoomBrushed[0])).attr('width', diffwidthPlot3)
-
+                    .attr("d", priceSeries
+                            .x((d)=>xt(d.dt))
+                            .y((d)=> yt(d.price)));
 
             //Update the mouseover circle
             focusOverMouseMove.select("circle.y")
@@ -553,11 +493,11 @@
         })]);
 
         let xDateRangePlot2 = [plot2XScale(dateExtent[0]), plot2XScale(dateExtent[1])]
-
-        // Add the valueline path.
-        svg2.append("path")
-                .attr("class", "line2")
-                .attr("d", lineValuesPlot2(data2));
+        const fixedRangePlots =
+                // Add the valueline path.
+                svg2.append("path")
+                        .attr("class", "line2")
+                        .attr("d", lineValuesPlot2(data2));
 
 
         // Add the X Axis
@@ -570,7 +510,7 @@
         svg2.append("g")
                 .attr("class", "y axis")
                 .call(yAxisPlot2);
-
+        console.log(xDateRangePlot2)
         svg2.append("g")
                 .attr("class", "brush2")
                 .call(brushPlot2)
@@ -582,23 +522,18 @@
 
 
         function brushedPlot2() {
-
+            console.log('fsafa')
             const xVal = d3.event.selection.map(plot2XScale.invert)
+            console.log(xVal)
 
-            if (currentBrushDateRange !== null && (xVal[0] !== currentBrushDateRange[0] || xVal[1] !== currentBrushDateRange[1])) {
-
-                decrease = 0;
-                increase = 0;
-            }
-            currentBrushDateRange = xVal;
-            currentRange = data1.filter((fd)=> {
+            const collect = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
             })
 
             const diffwidth = plot3Xscale(xVal[1]) - plot3Xscale(xVal[0]);
             svg.select(".line")
-                    .attr("d", priceSeries(currentRange));
+                    .attr("d", priceSeries(collect));
             svg3.select('.brush3')
                     .select('.selection')
                     .attr('x', plot3Xscale(xVal[0])).attr('width', diffwidth)
@@ -682,12 +617,7 @@
         function brushed3() {
             const xVal = d3.event.selection.map(plot3Xscale.invert)
 
-            if (currentBrushDateRange !== null && (xVal[0] !== currentBrushDateRange[0] || xVal[1] !== currentBrushDateRange[1])) {
-                decrease = 0;
-                increase = 0;
-            }
-            currentBrushDateRange = xVal;
-            currentRange = data1.filter((fd)=> {
+            const collect = data1.filter((fd)=> {
                 return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
             })
@@ -701,7 +631,7 @@
                 initialState = false;
             }
             svg.select(".line")
-                    .attr("d", priceSeries(currentRange));
+                    .attr("d", priceSeries(collect));
 
 
             if (initialState) {
