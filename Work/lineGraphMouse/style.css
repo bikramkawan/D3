@@ -2,10 +2,12 @@ body {
     font: 10px Arial;
     display: flex;
     flex-direction: column;
+
 }
 
 .chartBottom {
     display: flex;
+    margin-top: 20px;
 }
 
 .view {
@@ -47,7 +49,7 @@ text {
 
 button {
     height: 50px;
-    font-size: 31px;
+    font-size: 18px;
 }
 
 .circleDrawn, .score {
@@ -81,14 +83,14 @@ button {
     background: lightgray;
     display: flex;
     flex-direction: column;
-    width: 400px;
+    width: 200px;
     justify-content: center;
     text-align: center;
-    height: 600px;
+
 }
 
 .panel > h1 {
-    font-size: 35px;
+    font-size: 25px;
 }
 
 .panel > div, button {
@@ -148,5 +150,20 @@ button {
 
 .top {
     display: flex;
-    margin-top: 80px;
+    margin-top: 30px;
+    justify-content: space-around;
+    max-height: 400px;
+}
+.chart,.chart1,.chart2{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 100;
+    text-transform: uppercase;
+
+}
+p{
+    border-bottom: 1px solid;
 }

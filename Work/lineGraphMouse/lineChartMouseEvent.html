@@ -7,9 +7,8 @@
 
 <div class="top">
 
-    <div id="chart"></div>
+    <div class="chart"><p>Daily Data</p>   <div id="chart"></div></div>
     <div class="panel"><h1>Support Panel</h1>
-
         <div class="score">
             <div class="dataScore"></div>
             <div class="priceScore"></div>
@@ -19,14 +18,11 @@
         <button class="toggleDraw">Draw Circle</button>
         <button class="saveData">Save Circle Data</button>
         <button class="plotCircles">Plot Circle Data</button>
-
-
     </div>
 
 
     <div class="delete">
         <div class="confirm">Confirm</div>
-
         <div class="action">
             <div class="yes">Yes</div>
             <div class="no">No</div>
@@ -34,8 +30,10 @@
     </div>
 </div>
 <div class="chartBottom">
-    <div id="chart2"></div>
-    <div id="chart3"></div>
+    <div class="chart1"><p> Monthly Data</p><div id="chart2"></div></div>
+    <div class="chart2">
+        <p> Yearly Data</p>
+        <div id="chart3"></div></div>
 </div>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -43,8 +41,8 @@
 
     //Set up some space for SVG
     const margin = {top: 20, right: 20, bottom: 50, left: 50},
-            width = 1000 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+            width = 800 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
     let toogleDrawCircle = false;
     const circleDrawnDict = new Map(); // Will store the information of circles drawn after clicked with date and price
     const parseTime = d3.timeParse("%Y-%m-%d");  // Date parser for D3;
@@ -54,8 +52,8 @@
     const xAxixText = "Date/Time";
     const yAxixText = "Price";
 
-    const smallPlotWidth = 600,
-            smallPlotHeight = 270;
+    const smallPlotWidth = 600-margin.left - margin.right,
+            smallPlotHeight = 300- margin.top - margin.bottom;
 
     const plot3Xscale = d3.scaleTime().range([0, smallPlotWidth]);
     const plot3Yscale = d3.scaleLinear().range([smallPlotHeight, 0]);
@@ -90,8 +88,8 @@
 
     const svg2 = d3.select('#chart2')
             .append("svg")
-            .attr('width', smallPlotWidth)
-            .attr('height', 400)
+            .attr('width', smallPlotWidth+ margin.left + margin.right)
+            .attr('height', smallPlotHeight + margin.top + margin.bottom)
             .append("svg:g")
             .attr("id", "group2")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -99,8 +97,8 @@
 
     const svg3 = d3.select('#chart3')
             .append("svg")
-            .attr('width', 800)
-            .attr('height', 400)
+        .attr('width', smallPlotWidth+ margin.left + margin.right)
+        .attr('height', smallPlotHeight + margin.top + margin.bottom)
             .append("svg:g")
             .attr("id", "group3")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -176,7 +174,7 @@
         const yAxis = d3.axisRight(plot1YScale)
                 .ticks(5)
                 .tickSize(width)
-                .tickPadding(-20 - width);
+                .tickPadding(-30 - width);
 
         // g-element for storing x-axis gridlines
         const gX = svg.append("g")
@@ -385,15 +383,7 @@
         d3.select('.no').on('click', ()=> deleteMeDialog.style('display', 'none'))
 
 
-        function move() {
-            var t = d3.event.transform,
-                    s = d3.event.transform.k;
 
-            t.x = Math.max(0, Math.min(t.x, width - s * 60));
-            t.y = Math.max(0, Math.min(t.y, height - s * 60));
-
-            svg.attr("transform", t);
-        }
 
 
         // The function for zoom operation method
@@ -632,17 +622,12 @@
             }
             svg.select(".line")
                     .attr("d", priceSeries(collect));
+            const calcDiffWidth = diffwidth>plot2XScale.range()[1]?plot2XScale.range()[1]:diffwidth;
 
-
-            if (initialState) {
-                svg2.select('.brush2')
-                        .select('.selection')
-                        .attr('x', 0).attr('width', diffwidth)
-                return;
-            }
             svg2.select('.brush2')
                     .select('.selection')
-                    .attr('x', plot2XScale(xVal[0]) < 0 ? 0 : plot2XScale(xVal[0])).attr('width', plot2XScale(xVal[1]) < 0 ? 0 : diffwidth)
+                    .attr('x', plot2XScale(xVal[0]) < 0 ? 0 : plot2XScale(xVal[0]))
+                    .attr('width', plot2XScale(xVal[1]) < 0 ? 0 :calcDiffWidth)
 
 
         }
