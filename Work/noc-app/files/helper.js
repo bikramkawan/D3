@@ -309,9 +309,19 @@ function brush() {
     // Render selected lines
     paths(selected, foreground, brush_count, true);
 
+    if (extents.length === 0) {
+        // Render BW plot
+        showScatterPlot(selected, foreground, brush_count);
+    } else {
 
-    // Render BW plot
-    showScatterPlot(selected, foreground, brush_count);
+
+        const filterData = data.slice().filter((d)=> d['Read BW demand'] >= extents[0][0] && d['Read BW demand'] < extents[0][1]);
+        console.log(extents, data, filterData)
+        showScatterPlot(filterData, foreground, brush_count);
+        console.log(constants.plot1XScale()(0))
+    }
+
+
 } // brush()
 
 // render a set of polylines on a canvas
@@ -597,9 +607,6 @@ function search(selection, str) {
 /* Correlation scatter plot */
 console.log("Create correlation scatter plot..");
 
-function showScatterPlot_(selected, foreground, brush_count) {
-}
-
 
 const margins1 = {
     "left": 40,
@@ -637,10 +644,10 @@ const constants = {
 
 
 function showScatterPlot(selected, foreground, brush_count) {
-
     console.log("In showScatterPlot()...");
-
+    // console.log(brush_count,foreground)
     // just to have some space around items.
+
     var margins1 = {
         "left": 40,
         "right": 30,
@@ -692,18 +699,18 @@ function showScatterPlot(selected, foreground, brush_count) {
 
     }
 
-    plotScatterGlobal(plot1);
+    const plotBrushRect = true;
+    plotScatterGlobal(plot1, plotBrushRect);
 
     plotScatterGlobal(plot2);
 
     plotScatterGlobal(plot3);
 
 
-
 }
 
 
-function plotScatterGlobal(plot) {
+function plotScatterGlobal(plot, brushedRect) {
 
     var chartDiv = document.getElementById("plot1");
     // Extract the width and height that was computed by CSS.
@@ -752,6 +759,16 @@ function plotScatterGlobal(plot) {
         .attr('class', lineClassName)
         .attr("stroke-width", 2)
         .attr("stroke", "black");
+
+    if (brushedRect) {
+        svg.append("rect")
+            .classed('rectbrush', true)
+            .attr("x", 10)
+            .attr("y", 10)
+            .attr("width", 50)
+            .attr("height", 100)
+            .attr("stroke", "black");
+    }
 
     const xAxix = d3.svg.axis().scale(xScale).orient("bottom").tickPadding(2);
     const yAxix = d3.svg.axis().scale(yScale).orient("left").tickPadding(2);
