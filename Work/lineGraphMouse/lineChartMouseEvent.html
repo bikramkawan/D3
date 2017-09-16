@@ -7,7 +7,9 @@
 
 <div class="top">
 
-    <div class="chart"><p>Daily Data</p>   <div id="chart"></div></div>
+    <div class="chart"><p>Daily Data</p>
+        <div id="chart"></div>
+    </div>
     <div class="panel"><h1>Support Panel</h1>
         <div class="score">
             <div class="dataScore"></div>
@@ -30,10 +32,13 @@
     </div>
 </div>
 <div class="chartBottom">
-    <div class="chart1"><p> Monthly Data</p><div id="chart2"></div></div>
+    <div class="chart1"><p> Monthly Data</p>
+        <div id="chart2"></div>
+    </div>
     <div class="chart2">
         <p> Yearly Data</p>
-        <div id="chart3"></div></div>
+        <div id="chart3"></div>
+    </div>
 </div>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -52,8 +57,8 @@
     const xAxixText = "Date/Time";
     const yAxixText = "Price";
 
-    const smallPlotWidth = 600-margin.left - margin.right,
-            smallPlotHeight = 300- margin.top - margin.bottom;
+    const smallPlotWidth = 600 - margin.left - margin.right,
+            smallPlotHeight = 300 - margin.top - margin.bottom;
 
     const plot3Xscale = d3.scaleTime().range([0, smallPlotWidth]);
     const plot3Yscale = d3.scaleLinear().range([smallPlotHeight, 0]);
@@ -88,7 +93,7 @@
 
     const svg2 = d3.select('#chart2')
             .append("svg")
-            .attr('width', smallPlotWidth+ margin.left + margin.right)
+            .attr('width', smallPlotWidth + margin.left + margin.right)
             .attr('height', smallPlotHeight + margin.top + margin.bottom)
             .append("svg:g")
             .attr("id", "group2")
@@ -97,8 +102,8 @@
 
     const svg3 = d3.select('#chart3')
             .append("svg")
-        .attr('width', smallPlotWidth+ margin.left + margin.right)
-        .attr('height', smallPlotHeight + margin.top + margin.bottom)
+            .attr('width', smallPlotWidth + margin.left + margin.right)
+            .attr('height', smallPlotHeight + margin.top + margin.bottom)
             .append("svg:g")
             .attr("id", "group3")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -202,7 +207,7 @@
         chartBody.append("svg:path")
                 .data([data1])
                 .attr("class", "line")
-                .attr("d", priceSeries);
+        // .attr("d", priceSeries);
 
         // draw small circle which runs over the line for mouseover
         focusOverMouseMove.append("circle")
@@ -383,9 +388,6 @@
         d3.select('.no').on('click', ()=> deleteMeDialog.style('display', 'none'))
 
 
-
-
-
         // The function for zoom operation method
         function zoomed() {
             a = mouseDate(plot1XScale);
@@ -482,12 +484,8 @@
             return d.price;
         })]);
 
-        let xDateRangePlot2 = [plot2XScale(dateExtent[0]), plot2XScale(dateExtent[1])]
-        const fixedRangePlots =
-                // Add the valueline path.
-                svg2.append("path")
-                        .attr("class", "line2")
-                        .attr("d", lineValuesPlot2(data2));
+        svg2.append("path")
+                .attr("class", "line2")
 
 
         // Add the X Axis
@@ -500,7 +498,7 @@
         svg2.append("g")
                 .attr("class", "y axis")
                 .call(yAxisPlot2);
-        console.log(xDateRangePlot2)
+
         svg2.append("g")
                 .attr("class", "brush2")
                 .call(brushPlot2)
@@ -512,19 +510,13 @@
 
 
         function brushedPlot2() {
-            console.log('fsafa',plot2XScale.invert)
+            if (!d3.event.sourceEvent) return; // Only transition after input.
+            if (!d3.event.selection) return; // Ignore empty selections.
             const xVal = d3.event.selection.map(plot2XScale.invert)
-            console.log(xVal)
-
-            updateBrushedRect(xVal)
-            const collect = data1.filter((fd)=> {
-                return fd.dt >= xVal[0] && fd.dt <= xVal[1];
-
-            })
 
             const diffwidth = plot3Xscale(xVal[1]) - plot3Xscale(xVal[0]);
-            svg.select(".line")
-                    .attr("d", priceSeries(collect));
+            updateDailyPlot(xVal);
+            //updateMonthlyPlot(xVal)
             svg3.select('.brush3')
                     .select('.selection')
                     .attr('x', plot3Xscale(xVal[0])).attr('width', diffwidth)
@@ -605,57 +597,66 @@
                 .attr("class", "circleFocus3");
 
 
+        function updateBrushedRect(xVal) {
 
-        function updateBrushedRect(xVal){
+            if (xVal === undefined) {
+                const x = plot2XScale(dateExtent[0]) < 0 ? 0 : plot2XScale(dateExtent[0]);
+                const width = plot2XScale(dateExtent[1]) > plot2XScale.range()[1] ? plot2XScale.range()[1] : plot2XScale(dateExtent[1]);
+                return [x, width];
+            } else {
 
-        console.log(xDateRangePlot2,xVal)
-            if(xVal===undefined){
-                return xDateRangePlot2;
-            }else {
+                const x = plot2XScale(xVal[0]) < 0 ? 0 : plot2XScale(xVal[0]);
+                const maxX = plot2XScale(xVal[1]) > plot2XScale.range()[1] ? plot2XScale.range()[1] : plot2XScale(xVal[1])
+                const width = maxX - x;
+                svg2.select('.brush2')
+                        .select('.selection')
+                        .attr('x', x)
+                        .attr('width', width)
 
-                const diffwidth = plot2XScale(xVal[1]) - plot2XScale(xVal[0]);
-                const plot2XCord = plot2XScale(xVal[0]) < 0 ? 0 : plot2XScale(xVal[0]);
-                const calcDiffWidth = plot2XScale(xVal[1]) < 0 ? 0 :diffwidth>plot2XScale.range()[1]?plot2XScale.range()[1]:diffwidth;
-
-                return [plot2XCord,calcDiffWidth]
             }
-
-
-
 
 
         }
 
 
         function brushed3() {
+
+            if (!d3.event.sourceEvent) return; // Only transition after input.
+            if (!d3.event.selection) return; // Ignore empty selections.
+            console.log('brush3')
             const xVal = d3.event.selection.map(plot3Xscale.invert)
-
-            const collect = data1.filter((fd)=> {
-                return fd.dt >= xVal[0] && fd.dt <= xVal[1];
-
-            })
-
-            const brush2Cord = updateBrushedRect(xVal)
-
-
+            updateBrushedRect(xVal);
+            updateDailyPlot(xVal);
+            updateMonthlyPlot(xVal);
             if (plot2XScale(xVal[0]) !== plot2XScale(dateExtent[0])) {
                 initialState = false;
             }
-            svg.select(".line")
-                    .attr("d", priceSeries(collect));
-
-
-            svg2.select('.brush2')
-                    .select('.selection')
-                    .attr('x',brush2Cord[0] )
-                    .attr('width', brush2Cord[1])
 
 
         }
 
 
+        function updateDailyPlot(xVal) {
 
+            const filteredData = data1.filter((fd)=> {
+                return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
+            });
+
+            svg.select(".line")
+                    .attr("d", priceSeries(filteredData));
+        }
+
+        function updateMonthlyPlot(xVal) {
+
+            const filteredData = data2.filter((fd)=> {
+                return fd.dt >= xVal[0] && fd.dt <= xVal[1];
+
+            });
+
+            svg2.select(".line2")
+                    .attr("d", lineValuesPlot2(filteredData));
+        }
 
         //Dummy Data Plot Starts here
 
