@@ -322,7 +322,7 @@ function brush() {
         const top = yscale['Read BW demand'](bwExtents[0])
         const bottom = yscale['Read BW demand'](bwExtents[1])
         drawExtentsText([top, bottom], bwExtents, selection);
-        const filterData = data.slice().filter((d)=> d['Read BW demand'] >= extents[0][0] && d['Read BW demand'] < extents[0][1]);
+        const filterData = data.slice().filter((d)=> d['Read BW demand'] >= bwExtents[0] && d['Read BW demand'] < bwExtents[1]);
 
         showScatterPlot(filterData, foreground, brush_count, true);
     }
@@ -758,9 +758,6 @@ function plotScatterGlobal(plot, drawRect) {
     const {lineClassName, groupNodeClassName} = plot;
     const rectYCord = [-5, 5 + yScale.range()[0]];
     const sortedData = _.sortBy(selected.slice(), 'Read BW % diff');
-    const leftCoord = sortedData[0]['Read BW % diff'];
-    const rightCord = sortedData[sortedData.length - 1]['Read BW % diff']
-
 
     d3.select(`#${svgSelect}`).html("");
     const svg = d3.select(`#${svgSelect}`)
@@ -798,7 +795,9 @@ function plotScatterGlobal(plot, drawRect) {
         .attr("stroke-width", 2)
         .attr("stroke", "black");
 
-    if (drawRect) {
+    if (drawRect && sortedData.length > 0) {
+        const leftCoord = sortedData[0]['Read BW % diff'];
+        const rightCord = sortedData[sortedData.length - 1]['Read BW % diff']
         svg.append("rect")
             .classed('rectbrush', true)
             .attr("x", xScale(leftCoord))
