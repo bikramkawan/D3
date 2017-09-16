@@ -309,20 +309,52 @@ function brush() {
     // Render selected lines
     paths(selected, foreground, brush_count, true);
 
+    const selection = d3.select(this);
     if (extents.length === 0) {
         // Render BW plot
-        showScatterPlot(selected, foreground, brush_count,false);
-    } else {
+        showScatterPlot(selected, foreground, brush_count, false);
+    }
 
+    if (selection.data()[0] === 'Read BW demand') {
 
+        const bwExtents = yscale['Read BW demand'].brush.extent();
+
+        const top = yscale['Read BW demand'](bwExtents[0])
+        const bottom = yscale['Read BW demand'](bwExtents[1])
+        drawExtentsText([top, bottom], bwExtents, selection);
         const filterData = data.slice().filter((d)=> d['Read BW demand'] >= extents[0][0] && d['Read BW demand'] < extents[0][1]);
 
-        showScatterPlot(filterData, foreground, brush_count,true);
-
+        showScatterPlot(filterData, foreground, brush_count, true);
     }
 
 
 } // brush()
+
+function drawExtentsText(position, extents, selection) {
+
+    selection.selectAll('text').remove();
+
+    selection.append('text')
+        .classed('extent1', true)
+        .attr('x', 13)
+        .attr('y', position[0])
+        .text(extents[0].toFixed(2))
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "10px")
+        .attr("fill", "red");
+
+    selection.append('text')
+        .classed('extent2', true)
+        .attr('x', 13)
+        .attr('y', position[1])
+        .text(extents[1].toFixed(2))
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "10px")
+        .attr("fill", "red");
+
+
+}
+
 
 // render a set of polylines on a canvas
 function paths(selected, ctx, count) {
@@ -643,7 +675,7 @@ const constants = {
 }
 
 
-function showScatterPlot(selected, foreground, brush_count,drawRect) {
+function showScatterPlot(selected, foreground, brush_count, drawRect) {
     console.log("In showScatterPlot()...");
     // console.log(brush_count,foreground)
     // just to have some space around items.
@@ -701,7 +733,7 @@ function showScatterPlot(selected, foreground, brush_count,drawRect) {
     }
 
     const plotBrushRect = true;
-    plotScatterGlobal(plot1,drawRect);
+    plotScatterGlobal(plot1, drawRect);
 
     plotScatterGlobal(plot2);
 
@@ -724,7 +756,7 @@ function plotScatterGlobal(plot, drawRect) {
     const svgSelect = plot.svgSelector;
     const attributes = plot.attributes;
     const {lineClassName, groupNodeClassName} = plot;
-    const rectYCord = [-5, 5+yScale.range()[0]];
+    const rectYCord = [-5, 5 + yScale.range()[0]];
     const sortedData = _.sortBy(selected.slice(), 'Read BW % diff');
     const leftCoord = sortedData[0]['Read BW % diff'];
     const rightCord = sortedData[sortedData.length - 1]['Read BW % diff']

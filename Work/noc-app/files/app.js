@@ -166,6 +166,7 @@ d3.csv("results.csv", (raw_data) => {
                     d3.select(this).transition().attr("transform", "translate(" + xscale(d) + ")");
 
                     var extent = yscale[d].brush.extent();
+
                 }
 
                 // remove axis if dragged all the way left
@@ -215,6 +216,7 @@ d3.csv("results.csv", (raw_data) => {
         .append("title")
         .text("Drag up or down to brush along this axis");
 
+
     g.selectAll(".extent")
         .append("title")
         .text("Drag or resize this filter");
@@ -224,6 +226,7 @@ d3.csv("results.csv", (raw_data) => {
 
     // 5. Render full foreground
     brush();
+
 
 }); // d3.csv()
 
