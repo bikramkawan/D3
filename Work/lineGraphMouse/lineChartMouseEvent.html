@@ -450,6 +450,7 @@
         }
 
         function brush2Global(extents, brush3) {
+
             if (Math.min(...extents) < 0) return;
             const brushPlot2 = d3.brushX()
                     .extent([[extents[0], 0], [extents[1], smallPlotHeight]])
@@ -531,10 +532,11 @@
             if (!d3.event.sourceEvent) return; // Only transition after input.
             if (!d3.event.selection) return; // Ignore empty selections.
             const xVal = d3.event.selection.map(plot2XScale.invert)
-
+            console.log(brush3)
             const diffwidth = plot3Xscale(xVal[1]) - plot3Xscale(xVal[0]);
             updateDailyPlot(xVal);
 
+//            console.log(updateBrush3)
 
             svg3.select('.brush3')
                     .select('.selection')
@@ -628,6 +630,10 @@
                 const width = maxX - x;
                 updateBrush3 = xVal;
                 brush2Global([x, width], brush3)
+                const diffwidth = plot3Xscale(xVal[1]) - plot3Xscale(xVal[0]);
+                svg3.select('.brush3')
+                        .select('.selection')
+                        .attr('x', plot3Xscale(xVal[0])).attr('width', diffwidth)
 
             }
 
