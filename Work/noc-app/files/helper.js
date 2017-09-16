@@ -311,14 +311,14 @@ function brush() {
 
     if (extents.length === 0) {
         // Render BW plot
-        showScatterPlot(selected, foreground, brush_count);
+        showScatterPlot(selected, foreground, brush_count,false);
     } else {
 
 
         const filterData = data.slice().filter((d)=> d['Read BW demand'] >= extents[0][0] && d['Read BW demand'] < extents[0][1]);
-        console.log(extents, data, filterData)
-        showScatterPlot(filterData, foreground, brush_count);
-        console.log(constants.plot1XScale()(0))
+
+        showScatterPlot(filterData, foreground, brush_count,true);
+
     }
 
 
@@ -637,13 +637,13 @@ const constants = {
 
     plot3XScale: () => d3.scale.linear().domain([0, 70]).range([0, plot1Width - margins2.left - margins2.right]),
 
-    plot3YScale: ()=> d3.scale.linear().domain([0, 40]).range([plot1Width - margins2.top - margins2.bottom, 0])
+    plot3YScale: ()=> d3.scale.linear().domain([0, 40]).range([plot1Width - margins2.top - margins2.bottom, 0]),
 
 
 }
 
 
-function showScatterPlot(selected, foreground, brush_count) {
+function showScatterPlot(selected, foreground, brush_count,drawRect) {
     console.log("In showScatterPlot()...");
     // console.log(brush_count,foreground)
     // just to have some space around items.
@@ -664,7 +664,8 @@ function showScatterPlot(selected, foreground, brush_count) {
         svgSelector: 'plot1',
         lineClassName: 'plot1Line',
         groupNodeClassName: 'node1',
-        attributes: ["Read BW % diff", "Write BW % diff"]
+        attributes: ["Read BW % diff", "Write BW % diff"],
+
 
     }
     const margins2 = {
@@ -700,7 +701,7 @@ function showScatterPlot(selected, foreground, brush_count) {
     }
 
     const plotBrushRect = true;
-    plotScatterGlobal(plot1, plotBrushRect);
+    plotScatterGlobal(plot1,drawRect);
 
     plotScatterGlobal(plot2);
 
@@ -710,7 +711,7 @@ function showScatterPlot(selected, foreground, brush_count) {
 }
 
 
-function plotScatterGlobal(plot, brushedRect) {
+function plotScatterGlobal(plot, drawRect) {
 
     var chartDiv = document.getElementById("plot1");
     // Extract the width and height that was computed by CSS.
@@ -723,6 +724,11 @@ function plotScatterGlobal(plot, brushedRect) {
     const svgSelect = plot.svgSelector;
     const attributes = plot.attributes;
     const {lineClassName, groupNodeClassName} = plot;
+    const rectYCord = [-5, 5+yScale.range()[0]];
+    const sortedData = _.sortBy(selected.slice(), 'Read BW % diff');
+    const leftCoord = sortedData[0]['Read BW % diff'];
+    const rightCord = sortedData[sortedData.length - 1]['Read BW % diff']
+
 
     d3.select(`#${svgSelect}`).html("");
     const svg = d3.select(`#${svgSelect}`)
@@ -760,14 +766,14 @@ function plotScatterGlobal(plot, brushedRect) {
         .attr("stroke-width", 2)
         .attr("stroke", "black");
 
-    if (brushedRect) {
+    if (drawRect) {
         svg.append("rect")
             .classed('rectbrush', true)
-            .attr("x", 10)
-            .attr("y", 10)
-            .attr("width", 50)
-            .attr("height", 100)
-            .attr("stroke", "black");
+            .attr("x", xScale(leftCoord))
+            .attr("y", rectYCord[0])
+            .attr("width", xScale(rightCord) - xScale(leftCoord))
+            .attr("height", rectYCord[1])
+
     }
 
     const xAxix = d3.svg.axis().scale(xScale).orient("bottom").tickPadding(2);

@@ -61,6 +61,13 @@
   margin: 0 1%;
   position: relative;
 }
+.scatterPlot .bwcorr #plot1 .rectbrush,
+.scatterPlot .bwcorr #plot2 .rectbrush,
+.scatterPlot .bwcorr #plot3 .rectbrush {
+  fill-opacity: 0.2;
+  fill: darkred;
+  stroke: none;
+}
 .dark .scatterPlot .bwcorr #plot1 text,
 .dark .scatterPlot .bwcorr #plot2 text,
 .dark .scatterPlot .bwcorr #plot3 text {
