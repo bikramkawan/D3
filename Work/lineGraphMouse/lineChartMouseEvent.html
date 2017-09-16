@@ -218,7 +218,8 @@
         //If you minimize the time it will be impossible to differentiate between single click and double click.
         const DELAY = 300;
         let clicks = 0, timer = null;
-
+        let filteredData = data1;
+        let updateBrush3 = null;
         // appending of rect to svg on which to call zoom method
         svg.append("rect")
                 .attr("id", "rect")
@@ -262,12 +263,10 @@
         //Action when user click on save button to download the data
         d3.select('.saveData').on('click', ()=> {
 
-
             alert(`There are ${circleDrawnDict.size} circle in dictionary`)
 
             //circleDrawnDict -> is the variable which holds the circle drawn information
             // You can add your logic here to to create data to store in CSV .
-
 
         })
 
@@ -417,12 +416,9 @@
 
             });
 
-
+            const zoomedLine = getLine1Data(xt, yt);
             // Update the line
-            svg.select(".line")
-                    .attr("d", priceSeries
-                            .x((d)=>xt(d.dt))
-                            .y((d)=> yt(d.price)));
+            updateDailyPlot(null, zoomedLine)
 
             //Update the mouseover circle
             focusOverMouseMove.select("circle.y")
@@ -441,11 +437,34 @@
                     .call(zoom.transform, d3.zoomIdentity);
         }
 
+        function getLine1Data(xt, yt) {
+
+            const zoomScale = d3.line()
+                    .defined((d) =>d.price != 0)
+                    .x((d)=> xt(d.dt))
+                    .y((d)=>yt(d.price));
+
+            return zoomScale;
+
+
+        }
+
+        function brush2Global(extents, brush3) {
+            if (Math.min(...extents) < 0) return;
+            const brushPlot2 = d3.brushX()
+                    .extent([[extents[0], 0], [extents[1], smallPlotHeight]])
+                    .on("brush end", ()=> brushedPlot2(brush3));
+
+
+            d3.selectAll('.brush2').remove()
+            svg2.append("g")
+                    .attr("class", "brush2")
+                    .call(brushPlot2)
+                    .call(brushPlot2.move, extents);
+
+        }
 
         //Plot 2 Starts here
-        const brushPlot2 = d3.brushX()
-                .extent([[0, 0], [smallPlotWidth, smallPlotHeight]])
-                .on("brush end", brushedPlot2);
 
 
         //// Define the axes
@@ -499,28 +518,27 @@
                 .attr("class", "y axis")
                 .call(yAxisPlot2);
 
-        svg2.append("g")
-                .attr("class", "brush2")
-                .call(brushPlot2)
-                .call(brushPlot2.move, updateBrushedRect);
+        //brush2Global()
+        //  .call(brushPlot2.move, updateBrushedRect);
 
 
         focusCirclePlot2.append("circle")
                 .attr("class", "circleFocus2");
 
 
-        function brushedPlot2() {
+        function brushedPlot2(brush3) {
+
             if (!d3.event.sourceEvent) return; // Only transition after input.
             if (!d3.event.selection) return; // Ignore empty selections.
             const xVal = d3.event.selection.map(plot2XScale.invert)
 
             const diffwidth = plot3Xscale(xVal[1]) - plot3Xscale(xVal[0]);
             updateDailyPlot(xVal);
-            //updateMonthlyPlot(xVal)
+
+
             svg3.select('.brush3')
                     .select('.selection')
                     .attr('x', plot3Xscale(xVal[0])).attr('width', diffwidth)
-
 
         }
 
@@ -597,7 +615,7 @@
                 .attr("class", "circleFocus3");
 
 
-        function updateBrushedRect(xVal) {
+        function updateBrushedRect(xVal, brush3) {
 
             if (xVal === undefined) {
                 const x = plot2XScale(dateExtent[0]) < 0 ? 0 : plot2XScale(dateExtent[0]);
@@ -608,10 +626,8 @@
                 const x = plot2XScale(xVal[0]) < 0 ? 0 : plot2XScale(xVal[0]);
                 const maxX = plot2XScale(xVal[1]) > plot2XScale.range()[1] ? plot2XScale.range()[1] : plot2XScale(xVal[1])
                 const width = maxX - x;
-                svg2.select('.brush2')
-                        .select('.selection')
-                        .attr('x', x)
-                        .attr('width', width)
+                updateBrush3 = xVal;
+                brush2Global([x, width], brush3)
 
             }
 
@@ -623,28 +639,33 @@
 
             if (!d3.event.sourceEvent) return; // Only transition after input.
             if (!d3.event.selection) return; // Ignore empty selections.
-            console.log('brush3')
+
             const xVal = d3.event.selection.map(plot3Xscale.invert)
-            updateBrushedRect(xVal);
+            updateBrushedRect(xVal, true);
             updateDailyPlot(xVal);
             updateMonthlyPlot(xVal);
-            if (plot2XScale(xVal[0]) !== plot2XScale(dateExtent[0])) {
-                initialState = false;
-            }
 
 
         }
 
 
-        function updateDailyPlot(xVal) {
+        function updateDailyPlot(xVal, zoomedLine) {
 
-            const filteredData = data1.filter((fd)=> {
-                return fd.dt >= xVal[0] && fd.dt <= xVal[1];
 
-            });
+            if (xVal !== null) {
+                const filtered = data1.filter((fd)=> {
+                    return fd.dt >= xVal[0] && fd.dt <= xVal[1];
+
+                });
+                filteredData = filtered;
+                svg.select(".line")
+                        .attr("d", priceSeries(filtered));
+                return;
+            }
+
 
             svg.select(".line")
-                    .attr("d", priceSeries(filteredData));
+                    .attr("d", zoomedLine(filteredData));
         }
 
         function updateMonthlyPlot(xVal) {
