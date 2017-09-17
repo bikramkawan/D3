@@ -154,7 +154,8 @@ button {
     justify-content: space-around;
     max-height: 400px;
 }
-.chart,.chart1,.chart2{
+
+.chart, .chart1, .chart2 {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -164,6 +165,17 @@ button {
     text-transform: uppercase;
 
 }
-p{
+
+.chart, .chart1 {
+
+    background: lightgrey;
+    opacity: 0.5;
+}
+
+p {
     border-bottom: 1px solid;
+}
+
+.nodata {
+    font-size: 50px;
 }

@@ -8,7 +8,9 @@
 <div class="top">
 
     <div class="chart"><p>Daily Data</p>
-        <div id="chart"></div>
+        <div id="chart">
+            <div class="nodata">No Data Available</div>
+        </div>
     </div>
     <div class="panel"><h1>Support Panel</h1>
         <div class="score">
@@ -33,7 +35,9 @@
 </div>
 <div class="chartBottom">
     <div class="chart1"><p> Monthly Data</p>
-        <div id="chart2"></div>
+        <div id="chart2">
+            <div class="nodata">No Data Available</div>
+        </div>
     </div>
     <div class="chart2">
         <p> Yearly Data</p>
@@ -672,10 +676,18 @@
             const xVal = d3.event.selection.map(plot3Xscale.invert)
             updateBrushedRect(xVal, true);
             updateDailyPlot(xVal, true);
-
+            updateInitialMessage();
 
         }
 
+
+        function updateInitialMessage() {
+
+            d3.selectAll('.nodata').style('display', 'none');
+            d3.select('.chart').style('background', 'none').style('opacity', 1);
+            d3.select('.chart1').style('background', 'none').style('opacity', 1);
+
+        }
 
         function updateDailyPlot(xVal, smallPortion) {
 
