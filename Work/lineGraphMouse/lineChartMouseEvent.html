@@ -118,7 +118,7 @@
     let focusOverMouseMove = svg.append("g")    // Selector for mouseover small circle which runs over the line
             .style("display", "block")
 
-    const focusCirclePlot2 = svg2.append("g")    // Selector for mouseover small circle which runs over the line
+    let focusCirclePlot2 = svg2.append("g")    // Selector for mouseover small circle which runs over the line
 
 
     const focusCirclePlot3 = svg3.append("g")    // Selector for mouseover small circle which runs over the line
@@ -367,7 +367,6 @@
             // This is the method for detecting single click and double and do the action accordingly;
             d3.select(this).on('click', function () {
 
-
                 focusCirclePlot2.select("circle.circleFocus2")
                         .style("display", "block")
                         .attr('cx', ()=> plot2XScale(d.dt))
@@ -575,6 +574,7 @@
                     .attr("class", "brush2")
                     .call(brushPlot2)
 
+            focusCirclePlot2 = svg2.append("g")
 
             focusCirclePlot2.append("circle")
                     .attr("class", "circleFocus2");
