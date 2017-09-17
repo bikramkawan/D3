@@ -124,10 +124,10 @@
     const focusCirclePlot3 = svg3.append("g")    // Selector for mouseover small circle which runs over the line
 
 
-    const focusedCircleGroup = svg.append("g")          // Selector for the circles drawn after user clicks
+    let focusedCircleGroup = svg.append("g")          // Selector for the circles drawn after user clicks
             .classed('focusedClicked', true);
 
-    const dummyCirclePlot = svg.append("g")          // Selector for the circles drawn after user clicks
+    let dummyCirclePlot = svg.append("g")          // Selector for the circles drawn after user clicks
             .classed('dummyCircle', true);
 
     const dateScore = d3.select('.dataScore');   // Selector for the date value on the panel
@@ -221,7 +221,7 @@
             d3.select('#group').selectAll('rect').remove();
             d3.select('#group').selectAll('text').remove();
             d3.select('#group').selectAll('defs').remove();
-
+            d3.select('#group').selectAll('line').remove();
             // g-element for storing x-axis gridlines
             gX = svg.append("g")
                     .attr("class", "axis axis--x")
@@ -232,6 +232,17 @@
             gY = svg.append("g")
                     .attr("class", "axis axis--y")
                     .call(yAxis);
+
+
+            // assign zoom reset on click of button
+            d3.select(".reset").on("click", resetted);
+            d3.select(".toggleDraw").on("click", ()=> {
+                toogleDrawCircle = !toogleDrawCircle;
+                d3.select('.toggleDraw')
+                        .style('background', ()=>toogleDrawCircle ? 'lightsteelblue' : '');
+
+            });
+
 
             // Clip path to prevent shapes 'leaking' outside chart body
             svg.append("defs").append("clipPath")
@@ -256,6 +267,13 @@
             // draw small circle which runs over the line for mouseover
             focusOverMouseMove.append("circle")
                     .attr("class", "circleFocus");
+
+
+            focusedCircleGroup = svg.append("g")          // Selector for the circles drawn after user clicks
+                    .classed('focusedClicked', true);
+
+//            dummyCirclePlot = svg.append("g")          // Selector for the circles drawn after user clicks
+//                    .classed('dummyCircle', true);
 
             // this is the constant define to differentiate between single click and double click.
             // It was little bit tricky to add two events on the same DOM element. so the cirle will be drawn after 300ms
@@ -292,17 +310,7 @@
             // call zoom function on #rect
             d3.select("#rect").call(zoom)
             d3.select("#rect").call(zoom).on("dblclick.zoom", null);
-
-            // assign zoom reset on click of button
-            d3.select(".reset").on("click", resetted);
-            d3.select(".toggleDraw").on("click", ()=> {
-                toogleDrawCircle = !toogleDrawCircle;
-                d3.select('.toggleDraw')
-                        .style('background', ()=>toogleDrawCircle ? 'lightsteelblue' : '');
-
-            });
-
-
+            d3.select("#rect").call(zoom.transform, d3.zoomIdentity);
             //Action when user click on save button to download the data
             d3.select('.saveData').on('click', ()=> {
 
@@ -312,7 +320,6 @@
                 // You can add your logic here to to create data to store in CSV .
 
             })
-
 
         }
 
@@ -347,7 +354,6 @@
 
             const xt = transform.rescaleX(plot1XScale), yt = transform.rescaleY(plot1YScale);
             d = mouseDate(xt);
-            console.log(transform, d)
             // Update the score on the board with latest date and price
             dateScore.text(`Date:${d.date}`)
             priceScore.text(` Price:${d.price}`)
@@ -435,6 +441,7 @@
 
         // The function for zoom operation method
         function zoomed() {
+
             a = mouseDate(plot1XScale);
             gX.call(xAxis.scale(d3.event.transform.rescaleX(plot1XScale)));
             gY.call(yAxis.scale(d3.event.transform.rescaleY(plot1YScale)));
@@ -462,9 +469,12 @@
 
             });
 
-            const zoomedLine = getLine1Data(xt, yt);
+
             // Update the line
-            updateDailyPlot(null, zoomedLine)
+            svg.select(".line")
+                    .attr("d", priceSeries
+                            .x((d)=>xt(d.dt))
+                            .y((d)=> yt(d.price)));
 
             //Update the mouseover circle
             focusOverMouseMove.select("circle.y")
