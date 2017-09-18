@@ -7,9 +7,9 @@
 
 <div class="top">
 
-    <div class="chart"><p>Daily Data</p>
+    <div class="chart true"><p>Daily Data</p>
         <div id="chart">
-            <div class="nodata">No Data Available</div>
+            <div class="nodata1 true">No Data Available</div>
         </div>
     </div>
     <div class="panel"><h1>Support Panel</h1>
@@ -34,9 +34,9 @@
     </div>
 </div>
 <div class="chartBottom">
-    <div class="chart1"><p> Monthly Data</p>
+    <div class="chart1 true"><p> Monthly Data</p>
         <div id="chart2">
-            <div class="nodata">No Data Available</div>
+            <div class="nodata2 true">No Data Available</div>
         </div>
     </div>
     <div class="chart2">
@@ -557,10 +557,11 @@
 
             const diffwidth = plot3Xscale(xVal[1]) - plot3Xscale(xVal[0]);
             updateDailyPlot(xVal);
+            enableChart1();
 
-            svg3.select('.brush3')
-                    .select('.selection')
-                    .attr('x', plot3Xscale(xVal[0])).attr('width', diffwidth)
+//            svg3.select('.brush3')
+//                    .select('.selection')
+//                    .attr('x', plot3Xscale(xVal[0])).attr('width', diffwidth)
 
         }
 
@@ -640,20 +641,42 @@
             if (!d3.event.selection) return; // Ignore empty selections.
 
             const xVal = d3.event.selection.map(plot3Xscale.invert)
+
+            disableChart1();
             updateBrushRectPlot2(xVal, true);
-            updateDailyPlot(xVal, true);
-            updateInitialMessage();
+            //  updateDailyPlot(xVal, true);
+            enabelChart2();
 
         }
 
 
-        function updateInitialMessage() {
-
-            d3.selectAll('.nodata').style('display', 'none');
-            d3.select('.chart').style('background', 'none').style('opacity', 1);
-            d3.select('.chart1').style('background', 'none').style('opacity', 1);
+        function enabelChart2() {
+            d3.selectAll('.nodata2').classed('true', false);
+            d3.select('.chart1').classed('true', false);
 
         }
+
+
+        function disableChart1() {
+
+            d3.select('.chart').classed('true', true);
+            d3.selectAll('.nodata1').classed('true', true);
+            d3.select('#group').selectAll('g').remove();
+            d3.select('#group').selectAll('rect').remove();
+            d3.select('#group').selectAll('text').remove();
+            d3.select('#group').selectAll('defs').remove();
+            d3.select('#group').selectAll('line').remove();
+
+        }
+
+        function enableChart1() {
+
+            d3.select('.chart').classed('true', false);
+            d3.selectAll('.nodata1').classed('true', false);
+
+
+        }
+
 
         function updateDailyPlot(xVal, smallPortion) {
 

@@ -166,16 +166,54 @@ button {
 
 }
 
-.chart, .chart1 {
-
-    background: lightgrey;
-    opacity: 0.5;
-}
-
 p {
     border-bottom: 1px solid;
 }
 
-.nodata {
+.chart1.true {
+
+    background: lightgrey;
+    opacity: 0.5;
+
+}
+
+.chart.true {
+
+    background: lightgrey;
+    opacity: 0.5;
+
+}
+
+.chart1.false {
+
+    background: lightgrey;
+    opacity: 0.5;
+
+}
+
+.chart.false {
+
+    background: lightgrey;
+    opacity: 0.5;
+
+}
+
+.nodata1.true {
     font-size: 50px;
+    display: block;
+}
+
+.nodata2.true {
+    font-size: 50px;
+    display: block;
+}
+
+.nodata1 {
+    font-size: 50px;
+    display: none;
+}
+
+.nodata2 {
+    font-size: 50px;
+    display: none;
 }
