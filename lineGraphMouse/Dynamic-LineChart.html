@@ -150,7 +150,7 @@
     let toogleDrawCircle = false;
     const circleDrawnDict = new Map(); // Will store the information of circles drawn after clicked with date and price
     const parseTime = d3.timeParse("%Y-%m-%d");  // Date parser for D3;
-    const bisectDate = d3.bisector((d) =>d.p2).left;
+    const bisectDate = d3.bisector((d) =>d.p3).left;
 
     const xAxixText = "Date/Time";
     const yAxixText = "Price";
@@ -165,7 +165,7 @@
     // initial d3.line() object
     const priceSeries = d3.line()
             .defined((d) =>d.p1 != 0)
-            .x((d)=> x(d.p2))
+            .x((d)=> x(d.p3))
             .y((d)=>y(d.p1));
 
     // Main SVG Selector
@@ -209,17 +209,17 @@
     console.log(dummyDateToPlot)
 
     dummyDateToPlot.forEach((d, i) => {
-        d.p2 = +d.p2;
+        d.p3 = +d.p3;
         d.p1 = +d.p1;
     });
 
     console.log(dummyDateToPlot)
 
-//    (80% of vertical height) Y Axis: Column P1, X Axis: Column P2
-//(20% of vertical height) Y Axis: Column P5, X Axis: Column P2
+//    (80% of vertical height) Y Axis: Column P1, X Axis: Column p3
+//(20% of vertical height) Y Axis: Column P5, X Axis: Column p3
 
     // Load CSV
-    d3.csv("dynamicplotdata.csv", function (error, rawdata) {
+    d3.csv("newdata.csv", function (error, rawdata) {
         if (error) throw error;
         // format the data
         console.log(rawdata)
@@ -228,11 +228,10 @@
             data.push(
                     {
                         data: d.Date,
-                        p1: parseFloat(d.P1),
-                        p2: parseFloat(d.P2),
-                        p3: parseFloat(d.P3),
-                        p4: parseFloat(d.P4),
-                        p5: parseFloat(d.P5)
+                        p1: parseFloat(d.Col1),
+                        p3: parseFloat(d.Col2),
+                        p3: parseFloat(d.Col3),
+                        p4: parseFloat(d.Col4)
                     }
             )
 
@@ -240,8 +239,8 @@
         console.log(data, 'gg')
 
         // Scale the range of the data  to find max and min range to map when zoom in and zoom out
-        const date_max = d3.max(data, (d)=>d.p2);
-        x.domain(d3.extent(data, (d) => d.p2));
+        const date_max = d3.max(data, (d)=>d.p3);
+        x.domain(d3.extent(data, (d) => d.p3));
         y.domain(d3.extent(data, (d)=> d.p1));
 
         console.log(x.range(),x.domain())
@@ -364,7 +363,7 @@
                 focusedCircleGroup.append("circle")
                         .attr("class", "clickedCircle")
                         .attr('data-attr', ()=>e.date)
-                        .attr('cx', ()=> x(e.p2))
+                        .attr('cx', ()=> x(e.p3))
                         .attr('cy', ()=> y(e.p1))
 
             });
@@ -384,12 +383,12 @@
             var x0 = scale.invert(d3.mouse(g)[0])
             i = bisectDate(data, x0, 1)
             d0 = data[i - 1];
-            if (d0.p2 === date_max) {
+            if (d0.p3 === date_max) {
                 d = d0;
             }
             else {
                 var d1 = data[i]
-                d = x0 - d0.p2 > d1.p2 - x0 ? d1 : d0;
+                d = x0 - d0.p3 > d1.p3 - x0 ? d1 : d0;
             }
             return d;
         }
@@ -408,12 +407,12 @@
             d = mouseDate(xt);
 
             // Update the score on the board with latest date and price
-            dateScore.text(`Date:${d.date}`)
-            priceScore.text(` Price:${d.p1}`)
+            dateScore.text(`p3:${d.date}`)
+            priceScore.text(` P1:${d.p1}`)
 
 
             focusOverMouseMove.select("circle.circleFocus")
-                    .attr('cx', ()=> transform.applyX(x(d.p2)))
+                    .attr('cx', ()=> transform.applyX(x(d.p3)))
                     .attr('cy', ()=>transform.applyY(y(d.p1)));
 
 
@@ -439,7 +438,7 @@
                         focusedCircleGroup.append("circle")
                                 .attr("class", "clickedCircle")
                                 .attr('data-attr', (e)=>d.date)
-                                .attr('cx', ()=>transform.applyX(x(d.p2)))
+                                .attr('cx', ()=>transform.applyX(x(d.p3)))
                                 .attr('cy', ()=>transform.applyY(y(d.p1)))
                     }, DELAY);
 
@@ -495,7 +494,7 @@
                 focusedCircleGroup.append("circle")
                         .attr("class", "clickedCircle")
                         .attr('data-attr', ()=>e.date)
-                        .attr('cx', ()=> t.applyX(x(e.p2)))
+                        .attr('cx', ()=> t.applyX(x(e.p3)))
                         .attr('cy', ()=> t.applyY(y(e.p1)))
 
             });
@@ -505,7 +504,7 @@
                 focusedCircleGroup.append("circle")
                         .attr("class", "clickedCircle")
                         .attr('data-attr', ()=>e.date)
-                        .attr('cx', ()=> t.applyX(x(e.p2)))
+                        .attr('cx', ()=> t.applyX(x(e.p3)))
                         .attr('cy', ()=> t.applyY(y(e.p1)))
 
             });
@@ -514,14 +513,14 @@
             // Update the line
             svg.select(".line")
                     .attr("d", priceSeries
-                            .x((d)=>xt(d.p2))
+                            .x((d)=>xt(d.p3))
                             .y((d)=> yt(d.p1)));
 
             //Update the mouseover circle
             focusOverMouseMove.select("circle.y")
                     .classed("zoomed", true)
                     .attr("id", "one")
-                    .attr('cx', ()=>t.applyX(x(d.p2)))
+                    .attr('cx', ()=>t.applyX(x(d.p3)))
                     .attr('cy', ()=>t.applyY(y(d.p1)));
         }
 
