@@ -52,7 +52,7 @@ function zoomed() {
 
     // Update the line
     svg.select(".line")
-        .attr("d", priceSeries
+        .attr("d", topLineSeries
             .x((d)=>xt(d.p3))
             .y((d)=> yt(d.p1)));
 
@@ -91,7 +91,7 @@ function mouseMove() {
 
     // This is the method for detecting single click and double and do the action accordingly;
     d3.select(this).on('click', function () {
-
+        generateNewLine(d);
         // If Draw circle is false nothing will be drawn
         if (!toogleDrawCircle) return;
 
@@ -100,7 +100,7 @@ function mouseMove() {
             timer = setTimeout(function () {
                 clicks = 0;
 
-                circleDrawnDict.set(d.date, d) // Store the information of circle drawn to the dict;
+                circleDrawnDict.set(d.date, d); // Store the information of circle drawn to the dict;
                 console.log(circleDrawnDict, 'Circle is added successfully!')
 
                 const temp = localStorage.getItem(circleDrawnDict);
@@ -136,6 +136,59 @@ function mouseMove() {
 
     // Stop default event triggering of double click
     d3.select(this).on("dblclick", (e)=> d3.event.stopPropagation());
+
+
+}
+
+function generateNewLine(clickedData) {
+
+    const currentIndex = data.findIndex((d)=>d.date === clickedData.date)
+    const slicedData = data.slice(currentIndex, data.length);
+
+    const newLineData = slicedData.map((d, i)=> {
+        return {dt: (d.p2 - data[currentIndex - 1]['p2']) / (d.p3 - data[currentIndex - 1]['p3']), p3: d.p3};
+
+    })
+    const xScale = d3.scaleLinear()
+        .range([0, width]);
+
+//initial y-scale
+    const yScale = d3.scaleLinear()
+        .range([svgHeight1, 0]);
+    xScale.domain(d3.extent(newLineData, (d) => d.p3));
+    yScale.domain(d3.extent(newLineData, (d)=> d.dt));
+
+    const newLineSeries = d3.line()
+        .x((d)=> xScale(d.p3))
+        .y((d)=>yScale(d.dt))
+
+    const color = checkLineColor(newLineData);
+console.log(color)
+    newLines.append("path")
+        .attr("class", "newline")
+        .attr("d", newLineSeries(newLineData))
+        .attr('fill','none')
+        .attr('stroke', color);
+
+    // return computedLineData.slice(1, computedLineData.length);
+    // console.log(computedLineData.slice(1, computedLineData.length))
+
+
+}
+
+function checkLineColor(data) {
+
+
+    if (data[1].dt - data[0].dt > 0) {
+
+        return 'green';
+    } else if (data[1].dt - data[0].dt < 0) {
+
+        return 'red';
+    } else {
+
+        return 'steelblue';
+    }
 
 
 }

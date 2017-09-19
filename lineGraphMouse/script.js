@@ -76,6 +76,10 @@ const deleteMeDialog = d3.select('.delete');  // Selector for delete dialog
 const focusOverMouseMove = svg.append("g")    // Selector for mouseover small circle which runs over the line
     .style("display", "block")
 
+
+const newLines = svg.append("g")
+    .classed("newLines", true);
+
 const focusedCircleGroup = svg.append("g")          // Selector for the circles drawn after user clicks
     .classed('focusedClicked', true);
 
@@ -115,6 +119,9 @@ let currentSelect = null;
 //    (80% of vertical svgHeight1) Y Axis: Column P1, X Axis: Column p3
 //(20% of vertical svgHeight1) Y Axis: Column P5, X Axis: Column p3
 
+//   x.domain(d3.extent(data, (d) => d.p3));
+//  y.domain(d3.extent(data, (d)=> d.p1));
+//
 // Load CSV
 d3.csv("newdata.csv", function (error, rawdata) {
     if (error) throw error;
@@ -123,7 +130,7 @@ d3.csv("newdata.csv", function (error, rawdata) {
     rawdata.forEach((d, i) => {
         data.push(
             {
-                data: d.Date,
+                date: d.Date,
                 p1: parseFloat(d.Col1),
                 p2: parseFloat(d.Col2),
                 p3: parseFloat(d.Col3),
