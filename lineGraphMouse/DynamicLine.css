@@ -1,0 +1,112 @@
+body {
+  font: 10px Arial;
+  display: flex;
+  justify-content: space-around;
+}
+body .chartContainer {
+  display: flex;
+  flex-direction: column;
+  height: 93vh;
+}
+body .chartContainer #chartTop {
+  height: 68%;
+}
+body .chartContainer #chartBottom {
+  height: 30%;
+  margin-top: 1%;
+}
+.view {
+  fill: rgba(255, 255, 255, 0.2);
+}
+.axis path {
+  display: none;
+}
+.axis line {
+  stroke-opacity: 0.3;
+}
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.line2 {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+text {
+  font-size: 12px;
+  font-family: sans-serif;
+  text-anchor: middle;
+  dy: 1em;
+}
+button {
+  height: 50px;
+  font-size: 20px;
+}
+.circleDrawn,
+.score {
+  margin: 20px;
+  display: block;
+  font-size: 20px;
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 5px;
+  text-align: center;
+  background: lightblue;
+}
+.delete {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  position: absolute;
+  text-align: center;
+  width: 150px;
+  height: 50px;
+  padding: 2px;
+  font: 21px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+}
+.panel {
+  background: lightgray;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  justify-content: center;
+  text-align: center;
+}
+.panel > h1 {
+  font-size: 25px;
+}
+.panel > div,
+button {
+  margin-bottom: 15px;
+}
+.action {
+  display: flex;
+}
+.confirm {
+  flex: 1;
+  font-size: 24px;
+}
+.yes,
+.no {
+  flex: 1;
+  cursor: pointer;
+}
+.circleFocus {
+  fill: none;
+  stroke: steelblue;
+  r: 4;
+}
+#rect {
+  fill: none;
+  pointer-events: all;
+}
+.clickedCircle {
+  stroke: steelblue;
+  r: 4;
+  fill: red;
+}
