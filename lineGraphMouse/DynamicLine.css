@@ -107,6 +107,6 @@ button {
 }
 .clickedCircle {
   stroke: steelblue;
-  r: 4;
+  r: 8;
   fill: red;
 }

@@ -140,17 +140,27 @@ function mouseMove() {
 
 }
 
-function generateNewLine(clickedData) {
+
+function calcNewLines(clickedData) {
+
 
     const currentIndex = data.findIndex((d)=>d.date === clickedData.date)
     const slicedData = data.slice(currentIndex, data.length);
 
-    const newLineData = slicedData.map((d, i)=> {
+    const calcData = slicedData.map((d, i)=> {
         return {dt: (d.p2 - data[currentIndex - 1]['p2']) / (d.p3 - data[currentIndex - 1]['p3']), p3: d.p3};
 
     })
+
+
+    return calcData;
+
+}
+
+
+function calcScale(newLineData, d) {
     const xScale = d3.scaleLinear()
-        .range([0, width]);
+        .range([0, x(d.p3)]);
 
 //initial y-scale
     const yScale = d3.scaleLinear()
@@ -158,20 +168,93 @@ function generateNewLine(clickedData) {
     xScale.domain(d3.extent(newLineData, (d) => d.p3));
     yScale.domain(d3.extent(newLineData, (d)=> d.dt));
 
+    return {xScale, yScale};
+
+
+}
+function generateNewLine(clickedData) {
+
+
+    const newLineData = calcNewLines(clickedData);
+    const result = calcScale(newLineData, clickedData);
+    let xScaling = result.xScale;
+    let yScaling = result.yScale;
+
+
     const newLineSeries = d3.line()
-        .x((d)=> xScale(d.p3))
-        .y((d)=>yScale(d.dt))
+        .x((d)=> xScaling(d.p3))
+        .y((d)=>yScaling(d.dt))
 
     const color = checkLineColor(newLineData);
-console.log(color)
+
+
+    const countLines = newLines.selectAll('path').size()
+
     newLines.append("path")
-        .attr("class", "newline")
+        .attr("class", `newline-${countLines}`)
         .attr("d", newLineSeries(newLineData))
-        .attr('fill','none')
+        .attr('fill', 'none')
         .attr('stroke', color);
 
-    // return computedLineData.slice(1, computedLineData.length);
-    // console.log(computedLineData.slice(1, computedLineData.length))
+    let lastCoord = newLineData[newLineData.length - 1];
+
+    newLines.append("circle")
+        .attr("class", `tailCircle-${countLines}`)
+        .attr('fill', 'red')
+        .attr('r', 8)
+        .attr('data-attr', `c-${countLines}`)
+        .attr('cx', xScaling(lastCoord.p3))
+        .attr('cy', yScaling(lastCoord.dt))
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+    function dragstarted(d) {
+        console.log('start')
+        d3.select(this).raise().classed("active", true);
+    }
+
+    function dragged() {
+
+        const transform = d3.zoomTransform(this);
+        const xt = transform.rescaleX(x), yt = transform.rescaleY(y);
+        d = mouseDate(xt);
+
+        const tempNewLines = calcNewLines(d);
+
+        const {xScale, yScale} = calcScale(tempNewLines, d);
+        xScaling = xScale;
+        yScaling = yScale;
+
+        const tempLineSeries = d3.line()
+            .x((d)=> xScale(d.p3))
+            .y((d)=>yScale(d.dt))
+
+        const color = checkLineColor(tempNewLines);
+
+
+        let attId = null;
+        d3.select(this).datum(function () {
+            attId = this.dataset.attr[2];
+            return this.dataset;
+        })
+
+        const select = d3.select(`.newline-${attId}`);
+
+        select.attr("d", tempLineSeries(tempNewLines))
+            .attr('fill', 'none')
+            .attr('stroke', color);
+        lastCoord = tempNewLines[tempNewLines.length - 1];
+        d3.select(this).attr('cx', d3.event.x)
+            .attr('cy', d3.event.y)
+    }
+
+    function dragended(d) {
+        d3.select(this).attr('cx', xScaling(lastCoord.p3))
+            .attr('cy', yScaling(lastCoord.dt))
+
+    }
 
 
 }

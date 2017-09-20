@@ -51,7 +51,6 @@ const bottomLineSeries = d3.line()
     .y((d)=>y2(d.p4))
 
 
-
 // Main SVG Selector
 const svg = d3.select('#chartTop')
     .append("svg:svg")
@@ -76,9 +75,6 @@ const deleteMeDialog = d3.select('.delete');  // Selector for delete dialog
 const focusOverMouseMove = svg.append("g")    // Selector for mouseover small circle which runs over the line
     .style("display", "block")
 
-
-const newLines = svg.append("g")
-    .classed("newLines", true);
 
 const focusedCircleGroup = svg.append("g")          // Selector for the circles drawn after user clicks
     .classed('focusedClicked', true);
@@ -116,6 +112,7 @@ let gX2, gY2, xAxis2, yAxis2;
 const DELAY = 300;
 let clicks = 0, timer = null;
 let currentSelect = null;
+let newLines = null
 //    (80% of vertical svgHeight1) Y Axis: Column P1, X Axis: Column p3
 //(20% of vertical svgHeight1) Y Axis: Column P5, X Axis: Column p3
 
@@ -266,9 +263,13 @@ d3.csv("newdata.csv", function (error, rawdata) {
         .attr("x", 0 - (svgHeight1 / 2))
         .text(yAxixText);
 
+    newLines = svg.append("g")
+        .classed("newLines", true);
+
+
     // call zoom function on #rect
-    d3.select("#rect").call(zoom)
-    d3.select("#rect").call(zoom).on("dblclick.zoom", null);
+    // d        })3.select("#rect").call(zoom)
+    // d3.select("#rect").call(zoom).on("dblclick.zoom", null);
 
     // assign zoom reset on click of button
     d3.select(".reset").on("click", resetted);
