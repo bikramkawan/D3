@@ -112,7 +112,9 @@ let gX2, gY2, xAxis2, yAxis2;
 const DELAY = 300;
 let clicks = 0, timer = null;
 let currentSelect = null;
-let newLines = null
+let newLines = null;
+let zoomToggle = false;
+let zoom = null;
 //    (80% of vertical svgHeight1) Y Axis: Column P1, X Axis: Column p3
 //(20% of vertical svgHeight1) Y Axis: Column P5, X Axis: Column p3
 
@@ -150,7 +152,7 @@ d3.csv("newdata.csv", function (error, rawdata) {
 
     console.log(x.domain(), x2.domain(), y2.domain())
     // Zoom variable [defines how far you can zoom (scaleExtent) and pan (translateExtent)]
-    const zoom = d3.zoom()
+    zoom = d3.zoom()
         .scaleExtent([1, 5])
         .translateExtent([[-1000, -1000], [1000, 1000]])
         .on("zoom", zoomed)
@@ -268,8 +270,8 @@ d3.csv("newdata.csv", function (error, rawdata) {
 
 
     // call zoom function on #rect
-    // d        })3.select("#rect").call(zoom)
-    // d3.select("#rect").call(zoom).on("dblclick.zoom", null);
+    d3.select("#rect").call(zoom)
+    d3.select("#rect").call(zoom).on("dblclick.zoom", null);
 
     // assign zoom reset on click of button
     d3.select(".reset").on("click", resetted);
