@@ -23,32 +23,15 @@ function mouseDate(scale) {
 
 // The function for zoom operation method
 function zoomed() {
-    a = mouseDate(x);
+    //a = mouseDate(x);
     gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
     gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
     var t = d3.event.transform, xt = t.rescaleX(x), yt = t.rescaleY(y)
+
+    transform2 = t;
+    var xt2 = t.rescaleX(x2), yt2 = t.rescaleY(y2)
+
     d3.selectAll('.clickedCircle').remove()
-
-    // Update all the circles which are in dict
-    circleDrawnDict.forEach(e=> {
-        focusedCircleGroup.append("circle")
-            .attr("class", "clickedCircle")
-            .attr('data-attr', ()=>e.date)
-            .attr('cx', ()=> t.applyX(x(e.p3)))
-            .attr('cy', ()=> t.applyY(y(e.p1)))
-
-    });
-
-
-    // dummyDateToPlot.forEach((e, i)=> {
-    //     focusedCircleGroup.append("circle")
-    //         .attr("class", "clickedCircle")
-    //         .attr('data-attr', ()=>e.date)
-    //         .attr('cx', ()=> t.applyX(x(e.p3)))
-    //         .attr('cy', ()=> t.applyY(y(e.p1)))
-    //
-    // });
-
 
     // Update the line
     svg.select(".line")
@@ -56,12 +39,46 @@ function zoomed() {
             .x((d)=>xt(d.p3))
             .y((d)=> yt(d.p1)));
 
+    //
+    // //a = mouseDate(x);
+    // gX2.call(xAxis2.scale(d3.event.transform.rescaleX(x2)));
+    // gY2.call(yAxis2.scale(d3.event.transform.rescaleY(y2)));
+    // var t1 = d3.event.transform, xt1 = t.rescaleX(x2), yt1 = t1.rescaleY(y2)
+    // console.log(t)
+    // svg2.select(".line2")
+    //     .attr("d", bottomLineSeries
+    //         .x((d)=>xt1(d.p3))
+    //         .y((d)=> yt1(d.p4)));
+
     //Update the mouseover circle
     focusOverMouseMove.select("circle.y")
         .classed("zoomed", true)
         .attr("id", "one")
         .attr('cx', ()=>t.applyX(x(d.p3)))
         .attr('cy', ()=>t.applyY(y(d.p1)));
+}
+
+
+function zoomed2() {
+    //a = mouseDate(x);
+    console.log('test')
+    gX2.call(xAxis2.scale(d3.event.transform.rescaleX(x2)));
+    gY2.call(yAxis2.scale(d3.event.transform.rescaleY(y2)));
+    console.log(d3.event.transform)
+    var t = d3.event.transform;
+    console.log(t, transform2.k);
+    t.k = transform2.k + t.k;
+    t.x = transform2.x - t.x;
+    t.y = transform2.y - t.y;
+
+    console.log(t)
+    var xt = t.rescaleX(x2), yt = t.rescaleY(y2)
+
+
+    svg2.select(".line2")
+        .attr("d", bottomLineSeries
+            .x((d)=>xt(d.p3))
+            .y((d)=> yt(d.p4)));
 }
 
 // function defining behaviour on click of the reset button
@@ -80,8 +97,8 @@ function mouseMove() {
     d = mouseDate(xt);
 
     // Update the score on the board with latest date and price
-    dateScore.text(`p3:${d.p3.toExponential()}`)
-    priceScore.text(` P1:${d.p1}`)
+    dateScore.text(`Date:${d.date}`)
+    priceScore.text(`C1:${d.p1}`)
 
 
     focusOverMouseMove.select("circle.circleFocus")
@@ -100,19 +117,8 @@ function mouseMove() {
             timer = setTimeout(function () {
                 clicks = 0;
 
-                circleDrawnDict.set(d.date, d); // Store the information of circle drawn to the dict;
                 console.log(circleDrawnDict, 'Circle is added successfully!')
 
-                const temp = localStorage.getItem(circleDrawnDict);
-                d3.select('.circleDrawn')
-                    .text(`Count Circles: ${circleDrawnDict.size}`);  // Update the number of circles drawn on the board
-
-                //Add red small circle after user perfom single click action
-                focusedCircleGroup.append("circle")
-                    .attr("class", "clickedCircle")
-                    .attr('data-attr', (e)=>d.date)
-                    .attr('cx', ()=>transform.applyX(x(d.p3)))
-                    .attr('cy', ()=>transform.applyY(y(d.p1)))
             }, DELAY);
 
         } else {
@@ -160,7 +166,7 @@ function calcNewLines(clickedData) {
 
 function calcScale(newLineData, d) {
     const xScale = d3.scaleLinear()
-        .range([0, x(d.p3)]);
+        .range([x(d.p3), width]);
 
 //initial y-scale
     const yScale = d3.scaleLinear()
@@ -180,7 +186,7 @@ function generateNewLine(clickedData) {
     let xScaling = result.xScale;
     let yScaling = result.yScale;
 
-
+    console.log(xScaling(d.p3))
     const newLineSeries = d3.line()
         .x((d)=> xScaling(d.p3))
         .y((d)=>yScaling(d.dt))
@@ -196,7 +202,7 @@ function generateNewLine(clickedData) {
         .attr('fill', 'none')
         .attr('stroke', color);
 
-    let lastCoord = newLineData[newLineData.length - 1];
+    let lastCoord = newLineData[0];
 
     newLines.append("circle")
         .attr("class", `tailCircle-${countLines}`)
@@ -245,7 +251,7 @@ function generateNewLine(clickedData) {
         select.attr("d", tempLineSeries(tempNewLines))
             .attr('fill', 'none')
             .attr('stroke', color);
-        lastCoord = tempNewLines[tempNewLines.length - 1];
+        lastCoord = tempNewLines[0];
         d3.select(this).attr('cx', d3.event.x)
             .attr('cy', d3.event.y)
     }
