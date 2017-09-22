@@ -106,8 +106,70 @@ button {
   fill: none;
   pointer-events: all;
 }
-.clickedCircle {
+.newlines {
+  fill: none;
   stroke: steelblue;
-  r: 8;
-  fill: red;
+}
+.newlines.l-0.pos {
+  stroke: #a4fba6;
+}
+.newlines.l-0.neg {
+  stroke: #730000;
+}
+.newlines.l-1.pos {
+  stroke: #4ae54a;
+}
+.newlines.l-1.neg {
+  stroke: #670000;
+}
+.newlines.l-2.pos {
+  stroke: #30cb00;
+}
+.newlines.l-2.neg {
+  stroke: #5c0000;
+}
+.newlines.l-3.pos {
+  stroke: #0f9200;
+}
+.newlines.l-3.neg {
+  stroke: #500000;
+}
+.newlines.l-4.pos {
+  stroke: #006203;
+}
+.newlines.l-4.neg {
+  stroke: #450000;
+}
+.clickedCircle {
+  r: 4;
+}
+.clickedCircle.l-0.pos {
+  fill: #a4fba6;
+}
+.clickedCircle.l-0.neg {
+  fill: #730000;
+}
+.clickedCircle.l-1.pos {
+  fill: #4ae54a;
+}
+.clickedCircle.l-1.neg {
+  fill: #670000;
+}
+.clickedCircle.l-2.pos {
+  fill: #30cb00;
+}
+.clickedCircle.l-2.neg {
+  fill: #5c0000;
+}
+.clickedCircle.l-3.pos {
+  fill: #0f9200;
+}
+.clickedCircle.l-3.neg {
+  fill: #500000;
+}
+.clickedCircle.l-4.pos {
+  fill: #006203;
+}
+.clickedCircle.l-4.neg {
+  fill: #450000;
 }

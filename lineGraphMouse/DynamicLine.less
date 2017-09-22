@@ -120,13 +120,107 @@ button {
   r: 4;
 }
 
-#rect,#rect2 {
+#rect, #rect2 {
   fill: none;
   pointer-events: all;
 }
 
-.clickedCircle {
+.newlines {
+  fill: none;
   stroke: steelblue;
-  r: 8;
-  fill: red;
+  &.l-0 {
+    &.pos {
+      stroke: #a4fba6;
+    }
+    &.neg {
+      stroke: #730000;
+    }
+  }
+  &.l-1 {
+    &.pos {
+      stroke: #4ae54a;
+    }
+    &.neg {
+      stroke: #670000;
+    }
+  }
+
+  &.l-2 {
+    &.pos {
+      stroke: #30cb00;
+    }
+    &.neg {
+      stroke: #5c0000;
+    }
+  }
+
+  &.l-3 {
+    &.pos {
+      stroke: #0f9200;
+    }
+    &.neg {
+      stroke: #500000;
+    }
+  }
+
+  &.l-4 {
+    &.pos {
+      stroke: #006203;
+    }
+    &.neg {
+      stroke: #450000;
+    }
+  }
+
 }
+
+.clickedCircle {
+
+  r: 4;
+  &.l-0 {
+    &.pos {
+      fill: #a4fba6;
+    }
+    &.neg {
+      fill: #730000;
+    }
+  }
+  &.l-1 {
+    &.pos {
+      fill: #4ae54a;
+    }
+    &.neg {
+      fill: #670000;
+    }
+  }
+
+  &.l-2 {
+    &.pos {
+      fill: #30cb00;
+    }
+    &.neg {
+      fill: #5c0000;
+    }
+  }
+
+  &.l-3 {
+    &.pos {
+      fill: #0f9200;
+    }
+    &.neg {
+      fill: #500000;
+    }
+  }
+
+  &.l-4 {
+    &.pos {
+      fill: #006203;
+    }
+    &.neg {
+      fill: #450000;
+    }
+  }
+
+}
+
+
