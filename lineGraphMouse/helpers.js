@@ -76,6 +76,12 @@ function updateLinesOnZoom(transform) {
         generateNewLine(e, transform, true);
     });
 
+    randomLines.forEach((d)=> {
+        generateNewLine(data[d], transform, true);
+
+    })
+
+
 }
 
 function zoomed2() {
@@ -145,7 +151,6 @@ function mouseMove() {
         if (clicks === 1) {
             timer = setTimeout(function () {
                 clicks = 0;
-                console.log(lineDrawnDict.size)
                 lineDrawnDict.set(d.date, {...d, index: lineDrawnDict.size})
                 console.log(lineDrawnDict, 'Circle is added successfully!')
 

@@ -19,6 +19,7 @@ const lineDrawnDict = new Map(); // Will store the information of circles drawn 
 
 const bisectDate = d3.bisector((d) =>d.p3).left;
 
+const randomLines = [1062, 2060, 400];
 const xAxixText = "C3";
 const yAxixText = "C1";
 // initial x-scale
@@ -154,40 +155,13 @@ d3.csv("newdata.csv", function (error, rawdata) {
     // gX = svg.append("g")
     //     .attr("class", "axis axis--x")
     //     .attr("transform", "translate(0," + svgHeight1 + ")")
-      //  .call(xAxis);
+    //  .call(xAxis);
 
     // y-element for storing y-axis gridlines
     gY = svg.append("g")
         .attr("class", "axis axis--y")
         .call(yAxis);
 
-
-    // xAxis2 = d3.axisBottom(x2)
-    //     .ticks(8, 's')
-    //     .tickSize(-svgHeight2)
-    //     .tickPadding(10);
-    //
-    // // y-axis variable
-    // yAxis2 = d3.axisRight(y2)
-    //     .ticks(5, 's')
-    //     .tickSize(width)
-    //     .tickPadding(-20 - width);
-    //
-    // // g-element for storing x-axis gridlines
-    // gX2 = svg2.append("g")
-    //     .attr("class", "axis axis--x")
-    //     .attr("transform", "translate(0," + svgHeight2 + ")")
-    //     .call(xAxis2);
-    //
-    // // y-element for storing y-axis gridlines
-    // gY2 = svg2.append("g")
-    //     .attr("class", "axis axis--y")
-    //     .call(yAxis2);
-    //
-    //
-    // svg2.append("path")
-    //     .attr("class", "line2")
-    //     .attr("d", bottomLineSeries(data));
 
     //For chart 2
 
@@ -256,65 +230,64 @@ d3.csv("newdata.csv", function (error, rawdata) {
     d3.select(".reset").on("click", resetted);
 
 
-     // x-axis variable
-     xAxis2 = d3.axisBottom(x2)
-     .ticks(8, 's')
-     .tickSize(-svgHeight2)
-     .tickPadding(10);
+    // x-axis variable
+    xAxis2 = d3.axisBottom(x2)
+        .ticks(8, 's')
+        .tickSize(-svgHeight2)
+        .tickPadding(10);
 
-     // y-axis variable
-     yAxis2 = d3.axisRight(y2)
-     .ticks(5, 's')
-     .tickSize(width)
-     .tickPadding(-20 - width);
+    // y-axis variable
+    yAxis2 = d3.axisRight(y2)
+        .ticks(5, 's')
+        .tickSize(width)
+        .tickPadding(-20 - width);
 
-     // g-element for storing x-axis gridlines
-     gX2 = svg2.append("g")
-         .attr("class", "axis axis--x")
-         .attr("transform", "translate(0," + svgHeight2 + ")")
-         .call(xAxis2);
+    // g-element for storing x-axis gridlines
+    gX2 = svg2.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + svgHeight2 + ")")
+        .call(xAxis2);
 
-     // y-element for storing y-axis gridlines
-     gY2 = svg2.append("g")
-         .attr("class", "axis axis--y")
-         .call(yAxis2);
+    // y-element for storing y-axis gridlines
+    gY2 = svg2.append("g")
+        .attr("class", "axis axis--y")
+        .call(yAxis2);
 
-     //
-
-
-     svg2.append("defs").append("clipPath")
-         .attr("id", "clip2")
-         .append("rect")
-         .attr("width", width)
-         .attr("height", svgHeight2);
-
-     const chartBody2 = svg2.append("g")
-         .attr("class", "chartTopBody2")
-         .attr("clip-path", "url(#clip2)");
-
-     // mapping of data to line using the topLineSeries function
-     chartBody2.append("svg:path")
-     .data([data])
-     .attr("class", "line2")
-     .attr("d", bottomLineSeries);
+    //
 
 
-     zoom2 = d3.zoom()
-      .scaleExtent([1, 5])
-      .translateExtent([[-1000, -1000], [1000, 1000]])
-      .on("zoom", zoomed2)
+    svg2.append("defs").append("clipPath")
+        .attr("id", "clip2")
+        .append("rect")
+        .attr("width", width)
+        .attr("height", svgHeight2);
+
+    const chartBody2 = svg2.append("g")
+        .attr("class", "chartTopBody2")
+        .attr("clip-path", "url(#clip2)");
+
+    // mapping of data to line using the topLineSeries function
+    chartBody2.append("svg:path")
+        .data([data])
+        .attr("class", "line2")
+        .attr("d", bottomLineSeries);
 
 
-   //  appending of rect to svg on which to call zoom method
-     svg2.append("rect")
-         .attr("id", "rect2")
-         .attr("width", width)
-         .attr("height", svgHeight2)
+    zoom2 = d3.zoom()
+        .scaleExtent([1, 5])
+        .translateExtent([[-1000, -1000], [1000, 1000]])
+        .on("zoom", zoomed2)
 
-     // call zoom function on #rect
-     d3.select("#rect2").call(zoom2)
-     d3.select("#rect2").call(zoom2).on("dblclick.zoom", null);
 
+    //  appending of rect to svg on which to call zoom method
+    svg2.append("rect")
+        .attr("id", "rect2")
+        .attr("width", width)
+        .attr("height", svgHeight2)
+
+    // call zoom function on #rect
+    d3.select("#rect2").call(zoom2)
+    d3.select("#rect2").call(zoom2).on("dblclick.zoom", null);
 
 
     //Action when user click on save button to download the data
@@ -339,29 +312,13 @@ d3.csv("newdata.csv", function (error, rawdata) {
 
     d3.select('.plotCircles').on('click', ()=> {
         const transform = d3.zoomTransform(this);
-        const xt = transform.rescaleX(x), yt = transform.rescaleY(y);
-        d = mouseDate(xt);
-        // alert(`${circleDrawnDict.size} circles will be added to the plot from dictionary`)
-        dummyDateToPlot.forEach((e, i)=> {
-            focusedCircleGroup.append("circle")
-                .attr("class", "clickedCircle")
-                .attr('data-attr', ()=>e.date)
-                .attr('cx', ()=> x(e.p3))
-                .attr('cy', ()=> y(e.p1))
+        randomLines.forEach((d)=> {
+            generateNewLine(data[d], transform, false);
 
-        });
-
-        //circleDrawnDict -> is the variable which holds the circle drawn information
-        // You can add your logic here to to draw circle from CSV .
+        })
 
 
     })
-
-
-    // mouseMove function accesses #rect via this
-    // defines movement of hovertool after extracting
-    // current zoom extent parameters and applies
-    // these to circle and text objects
 
 
     //For deleting the circle action
