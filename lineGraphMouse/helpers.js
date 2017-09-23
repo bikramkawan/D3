@@ -37,7 +37,6 @@ function zoomed() {
             .x((d)=>xt(d.p3))
             .y((d)=> yt(d.p1)));
 
-    //  generateNewLine(null, t, true)
 
     if (t.x === 0 && t.y === 0) {
 
@@ -82,14 +81,9 @@ function zoomed2() {
 
     gX2.call(xAxis2.scale(d3.event.transform.rescaleX(x2)));
     gY2.call(yAxis2.scale(d3.event.transform.rescaleY(y2)));
-    console.log(d3.event.transform)
-    var t = d3.event.transform;
-    console.log(t, transform2.k);
-    t.k = transform2.k + t.k;
-    t.x = transform2.x - t.x;
-    t.y = transform2.y - t.y;
 
-    console.log(t)
+    var t = d3.event.transform;
+
     var xt = t.rescaleX(x2), yt = t.rescaleY(y2)
 
 
@@ -171,6 +165,8 @@ function mouseMove() {
 function calcNewLines(clickedData) {
 
     const currentIndex = data.findIndex((d)=>d.date === clickedData.date)
+
+    // const currentIndex = 1058
     const slicedData = data.slice(currentIndex, data.length);
 
     const calcData = slicedData.map((d, i)=> {
@@ -178,6 +174,7 @@ function calcNewLines(clickedData) {
 
     })
 
+    //   console.log(data[currentIndex],calcData)
 
     return calcData;
 
@@ -189,10 +186,10 @@ function calcScale(newLineData, d) {
         .range([x(d.p3), width]);
 
 //initial y-scale
-    const yScale = d3.scaleLinear()
-        .range([svgHeight1, 0]);
+    const yScale = y;
+
     xScale.domain(d3.extent(newLineData, (d) => d.p3));
-    yScale.domain(d3.extent(newLineData, (d)=> d.dt));
+
 
     return {xScale, yScale};
 
@@ -204,6 +201,7 @@ function generateNewLine(clickedData, transform, select) {
     const result = calcScale(newLineData, clickedData);
     let xScaling = result.xScale;
     let yScaling = result.yScale;
+    console.log(yScaling(newLineData[0].dt), newLineData, 'scale')
     var xt = transform.rescaleX(xScaling), yt = transform.rescaleY(yScaling)
     let newLineSeries = null;
 
@@ -233,7 +231,7 @@ function generateNewLine(clickedData, transform, select) {
 
 
 function generateCirlce(clickedData, transform, getClass) {
-
+//console.log(clickedData)
     newCircles.append("circle")
         .attr("class", `clickedCircle ${getClass}`)
         .attr('data-attr', clickedData.date)
@@ -293,18 +291,18 @@ function dragged() {
     const select = d3.select(`[data-attr="${attr}"]`)
     select.attr("d", tempLineSeries(tempNewLines))
 
-    d3.select(this).attr('cx', d3.event.x)
-        .attr('cy', d3.event.y)
+    d3.select(this).attr('cx', ()=> transform.applyX(x(d.p3)))
+        .attr('cy', ()=>transform.applyY(y(d.p1)))
 }
 
 function dragended(d) {
 
-    const transform = d3.zoomTransform(this);
-    const xt = transform.rescaleX(x), yt = transform.rescaleY(y);
-    d = mouseDate(xt);
-
-    d3.select(this).attr('cx', ()=> transform.applyX(x(d.p3)))
-        .attr('cy', ()=>transform.applyY(y(d.p1)))
+    // const transform = d3.zoomTransform(this);
+    // const xt = transform.rescaleX(x), yt = transform.rescaleY(y);
+    // d = mouseDate(xt);
+    //
+    // d3.select(this).attr('cx', ()=> transform.applyX(x(d.p3)))
+    //     .attr('cy', ()=>transform.applyY(y(d.p1)))
 
 }
 
