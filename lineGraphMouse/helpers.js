@@ -24,7 +24,7 @@ function mouseDate(scale) {
 // The function for zoom operation method
 function zoomed() {
     //a = mouseDate(x);
-    gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
+    gX2.call(xAxis2.scale(d3.event.transform.rescaleX(x)));
     gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
     var t = d3.event.transform, xt = t.rescaleX(x), yt = t.rescaleY(y)
 
@@ -43,6 +43,7 @@ function zoomed() {
 
         d3.selectAll('.newlines').remove();
         d3.selectAll('.clickedCircle').remove();
+        lineDrawnDict.clear();
         return;
     }
 
@@ -72,7 +73,7 @@ function zoomed() {
         .attr("id", "one")
         .attr('cx', ()=>t.applyX(x(d.p3)))
         .attr('cy', ()=>t.applyY(y(d.p1)));
-   
+
 }
 
 
@@ -146,7 +147,7 @@ function mouseMove() {
 
             clearTimeout(timer);    //prevent single-click action
             const findSelect = d3.selectAll(`[data-attr="${d.date}"]`).node(); // Gives the currenct selection DOM
-
+            console.log(findSelect)
             //If there is no circle drawn on this price value the dialog will not appear
             if (findSelect !== null) {
                 deleteMeDialog.style('display', 'flex')
@@ -225,7 +226,8 @@ function generateNewLine(clickedData, transform, select) {
         .attr('data-attr', clickedData.date)
         .attr("d", newLineSeries(newLineData))
 
-    generateCirlce(clickedData, transform, getClass, xt, yt, select)
+    generateCirlce(clickedData, transform, getClass, xt, yt, select);
+
 
 }
 
@@ -235,8 +237,20 @@ function generateCirlce(clickedData, transform, getClass) {
     newCircles.append("circle")
         .attr("class", `clickedCircle ${getClass}`)
         .attr('data-attr', clickedData.date)
+        .on('click', function () {
+
+            d3.select(this).datum(function () {
+                currentSelect = this.dataset.attr;
+
+            })
+            deleteMeDialog.style('display', 'flex')
+                .style("left", (d3.event.pageX + 20) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+
+        })
         .attr('cx', ()=> transform.applyX(x(clickedData.p3)))
         .attr('cy', ()=>transform.applyY(y(clickedData.p1)))
+
         .call(d3.drag()
             .on("start", dragstarted)
             .on("drag", dragged)
@@ -300,13 +314,15 @@ function getClassName(data) {
     const countPos = newLines.selectAll('path.pos').size()
     const countNeg = newLines.selectAll('path.neg').size()
 
+
     if (data[1].dt - data[0].dt > 0) {
-
-        return `l-${countPos} pos`;
-    } else if (data[1].dt - data[0].dt < 0) {
-
-
+        d3.select('.negative').text(`Neg:${countNeg + 1}`)
         return `l-${countNeg} neg`;
+
+    } else if (data[1].dt - data[0].dt < 0) {
+        d3.select('.positive').text(`Pos:${countPos + 1}`)
+        return `l-${countPos} pos`;
+
     } else {
 
         return 'steelblue';

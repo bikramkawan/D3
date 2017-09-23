@@ -92,7 +92,7 @@ let newCircles = null;
 
 let data = [], date_max, gX, gY, xAxis, yAxis;
 let gX2, gY2, xAxis2, yAxis2;
-const DELAY = 300;
+const DELAY = 700;
 let clicks = 0, timer = null;
 let currentSelect = null;
 
@@ -100,6 +100,8 @@ let zoomToggle = false;
 let zoom = null;
 let zoom2 = null;
 let transform2 = null;
+
+
 //
 // Load CSV
 d3.csv("newdata.csv", function (error, rawdata) {
@@ -135,24 +137,24 @@ d3.csv("newdata.csv", function (error, rawdata) {
         .translateExtent([[-1000, -1000], [1000, 1000]])
         .on("zoom", zoomed)
 
-
-    // x-axis variable
-    xAxis = d3.axisBottom(x)
-        .ticks(8, 's')
-        .tickSize(-svgHeight1)
-        .tickPadding(10);
+    //
+    // // x-axis variable
+    // xAxis = d3.axisBottom(x)
+    //     .ticks(8, 's')
+    //     .tickSize(-svgHeight1)
+    //     .tickPadding(10);
 
     // y-axis variable
     yAxis = d3.axisRight(y)
         .ticks(5)
         .tickSize(width)
-        .tickPadding(-20 - width);
+        .tickPadding(-20 - width)
 
     // g-element for storing x-axis gridlines
-    gX = svg.append("g")
-        .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + svgHeight1 + ")")
-        .call(xAxis);
+    // gX = svg.append("g")
+    //     .attr("class", "axis axis--x")
+    //     .attr("transform", "translate(0," + svgHeight1 + ")")
+      //  .call(xAxis);
 
     // y-element for storing y-axis gridlines
     gY = svg.append("g")
@@ -369,11 +371,13 @@ d3.csv("newdata.csv", function (error, rawdata) {
     //For deleting the circle action
     d3.select('.yes').on('click', ()=> {
         d3.selectAll(`[data-attr="${currentSelect}"]`).remove();
-        circleDrawnDict.delete(currentSelect);
+        lineDrawnDict.delete(currentSelect);
         deleteMeDialog.style('display', 'none');
-        d3.select('.circleDrawn').text(`Count Circles: ${circleDrawnDict.size}`);
-
-        console.log(circleDrawnDict, 'Circle is deleted Successfully!')
+        const countPos = newLines.selectAll('path.pos').size()
+        const countNeg = newLines.selectAll('path.neg').size()
+        d3.select('.negative').text(`Neg:${countNeg}`)
+        d3.select('.positive').text(`Pos:${countPos}`)
+        console.log(lineDrawnDict, 'Circle is deleted Successfully!')
 
     });
 

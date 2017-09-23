@@ -173,3 +173,7 @@ button {
 .clickedCircle.l-4.neg {
   fill: #450000;
 }
+.positive,
+.negative {
+  font-size: 16px;
+}
