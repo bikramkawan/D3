@@ -24,12 +24,10 @@ function mouseDate(scale) {
 // The function for zoom operation method
 function zoomed() {
     //a = mouseDate(x);
-    gX2.call(xAxis2.scale(d3.event.transform.rescaleX(x)));
+    //  gX2.call(xAxis2.scale(d3.event.transform.rescaleX(x)));
     gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
     var t = d3.event.transform, xt = t.rescaleX(x), yt = t.rescaleY(y)
 
-    transform2 = t;
-    var xt2 = t.rescaleX(x2), yt2 = t.rescaleY(y2)
 
     // Update the line
     svg.select(".line")
@@ -47,24 +45,18 @@ function zoomed() {
     }
 
 
-    d3.selectAll('.newlines').remove();
-    d3.selectAll('.clickedCircle').remove();
-
-    lineDrawnDict.forEach((e, i, index)=> {
-        generateNewLine(e, t, true);
-    });
-
+    updateLinesOnZoom(t);
 
     //
     // //a = mouseDate(x);
-    // gX2.call(xAxis2.scale(d3.event.transform.rescaleX(x2)));
-    // gY2.call(yAxis2.scale(d3.event.transform.rescaleY(y2)));
-    // var t1 = d3.event.transform, xt1 = t.rescaleX(x2), yt1 = t1.rescaleY(y2)
-    // console.log(t)
-    // svg2.select(".line2")
-    //     .attr("d", bottomLineSeries
-    //         .x((d)=>xt1(d.p3))
-    //         .y((d)=> yt1(d.p4)));
+    gX2.call(xAxis2.scale(d3.event.transform.rescaleX(x2)));
+    gY2.call(yAxis2.scale(d3.event.transform.rescaleY(y2)));
+    var t1 = d3.event.transform, xt1 = t.rescaleX(x2), yt1 = t1.rescaleY(y2)
+
+    svg2.select(".line2")
+        .attr("d", bottomLineSeries
+            .x((d)=>xt1(d.p3))
+            .y((d)=> yt1(d.p4)));
 
     //Update the mouseover circle
     focusOverMouseMove.select("circle.y")
@@ -76,6 +68,16 @@ function zoomed() {
 }
 
 
+function updateLinesOnZoom(transform) {
+    d3.selectAll('.newlines').remove();
+    d3.selectAll('.clickedCircle').remove();
+
+    lineDrawnDict.forEach((e,)=> {
+        generateNewLine(e, transform, true);
+    });
+
+}
+
 function zoomed2() {
     //a = mouseDate(x);
 
@@ -86,11 +88,24 @@ function zoomed2() {
 
     var xt = t.rescaleX(x2), yt = t.rescaleY(y2)
 
-
     svg2.select(".line2")
         .attr("d", bottomLineSeries
             .x((d)=>xt(d.p3))
             .y((d)=> yt(d.p4)));
+
+
+    gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
+    var t1 = d3.event.transform, xt1 = t.rescaleX(x), yt1 = t1.rescaleY(y)
+
+    // Update the line
+    svg.select(".line")
+        .attr("d", topLineSeries
+            .x((d)=>xt1(d.p3))
+            .y((d)=> yt1(d.p1)));
+
+    updateLinesOnZoom(t);
+
+
 }
 
 // function defining behaviour on click of the reset button
@@ -201,7 +216,6 @@ function generateNewLine(clickedData, transform, select) {
     const result = calcScale(newLineData, clickedData);
     let xScaling = result.xScale;
     let yScaling = result.yScale;
-    console.log(yScaling(newLineData[0].dt), newLineData, 'scale')
     var xt = transform.rescaleX(xScaling), yt = transform.rescaleY(yScaling)
     let newLineSeries = null;
 
