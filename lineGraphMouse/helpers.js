@@ -40,6 +40,7 @@ function zoomed() {
 
         d3.selectAll('.newlines').remove();
         d3.selectAll('.clickedCircle').remove();
+        updateScore(true)
         lineDrawnDict.clear();
         return;
     }
@@ -76,10 +77,12 @@ function updateLinesOnZoom(transform) {
         generateNewLine(e, transform, true);
     });
 
-    randomLines.forEach((d)=> {
-        generateNewLine(data[d], transform, true);
+    if (plotCircle) {
+        randomLines.forEach((d)=> {
+            generateNewLine(data[d], transform, true);
 
-    })
+        })
+    }
 
 
 }
@@ -161,7 +164,6 @@ function mouseMove() {
 
             clearTimeout(timer);    //prevent single-click action
             const findSelect = d3.selectAll(`[data-attr="${d.date}"]`).node(); // Gives the currenct selection DOM
-            console.log(findSelect)
             //If there is no circle drawn on this price value the dialog will not appear
             if (findSelect !== null) {
                 deleteMeDialog.style('display', 'flex')
@@ -277,13 +279,16 @@ function generateCirlce(clickedData, transform, getClass) {
 }
 
 function dragstarted(d) {
-    d3.select(this).raise().classed("active", true);
+    console.log('circle is dragging');
+
 }
 
 let dragXScale = null;
 let dragYScale = null;
 let dragData = null;
 function dragged() {
+
+    if (!toogleDrawCircle) return;
 
     const transform = d3.zoomTransform(this);
     const xt = transform.rescaleX(x), yt = transform.rescaleY(y);
@@ -325,7 +330,7 @@ function dragended(d) {
 
 }
 
-
+let countPositive=0, countNegative=0;
 function getClassName(data) {
 
     const countPos = newLines.selectAll('path.pos').size()
@@ -333,17 +338,38 @@ function getClassName(data) {
 
 
     if (data[1].dt - data[0].dt > 0) {
-        d3.select('.negative').text(`Neg:${countNeg + 1}`)
+        countNegative = countNeg + 1;
+        updateScore();
         return `l-${countNeg} neg`;
 
     } else if (data[1].dt - data[0].dt < 0) {
-        d3.select('.positive').text(`Pos:${countPos + 1}`)
+
+        countPositive = countPos + 1;
+        updateScore();
+
         return `l-${countPos} pos`;
 
     } else {
 
         return 'steelblue';
     }
+
+
+}
+
+
+function updateScore(clear) {
+
+    if (clear) {
+        console.log('cle')
+        d3.select('.negative').text(`Neg: 0 `);
+        d3.select('.positive').text(`Pos: 0`);
+        return;
+
+    }
+
+    d3.select('.negative').text(`Neg:${countNegative}`);
+    d3.select('.positive').text(`Pos:${countPositive}`)
 
 
 }

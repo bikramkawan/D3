@@ -15,6 +15,7 @@ const svgHeight1 = chart1Height - margin.top - margin.bottom;
 const svgHeight2 = chart2Height - margin.top - margin.bottom;
 
 let toogleDrawCircle = false;
+let plotCircle = false;
 const lineDrawnDict = new Map(); // Will store the information of circles drawn after clicked with date and price
 
 const bisectDate = d3.bisector((d) =>d.p3).left;
@@ -294,7 +295,7 @@ d3.csv("newdata.csv", function (error, rawdata) {
     d3.select('.saveData').on('click', ()=> {
 
 
-        alert(`There are ${circleDrawnDict.size} circle in dictionary`)
+        alert(`There are ${lineDrawnDict.size} circle in dictionary`)
 
         //circleDrawnDict -> is the variable which holds the circle drawn information
         // You can add your logic here to to create data to store in CSV .
@@ -311,11 +312,14 @@ d3.csv("newdata.csv", function (error, rawdata) {
 
 
     d3.select('.plotCircles').on('click', ()=> {
+        plotCircle = !plotCircle;
         const transform = d3.zoomTransform(this);
         randomLines.forEach((d)=> {
             generateNewLine(data[d], transform, false);
-
         })
+
+        d3.select('.plotCircles')
+            .style('background', ()=>plotCircle ? 'lightsteelblue' : '');
 
 
     })
