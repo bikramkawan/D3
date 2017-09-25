@@ -145,16 +145,16 @@ function mouseMove() {
         .attr('cx', ()=> transform.applyX(x(d.p3)))
         .attr('cy', ()=>transform.applyY(y(d.p1)));
 
-    console.log(transform,'move',zoomTransform)
-    // This is the method for detecting single click and double and do the action accordingly;
+     // This is the method for detecting single click and double and do the action accordingly;
     d3.select(this).on('click', function () {
 
         if (!toogleDrawCircle) return;
-            generateNewLine(d, transform);
+
              clicks++;  //count clicks
         if (clicks === 1) {
             timer = setTimeout(function () {
                 clicks = 0;
+                generateNewLine(d, transform);
                 lineDrawnDict.set(d.date, {...d, index: lineDrawnDict.size})
                 console.log(lineDrawnDict, 'Circle is added successfully!')
 
@@ -234,7 +234,7 @@ function generateNewLine(clickedData, transform, select) {
      }
 
     else {
-
+        console.log('nosel',clickedData)
         newLineSeries = d3.line()
             .x((d)=> xScaling(d.p3))
             .y((d)=>yScaling(d.dt))
@@ -255,7 +255,7 @@ function generateNewLine(clickedData, transform, select) {
 
 function generateCirlce(clickedData, transform, getClass) {
 //console.log(clickedData)
-    console.log(transform,'zz',zoomTransform)
+
     newCircles.append("circle")
         .attr("class", `clickedCircle ${getClass}`)
         .attr('data-attr', clickedData.date)
@@ -323,7 +323,9 @@ function dragged() {
 
     const select = d3.select(`[data-attr="${attr}"]`)
     select.attr("d", tempLineSeries(tempNewLines))
+    console.log(attr)
 
+    lineDrawnDict.set(attr,d)
     d3.select(this).attr('cx', ()=> transform.applyX(x(d.p3)))
         .attr('cy', ()=>transform.applyY(y(d.p1)))
 }

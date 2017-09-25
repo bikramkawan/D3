@@ -94,7 +94,7 @@ let newCircles = null;
 
 let data = [], date_max, gX, gY, xAxis, yAxis;
 let gX2, gY2, xAxis2, yAxis2;
-const DELAY = 700;
+const DELAY = 300;
 let clicks = 0, timer = null;
 let currentSelect = null;
 
