@@ -20,7 +20,7 @@ const lineDrawnDict = new Map(); // Will store the information of circles drawn 
 
 const bisectDate = d3.bisector((d) =>d.p3).left;
 
-const randomLines = [1062, 2060, 400];
+let randomLines = [1062, 2060, 400];
 const xAxixText = "C3";
 const yAxixText = "C1";
 // initial x-scale

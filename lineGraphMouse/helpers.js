@@ -20,13 +20,14 @@ function mouseDate(scale) {
     }
     return d;
 }
-
+let zoomTransform = null;
 // The function for zoom operation method
 function zoomed() {
     //a = mouseDate(x);
     //  gX2.call(xAxis2.scale(d3.event.transform.rescaleX(x)));
     gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
     var t = d3.event.transform, xt = t.rescaleX(x), yt = t.rescaleY(y)
+    zoomTransform = t;
 
 
     // Update the line
@@ -41,6 +42,7 @@ function zoomed() {
         d3.selectAll('.newlines').remove();
         d3.selectAll('.clickedCircle').remove();
         updateScore(true)
+        randomLines=[]
         lineDrawnDict.clear();
         return;
     }
@@ -143,14 +145,13 @@ function mouseMove() {
         .attr('cx', ()=> transform.applyX(x(d.p3)))
         .attr('cy', ()=>transform.applyY(y(d.p1)));
 
-
+    console.log(transform,'move',zoomTransform)
     // This is the method for detecting single click and double and do the action accordingly;
     d3.select(this).on('click', function () {
 
         if (!toogleDrawCircle) return;
-        generateNewLine(d, transform);
-
-        clicks++;  //count clicks
+            generateNewLine(d, transform);
+             clicks++;  //count clicks
         if (clicks === 1) {
             timer = setTimeout(function () {
                 clicks = 0;
@@ -190,8 +191,7 @@ function calcNewLines(clickedData) {
 
     // const currentIndex = 1058
     const slicedData = data.slice(currentIndex, data.length);
-
-    const calcData = slicedData.map((d, i)=> {
+        const calcData = slicedData.map((d, i)=> {
         return {dt: (d.p2 - data[currentIndex - 1]['p2']) / (d.p3 - data[currentIndex - 1]['p3']), p3: d.p3};
 
     })
@@ -226,13 +226,15 @@ function generateNewLine(clickedData, transform, select) {
     var xt = transform.rescaleX(xScaling), yt = transform.rescaleY(yScaling)
     let newLineSeries = null;
 
-    if (select) {
+    if (select || (transform.x!==0 && transform.y!==0)) {
         newLineSeries = d3.line()
             .x((d)=>xt(d.p3))
             .y((d)=> yt(d.dt))
 
+     }
 
-    } else {
+    else {
+
         newLineSeries = d3.line()
             .x((d)=> xScaling(d.p3))
             .y((d)=>yScaling(d.dt))
@@ -253,6 +255,7 @@ function generateNewLine(clickedData, transform, select) {
 
 function generateCirlce(clickedData, transform, getClass) {
 //console.log(clickedData)
+    console.log(transform,'zz',zoomTransform)
     newCircles.append("circle")
         .attr("class", `clickedCircle ${getClass}`)
         .attr('data-attr', clickedData.date)
@@ -289,8 +292,12 @@ let dragData = null;
 function dragged() {
 
     if (!toogleDrawCircle) return;
+    let transform = d3.zoomTransform(this);
+    if(zoomTransform!==null){
+        transform =zoomTransform;
+    }
 
-    const transform = d3.zoomTransform(this);
+    console.log(transform,'drag')
     const xt = transform.rescaleX(x), yt = transform.rescaleY(y);
     d = mouseDate(xt);
 
@@ -301,9 +308,11 @@ function dragged() {
     dragYScale = yScale;
     dragData = tempNewLines;
 
+    var xtChanged = transform.rescaleX(xScale), ytChanged = transform.rescaleY(yScale)
     const tempLineSeries = d3.line()
-        .x((d)=> xScale(d.p3))
-        .y((d)=>yScale(d.dt))
+        .x((d)=> xtChanged(d.p3))
+        .y((d)=>ytChanged(d.dt))
+
 
     const getClass = d3.select(this).attr('class');
     let attr = null;
