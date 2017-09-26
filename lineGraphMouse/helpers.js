@@ -36,16 +36,17 @@ function zoomed() {
             .x((d)=>xt(d.p3))
             .y((d)=> yt(d.p1)));
 
-
-    if (t.x === 0 && t.y === 0) {
-
-        d3.selectAll('.newlines').remove();
-        d3.selectAll('.clickedCircle').remove();
-        updateScore(true)
-        randomLines=[]
-        lineDrawnDict.clear();
-        return;
-    }
+    // Donot reset to score and other functional. Just zoom out
+    //
+    // if (t.x === 0 && t.y === 0) {
+    //
+    //     d3.selectAll('.newlines').remove();
+    //     d3.selectAll('.clickedCircle').remove();
+    //     updateScore(true)
+    //     randomLines=[]
+    //     lineDrawnDict.clear();
+    //     return;
+    // }
 
 
     updateLinesOnZoom(t);
@@ -234,7 +235,7 @@ function generateNewLine(clickedData, transform, select) {
      }
 
     else {
-        console.log('nosel',clickedData)
+
         newLineSeries = d3.line()
             .x((d)=> xScaling(d.p3))
             .y((d)=>yScaling(d.dt))
