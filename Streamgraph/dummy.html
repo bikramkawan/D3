@@ -1,0 +1,191 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+    <style>
+        body {
+            margin: 0 auto;
+        }
+
+        h1, h2, p {
+            margin: 0px;
+        }
+
+        svg {
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        .axis {
+            font: 10px sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .tooltip {
+            position: absolute;
+            width: 150px;
+            height: 35px;
+            pointer-events: none;
+        }
+
+    </style>
+    <p align="center" id="major">!</p>
+</head>
+
+<body>
+<script>
+
+    const newdata = [];
+     let sorteddata;
+    d3.csv('newdata.csv', function (err, rawdata) {
+        if (err) console.log(err);
+
+        rawdata.forEach((d, i) => {
+            newdata.push(
+                    {
+
+                        house: (d['House']),
+                        char: (d['Character']),
+                        season: parseFloat(d['Season']),
+                        value: parseFloat(d['Value'])
+
+                    }
+            )
+
+        });
+
+
+
+        sorteddata = _.sortBy(newdata.slice(),'season');
+           console.log(newdata,sorteddata)
+        var nested_data = d3.nest()
+                .key(function (d) {
+                    return d.season;
+                })
+                .entries(sorteddata);
+
+
+        var mqpdata = nested_data.map(function (d) {
+            var obj = {
+                season: parseFloat(d.key)
+            }
+
+            d.values.forEach(function (v) {
+                obj[v.house] = v.value;
+            })
+          //  console.log(obj)
+            return obj;
+        })
+        console.log(mqpdata)
+        buildStreamGraph(mqpdata);
+
+    })
+
+
+    function buildStreamGraph(mqpdata) {
+        var data = mqpdata;
+
+console.log(sorteddata)
+
+
+        const houses = _.uniqBy(sorteddata,'house').map(d=>d.house)
+        console.log(houses)
+
+        var stack = d3.stack()
+                .keys(houses)
+                .order(d3.stackOrderNone)
+                .offset(d3.stackOffsetWiggle);
+
+        var series = stack(data);
+
+        var width = 850,
+                height = 500;
+
+        var x = d3.scaleLinear()
+                .domain(d3.extent(data, function (d) {
+                    return d.season;
+                }))
+                .range([0, width]);
+
+        console.log(x.domain())
+// setup axis
+        var xAxis = d3.axisBottom(x);
+
+        var y = d3.scaleLinear()
+                .domain([0, d3.max(series, function (layer) {
+                    return d3.max(layer, function (d) {
+                        return d[0] + d[1];
+                    });
+                })])
+                .range([height / 2, -200]);
+console.log(y.domain())
+        var color = d3.scaleLinear()
+                .range(["#51D0D7", "#31B5BB"]);
+
+        var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+        var area = d3.area()
+                .x(function (d) {
+                    console.info('in area function', d);
+                    return x(d.data.season);
+                })
+                .y0(function (d) {
+                    return y(d[0]);
+                })
+                .y1(function (d) {
+                    return y(d[1]);
+                })
+                .curve(d3.curveBasis);
+
+        var tooltip = d3.select("body").append("div")
+                .attr("class", "tooltip");
+
+        var svg = d3.select("body").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+        console.log(series)
+        svg.selectAll("path")
+                .data(series)
+                .enter().append("path")
+                .attr("d", area)
+                .style("fill", function () {
+                    return color(Math.random());
+                })
+                .on('mouseover', function (d) {
+                    d3.select(this).style('fill', d3.rgb(d3.select(this).style("fill")).brighter());
+                    d3.select("#major").text(d.key);
+                    tooltip.transition()
+                            .duration(700)
+                            .style("opacity", 1);
+                    tooltip.html("Cantidad: " + "#familiares")
+                            .style("left", (d3.event.pageX + 5) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on('mouseout', function (d) {
+                    d3.select(this).style('fill',
+                            d3.rgb(d3.select(this).style("fill")).darker());
+                    d3.select("#major").text("Mouse over");
+                    tooltip.transition()
+                            .duration(500)
+                            .style("opacity", 0);
+                })
+
+        svg.append("g")
+                .attr("class", "axis axis--x")
+                .attr("transform", "translate(0," + (height) + ")")
+                .call(xAxis);
+
+        var xAxisGroup = svg.append("g").call(xAxis);
+    }
+
+</script>
+</body>
+</html>
