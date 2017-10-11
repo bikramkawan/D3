@@ -671,6 +671,11 @@ const constants = {
 
     plot3YScale: ()=> d3.scale.linear().domain([0, 40]).range([plot1Width - margins2.top - margins2.bottom, 0]),
 
+    plot1Attributes: ["Read BW % diff", "Write BW % diff"],
+
+    plot2Attributes: ["Read Latency", "Write Latency"],
+
+    plot3Attributes: ["Read Outstanding", "Write Outstanding"]
 
 }
 
@@ -695,8 +700,10 @@ function showScatterPlot(selected, foreground, brush_count, drawRect) {
         margins: margins1,
         svgSelector: 'plot1',
         lineClassName: 'plot1Line',
+        hoverTextClassNameY: 'hoverTextY1',
+        hoverTextClassNameX: 'hoverTextX1',
         groupNodeClassName: 'node1',
-        attributes: ["Read BW % diff", "Write BW % diff"],
+        attributes: constants.plot1Attributes,
 
 
     }
@@ -714,8 +721,10 @@ function showScatterPlot(selected, foreground, brush_count, drawRect) {
         margins: margins2,
         svgSelector: 'plot2',
         lineClassName: 'plot2Line',
+        hoverTextClassNameY: 'hoverTextY2',
+        hoverTextClassNameX: 'hoverTextX2',
         groupNodeClassName: 'node2',
-        attributes: ["Read Latency", "Write Latency"]
+        attributes: constants.plot2Attributes
 
     };
 
@@ -727,8 +736,10 @@ function showScatterPlot(selected, foreground, brush_count, drawRect) {
         margins: margins2,
         svgSelector: 'plot3',
         lineClassName: 'plot3Line',
+        hoverTextClassNameY: 'hoverTextY3',
+        hoverTextClassNameX: 'hoverTextX3',
         groupNodeClassName: 'node3',
-        attributes: ["Read Outstanding", "Write Outstanding"]
+        attributes: constants.plot3Attributes
 
     }
 
@@ -755,7 +766,7 @@ function plotScatterGlobal(plot, drawRect) {
     const selected = plot.dataset;
     const svgSelect = plot.svgSelector;
     const attributes = plot.attributes;
-    const {lineClassName, groupNodeClassName} = plot;
+    const {lineClassName, groupNodeClassName, hoverTextClassNameY, hoverTextClassNameX} = plot;
     const rectYCord = [-5, 5 + yScale.range()[0]];
     const sortedData = _.sortBy(selected.slice(), 'Read BW % diff');
 
@@ -794,6 +805,16 @@ function plotScatterGlobal(plot, drawRect) {
         .attr('class', lineClassName)
         .attr("stroke-width", 2)
         .attr("stroke", "black");
+
+
+    svg.append("text")
+        .attr("fill", "#414241")
+        .attr("class", hoverTextClassNameY)
+
+    svg.append("text")
+        .attr("fill", "#414241")
+        .attr("class", hoverTextClassNameX)
+
 
     if (drawRect && sortedData.length > 0) {
         const leftCoord = sortedData[0]['Read BW % diff'];
@@ -837,6 +858,7 @@ function plotScatterGlobal(plot, drawRect) {
 
 }
 
+const MODE = 'SCORE_BOARD';
 
 function highlightScatter(d) {
 
@@ -852,6 +874,8 @@ function highlightScatter(d) {
     d3.selectAll(`[data-attr-t3="${d.name}"]`).style("visibility", "visible")
 
     updateScatterLines(d);
+
+    addScatterText(d, MODE);
 
     return highlight(d);
 
@@ -871,6 +895,15 @@ function removeHighlightScatter(d) {
     d3.selectAll('.plot2Line').style('display', 'none');
     d3.selectAll('.plot3Line').style('display', 'none');
 
+    d3.selectAll('.hoverTextY1').style('display', 'none');
+    d3.selectAll('.hoverTextX1').style('display', 'none');
+    d3.selectAll('.hoverTextY2').style('display', 'none');
+    d3.selectAll('.hoverTextX2').style('display', 'none');
+    d3.selectAll('.hoverTextY3').style('display', 'none');
+    d3.selectAll('.hoverTextX3').style('display', 'none');
+
+    d3.selectAll('.score').selectAll('h4')
+        .style('opacity', '0');
 
     return unhighlight(d)
 
@@ -879,38 +912,129 @@ function removeHighlightScatter(d) {
 
 function updateScatterLines(d) {
 
-    const plot1XScale = constants.plot1XScale();
-    const plot1YScale = constants.plot1YScale();
-    const plot1 = [plot1XScale(d["Read BW % diff"]), plot1YScale(d["Write BW % diff"])];
+    const {plot1, plot2, plot3} = scaleMyValue(d);
 
     d3.select('.plot1Line')
-        .attr("d", `M0 ${plot1[1]} L${plot1[0]} ${plot1[1]} M${plot1[0]} ${plot1[1]} L${plot1[0]} ${plot1YScale.range()[0]}`)
+        .attr("d", `M0 ${plot1[1]} L${plot1[0]} ${plot1[1]} M${plot1[0]} ${plot1[1]} L${plot1[0]} ${constants.plot1YScale().range()[0]}`)
         .attr("stroke", ()=> color(d.group, 1))
         .style('display', 'block');
 
-    const plot2XScale = constants.plot2XScale();
-    const plot2YScale = constants.plot2YScale();
-    const plot2 = [plot2XScale(d["Read Latency"]), plot2YScale(d["Write Latency"])]
 
     d3.select('.plot2Line')
-        .attr("d", `M0 ${plot2[1]} L${plot2[0]} ${plot2[1]} M${plot2[0]} ${plot2[1]} L${plot2[0]} ${plot2YScale.range()[0]}`)
+        .attr("d", `M0 ${plot2[1]} L${plot2[0]} ${plot2[1]} M${plot2[0]} ${plot2[1]} L${plot2[0]} ${constants.plot2YScale().range()[0]}`)
         .attr("stroke", ()=> color(d.group, 1))
         .style('display', 'block');
 
 
-    const plot3XScale = constants.plot3XScale();
-    const plot3YScale = constants.plot3YScale();
-
-    const plot3 = [plot3XScale(d["Read Outstanding"]), plot3YScale(d["Write Outstanding"])]
-
     d3.select('.plot3Line')
-        .attr("d", `M0 ${plot3[1]} L${plot3[0]} ${plot3[1]} M${plot3[0]} ${plot3[1]} L${plot3[0]} ${plot3YScale.range()[0]}`)
+        .attr("d", `M0 ${plot3[1]} L${plot3[0]} ${plot3[1]} M${plot3[0]} ${plot3[1]} L${plot3[0]} ${constants.plot3YScale().range()[0]}`)
         .attr("stroke", ()=> color(d.group, 1))
         .style('display', 'block');
 
 
 }
 
+
+function scaleMyValue(d) {
+
+    const plot1XScale = constants.plot1XScale();
+    const plot1YScale = constants.plot1YScale();
+    const plot2XScale = constants.plot2XScale();
+    const plot2YScale = constants.plot2YScale();
+    const plot3XScale = constants.plot3XScale();
+    const plot3YScale = constants.plot3YScale();
+    const {plot1Attributes, plot2Attributes, plot3Attributes} = constants;
+
+    const plot1 = [plot1XScale(d[plot1Attributes[0]]), plot1YScale(d[plot1Attributes[1]])];
+    const plot2 = [plot2XScale(d[plot2Attributes[0]]), plot2YScale(d[plot2Attributes[1]])];
+    const plot3 = [plot3XScale(d[plot3Attributes[0]]), plot3YScale(d[plot3Attributes[1]])];
+
+    return {plot1, plot2, plot3}
+}
+
+
+function addScatterText(d, mode) {
+
+    const {plot1, plot2, plot3} = scaleMyValue(d);
+    const {plot1Attributes, plot2Attributes, plot3Attributes} = constants;
+
+    if (mode === MODE) {
+        renderXYValues(d);
+    }
+
+    d3.select('.hoverTextY1')
+        .attr('x', '0')
+        .attr('y', plot1[1])
+        .text(d[plot1Attributes[1]])
+        .style('display', 'block');
+
+    d3.select('.hoverTextX1')
+        .attr('x', plot1[0])
+        .attr('y', constants.plot1YScale().range()[0])
+        .text(d[plot1Attributes[0]])
+        .style('display', 'block');
+
+
+    d3.select('.hoverTextY2')
+        .attr('x', '0')
+        .attr('y', plot2[1])
+        .text(d[plot2Attributes[1]])
+        .style('display', 'block');
+
+    d3.select('.hoverTextX2')
+        .attr('x', plot2[0])
+        .attr('y', constants.plot2YScale().range()[0])
+        .text(d[plot2Attributes[0]])
+        .style('display', 'block');
+
+
+    d3.select('.hoverTextY3')
+        .attr('x', '0')
+        .attr('y', plot3[1])
+        .text(d[plot3Attributes[1]])
+        .style('display', 'block');
+
+    d3.select('.hoverTextX3')
+        .attr('x', plot3[0])
+        .attr('y', constants.plot3YScale().range()[0])
+        .text(d[plot3Attributes[0]])
+        .style('display', 'block');
+
+
+}
+
+
+function renderXYValues(d) {
+
+    const {plot1Attributes, plot2Attributes, plot3Attributes} = constants;
+
+    d3.select('.Y1')
+        .text(`Y=${d[plot1Attributes[1]]}`)
+        .style('opacity', '1');
+
+    d3.select('.X1')
+        .text(`X=${d[plot1Attributes[0]]}`)
+        .style('opacity', '1');
+
+
+    d3.select('.Y2')
+        .text(`Y=${d[plot2Attributes[1]]}`)
+        .style('opacity', '1');
+
+    d3.select('.X2')
+        .text(`X=${d[plot2Attributes[0]]}`)
+        .style('opacity', '1');
+
+
+    d3.select('.Y3')
+        .text(`Y=${d[plot3Attributes[1]]}`)
+        .style('opacity', '1');
+
+    d3.select('.X3')
+        .text(`X=${d[plot3Attributes[0]]}`)
+        .style('opacity', '1');
+
+}
 
 // TODO below. Add text to axis-line crossings.
 function addTextLabels(data) {

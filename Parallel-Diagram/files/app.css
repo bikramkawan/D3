@@ -49,6 +49,18 @@
   margin: 1%;
   height: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.scatterPlot .bwcorr .header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.scatterPlot .bwcorr .score {
+  margin-top: 80px;
 }
 .scatterPlot .bwcorr #plot1,
 .scatterPlot .bwcorr #plot2,
