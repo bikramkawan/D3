@@ -9,6 +9,7 @@ var parseTime = d3.timeParse("%d-%b-%y");
 
 // set the ranges
 var x = d3.scaleTime().range([0, width]);
+var x2 = d3.scaleTime().range([0, width]);
 var y = d3.scaleLinear().range([height, 0]);
 
 // define the line
@@ -29,6 +30,18 @@ var svg = d3.select(".chart").append("svg")
     .append("g")
     .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
+
+const zoom = d3.zoom()
+    .scaleExtent([1, 5])
+    .translateExtent([[0, 0], [width, height]])
+    .extent([[0, 0], [width, height]])
+    .on("zoom", zoomed);
+
+svg.append("defs").append("clipPath")
+    .attr("id", "clip")
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height);
 
 
 // format the data
@@ -53,12 +66,16 @@ console.log(data, bardata)
 x.domain(d3.extent(data, function (d) {
     return d.date;
 }));
+x2.domain(x.domain());
 // y.domain([0, d3.max(data, function (d) {
 //     return d.close;
 // })]);
 
 
 y.domain([0, 600]);
+
+const xAxis = d3.axisBottom(x),
+    yAxis = d3.axisLeft(y);
 
 // Add the valueline path.
 svg.append("path")
@@ -68,12 +85,23 @@ svg.append("path")
 
 // Add the X Axis
 svg.append("g")
+    .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x));
+    .call(xAxis);
 
 // Add the Y Axis
 svg.append("g")
-    .call(d3.axisLeft(y));
+    .attr("class", "axis axis--y")
+    .call(yAxis);
+
+
+svg.append("rect")
+    .attr("class", "zoom")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .call(zoom);
+
 var barY = d3.scaleLinear().range([0, height / 3]).domain([0, d3.max(bardata, function (d) {
     return d.value;
 })]);
@@ -202,3 +230,16 @@ limitsLine.selectAll('path')
 //     .attr('cy',(d)=>y(d.close))
 //     .attr('r',4)
 //     .attr('stroke','red')
+
+function zoomed() {
+    const t = d3.event.transform;
+    console.log(t, t.rescaleX(x2).domain(), t.rescaleX(x2))
+    x.domain(t.rescaleX(x2).domain());
+    svg.select(".line").attr("d", valueline);
+    svg.select(".axis--x").call(xAxis);
+    // d3.select('.rectG')
+    //     .attr("transform", `scale(${t.k})`)
+    // .attr("transform", "translate(" + 100 + "," + 100 + ")")
+
+
+}
