@@ -19,7 +19,7 @@ var valueline = d3.line()
         return x(d.date);
     })
     .y(function (d) {
-        return y(d.close);
+        return y(d.value);
     });
 
 // append the svg obgect to the body of the page
@@ -39,7 +39,25 @@ const zoom = d3.zoom()
     .on("zoom", zoomed);
 
 svg.append("defs").append("clipPath")
-    .attr("id", "clip")
+    .attr("id", "linedata")
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height);
+
+svg.append("defs").append("clipPath")
+    .attr("id", "bottomBar")
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height);
+
+svg.append("defs").append("clipPath")
+    .attr("id", "topBarGreen")
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height);
+
+svg.append("defs").append("clipPath")
+    .attr("id", "circles")
     .append("rect")
     .attr("width", width)
     .attr("height", height);
@@ -51,7 +69,7 @@ x.domain(d3.extent(lineData, function (d) {
 }));
 x2.domain(x.domain());
 y.domain([0, d3.max(lineData, function (d) {
-    return d.close;
+    return d.value;
 })]);
 
 
@@ -157,28 +175,35 @@ limitsLine.selectAll('path')
 console.log(height, y(greenAreaLimits[1].value), y(greenAreaLimits[0].value))
 
 
-const circles = svg.append("g").classed('circle', true)
+const circles = svg.append("g").classed('circles', true)
 
 circles.selectAll('circle')
     .data(lineData)
     .enter()
     .append('circle')
     .attr('cx', (d)=>x(d.date))
-    .attr('cy', (d)=>y(d.close))
-    .attr('r', 4)
-    .attr('fill', (d)=>fillCircle(d.close))
+    .attr('cy', (d)=>y(d.value))
+    .attr('fill', (d)=>fillCircle(d.value))
 
 function zoomed() {
     const t = d3.event.transform;
     x.domain(t.rescaleX(x2).domain());
     svg.select(".line").attr("d", valueline);
     svg.select(".axis--x").call(xAxis);
+
     circles.selectAll('circle')
         .attr('cx', (d)=> t.applyX(x2(d.date)))
-        .attr('cy', (d)=> y(d.close))
-    // d3.select('.rectG')
-    //     .attr("transform", `scale(${t.k})`)
-    // .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .attr('cy', (d)=> y(d.value))
+
+
+    bottomBarGraph.selectAll('rect')
+        .attr('x', (d, i)=>t.applyX(x2(d.date)))
+
+    topBarGreen.selectAll('rect')
+        .attr('x', (d, i)=>t.applyX(x2(d.date)))
+
+    topBarOrange.selectAll('rect')
+        .attr('x', (d, i)=>t.applyX(x2(d.date)))
 
 
 }

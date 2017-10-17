@@ -600,7 +600,7 @@ function formatData() {
     const lineData = glucoseNew.map(function (d) {
         return {
             date: formatTime(d.created),
-            close: parseFloat(d.value)
+            value: parseFloat(d.value)
         }
 
     });

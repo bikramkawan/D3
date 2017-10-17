@@ -2,7 +2,7 @@
   fill: none;
   stroke: grey;
   stroke-width: 5px;
-  clip-path: url(#clip);
+  clip-path: url(#linedata);
 }
 
 .hyper, .hypo {
@@ -29,12 +29,23 @@
 .bottomBar {
   fill: grey;
   opacity: 0.5;
+  clip-path: url(#bottomBar);
+
 }
 
 .topBarGreen {
   fill: lightgreen;
+  clip-path: url(#topBarGreen);
 }
 
 .topBarOrange {
   fill: orange;
+}
+
+.circles {
+  circle {
+    r: 4;
+  }
+  clip-path: url(#circles);
+
 }
