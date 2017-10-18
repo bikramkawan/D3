@@ -368,7 +368,7 @@ var newdata = {
         {
             "source": "app",
             "created": "04.10.17 12:30",
-            "value": 38,
+            "value": 138,
             "type": "lunch",
             "comment": "salat mit putenbrust und brot"
         },
@@ -383,7 +383,7 @@ var newdata = {
     "activity": [
         {
             "source": "app",
-            "created": "02.10.17 08:30",
+            "created": "02.10.17 07:00",
             "duration": 1,
             "intensity": "strong",
             "type": "jog",
@@ -391,7 +391,7 @@ var newdata = {
         },
         {
             "source": "web",
-            "created": "02.10.17 13:00",
+            "created": "02.10.17 08:25",
             "duration": 0.75,
             "intensity": "light",
             "type": "walking",
@@ -399,7 +399,7 @@ var newdata = {
         },
         {
             "source": "app",
-            "created": "02.10.17 19:45",
+            "created": "02.10.17 12:30",
             "duration": 1.25,
             "intensity": "medium",
             "type": "fitness_center",
@@ -407,7 +407,7 @@ var newdata = {
         },
         {
             "source": "web",
-            "created": "03.10.17 13:00",
+            "created": "02.10.17 23:00",
             "duration": 0.75,
             "intensity": "medium",
             "type": "walking",
@@ -415,7 +415,7 @@ var newdata = {
         },
         {
             "source": "app",
-            "created": "03.10.17 19:45",
+            "created": "03.10.17 07:00",
             "duration": 1.25,
             "intensity": "strong",
             "type": "fitness_center",
@@ -423,7 +423,7 @@ var newdata = {
         },
         {
             "source": "app",
-            "created": "04.10.17 08:30",
+            "created": "03.10.17 12:30",
             "duration": 1,
             "intensity": "medium",
             "type": "jog",
@@ -431,11 +431,42 @@ var newdata = {
         },
         {
             "source": "web",
-            "created": "04.10.17 13:00",
+            "created": "03.10.17 23:00",
             "duration": 0.75,
             "intensity": "light",
             "type": "walking",
             "comment": "mittagspause, parkrunde"
+        }, {
+            "source": "app",
+            "created": "04.10.17 07:00",
+            "duration": 1.25,
+            "intensity": "medium",
+            "type": "fitness_center",
+            "comment": "bodypump"
+        },
+        {
+            "source": "web",
+            "created": "04.10.17 08:25",
+            "duration": 0.75,
+            "intensity": "medium",
+            "type": "walking",
+            "comment": "mittagspause, parkrunde"
+        },
+        {
+            "source": "app",
+            "created": "04.10.17 12:30",
+            "duration": 1.25,
+            "intensity": "strong",
+            "type": "fitness_center",
+            "comment": "bodypump"
+        },
+        {
+            "source": "app",
+            "created": "04.10.17 23:00",
+            "duration": 1.25,
+            "intensity": "medium",
+            "type": "fitness_center",
+            "comment": "bodypump"
         }
     ],
     "medication": [
@@ -454,21 +485,6 @@ var newdata = {
             "name": "novorapid",
             "type": "bolus_insulin",
             "comment": "nach breakfast"
-        },
-        {
-            "source": "web",
-            "created": "02.10.17 10:35",
-            "value": 2,
-            "name": "mix_insulin",
-            "type": "mix_insulin"
-        },
-        {
-            "source": "web",
-            "created": "02.10.17 11:11",
-            "value": 1,
-            "name": "aspirin",
-            "type": "other_medication",
-            "comment": "kopfschmerzen"
         },
         {
             "source": "app",
@@ -497,7 +513,7 @@ var newdata = {
         {
             "source": "app",
             "created": "03.10.17 12:30",
-            "value": 3,
+            "value": 13,
             "name": "novorapid",
             "type": "bolus_insulin",
             "comment": "zum lunch"
@@ -505,7 +521,7 @@ var newdata = {
         {
             "source": "app",
             "created": "03.10.17 23:00",
-            "value": 5,
+            "value": 15,
             "name": "lantus",
             "type": "basis_insulin",
             "comment": "wie immer abends"
@@ -527,24 +543,9 @@ var newdata = {
             "comment": "nach breakfast"
         },
         {
-            "source": "web",
-            "created": "04.10.17 10:35",
-            "value": 2,
-            "name": "mix_insulin",
-            "type": "mix_insulin"
-        },
-        {
-            "source": "web",
-            "created": "04.10.17 11:11",
-            "value": 1,
-            "name": "aspirin",
-            "type": "other_medication",
-            "comment": "kopfschmerzen"
-        },
-        {
             "source": "app",
             "created": "04.10.17 12:30",
-            "value": 7,
+            "value": 27,
             "name": "novorapid",
             "type": "bolus_insulin",
             "comment": "zum lunch"
@@ -552,7 +553,7 @@ var newdata = {
         {
             "source": "app",
             "created": "04.10.17 23:00",
-            "value": 5,
+            "value": 25,
             "name": "lantus",
             "type": "basis_insulin",
             "comment": "wie immer abends"
@@ -588,7 +589,8 @@ var greenAreaLimits = [{
 
 
 function formatData() {
-    var formatTime = d3.timeParse("%d.%m.%y %H:%M");
+    var formatTime = d3.timeParse("%d.%m.%y %H");
+
 
     const glucoseNew = newdata.glucose;
     const meal = newdata.meal;
@@ -598,25 +600,27 @@ function formatData() {
 
 // format the data
     const lineData = glucoseNew.map(function (d) {
+
         return {
-            date: formatTime(d.created),
+            date: formatTime(d.created.split(':')[0]),
             value: parseFloat(d.value)
         }
 
     });
+
 
     const bardata = meal.map((d)=> {
         return {
-            date: formatTime(d.created),
+            date: formatTime(d.created.split(':')[0]),
             value: parseFloat(d.value)
         }
 
     });
 
-
+    console.log(bardata)
     const lightGreenData = medication.map((d)=> {
         return {
-            date: formatTime(d.created),
+            date: formatTime(d.created.split(':')[0]),
             value: parseFloat(d.value)
         }
 
@@ -624,8 +628,8 @@ function formatData() {
 
     const orangeData = activity.map((d)=> {
         return {
-            date: formatTime(d.created),
-            value: parseFloat(d.duration)
+            date: formatTime(d.created.split(':')[0]),
+            intensity: d.intensity
         }
 
     });
@@ -637,10 +641,8 @@ function formatData() {
 }
 
 
-function bottomBarHeight(d, height) {
-    return d <= 100 ? (height / 3) : (height / 3 + 20)
 
-}
+
 
 function calcGreenHeight(data, height) {
 
@@ -661,7 +663,6 @@ function calcOrangeHeight(d, height) {
 // <10 : 1/27 of graph height
 // 10-19: 2/27 of graph height
 // >20 : 3/27 of graph height
-
     if (d === 'light') return (height / 27)
     if (d === 'medium') return ((2 / 27) * height)
     if (d === 'strong') return ((3 / 27) * height)

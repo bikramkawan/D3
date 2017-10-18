@@ -27,12 +27,18 @@
   opacity: 0.5;
   clip-path: url(#bottomBar);
 }
+.fadeVis {
+  fill: red;
+  opacity: 0.5;
+  clip-path: url(#bottomBar);
+}
 .topBarGreen {
   fill: lightgreen;
   clip-path: url(#topBarGreen);
 }
 .topBarOrange {
   fill: orange;
+  clip-path: url(#topBarOrange);
 }
 .circles {
   clip-path: url(#circles);

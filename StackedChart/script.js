@@ -8,6 +8,9 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 
 const bottomBarWidth = 10;
 const topBarWidth = 10;
+const fadeVisData = [5, 4, 3, 2, 1];
+const fadeVisOffset = 2;
+const fadeVisCollection = new Map();
 // set the ranges
 var x = d3.scaleTime().range([0, width]);
 var x2 = d3.scaleTime().range([0, width]);
@@ -55,6 +58,13 @@ svg.append("defs").append("clipPath")
     .append("rect")
     .attr("width", width)
     .attr("height", height);
+
+svg.append("defs").append("clipPath")
+    .attr("id", "topBarOrange")
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height);
+
 
 svg.append("defs").append("clipPath")
     .attr("id", "circles")
@@ -122,6 +132,7 @@ var barY = d3.scaleLinear()
 const bottomBarGraph = svg.append("g").classed('bottomBar', true)
 // .attr("transform", "translate(0," + (height-barY.domain()[1]-50) + ")");
 
+var fadeVisGraph = svg.append("g").classed('fadeVis', true)
 
 bottomBarGraph.selectAll('rect')
     .data(bardata)
@@ -129,8 +140,8 @@ bottomBarGraph.selectAll('rect')
     .append('rect')
     .attr('x', (d, i)=>x(d.date))
     .attr('width', bottomBarWidth)
-    .attr('y', (d, i)=>height - bottomBarHeight(d.value, height))
-    .attr('height', (d)=>bottomBarHeight(d.value, height))
+    .attr('y', (d, i)=>height - bottomBarHeight(d, height))
+    .attr('height', (d)=>bottomBarHeight(d, height))
 
 
 const topBarGreen = svg.append("g").classed('topBarGreen', true)
@@ -148,16 +159,14 @@ topBarGreen.selectAll('rect')
     .attr('height', (d)=>calcGreenHeight(d, height))
 
 
-console.log(lightGreenData, orangeData)
-
 topBarOrange.selectAll('rect')
     .data(orangeData)
     .enter()
     .append('rect')
     .classed('topOrange', true)
     .attr('x', (d, i)=>x(d.date))
-    .attr('width', 50)
-    .attr('y', (d, i)=> (calcGreenHeight(lightGreenData[i])))
+    .attr('width', topBarWidth)
+    .attr('y', (d, i)=> calcGreenHeight(lightGreenData[i], height))
     .attr('height', (d)=> calcOrangeHeight(d.intensity, height))
 
 
@@ -199,11 +208,50 @@ function zoomed() {
     bottomBarGraph.selectAll('rect')
         .attr('x', (d, i)=>t.applyX(x2(d.date)))
 
+
+    fadeVisCollection.forEach((e)=> {
+        d3.select(`[data-attr="${e.date.toString()}"]`)
+            .selectAll('rect')
+            .attr('x', ()=>t.applyX(x2(e.date)))
+
+    })
+
     topBarGreen.selectAll('rect')
         .attr('x', (d, i)=>t.applyX(x2(d.date)))
 
     topBarOrange.selectAll('rect')
         .attr('x', (d, i)=>t.applyX(x2(d.date)))
 
+
+}
+
+
+function bottomBarHeight(data, height) {
+
+    const maxBottomHeight = (height / 3);
+
+    if (data.value > 100) {
+        let prevHeight = maxBottomHeight;
+        d3.selectAll(`[data-attr="${data.date}"]`).remove()
+        const g = fadeVisGraph.append('g').attr('data-attr', `${data.date}`)
+        fadeVisCollection.set(data.date, data)
+        g.selectAll('rect')
+            .data(fadeVisData)
+            .enter()
+            .append('rect')
+            .attr('x', ()=>x(data.date))
+            .attr('width', bottomBarWidth)
+            .attr('y', function (d, i) {
+                prevHeight = prevHeight - d - fadeVisOffset;
+                return maxBottomHeight + prevHeight
+
+
+            })
+            .attr('height', (e, i)=> e)
+
+
+    }
+
+    return maxBottomHeight;
 
 }
