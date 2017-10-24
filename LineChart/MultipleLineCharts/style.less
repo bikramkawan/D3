@@ -1,18 +1,42 @@
-.line1 {
+.lineY11 {
   fill: none;
-  stroke: blue;
+  stroke: #e41a1c;
+  background: #e41a1c;
   clip-path: url(#clip);
 }
 
-.line2 {
+.lineY12 {
   fill: none;
-  stroke: red;
+  stroke: #377eb8;
+  background: #377eb8;
   clip-path: url(#clip);
 }
 
-.line3 {
+.lineY13 {
   fill: none;
-  stroke: green;
+  stroke: #4daf4a;
+  background: #4daf4a;
+  clip-path: url(#clip);
+}
+
+.lineY21 {
+  fill: none;
+  stroke: #984ea3;
+  background: #984ea3;
+  clip-path: url(#clip);
+}
+
+.lineY22 {
+  fill: none;
+  stroke: #ff7f00;
+  background: #ff7f00;
+  clip-path: url(#clip);
+}
+
+.lineY31 {
+  fill: none;
+  stroke: #a65628;
+  background: #a65628;
   clip-path: url(#clip);
 }
 
@@ -20,4 +44,25 @@
   cursor: move;
   fill: none;
   pointer-events: all;
+}
+
+.container {
+  display: flex;
+  .legends {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    width: 300px;
+    .row {
+      border: 1px solid;
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      div:nth-child(2) {
+
+        width: 50px;
+      }
+
+    }
+  }
 }
