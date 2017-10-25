@@ -4,7 +4,7 @@
 
 
 const margin = {top: 30, right: 200, bottom: 50, left: 50},
-    width = 900 - margin.left - margin.right,
+    width = 1100 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
 const svg = d3.select('.chart')
@@ -113,7 +113,7 @@ const data = [];
 
 d3.csv("newdata.csv", function (error, rawdata) {
 
-    console.log(rawdata)
+
     rawdata.forEach((item)=> {
         data.push({
             date: parseDate(`${item.date} ${item.time}`),
@@ -167,7 +167,6 @@ d3.csv("newdata.csv", function (error, rawdata) {
     drawLegends();
 
     const submit = d3.select('.submit').on('click', function (d) {
-
         const date1 = d3.select('.date1').property("valueAsDate")
         const date2 = d3.select('.date2').property("valueAsDate")
 
@@ -183,6 +182,15 @@ d3.csv("newdata.csv", function (error, rawdata) {
         drawLine(filterData1, lineY22, 'lineY22', yAxis2, -50);
         drawLine(filterData1, lineY31, 'lineY31', yAxis3, -100);
 
+    })
+
+
+    d3.select('.mode').on('click', ()=> {
+
+        const isDark = d3.select('.mode').attr('class') === 'mode';
+        d3.select('.mode').classed('dark', isDark);
+        d3.selectAll('.axis').classed('darkMode', isDark)
+        d3.select('.chart').classed('darkChart', isDark);
 
     })
 
@@ -195,7 +203,7 @@ function drawLine(linedata, linefunc, lineclass, lineYAxis, yAxisOffset) {
 
     d3.selectAll(`.${lineclass}-grp`).remove()
 
-    d3.selectAll('.axis--x').remove();
+    d3.selectAll('.xAxis').remove();
 
 
     x.domain(d3.extent(linedata, function (d) {
@@ -213,17 +221,17 @@ function drawLine(linedata, linefunc, lineclass, lineYAxis, yAxisOffset) {
 
 
     line.append("g")
-        .attr("class", "axis axis--x")
-        .attr("transform", `translate(0,-${margin.top})`)
+        .attr("class", "axis xAxis")
+        .attr("transform", `translate(0,-${margin.top - 5})`)
         .call(xAxis1);
 
     line.append("g")
-        .attr("class", "axis axis--x")
+        .attr("class", "axis xAxis")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis2);
 
     line.append("g")
-        .attr("class", "axis axis--y")
+        .attr("class", "axis yAxis")
         .attr("transform", `translate(${yAxisOffset},0 )`)
         .call(lineYAxis);
 

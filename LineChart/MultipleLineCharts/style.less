@@ -46,34 +46,65 @@
   pointer-events: all;
 }
 
-.container {
+.legends {
   display: flex;
-  .legends {
+  justify-content: space-around;
+  flex-direction: column;
+  width: 500px;
+  .row {
+    border: 1px solid;
     display: flex;
-    justify-content: space-around;
-    flex-direction: column;
-    width: 420px;
-    .row {
-      border: 1px solid;
-      display: flex;
-      font-size: 17px;
-      margin-left: -50px;
-      cursor: pointer;
-      div {
-        margin-right: 5px;
-      }
-      div:nth-child(2) {
-        flex-basis: 10%;
-      }
-      .name {
-        flex-basis: 40%;
-        overflow: hidden;
-      }
+    font-size: 20px;
+    cursor: pointer;
+    div {
+      margin-right: 5px;
+    }
+    div:nth-child(2) {
+      flex-basis: 10%;
+    }
+    .name {
+      flex-basis: 40%;
+      overflow: hidden;
+    }
 
-      .unit {
-
-      }
+    .unit {
 
     }
+
   }
+}
+
+.mode {
+  text-align: center;
+  font-size: 30px;
+  cursor: pointer;
+  margin-bottom: 5px;
+
+  &.dark {
+    background: aqua;
+  }
+}
+
+.darkChart {
+  background: black;
+}
+
+.darkMode {
+  path, line, text {
+    stroke: white;
+
+  }
+
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.chart {
+  text-align: center;
+  margin-top: 11px;
 }

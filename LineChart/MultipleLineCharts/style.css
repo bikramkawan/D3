@@ -39,29 +39,52 @@
   fill: none;
   pointer-events: all;
 }
-.container {
-  display: flex;
-}
-.container .legends {
+.legends {
   display: flex;
   justify-content: space-around;
   flex-direction: column;
-  width: 420px;
+  width: 500px;
 }
-.container .legends .row {
+.legends .row {
   border: 1px solid;
   display: flex;
-  font-size: 17px;
-  margin-left: -50px;
+  font-size: 20px;
   cursor: pointer;
 }
-.container .legends .row div {
+.legends .row div {
   margin-right: 5px;
 }
-.container .legends .row div:nth-child(2) {
+.legends .row div:nth-child(2) {
   flex-basis: 10%;
 }
-.container .legends .row .name {
+.legends .row .name {
   flex-basis: 40%;
   overflow: hidden;
+}
+.mode {
+  text-align: center;
+  font-size: 30px;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+.mode.dark {
+  background: aqua;
+}
+.darkChart {
+  background: black;
+}
+.darkMode path,
+.darkMode line,
+.darkMode text {
+  stroke: white;
+}
+.bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.chart {
+  text-align: center;
+  margin-top: 11px;
 }
