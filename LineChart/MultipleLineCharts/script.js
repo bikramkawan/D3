@@ -3,7 +3,7 @@
  */
 
 
-const margin = {top: 20, right: 200, bottom: 50, left: 50},
+const margin = {top: 30, right: 200, bottom: 50, left: 50},
     width = 900 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
@@ -20,7 +20,8 @@ const pt = d3.timeParse("%Y");
 const x = d3.scaleTime().range([0, width]),
     y1 = d3.scaleLinear().range([height, 0]),
     y2 = d3.scaleLinear().range([height, 0]),
-    y3 = d3.scaleLinear().range([height, 0])
+    y3 = d3.scaleLinear().range([height, 0]),
+    x2 = d3.scaleLinear().range([0, width])
 
 const legends = [{
 
@@ -74,10 +75,11 @@ const legends = [{
 
 
 ]
-const xAxis = d3.axisBottom(x),
+const xAxis1 = d3.axisBottom(x),
     yAxis1 = d3.axisLeft(y1),
     yAxis2 = d3.axisLeft(y2),
-    yAxis3 = d3.axisLeft(y3);
+    yAxis3 = d3.axisLeft(y3),
+    xAxis2 = d3.axisBottom(x2)
 
 
 const lineY11 = d3.line()
@@ -111,10 +113,11 @@ const data = [];
 
 d3.csv("newdata.csv", function (error, rawdata) {
 
-
+    console.log(rawdata)
     rawdata.forEach((item)=> {
         data.push({
             date: parseDate(`${item.date} ${item.time}`),
+            time2: parseFloat(item.time2),
             y11: parseFloat(item.y1_lp1) < 0 ? 0 : parseFloat(item.y1_lp1),
             y12: parseFloat(item.y1_lp2) < 0 ? 0 : parseFloat(item.y1_lp2),
             y13: parseFloat(item.y1_tp) < 0 ? 0 : parseFloat(item.y1_tp),
@@ -142,6 +145,9 @@ d3.csv("newdata.csv", function (error, rawdata) {
 
     x.domain(d3.extent(data, function (d) {
         return d.date;
+    }));
+    x2.domain(d3.extent(data, function (d) {
+        return d.time2;
     }));
     y1.domain(y1Extent);
 
@@ -189,6 +195,9 @@ function drawLine(linedata, linefunc, lineclass, lineYAxis, yAxisOffset) {
 
     d3.selectAll(`.${lineclass}-grp`).remove()
 
+    d3.selectAll('.axis--x').remove();
+
+
     x.domain(d3.extent(linedata, function (d) {
         return d.date;
     }));
@@ -205,8 +214,13 @@ function drawLine(linedata, linefunc, lineclass, lineYAxis, yAxisOffset) {
 
     line.append("g")
         .attr("class", "axis axis--x")
+        .attr("transform", `translate(0,-${margin.top})`)
+        .call(xAxis1);
+
+    line.append("g")
+        .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+        .call(xAxis2);
 
     line.append("g")
         .attr("class", "axis axis--y")
