@@ -46,14 +46,22 @@
   display: flex;
   justify-content: space-around;
   flex-direction: column;
-  width: 300px;
+  width: 420px;
 }
 .container .legends .row {
   border: 1px solid;
   display: flex;
-  justify-content: space-between;
-  font-size: 20px;
+  font-size: 17px;
+  margin-left: -50px;
+  cursor: pointer;
+}
+.container .legends .row div {
+  margin-right: 5px;
 }
 .container .legends .row div:nth-child(2) {
-  width: 50px;
+  flex-basis: 10%;
+}
+.container .legends .row .name {
+  flex-basis: 40%;
+  overflow: hidden;
 }

@@ -3,7 +3,7 @@
  */
 
 
-const margin = {top: 20, right: 200, bottom: 50, left: 200},
+const margin = {top: 20, right: 200, bottom: 50, left: 50},
     width = 900 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
@@ -16,12 +16,64 @@ const colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33'
 const parseDate = d3.timeParse("%m/%d/%y %H:%M:%S");
 const pt = d3.timeParse("%Y");
 
+
 const x = d3.scaleTime().range([0, width]),
     y1 = d3.scaleLinear().range([height, 0]),
     y2 = d3.scaleLinear().range([height, 0]),
     y3 = d3.scaleLinear().range([height, 0])
 
+const legends = [{
 
+    name: 'Line Press #1',
+    className: 'lineY11',
+    scale: y1,
+    unit: 'Psi'
+},
+    {
+
+        name: 'Line Press #2',
+        className: 'lineY12',
+        scale: y1,
+        unit: 'Psi'
+
+
+    },
+    {
+
+        name: 'Tubing Press',
+        className: 'lineY13',
+        scale: y1,
+        unit: 'Psi'
+
+
+    }, {
+
+        name: 'Discharge Rate',
+        className: 'lineY21',
+        scale: y2,
+        unit: 'bbl/min'
+
+
+    }, {
+
+        name: 'Tubing Rate',
+        className: 'lineY22',
+        scale: y2,
+        unit: 'bbl/min'
+
+
+    }, {
+
+        name: 'Proppant Conc 40/70',
+        className: 'lineY31',
+        scale: y3,
+        unit: 'ppa'
+
+
+    }
+
+
+]
 const xAxis = d3.axisBottom(x),
     yAxis1 = d3.axisLeft(y1),
     yAxis2 = d3.axisLeft(y2),
@@ -59,23 +111,21 @@ const data = [];
 
 d3.csv("newdata.csv", function (error, rawdata) {
 
-    console.log(rawdata)
 
     rawdata.forEach((item)=> {
         data.push({
             date: parseDate(`${item.date} ${item.time}`),
-            y11: parseFloat(item.y1_lp1),
-            y12: parseFloat(item.y1_lp2),
-            y13: parseFloat(item.y1_tp),
-            y21: parseFloat(item.y2_dr),
-            y22: parseFloat(item.y2_tr),
-            y31: parseFloat(item.y3_pc)
+            y11: parseFloat(item.y1_lp1) < 0 ? 0 : parseFloat(item.y1_lp1),
+            y12: parseFloat(item.y1_lp2) < 0 ? 0 : parseFloat(item.y1_lp2),
+            y13: parseFloat(item.y1_tp) < 0 ? 0 : parseFloat(item.y1_tp),
+            y21: parseFloat(item.y2_dr) < 0 ? 0 : parseFloat(item.y2_dr),
+            y22: parseFloat(item.y2_tr) < 0 ? 0 : parseFloat(item.y2_tr),
+            y31: parseFloat(item.y3_pc) < 0 ? 0 : parseFloat(item.y3_pc)
         })
 
 
     })
 
-    console.log(data)
 
     if (error) throw error;
 
@@ -105,9 +155,10 @@ d3.csv("newdata.csv", function (error, rawdata) {
     drawLine(data, lineY11, 'lineY11', yAxis1, 0);
     drawLine(data, lineY12, 'lineY12', yAxis1, 0);
     drawLine(data, lineY13, 'lineY13', yAxis1, 0);
-    drawLine(data, lineY21, 'lineY21', yAxis2, -50);
-    drawLine(data, lineY22, 'lineY22', yAxis2, -50);
-    drawLine(data, lineY31, 'lineY31', yAxis3, -100);
+    drawLine(data, lineY21, 'lineY21', yAxis2, width + 50);
+    drawLine(data, lineY22, 'lineY22', yAxis2, width + 50);
+    drawLine(data, lineY31, 'lineY31', yAxis3, width + 100);
+    drawLegends();
 
     const submit = d3.select('.submit').on('click', function (d) {
 
@@ -117,14 +168,14 @@ d3.csv("newdata.csv", function (error, rawdata) {
         const formatYear = d3.timeFormat("%Y");
 
         const filterData1 = data.filter(d=>formatYear(d.date) > formatYear(date1) && formatYear(d.date) < formatYear(date2));
+        console.log(filterData1, date1, date2)
 
-        const filterData2 = line2Data.filter(d=>formatYear(d.date) > formatYear(date1) && formatYear(d.date) < formatYear(date2));
-
-        const filterData3 = line3Data.filter(d=>formatYear(d.date) > formatYear(date1) && formatYear(d.date) < formatYear(date2));
-
-        drawLine(filterData1, line1, 'line1', yAxis1, 0);
-        drawLine(filterData2, line2, 'line2', yAxis2, -50);
-        drawLine(filterData3, line3, 'line3', yAxis3, -100);
+        drawLine(filterData1, lineY11, 'lineY11', yAxis1, 0);
+        drawLine(filterData1, lineY12, 'lineY12', yAxis1, 0);
+        drawLine(filterData1, lineY13, 'lineY13', yAxis1, 0);
+        drawLine(filterData1, lineY21, 'lineY21', yAxis2, -50);
+        drawLine(filterData1, lineY22, 'lineY22', yAxis2, -50);
+        drawLine(filterData1, lineY31, 'lineY31', yAxis3, -100);
 
 
     })
@@ -161,5 +212,32 @@ function drawLine(linedata, linefunc, lineclass, lineYAxis, yAxisOffset) {
         .attr("class", "axis axis--y")
         .attr("transform", `translate(${yAxisOffset},0 )`)
         .call(lineYAxis);
+
+}
+
+
+function drawLegends() {
+
+
+    const el = d3.select('.legends')
+        .selectAll('div')
+        .data(legends)
+        .enter()
+        .append('div')
+        .classed('row', true)
+        .on('click', (d)=> {
+            const hidden = d3.select(`path.${d.className}`).attr('visibility') !== 'hidden';
+            d3.select(`path.${d.className}`).attr('visibility', hidden ? 'hidden' : 'visible');
+            d3.select(`div.${d.className}`).style('opacity', hidden ? '0.5' : '1');
+
+        })
+    el.append('div').text(d=>d.name).classed('name', true)
+    el.append('div').attr('class', d=>d.className)
+    el.append('div').classed('unit', true).text((d)=> {
+        const s = d.scale.domain();
+
+        return `[${Math.floor(s[0])},${Math.floor(s[1])}] - ${d.unit}(unit)`
+
+    })
 
 }
