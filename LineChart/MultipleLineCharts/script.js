@@ -111,9 +111,7 @@ const lineY31 = d3.line()
 
 const data = [];
 
-d3.csv("newdata.csv", function (error, rawdata) {
-
-
+d3.csv("newdataV2.csv", function (error, rawdata) {
     rawdata.forEach((item)=> {
         data.push({
             date: parseDate(`${item.date} ${item.time}`),
