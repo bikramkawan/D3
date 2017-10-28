@@ -5,7 +5,7 @@ define(function (require) {
 
     return {
 
-        drawLine: function drawLine(linedata, linefunc, lineclass, lineYAxis, yAxisOffset, xAxis1, xAxis2, x, svg) {
+        drawLine: function drawLine(linedata, linefunc, lineclass, lineYAxis, yAxisOffset, xAxis1, xAxis2, x, svg, yAxixClass) {
 
             const {margin, width, height} = require('./constants.js').constants();
 
@@ -28,17 +28,17 @@ define(function (require) {
 
 
             line.append("g")
-                .attr("class", "axis xAxis")
-                .attr("transform", `translate(0,-${margin.top - 5})`)
+                .attr("class", "axis xAxis TopX")
+                .attr("transform", `translate(0,-${margin.top})`)
                 .call(xAxis1);
 
             line.append("g")
-                .attr("class", "axis xAxis")
+                .attr("class", "axis xAxis BottomX")
                 .attr("transform", "translate(0," + height + ")")
                 .call(xAxis2);
 
             line.append("g")
-                .attr("class", "axis yAxis")
+                .attr("class", `axis yAxis ${yAxixClass}`)
                 .attr("transform", `translate(${yAxisOffset},0 )`)
                 .call(lineYAxis);
 
@@ -79,8 +79,49 @@ define(function (require) {
 
             })
 
-        }
+        },
 
+        drawBrush: function (selector, scale, brushDimension, orientation, margin) {
+
+            if (orientation === 'horizontal') {
+
+                const {width, height} = brushDimension;
+                console.log(scale.range())
+                const brush = d3.brushX()
+                    .extent([[0, 0], [width, 30]])
+                    .on("brush end", ()=> brushed(scale));
+
+                d3.select(`.${selector}`).append("g")
+                    .attr("class", "brush")
+                    .call(brush)
+                    .call(brush.move, scale.range());
+            } else {
+
+                const width = margin.left - 10;
+                const {height} = brushDimension;
+                const brush = d3.brushY()
+                    .extent([[0, 0], [width, height]])
+                    .on("brush end", ()=> brushed(scale));
+
+                console.log(scale.range())
+                d3.select(`.${selector}`).append("g")
+                    .attr("transform", `translate(-${width},0 )`)
+                    .attr("class", "brush")
+                    .call(brush)
+                    .call(brush.move, [0, height]);
+
+            }
+
+
+            function brushed(xScale) {
+                if (!d3.event.sourceEvent) return; // Only transition after input.
+                if (!d3.event.selection) return; // Ignore empty selections.
+
+                const xVal = d3.event.selection.map(xScale.invert)
+                console.log(xVal)
+            }
+
+        }
     }
 
 

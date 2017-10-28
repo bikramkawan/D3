@@ -18,6 +18,7 @@ define(function (require) {
                 .append("svg:svg")
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)
+
             const render = require('./render');
 
             const xAxis1 = d3.axisBottom(x),
@@ -34,7 +35,7 @@ define(function (require) {
                 let y1Extent = [0, 0];
                 let y2Extent = [0, 0];
                 data.forEach((d)=> {
-                    const y1Values = d3.extent([d.y11, d.y12, d.y3])
+                    const y1Values = d3.extent([d.y11, d.y12, d.y13])
                     const y2Values = d3.extent([d.y21, d.y22])
                     y1Extent = [Math.min(y1Values[0], y1Extent[0]), Math.max(y1Values[1], y1Extent[1])];
                     y2Extent = [Math.min(y2Values[0], y2Extent[0]), Math.max(y2Values[1], y2Extent[1])]
@@ -47,15 +48,21 @@ define(function (require) {
                 y2.domain(y2Extent);
                 y3.domain(d3.extent(data, d=> d.y31));
 
-                render.drawLine(data, lineY11, 'lineY11', yAxis1, 0, xAxis1, xAxis2, x, svg);
-                render.drawLine(data, lineY12, 'lineY12', yAxis1, 0, xAxis1, xAxis2, x, svg);
-                render.drawLine(data, lineY13, 'lineY13', yAxis1, 0, xAxis1, xAxis2, x, svg);
-                render.drawLine(data, lineY21, 'lineY21', yAxis2, width + 50, xAxis1, xAxis2, x, svg);
-                render.drawLine(data, lineY22, 'lineY22', yAxis2, width + 50, xAxis1, xAxis2, x, svg);
-                render.drawLine(data, lineY31, 'lineY31', yAxis3, width + 100, xAxis1, xAxis2, x, svg);
-                console.log(y1.domain(), y2.domain(), y3.domain(), x.domain())
+                render.drawLine(data, lineY11, 'lineY11', yAxis1, 0, xAxis1, xAxis2, x, svg, 'Yleft');
+                render.drawLine(data, lineY12, 'lineY12', yAxis1, 0, xAxis1, xAxis2, x, svg, 'Yleft');
+                render.drawLine(data, lineY13, 'lineY13', yAxis1, 0, xAxis1, xAxis2, x, svg, 'Yleft');
+                render.drawLine(data, lineY21, 'lineY21', yAxis2, width + 50, xAxis1, xAxis2, x, svg, 'YRight1');
+                render.drawLine(data, lineY22, 'lineY22', yAxis2, width + 50, xAxis1, xAxis2, x, svg, 'YRight1');
+                render.drawLine(data, lineY31, 'lineY31', yAxis3, width + 100, xAxis1, xAxis2, x, svg, 'YRight2');
+                console.log(y1.domain(), y1.range())
                 render.drawLegends();
                 render.toggleMode();
+                const brushDimension = {width, height};
+                const brushTopX = render.drawBrush('TopX', x, brushDimension, 'horizontal', margin);
+                const brushBottomX = render.drawBrush('BottomX', x2, brushDimension, 'horizontal', margin);
+                const brushLeftY = render.drawBrush('Yleft', y1, brushDimension, 'vertical', margin);
+                const brushYRight1 = render.drawBrush('YRight1', y2, brushDimension, 'vertical', margin);
+                const brushYRight2 = render.drawBrush('YRight2', y3, brushDimension, 'vertical', margin);
 
 
             });

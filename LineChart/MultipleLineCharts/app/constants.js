@@ -10,9 +10,9 @@ define(function () {
 
         constants: function () {
 
-            const margin = {top: 30, right: 200, bottom: 50, left: 50},
+            const margin = {top: 50, right: 200, bottom: 50, left: 50},
                 width = 1100 - margin.left - margin.right,
-                height = 400 - margin.top - margin.bottom;
+                height = 450 - margin.top - margin.bottom;
 
             return {margin, width, height};
 
