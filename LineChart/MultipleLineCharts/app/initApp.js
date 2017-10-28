@@ -21,6 +21,7 @@ define(function (require) {
 
             const render = require('./render');
 
+
             const xAxis1 = d3.axisBottom(x),
                 yAxis1 = d3.axisLeft(y1),
                 yAxis2 = d3.axisLeft(y2),
@@ -32,6 +33,7 @@ define(function (require) {
             d3.csv("data/newdataV2.csv", function (error, rawdata) {
                 if (error) throw error;
                 const data = require('./constants').formatData(rawdata);
+                console.log(data)
                 let y1Extent = [0, 0];
                 let y2Extent = [0, 0];
                 data.forEach((d)=> {
@@ -48,21 +50,42 @@ define(function (require) {
                 y2.domain(y2Extent);
                 y3.domain(d3.extent(data, d=> d.y31));
 
-                render.drawLine(data, lineY11, 'lineY11', yAxis1, 0, xAxis1, xAxis2, x, svg, 'Yleft');
-                render.drawLine(data, lineY12, 'lineY12', yAxis1, 0, xAxis1, xAxis2, x, svg, 'Yleft');
-                render.drawLine(data, lineY13, 'lineY13', yAxis1, 0, xAxis1, xAxis2, x, svg, 'Yleft');
-                render.drawLine(data, lineY21, 'lineY21', yAxis2, width + 50, xAxis1, xAxis2, x, svg, 'YRight1');
-                render.drawLine(data, lineY22, 'lineY22', yAxis2, width + 50, xAxis1, xAxis2, x, svg, 'YRight1');
-                render.drawLine(data, lineY31, 'lineY31', yAxis3, width + 100, xAxis1, xAxis2, x, svg, 'YRight2');
-                console.log(y1.domain(), y1.range())
+
+                const config = {
+                    data,
+                    xAxis1,
+                    xAxis2,
+                    x,
+                    x2,
+                    y1,
+                    y2,
+                    y3,
+                    svg,
+                    width,
+                    lineY11,
+                    lineY12,
+                    lineY13,
+                    lineY21,
+                    lineY22,
+                    lineY31,
+                    yAxis1,
+                    yAxis2,
+                    yAxis3,
+
+                };
+
+                const lineData = constants.formatLineData(config)
+
+                lineData.forEach(item=>render.drawLine(item));
                 render.drawLegends();
                 render.toggleMode();
                 const brushDimension = {width, height};
-                const brushTopX = render.drawBrush('TopX', x, brushDimension, 'horizontal', margin);
-                const brushBottomX = render.drawBrush('BottomX', x2, brushDimension, 'horizontal', margin);
-                const brushLeftY = render.drawBrush('Yleft', y1, brushDimension, 'vertical', margin);
-                const brushYRight1 = render.drawBrush('YRight1', y2, brushDimension, 'vertical', margin);
-                const brushYRight2 = render.drawBrush('YRight2', y3, brushDimension, 'vertical', margin);
+                const configBrush = {x, margin, x2, brushDimension, y1, y2, y3, lineData}
+
+                const brushData = constants.formatBrushData(configBrush);
+
+
+                brushData.forEach(brush=>render.drawBrush(brush));
 
 
             });

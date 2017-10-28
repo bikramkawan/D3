@@ -1,3 +1,39 @@
+.color-lineY11 {
+  fill: none;
+  stroke: #e41a1c;
+  background: #e41a1c;
+  clip-path: url(#clip);
+}
+.color-lineY12 {
+  fill: none;
+  stroke: #377eb8;
+  background: #377eb8;
+  clip-path: url(#clip);
+}
+.color-lineY13 {
+  fill: none;
+  stroke: #4daf4a;
+  background: #4daf4a;
+  clip-path: url(#clip);
+}
+.color-lineY21 {
+  fill: none;
+  stroke: #984ea3;
+  background: #984ea3;
+  clip-path: url(#clip);
+}
+.color-lineY22 {
+  fill: none;
+  stroke: #ff7f00;
+  background: #ff7f00;
+  clip-path: url(#clip);
+}
+.color-lineY31 {
+  fill: none;
+  stroke: #a65628;
+  background: #a65628;
+  clip-path: url(#clip);
+}
 .lineY11 {
   fill: none;
   stroke: #e41a1c;

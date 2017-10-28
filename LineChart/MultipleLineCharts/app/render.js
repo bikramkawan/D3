@@ -2,20 +2,21 @@
  * Created by bikramkawan on 10/27/17.
  */
 define(function (require) {
+    const newExtents = new Map();
 
     return {
 
-        drawLine: function drawLine(linedata, linefunc, lineclass, lineYAxis, yAxisOffset, xAxis1, xAxis2, x, svg, yAxixClass) {
+        drawLine: function drawLine(params) {
 
+            const {linedata, linefunc, lineclass, lineYAxis, yAxisOffset, xAxis1, xAxis2, x, svg, yAxixClass} = params;
             const {margin, width, height} = require('./constants.js').constants();
 
+            d3.selectAll(`.${lineclass}`).remove()
+            // d3.selectAll('.xAxis').remove();
+            const isYExist = d3.selectAll(`.${yAxixClass}`).node();
+            const isTopX = d3.selectAll('.TopX').node();
+            const isBottomX = d3.selectAll('.BottomX').node();
 
-            d3.selectAll(`.${lineclass}-grp`).remove()
-            d3.selectAll('.xAxis').remove();
-
-            x.domain(d3.extent(linedata, function (d) {
-                return d.date;
-            }));
 
             const line = svg.append("g")
                 .classed(`${lineclass}-grp`, true)
@@ -27,20 +28,28 @@ define(function (require) {
                 .attr("d", linefunc);
 
 
-            line.append("g")
-                .attr("class", "axis xAxis TopX")
-                .attr("transform", `translate(0,-${margin.top})`)
-                .call(xAxis1);
+            if (!isTopX) {
+                line.append("g")
+                    .attr("class", "axis xAxis TopX")
+                    .attr("transform", `translate(0,-${margin.top})`)
+                    .call(xAxis1);
+            }
 
-            line.append("g")
-                .attr("class", "axis xAxis BottomX")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis2);
+            if (!isBottomX) {
+                line.append("g")
+                    .attr("class", "axis xAxis BottomX")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis2);
+            }
 
-            line.append("g")
-                .attr("class", `axis yAxis ${yAxixClass}`)
-                .attr("transform", `translate(${yAxisOffset},0 )`)
-                .call(lineYAxis);
+
+            if (!isYExist) {
+                line.append("g")
+                    .attr("class", `axis yAxis ${yAxixClass}`)
+                    .attr("transform", `translate(${yAxisOffset},0 )`)
+                    .call(lineYAxis);
+            }
+
 
         },
 
@@ -59,10 +68,9 @@ define(function (require) {
 
                 })
             el.append('div').text(d=>d.name).classed('name', true)
-            el.append('div').attr('class', d=>d.className)
+            el.append('div').attr('class', (d)=> `color-${d.className}`)
             el.append('div').classed('unit', true).text((d)=> {
                 const s = d.scale.domain();
-
                 return `[${Math.floor(s[0])},${Math.floor(s[1])}] - ${d.unit}(unit)`
 
             })
@@ -81,15 +89,17 @@ define(function (require) {
 
         },
 
-        drawBrush: function (selector, scale, brushDimension, orientation, margin) {
+        drawBrush: function (param) {
+
+            const {selector, scale, brushDimension, orientation, margin, key, lineData} = param
+
 
             if (orientation === 'horizontal') {
 
                 const {width, height} = brushDimension;
-                console.log(scale.range())
                 const brush = d3.brushX()
                     .extent([[0, 0], [width, 30]])
-                    .on("brush end", ()=> brushed(scale));
+                    .on("brush end", ()=> this.brush(param));
 
                 d3.select(`.${selector}`).append("g")
                     .attr("class", "brush")
@@ -101,9 +111,8 @@ define(function (require) {
                 const {height} = brushDimension;
                 const brush = d3.brushY()
                     .extent([[0, 0], [width, height]])
-                    .on("brush end", ()=> brushed(scale));
+                    .on("brush end", ()=> this.brush(param));
 
-                console.log(scale.range())
                 d3.select(`.${selector}`).append("g")
                     .attr("transform", `translate(-${width},0 )`)
                     .attr("class", "brush")
@@ -112,14 +121,36 @@ define(function (require) {
 
             }
 
+        },
+        brush: function brushed(param) {
+            const {scale, key, lineData} = param;
+            if (!d3.event.sourceEvent) return; // Only transition after input.
+            if (!d3.event.selection) return; // Ignore empty selections.
+            const extents = d3.event.selection.map(scale.invert);
 
-            function brushed(xScale) {
-                if (!d3.event.sourceEvent) return; // Only transition after input.
-                if (!d3.event.selection) return; // Ignore empty selections.
+            newExtents.set(key, extents)
+            let filtered = lineData[0].allData;
 
-                const xVal = d3.event.selection.map(xScale.invert)
-                console.log(xVal)
+            if (newExtents.has('date')) {
+                filtered = filtered.filter((d)=>d.date >= newExtents.get('date')[0] && d.date < newExtents.get('date')[1])
+
             }
+
+            if (newExtents.has('time2')) {
+                filtered = filtered.filter((d)=>d.time2 >= newExtents.get('time2')[0] && d.time2 < newExtents.get('time2')[1])
+
+            }
+
+            if (newExtents.has('y31')) {
+                filtered = filtered.filter((d)=>d.y31 >= newExtents.get('y31')[1] && d.y31 < newExtents.get('y31')[0])
+
+            }
+
+
+            const newLine = lineData.map((d)=> Object.assign({}, d, {linedata: filtered}))
+
+            newLine.forEach(item=>this.drawLine(item));
+
 
         }
     }

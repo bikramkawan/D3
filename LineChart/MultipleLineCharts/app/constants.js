@@ -108,6 +108,178 @@ define(function () {
             return data;
 
 
+        },
+        formatLineData: function (config) {
+
+            const {
+                data,
+                xAxis1,
+                xAxis2,
+                x,
+                x2,
+                y1,
+                y2,
+                y3,
+                svg,
+                width,
+                lineY11,
+                lineY12,
+                lineY13,
+                lineY21,
+                lineY22,
+                lineY31,
+                yAxis1,
+                yAxis2,
+                yAxis3,
+            } = config;
+
+            const line1 = {
+                linedata: data,
+                linefunc: lineY11,
+                lineclass: 'lineY11',
+                lineYAxis: yAxis1,
+                yAxisOffset: 0,
+                xAxis1,
+                xAxis2,
+                x,
+                svg,
+                yAxixClass: 'Yleft',
+                allData: data,
+
+            }
+
+            const line2 = {
+                linedata: data,
+                linefunc: lineY12,
+                lineclass: 'lineY12',
+                lineYAxis: yAxis1,
+                yAxisOffset: 0,
+                xAxis1,
+                xAxis2,
+                x,
+                svg,
+                yAxixClass: 'Yleft',
+                allData: data,
+
+            }
+            const line3 = {
+                linedata: data,
+                linefunc: lineY13,
+                lineclass: 'lineY13',
+                lineYAxis: yAxis1,
+                yAxisOffset: 0,
+                xAxis1,
+                xAxis2,
+                x,
+                svg,
+                yAxixClass: 'Yleft',
+                allData: data,
+
+            }
+
+            const line4 = {
+                linedata: data,
+                linefunc: lineY21,
+                lineclass: 'lineY21',
+                lineYAxis: yAxis2,
+                yAxisOffset: width + 50,
+                xAxis1,
+                xAxis2,
+                x,
+                svg,
+                yAxixClass: 'YRight1',
+                allData: data,
+
+            }
+
+            const line5 = {
+                linedata: data,
+                linefunc: lineY22,
+                lineclass: 'lineY22',
+                lineYAxis: yAxis2,
+                yAxisOffset: width + 50,
+                xAxis1,
+                xAxis2,
+                x,
+                svg,
+                yAxixClass: 'YRight1',
+                allData: data,
+
+            }
+            const line6 = {
+                linedata: data,
+                linefunc: lineY31,
+                lineclass: 'lineY31',
+                lineYAxis: yAxis3,
+                yAxisOffset: width + 100,
+                xAxis1,
+                xAxis2,
+                x,
+                svg,
+                yAxixClass: 'YRight2',
+                allData: data,
+
+            }
+
+
+            return [line1, line2, line3, line4, line5, line6]
+
+        },
+        formatBrushData: function (param) {
+            const {x, margin, x2, brushDimension, y1, y2, y3, lineData} = param;
+
+            const brush1 = {
+                selector: 'TopX',
+                scale: x,
+                brushDimension,
+                orientation: 'horizontal',
+                margin,
+                key: 'date',
+                lineData
+            }
+
+            const brush2 = {
+                selector: 'BottomX',
+                scale: x2,
+                brushDimension,
+                orientation: 'horizontal',
+                margin,
+                key: 'time2',
+                lineData
+            }
+
+            const brush3 = {
+                selector: 'Yleft',
+                scale: y1,
+                brushDimension,
+                orientation: 'vertical',
+                margin,
+                key: 'y1',
+                lineData
+            }
+
+            const brush4 = {
+                selector: 'YRight1',
+                scale: y2,
+                brushDimension,
+                orientation: 'vertical',
+                margin,
+                key: 'y2',
+                lineData
+            }
+            const brush5 = {
+                selector: 'YRight2',
+                scale: y3,
+                brushDimension,
+                orientation: 'vertical',
+                margin,
+                key: 'y31',
+                lineData
+            }
+
+
+            return [brush1, brush2, brush3, brush4, brush5];
+
         }
 
     }
