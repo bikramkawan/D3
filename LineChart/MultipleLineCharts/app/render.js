@@ -31,7 +31,7 @@ define(function (require) {
             if (!isTopX) {
                 line.append("g")
                     .attr("class", "axis xAxis TopX")
-                    .attr("transform", `translate(0,-${margin.top})`)
+                    .attr("transform", `translate(0,-${margin.topX})`)
                     .call(xAxis1);
             }
 
@@ -98,7 +98,7 @@ define(function (require) {
 
                 const {width, height} = brushDimension;
                 const brush = d3.brushX()
-                    .extent([[0, 0], [width, 30]])
+                    .extent([[0, 0], [width, 20]])
                     .on("brush end", ()=> this.brush(param));
 
                 d3.select(`.${selector}`).append("g")
@@ -151,6 +151,21 @@ define(function (require) {
 
             newLine.forEach(item=>this.drawLine(item));
 
+
+        },
+        drawBrushAxis: function (param) {
+            const {svg, axix} = param;
+
+            const bAxis = svg.append("g")
+                .classed(`brush-grp`, true)
+
+            bAxis.selectAll('g')
+                .data(axix)
+                .enter()
+                .append("g")
+                .attr("class", `axis yAxis Yleft`)
+                .attr("transform", `translate(${width + 200 + 50},70 )`)
+                .call(d=>d.axis);
 
         }
     }

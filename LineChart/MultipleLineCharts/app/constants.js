@@ -10,17 +10,24 @@ define(function () {
 
         constants: function () {
 
-            const margin = {top: 50, right: 200, bottom: 50, left: 50},
+            const margin = {top: 70, right: 200, bottom: 50, left: 100, topX: 30},
                 width = 1100 - margin.left - margin.right,
-                height = 450 - margin.top - margin.bottom;
+                height = 500 - margin.top - margin.bottom,
+                brushMargins = {
+                    bottomX: {x: margin.left, y: height + margin.top + 30},
+                    topX: {x: margin.left, y: 0},
+                    y1: {x: margin.left / 2, y: margin.top},
+                    y2: {x: width + margin.right / 2 + 70, y: 70},
+                    y3: {x: width + margin.right + 50, y: 70}
+                }
 
-            return {margin, width, height};
+            return {margin, width, height,brushMargins};
 
         },
 
         main: function () {
 
-            const {margin, width, height} = this.constants();
+            const {margin, width, height,brushMargins} = this.constants();
 
             const parseDate = d3.timeParse("%m/%d/%y %H:%M:%S");
             const x = d3.scaleTime().range([0, width]),
@@ -82,7 +89,7 @@ define(function () {
             ]
 
             return {
-                margin, width, height, parseDate, legends,
+                margin, width, height, parseDate, legends,brushMargins,
                 x, y1, y2, y3, x2
             }
         },
@@ -182,7 +189,7 @@ define(function () {
                 linefunc: lineY21,
                 lineclass: 'lineY21',
                 lineYAxis: yAxis2,
-                yAxisOffset: width + 50,
+                yAxisOffset: width + 30,
                 xAxis1,
                 xAxis2,
                 x,
@@ -197,7 +204,7 @@ define(function () {
                 linefunc: lineY22,
                 lineclass: 'lineY22',
                 lineYAxis: yAxis2,
-                yAxisOffset: width + 50,
+                yAxisOffset: width + 90,
                 xAxis1,
                 xAxis2,
                 x,
@@ -211,7 +218,7 @@ define(function () {
                 linefunc: lineY31,
                 lineclass: 'lineY31',
                 lineYAxis: yAxis3,
-                yAxisOffset: width + 100,
+                yAxisOffset: width + 110,
                 xAxis1,
                 xAxis2,
                 x,
@@ -229,7 +236,7 @@ define(function () {
             const {x, margin, x2, brushDimension, y1, y2, y3, lineData} = param;
 
             const brush1 = {
-                selector: 'TopX',
+                selector: 'TopX1',
                 scale: x,
                 brushDimension,
                 orientation: 'horizontal',
@@ -239,7 +246,7 @@ define(function () {
             }
 
             const brush2 = {
-                selector: 'BottomX',
+                selector: 'BottomX1',
                 scale: x2,
                 brushDimension,
                 orientation: 'horizontal',
@@ -278,7 +285,54 @@ define(function () {
             }
 
 
-            return [brush1, brush2, brush3, brush4, brush5];
+            return [brush2];
+
+        },
+        formatBrushAxisData: function (param) {
+
+           console.log(param)
+            const {
+                brushMargins,
+                xAxis1,
+                xAxis2,
+                yAxis1,
+                yAxis2,
+                yAxis3,
+            } = param;
+            const brush1 = {
+
+                selector: 'brush1',
+                margin: brushMargins.topX,
+                axis: xAxis1
+            }
+
+            const brush2 = {
+
+                selector: 'brush2',
+                margin: brushMargins.bottomX,
+                axis: xAxis2
+            }
+            const brush3 = {
+
+                selector: 'brush3',
+                margin: brushMargins.y1,
+                axis: yAxis1
+            }
+            const brush4 = {
+
+                selector: 'brush4',
+                margin: brushMargins.y2,
+                axis: yAxis2
+            }
+            const brush5 = {
+
+                selector: 'brush5',
+                margin: brushMargins.y3,
+                axis: yAxis3
+            }
+
+
+            return [brush1, brush2, brush3, brush4, brush5]
 
         }
 

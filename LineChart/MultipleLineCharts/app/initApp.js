@@ -7,6 +7,7 @@ define(function (require) {
                 width,
                 height,
                 legends,
+                brushMargins,
                 x,
                 y1,
                 y2,
@@ -84,9 +85,47 @@ define(function (require) {
 
                 const brushData = constants.formatBrushData(configBrush);
 
+                //
+                // const brush1 = svg.append("g")
+                //     .classed(`brush-grp`, true)
+                //     .attr("transform", "translate(" + margin.left + ",0)");
+                // brush1.append("g")
+                //     .attr("class", "axis xAxis TopX1")
+                //     .attr("transform", `translate(0,0)`)
+                //     .call(xAxis1);
 
-                brushData.forEach(brush=>render.drawBrush(brush));
+                // const brush1 = svg.append("g")
+                //     .classed(`brush-grp`, true)
+                // // .attr("transform", "translate(" + margin.left + ",0)");
+                // brush1.append("g")
+                //     .attr("class", `axis yAxis Yleft`)
+                //     .attr("transform", `translate(${width+200+50},70 )`)
+                //     .call(yAxis2);
 
+
+                const bAxis = svg.append("g")
+                    .classed(`brush-grp`, true)
+                const brushes = constants.formatBrushAxisData({
+                    brushMargins, xAxis1,
+                    xAxis2,
+                    yAxis1,
+                    yAxis2,
+                    yAxis3
+                })
+
+                console.error(brushes)
+
+                brushes.forEach((e)=> {
+
+                    bAxis.append("g")
+                        .attr("class", `axis ${e.selector}`)
+                        .attr("transform",`translate(${e.margin.x},${e.margin.y})`)
+                        .call(e.axis);
+
+                })
+
+
+                // brushData.forEach(brush=>render.drawBrush(brush));
 
             });
 

@@ -124,3 +124,23 @@
   text-align: center;
   margin-top: 11px;
 }
+.bottom-container {
+  display: flex;
+  justify-content: space-around;
+}
+.bottom-container .mode-container {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.bottom-container .mode-container .control {
+  height: 50px;
+  font-size: 30px;
+  font-weight: bold;
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  cursor: pointer;
+}
