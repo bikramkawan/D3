@@ -144,3 +144,9 @@
   margin: 5px;
   cursor: pointer;
 }
+.brush-grp .axis {
+  visibility: hidden;
+}
+.brush-grp .brush {
+  visibility: visible;
+}

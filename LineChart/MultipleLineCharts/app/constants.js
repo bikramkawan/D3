@@ -18,23 +18,28 @@ define(function () {
                     topX: {x: margin.left, y: 0},
                     y1: {x: margin.left / 2, y: margin.top},
                     y2: {x: width + margin.right / 2 + 70, y: 70},
-                    y3: {x: width + margin.right + 50, y: 70}
+                    y3: {x: width + margin.right + 30, y: 70}
                 }
 
-            return {margin, width, height,brushMargins};
+            return {margin, width, height, brushMargins};
 
         },
 
         main: function () {
 
-            const {margin, width, height,brushMargins} = this.constants();
+            const {margin, width, height, brushMargins} = this.constants();
 
             const parseDate = d3.timeParse("%m/%d/%y %H:%M:%S");
             const x = d3.scaleTime().range([0, width]),
                 y1 = d3.scaleLinear().range([height, 0]),
                 y2 = d3.scaleLinear().range([height, 0]),
                 y3 = d3.scaleLinear().range([height, 0]),
-                x2 = d3.scaleLinear().range([0, width]);
+                x2 = d3.scaleLinear().range([0, width]),
+                x12 = d3.scaleTime().range([0, width]),
+                y12 = d3.scaleLinear().range([height, 0]),
+                y22 = d3.scaleLinear().range([height, 0]),
+                y32 = d3.scaleLinear().range([height, 0]),
+                x22 = d3.scaleLinear().range([0, width]);
             const legends = [{
 
                 name: 'Line Press #1',
@@ -89,8 +94,8 @@ define(function () {
             ]
 
             return {
-                margin, width, height, parseDate, legends,brushMargins,
-                x, y1, y2, y3, x2
+                margin, width, height, parseDate, legends, brushMargins,
+                x, y1, y2, y3, x2,x12,x22,y12,y22,y32
             }
         },
         formatData: function (rawdata) {
@@ -149,6 +154,13 @@ define(function () {
                 xAxis1,
                 xAxis2,
                 x,
+                x2,
+                y1,
+                y2,
+                y3,
+                yAxis1,
+                yAxis2,
+                yAxis3,
                 svg,
                 yAxixClass: 'Yleft',
                 allData: data,
@@ -164,6 +176,13 @@ define(function () {
                 xAxis1,
                 xAxis2,
                 x,
+                x2,
+                y1,
+                y2,
+                y3,
+                yAxis1,
+                yAxis2,
+                yAxis3,
                 svg,
                 yAxixClass: 'Yleft',
                 allData: data,
@@ -178,6 +197,13 @@ define(function () {
                 xAxis1,
                 xAxis2,
                 x,
+                x2,
+                y1,
+                y2,
+                y3,
+                yAxis1,
+                yAxis2,
+                yAxis3,
                 svg,
                 yAxixClass: 'Yleft',
                 allData: data,
@@ -193,6 +219,13 @@ define(function () {
                 xAxis1,
                 xAxis2,
                 x,
+                x2,
+                y1,
+                y2,
+                y3,
+                yAxis1,
+                yAxis2,
+                yAxis3,
                 svg,
                 yAxixClass: 'YRight1',
                 allData: data,
@@ -208,6 +241,13 @@ define(function () {
                 xAxis1,
                 xAxis2,
                 x,
+                x2,
+                y1,
+                y2,
+                y3,
+                yAxis1,
+                yAxis2,
+                yAxis3,
                 svg,
                 yAxixClass: 'YRight1',
                 allData: data,
@@ -222,6 +262,13 @@ define(function () {
                 xAxis1,
                 xAxis2,
                 x,
+                x2,
+                y1,
+                y2,
+                y3,
+                yAxis1,
+                yAxis2,
+                yAxis3,
                 svg,
                 yAxixClass: 'YRight2',
                 allData: data,
@@ -233,11 +280,11 @@ define(function () {
 
         },
         formatBrushData: function (param) {
-            const {x, margin, x2, brushDimension, y1, y2, y3, lineData} = param;
+            const {x12, margin, x22, brushDimension, y12, y22, y32, lineData} = param;
 
             const brush1 = {
-                selector: 'TopX1',
-                scale: x,
+                selector: 'brush1',
+                scale: x12,
                 brushDimension,
                 orientation: 'horizontal',
                 margin,
@@ -246,8 +293,8 @@ define(function () {
             }
 
             const brush2 = {
-                selector: 'BottomX1',
-                scale: x2,
+                selector: 'brush2',
+                scale: x22,
                 brushDimension,
                 orientation: 'horizontal',
                 margin,
@@ -256,8 +303,8 @@ define(function () {
             }
 
             const brush3 = {
-                selector: 'Yleft',
-                scale: y1,
+                selector: 'brush3',
+                scale: y12,
                 brushDimension,
                 orientation: 'vertical',
                 margin,
@@ -266,8 +313,8 @@ define(function () {
             }
 
             const brush4 = {
-                selector: 'YRight1',
-                scale: y2,
+                selector: 'brush4',
+                scale: y22,
                 brushDimension,
                 orientation: 'vertical',
                 margin,
@@ -275,8 +322,8 @@ define(function () {
                 lineData
             }
             const brush5 = {
-                selector: 'YRight2',
-                scale: y3,
+                selector: 'brush5',
+                scale: y32,
                 brushDimension,
                 orientation: 'vertical',
                 margin,
@@ -285,12 +332,12 @@ define(function () {
             }
 
 
-            return [brush2];
+            return [brush1,brush2,brush3,brush4,brush5];
 
         },
         formatBrushAxisData: function (param) {
 
-           console.log(param)
+            console.log(param)
             const {
                 brushMargins,
                 xAxis1,
@@ -332,7 +379,7 @@ define(function () {
             }
 
 
-            return [brush1, brush2, brush3, brush4, brush5]
+            return [brush1,brush2,brush3,brush4,brush5]
 
         }
 

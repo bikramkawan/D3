@@ -12,7 +12,8 @@ define(function (require) {
                 y1,
                 y2,
                 y3,
-                x2
+                x2,
+                x12, x22, y12, y22, y32
             } = constants.main();
 
             const svg = d3.select('.chart')
@@ -44,12 +45,11 @@ define(function (require) {
                     y2Extent = [Math.min(y2Values[0], y2Extent[0]), Math.max(y2Values[1], y2Extent[1])]
 
                 })
-
-                x.domain(d3.extent(data, d=>d.date));
-                x2.domain(d3.extent(data, d=> d.time2));
-                y1.domain(y1Extent);
-                y2.domain(y2Extent);
-                y3.domain(d3.extent(data, d=> d.y31));
+                x12.domain(d3.extent(data, d=>d.date));
+                x22.domain(d3.extent(data, d=> d.time2));
+                y12.domain(y1Extent);
+                y22.domain(y2Extent);
+                y32.domain(d3.extent(data, d=> d.y31));
 
 
                 const config = {
@@ -81,9 +81,8 @@ define(function (require) {
                 render.drawLegends();
                 render.toggleMode();
                 const brushDimension = {width, height};
-                const configBrush = {x, margin, x2, brushDimension, y1, y2, y3, lineData}
+                const configBrush = {x12, margin, x22, brushDimension, y12, y22, y32, lineData}
 
-                const brushData = constants.formatBrushData(configBrush);
 
                 //
                 // const brush1 = svg.append("g")
@@ -119,13 +118,23 @@ define(function (require) {
 
                     bAxis.append("g")
                         .attr("class", `axis ${e.selector}`)
-                        .attr("transform",`translate(${e.margin.x},${e.margin.y})`)
+                        .attr("transform", `translate(${e.margin.x},${e.margin.y})`)
                         .call(e.axis);
 
                 })
 
+                const brushData = constants.formatBrushData(configBrush);
+                //
+                // const brush = d3.brushX()
+                //     .extent([[0, 0], [width, 20]])
+                //     .on("brush end", ()=> this.brush(param));
+                //
+                // d3.select('.brush1').append("g")
+                //     .attr("class", "brush")
+                //     .call(brush)
+                //     .call(brush.move, x.range());
 
-                // brushData.forEach(brush=>render.drawBrush(brush));
+                brushData.forEach(brush=>render.drawBrush(brush));
 
             });
 

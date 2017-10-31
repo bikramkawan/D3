@@ -8,18 +8,44 @@ define(function (require) {
 
         drawLine: function drawLine(params) {
 
-            const {linedata, linefunc, lineclass, lineYAxis, yAxisOffset, xAxis1, xAxis2, x, svg, yAxixClass} = params;
+            const {
+                linedata, linefunc, lineclass, lineYAxis, yAxisOffset, xAxis1, xAxis2,
+                x, x2,
+                y1,
+                y2,
+                y3, svg, yAxixClass,
+                yAxis1,
+                yAxis2,
+                yAxis3,
+            } = params;
             const {margin, width, height} = require('./constants.js').constants();
 
+
+            let y1Extent = [0, 0];
+            let y2Extent = [0, 0];
+            linedata.forEach((d)=> {
+                const y1Values = d3.extent([d.y11, d.y12, d.y13])
+                const y2Values = d3.extent([d.y21, d.y22])
+                y1Extent = [Math.min(y1Values[0], y1Extent[0]), Math.max(y1Values[1], y1Extent[1])];
+                y2Extent = [Math.min(y2Values[0], y2Extent[0]), Math.max(y2Values[1], y2Extent[1])]
+
+            })
+
+
+            x.domain(d3.extent(linedata, d=>d.date));
+            x2.domain(d3.extent(linedata, d=> d.time2));
+            y1.domain(y1Extent);
+            y2.domain(y2Extent);
+            y3.domain(d3.extent(linedata, d=> d.y31));
+
             d3.selectAll(`.${lineclass}`).remove()
-            // d3.selectAll('.xAxis').remove();
-            const isYExist = d3.selectAll(`.${yAxixClass}`).node();
-            const isTopX = d3.selectAll('.TopX').node();
-            const isBottomX = d3.selectAll('.BottomX').node();
-
-
+            d3.selectAll('.lineAxix-grp').remove();
             const line = svg.append("g")
                 .classed(`${lineclass}-grp`, true)
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            const lineAxis = svg.append("g")
+                .classed('lineAxix-grp', true)
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             line.append("path")
@@ -28,27 +54,32 @@ define(function (require) {
                 .attr("d", linefunc);
 
 
-            if (!isTopX) {
-                line.append("g")
-                    .attr("class", "axis xAxis TopX")
-                    .attr("transform", `translate(0,-${margin.topX})`)
-                    .call(xAxis1);
-            }
-
-            if (!isBottomX) {
-                line.append("g")
-                    .attr("class", "axis xAxis BottomX")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis2);
-            }
+            lineAxis.append("g")
+                .attr("class", "axis xAxis TopX")
+                .attr("transform", `translate(0,-${margin.topX})`)
+                .call(xAxis1);
 
 
-            if (!isYExist) {
-                line.append("g")
-                    .attr("class", `axis yAxis ${yAxixClass}`)
-                    .attr("transform", `translate(${yAxisOffset},0 )`)
-                    .call(lineYAxis);
-            }
+            lineAxis.append("g")
+                .attr("class", "axis xAxis BottomX")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis2);
+
+
+            lineAxis.append("g")
+                .attr("class", `axis yAxis Yleft`)
+                .attr("transform", `translate(${0},0 )`)
+                .call(yAxis1);
+
+            lineAxis.append("g")
+                .attr("class", `axis yAxis YRight1`)
+                .attr("transform", `translate(${width + 30},0 )`)
+                .call(yAxis2);
+            //
+            lineAxis.append("g")
+                .attr("class", `axis yAxis YRight2`)
+                .attr("transform", `translate(${width + 100},0 )`)
+                .call(yAxis3);
 
 
         },
@@ -102,19 +133,20 @@ define(function (require) {
                     .on("brush end", ()=> this.brush(param));
 
                 d3.select(`.${selector}`).append("g")
+
                     .attr("class", "brush")
                     .call(brush)
                     .call(brush.move, scale.range());
             } else {
 
-                const width = margin.left - 10;
+                const width = 20;
                 const {height} = brushDimension;
                 const brush = d3.brushY()
                     .extent([[0, 0], [width, height]])
                     .on("brush end", ()=> this.brush(param));
 
                 d3.select(`.${selector}`).append("g")
-                    .attr("transform", `translate(-${width},0 )`)
+                    .attr("transform", `translate(${-width},0 )`)
                     .attr("class", "brush")
                     .call(brush)
                     .call(brush.move, [0, height]);
@@ -129,6 +161,7 @@ define(function (require) {
             const extents = d3.event.selection.map(scale.invert);
 
             newExtents.set(key, extents)
+
             let filtered = lineData[0].allData;
 
             if (newExtents.has('date')) {
@@ -143,6 +176,21 @@ define(function (require) {
 
             if (newExtents.has('y31')) {
                 filtered = filtered.filter((d)=>d.y31 >= newExtents.get('y31')[1] && d.y31 < newExtents.get('y31')[0])
+
+            }
+
+            if (newExtents.has('y1')) {
+                filtered = filtered.filter((d)=> (d.y11 >= newExtents.get('y1')[1] && d.y11 < newExtents.get('y1')[0]) &&
+                    (d.y12 >= newExtents.get('y1')[1] && d.y12 < newExtents.get('y1')[0]) &&
+                    (d.y13 >= newExtents.get('y1')[1] && d.y13 < newExtents.get('y1')[0])
+                )
+
+            }
+
+            if (newExtents.has('y2')) {
+                filtered = filtered.filter((d)=> (d.y21 >= newExtents.get('y2')[1] && d.y21 < newExtents.get('y2')[0]) &&
+                    (d.y22 >= newExtents.get('y2')[1] && d.y22 < newExtents.get('y2')[0])
+                )
 
             }
 
