@@ -21,6 +21,15 @@ define(function (require) {
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)
 
+            const svgContainer = svg.append('g').attr("transform", `translate(100,70)`)
+            const svgRect = svgContainer.append('rect')
+                .attr('x', 0)
+                .attr('width', width)
+                .attr('height', height)
+                .attr('fill', 'transparent')
+                .attr('stroke', 'red')
+
+
             const render = require('./render');
 
 
@@ -34,7 +43,7 @@ define(function (require) {
 
             d3.csv("data/newdataV2.csv", function (error, rawdata) {
                 if (error) throw error;
-                const data = require('./constants').formatData(rawdata);
+                const data = require('./constants').formatData(rawdata.slice(0, 1000));
                 console.log(data)
                 let y1Extent = [0, 0];
                 let y2Extent = [0, 0];
@@ -124,17 +133,62 @@ define(function (require) {
                 })
 
                 const brushData = constants.formatBrushData(configBrush);
-                //
-                // const brush = d3.brushX()
-                //     .extent([[0, 0], [width, 20]])
-                //     .on("brush end", ()=> this.brush(param));
-                //
-                // d3.select('.brush1').append("g")
-                //     .attr("class", "brush")
-                //     .call(brush)
-                //     .call(brush.move, x.range());
 
+                const lineDict = new Map();
+                let clickCount = 0;
                 brushData.forEach(brush=>render.drawBrush(brush));
+                console.log(width, height, y2.domain(), y2.range(), y2(5), y2.invert(270 - 70))
+                svgRect.on("click", function () {
+                    const xCord = d3.event.offsetX - 100;
+                    const yCord = d3.event.offsetY - 70;
+                    const x = x2.invert(d3.event.offsetX - 100);
+                    const y = y2.invert(d3.event.offsetY - 70);
+                    console.log(x, y)
+                    clickCount++
+                    if (clickCount === 1) {
+                        lineDict.set('start', {xCord, yCord})
+                        const configStart = {
+                            svgContainer,
+                            cx: xCord,
+                            cy: yCord,
+                            key: 'start',
+                            lineMap: lineDict
+                        };
+                        render.drawCircle(configStart)
+                    }
+                    if (clickCount === 2) {
+
+                        lineDict.set('end', {xCord, yCord})
+
+                        const line1 = lineDict.get('start');
+                        const line2 = lineDict.get('end');
+
+                        const configEnd = {
+                            svgContainer,
+                            cx: xCord,
+                            cy: yCord,
+                            key: 'end',
+                            lineMap: lineDict
+
+                        };
+
+                        const configSlope = {
+                            svgContainer,
+                            x1: line1.xCord,
+                            y1: line1.yCord,
+                            x2: line2.xCord,
+                            y2: line2.yCord
+                        }
+
+                        render.drawCircle(configEnd);
+                        render.drawSlopeLine(configSlope);
+                        render.drawMiddleCircle(lineDict, svgContainer)
+
+
+                    }
+
+                })
+
 
             });
 

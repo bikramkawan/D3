@@ -215,8 +215,118 @@ define(function (require) {
                 .attr("transform", `translate(${width + 200 + 50},70 )`)
                 .call(d=>d.axis);
 
+        },
+        drawCircle: function (param) {
+
+            const {svgContainer, cx, cy, key, lineMap} = param;
+            const that = this;
+            svgContainer.append('circle')
+                .classed(key, true)
+                .attr('cx', cx)
+                .attr('cy', cy)
+                .attr('r', 4)
+                .call(d3.drag()
+                    .on("start", ()=>console.log('start'))
+                    .on("drag", function () {
+                        const xCord = d3.event.sourceEvent.offsetX - 100;
+                        const yCord = d3.event.sourceEvent.offsetY - 70;
+                        // const x = x2.invert(d3.event.offsetX - 100);
+                        // const y = y2.invert(d3.event.offsetY - 70);
+                        lineMap.set(key, {xCord, yCord})
+                        d3.select(this).attr('cx', xCord).attr('cy', yCord)
+                        const line1 = lineMap.get('start');
+                        const line2 = lineMap.get('end');
+                        const configSlope = {
+                            svgContainer,
+                            x1: line1.xCord,
+                            y1: line1.yCord,
+                            x2: line2.xCord,
+                            y2: line2.yCord
+                        }
+
+                        that.drawSlopeLine(configSlope)
+                        if (lineMap.has('mid')) {
+                            that.splitSlopeLine(lineMap, svgContainer)
+                        } else {
+                            that.drawMiddleCircle(lineMap, svgContainer)
+                        }
+
+                    })
+                    .on("end", ()=>console.log('end', lineMap)));
+
+
+        },
+        drawSlopeLine: function (param) {
+
+            d3.selectAll('.slopeLine').remove();
+            const {svgContainer, x1, y1, x2, y2} = param;
+            svgContainer.append('path')
+                .classed('slopeLine', true)
+                .attr('d', `M ${x1} ${y1} L ${x2} ${y2}`)
+                .attr('stroke', 'red')
+
+        },
+        drawMiddleCircle: function (lineDict, svgContainer) {
+            const that = this;
+            d3.selectAll('.middle').remove();
+            const line1 = lineDict.get('start');
+            const line2 = lineDict.get('end');
+            const xDiff = Math.abs((line1.xCord - line2.xCord) / 2);
+            const yDiff = Math.abs((line1.yCord - line2.yCord) / 2);
+            const cx = Math.min(line1.xCord, line2.xCord) + xDiff;
+            const cy = Math.min(line1.yCord, line2.yCord) + yDiff;
+            svgContainer.append('circle')
+                .classed('middle', true)
+                .attr('cx', cx)
+                .attr('cy', cy)
+                .attr('r', 4)
+                .attr('stroke', 'red')
+                .call(d3.drag()
+                    .on("start", ()=>console.log('start'))
+                    .on("drag", function () {
+                        const xCord = d3.event.sourceEvent.offsetX - 100;
+                        const yCord = d3.event.sourceEvent.offsetY - 70;
+                        lineDict.set('mid', {xCord: xCord, yCord: yCord})
+                        d3.select(this).attr('cx', xCord).attr('cy', yCord);
+                        that.splitSlopeLine(lineDict, svgContainer);
+
+
+                    })
+                    .on("end", ()=>console.log('end')));
+
+        },
+        splitSlopeLine: function (lineDict, svgContainer) {
+
+            d3.selectAll('.slopeLineSplit').remove();
+            d3.selectAll('.slopeLine').remove();
+            const line1 = lineDict.get('start');
+            const line2 = lineDict.get('end');
+            const x1 = line1.xCord;
+            const y1 = line1.yCord;
+            const x2 = line2.xCord;
+            const y2 = line2.yCord;
+            let xMid, yMid;
+
+            const mid = lineDict.get('mid')
+            xMid = mid.xCord;
+            yMid = mid.yCord;
+
+
+            svgContainer.append('path')
+                .classed('slopeLineSplit', true)
+                .attr('d', `M ${x1} ${y1} L ${xMid} ${yMid}`)
+                .attr('stroke', 'red')
+
+            svgContainer.append('path')
+                .classed('slopeLineSplit', true)
+                .attr('d', `M ${xMid} ${yMid} L ${x2} ${y2}`)
+                .attr('stroke', 'red')
+
+
         }
     }
 
 
 })
+
+
