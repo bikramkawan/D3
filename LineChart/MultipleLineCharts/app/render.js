@@ -4,7 +4,7 @@
 define(function (require) {
     const newExtents = new Map();
     let enableSlopeLine = false;
-
+    let enableFlagMode = false;
     return {
 
         drawLine: function drawLine(params) {
@@ -379,11 +379,22 @@ define(function (require) {
             d3.select('.slopeButton')
                 .on('click', function () {
                     enableSlopeLine = !enableSlopeLine;
-                    d3.select(this).classed('selected', enableSlopeLine === true)
+                    d3.select(this).classed('selected', enableSlopeLine)
+                });
+
+
+        },
+        enableFlagMode: function () {
+            d3.select('.flagButton')
+                .on('click', function () {
+                    enableFlagMode = !enableFlagMode;
+                    d3.select(this).classed('selected', enableFlagMode)
                 });
 
 
         }
+
+
     }
 
 

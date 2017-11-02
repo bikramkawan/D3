@@ -29,6 +29,8 @@ define(function (require) {
                 .attr('fill', 'transparent')
                 .attr('stroke', 'red')
 
+            const arc = d3.symbol().type(d3.symbolTriangle);
+
 
             const render = require('./render');
 
@@ -90,6 +92,7 @@ define(function (require) {
                 render.drawLegends();
                 render.toggleMode();
                 render.enableSlope();
+                render.enableFlagMode();
                 const brushDimension = {width, height};
                 const configBrush = {x12, margin, x22, brushDimension, y12, y22, y32, lineData}
 
@@ -125,55 +128,75 @@ define(function (require) {
                     const x = x2.invert(d3.event.offsetX - 100);
                     const y = y2.invert(d3.event.offsetY - 70);
 
-                    console.log(d3.select('.slopeButton').attr('class'))
-                    const slopeLineClass = d3.select('.slopeButton').attr('class')
+                    const slopeLineClass = d3.select('.slopeButton').attr('class');
                     const isSlopeLineEnable = slopeLineClass.indexOf('selected') > 0;
 
-                    if (!isSlopeLineEnable) return;
-                    console.log(x, y)
-                    clickCount++
-                    if (clickCount === 1) {
-                        lineDict.set('start', {xCord, yCord})
-                        const configStart = {
-                            svgContainer,
-                            cx: xCord,
-                            cy: yCord,
-                            key: 'start',
-                            lineMap: lineDict
-                        };
-                        render.drawCircle(configStart)
+                    const FlagLineClass = d3.select('.flagButton').attr('class');
+                    const isFlagModeEnable = FlagLineClass.indexOf('selected') > 0;
+
+
+                    if (isFlagModeEnable) {
+
+                        svgContainer.append('path')
+                            .classed('flags', true)
+                            .attr('d', arc)
+                            .attr('transform', `translate(${xCord},-2)rotate(90)`)
+
+
+                        svgContainer.append('path')
+                            .classed('flagsLine', true)
+                            .attr('d', `M ${xCord - 4} -8 L ${xCord - 4} 20`)
+                            .attr('stroke', 'red')
+                            .attr('fill', 'none')
                     }
-                    if (clickCount === 2) {
 
-                        lineDict.set('end', {xCord, yCord})
 
-                        const line1 = lineDict.get('start');
-                        const line2 = lineDict.get('end');
-
-                        const configEnd = {
-                            svgContainer,
-                            cx: xCord,
-                            cy: yCord,
-                            key: 'end',
-                            lineMap: lineDict
-
-                        };
-
-                        const configSlope = {
-                            svgContainer,
-                            x1: line1.xCord,
-                            y1: line1.yCord,
-                            x2: line2.xCord,
-                            y2: line2.yCord,
-                            lineDict
+                    if (isSlopeLineEnable) {
+                        clickCount++
+                        if (clickCount === 1) {
+                            lineDict.set('start', {xCord, yCord})
+                            const configStart = {
+                                svgContainer,
+                                cx: xCord,
+                                cy: yCord,
+                                key: 'start',
+                                lineMap: lineDict
+                            };
+                            render.drawCircle(configStart)
                         }
+                        if (clickCount === 2) {
 
-                        render.drawCircle(configEnd);
-                        render.drawMiddleCircle(lineDict, svgContainer)
-                        render.drawSlopeLine(configSlope);
+                            lineDict.set('end', {xCord, yCord})
+
+                            const line1 = lineDict.get('start');
+                            const line2 = lineDict.get('end');
+
+                            const configEnd = {
+                                svgContainer,
+                                cx: xCord,
+                                cy: yCord,
+                                key: 'end',
+                                lineMap: lineDict
+
+                            };
+
+                            const configSlope = {
+                                svgContainer,
+                                x1: line1.xCord,
+                                y1: line1.yCord,
+                                x2: line2.xCord,
+                                y2: line2.yCord,
+                                lineDict
+                            }
+
+                            render.drawCircle(configEnd);
+                            render.drawMiddleCircle(lineDict, svgContainer)
+                            render.drawSlopeLine(configSlope);
 
 
+                        }
                     }
+
 
                 })
 
