@@ -89,27 +89,9 @@ define(function (require) {
                 lineData.forEach(item=>render.drawLine(item));
                 render.drawLegends();
                 render.toggleMode();
+                render.enableSlope();
                 const brushDimension = {width, height};
                 const configBrush = {x12, margin, x22, brushDimension, y12, y22, y32, lineData}
-
-
-                //
-                // const brush1 = svg.append("g")
-                //     .classed(`brush-grp`, true)
-                //     .attr("transform", "translate(" + margin.left + ",0)");
-                // brush1.append("g")
-                //     .attr("class", "axis xAxis TopX1")
-                //     .attr("transform", `translate(0,0)`)
-                //     .call(xAxis1);
-
-                // const brush1 = svg.append("g")
-                //     .classed(`brush-grp`, true)
-                // // .attr("transform", "translate(" + margin.left + ",0)");
-                // brush1.append("g")
-                //     .attr("class", `axis yAxis Yleft`)
-                //     .attr("transform", `translate(${width+200+50},70 )`)
-                //     .call(yAxis2);
-
 
                 const bAxis = svg.append("g")
                     .classed(`brush-grp`, true)
@@ -121,7 +103,6 @@ define(function (require) {
                     yAxis3
                 })
 
-                console.error(brushes)
 
                 brushes.forEach((e)=> {
 
@@ -143,6 +124,12 @@ define(function (require) {
                     const yCord = d3.event.offsetY - 70;
                     const x = x2.invert(d3.event.offsetX - 100);
                     const y = y2.invert(d3.event.offsetY - 70);
+
+                    console.log(d3.select('.slopeButton').attr('class'))
+                    const slopeLineClass = d3.select('.slopeButton').attr('class')
+                    const isSlopeLineEnable = slopeLineClass.indexOf('selected') > 0;
+
+                    if (!isSlopeLineEnable) return;
                     console.log(x, y)
                     clickCount++
                     if (clickCount === 1) {
@@ -177,12 +164,13 @@ define(function (require) {
                             x1: line1.xCord,
                             y1: line1.yCord,
                             x2: line2.xCord,
-                            y2: line2.yCord
+                            y2: line2.yCord,
+                            lineDict
                         }
 
                         render.drawCircle(configEnd);
-                        render.drawSlopeLine(configSlope);
                         render.drawMiddleCircle(lineDict, svgContainer)
+                        render.drawSlopeLine(configSlope);
 
 
                     }

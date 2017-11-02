@@ -144,6 +144,9 @@
   margin: 5px;
   cursor: pointer;
 }
+.bottom-container .mode-container .control.selected {
+  background: steelblue;
+}
 .brush-grp .axis {
   visibility: hidden;
 }
