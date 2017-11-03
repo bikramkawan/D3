@@ -5,6 +5,10 @@ define(function (require) {
     const newExtents = new Map();
     let enableSlopeLine = false;
     let enableFlagMode = false;
+    let disableMidpoint = true;
+    const lineDict = new Map();
+    const dx = 100, dy = 70;
+    let svgContainer;
     return {
 
         drawLine: function drawLine(params) {
@@ -217,9 +221,8 @@ define(function (require) {
                 .call(d=>d.axis);
 
         },
-        drawCircle: function (param) {
-
-            const {svgContainer, cx, cy, key, lineMap} = param;
+        drawCircle: function ({key}) {
+            const {cx, cy} = lineDict.get(key);
             const that = this;
             svgContainer.append('circle')
                 .classed(key, true)
@@ -227,100 +230,111 @@ define(function (require) {
                 .attr('cy', cy)
                 .attr('r', 5)
                 .call(d3.drag()
-                    .on("start", ()=>console.log('start'))
+                    .on("start", ()=>console.log('Circle Dragging start'))
                     .on("drag", function () {
                         if (!enableSlopeLine) return
-                        const xCord = d3.event.sourceEvent.offsetX - 100;
-                        const yCord = d3.event.sourceEvent.offsetY - 70;
-                        // const x = x2.invert(d3.event.offsetX - 100);
-                        // const y = y2.invert(d3.event.offsetY - 70);
-                        lineMap.set(key, {xCord, yCord})
-                        d3.select(this).attr('cx', xCord).attr('cy', yCord)
-                        const line1 = lineMap.get('start');
-                        const line2 = lineMap.get('end');
-                        const configSlope = {
-                            svgContainer,
-                            x1: line1.xCord,
-                            y1: line1.yCord,
-                            x2: line2.xCord,
-                            y2: line2.yCord,
-                            lineDict: lineMap
+                        const cx = d3.event.sourceEvent.offsetX - dx;
+                        const cy = d3.event.sourceEvent.offsetY - dy;
+                        lineDict.set(key, {cx, cy})
+                        d3.select(this).attr('cx', cx).attr('cy', cy)
+                        if (disableMidpoint) {
+                            that.drawSlopeLine();
+                            that.drawMiddleCircle();
+
+                        } else {
+                            that.splitSlopeLine()
                         }
 
-                        that.drawSlopeLine(configSlope)
-                        // if (lineMap.has('mid')) {
-                        //     that.splitSlopeLine(lineMap, svgContainer)
-                        // } else {
-                        //     that.drawMiddleCircle(lineMap, svgContainer)
-                        // }
-
-
-                        that.splitSlopeLine(lineMap, svgContainer)
 
                     })
-                    .on("end", ()=>console.log('end')));
+                    .on("end", ()=>console.log('Circle Dragging Ended')));
 
 
         },
-        drawSlopeLine: function (param) {
+        drawSlopeLine: function () {
             if (!enableSlopeLine) return
             d3.selectAll('.slopeLine').remove();
-            const {svgContainer, x1, y1, x2, y2, lineDict} = param;
-            const mid = lineDict.get('mid');
+            let start = lineDict.get('start');
+            let end = lineDict.get('end');
+            let mid = lineDict.get('mid');
+            let x1 = start.cx;
+            let y1 = start.cy;
+            let x2 = end.cx;
+            let y2 = end.cy;
+            let mx = mid.cx;
+            let my = mid.cy;
             svgContainer.append('path')
                 .classed('slopeLine', true)
                 .attr('d', `M ${x1} ${y1} L ${x2} ${y2}`)
                 .attr('stroke', 'red')
                 .attr('stroke-width', 4)
                 .call(d3.drag()
-                    .on("start", ()=>console.log('start'))
-                    .on("drag", function () {
-                        if (!enableSlopeLine) return
-                        const {sourceEvent} = d3.event;
-                        const xCord = sourceEvent.offsetX - 100;
-                        const yCord = sourceEvent.offsetY - 70;
-                        const dx = xCord - d3.event.subject.x;
-                        const dy = yCord - d3.event.subject.y;
+                    .on("start", function () {
+                        console.log(' Line Dragging start')
 
-                        d3.select(this)
-                            .attr('d', `M ${x1 + dx} ${y1 + dy} L ${x2 + dx} ${y2 + dy}`)
+                        const tempstart = lineDict.get('start');
+                        const tempend = lineDict.get('end');
+                        const tempmid = lineDict.get('mid');
+                        const tempx1 = tempstart.cx;
+                        const tempy1 = tempstart.cy;
+                        const tempx2 = tempend.cx;
+                        const tempy2 = tempend.cy;
+                        const tempmx = tempmid.cx;
+                        const tempmy = tempmid.cy;
 
-                        d3.select('.start')
-                            .attr('cx', x1 + dx)
-                            .attr('cy', y1 + dy)
-
-                        d3.select('.end')
-                            .attr('cx', x2 + dx)
-                            .attr('cy', y2 + dy)
-
-
-                        d3.select('.middle')
-                            .attr('cx', mid.xCord + dx)
-                            .attr('cy', mid.yCord + dy)
-
-
-                        lineDict.set('start', {xCord: x1 + dx, yCord: y1 + dy})
-                        lineDict.set('mid', {xCord: mid.xCord + dx, yCord: mid.yCord + dy})
-                        lineDict.set('end', {xCord: x2 + dx, yCord: y2 + dy})
+                        x1 = tempx1;
+                        y1 = tempy1;
+                        x2 = tempx2;
+                        y2 = tempy2;
+                        mx = tempmx;
+                        my = tempmy;
 
 
                     })
-                    .on("end", ()=>console.log('end')));
+                    .on("drag", function () {
+                        if (!enableSlopeLine) return
+                        const {sourceEvent} = d3.event;
+                        const xCord = sourceEvent.offsetX - dx;
+                        const yCord = sourceEvent.offsetY - dy;
+                        const diffX = xCord - d3.event.subject.x;
+                        const diffY = yCord - d3.event.subject.y;
+
+                        d3.select(this)
+                            .attr('d', `M ${x1 + diffX} ${y1 + diffY} L ${x2 + diffX} ${y2 + diffY}`)
+
+                        d3.select('.start')
+                            .attr('cx', x1 + diffX)
+                            .attr('cy', y1 + diffY)
+
+                        d3.select('.end')
+                            .attr('cx', x2 + diffX)
+                            .attr('cy', y2 + diffY)
+
+                        d3.select('.middle')
+                            .attr('cx', mx + diffX)
+                            .attr('cy', my + diffY)
+
+                        lineDict.set('start', {cx: x1 + diffX, cy: y1 + diffY})
+                        lineDict.set('mid', {cx: mx + diffX, cy: my + diffY})
+                        lineDict.set('end', {cx: x2 + diffX, cy: y2 + diffY})
+
+
+                    })
+                    .on("end", function () {
+                            console.log('dragging of line end')
+
+                        }
+                    ));
 
 
         },
-        drawMiddleCircle: function (lineDict, svgContainer) {
+        drawMiddleCircle: function () {
+
             if (!enableSlopeLine) return
             const that = this;
             d3.selectAll('.middle').remove();
-            const line1 = lineDict.get('start');
-            const line2 = lineDict.get('end');
-            const xDiff = Math.abs((line1.xCord - line2.xCord) / 2);
-            const yDiff = Math.abs((line1.yCord - line2.yCord) / 2);
-            const cx = Math.min(line1.xCord, line2.xCord) + xDiff;
-            const cy = Math.min(line1.yCord, line2.yCord) + yDiff;
-            lineDict.set('mid', {xCord: cx, yCord: cy})
-
+            const {cx, cy} = this.calcMidPoint();
+            lineDict.set('mid', {cx, cy});
             svgContainer.append('circle')
                 .classed('middle', true)
                 .attr('cx', cx)
@@ -330,46 +344,42 @@ define(function (require) {
                 .call(d3.drag()
                     .on("start", ()=>console.log('start'))
                     .on("drag", function () {
-                        if (!enableSlopeLine) return
-                        const xCord = d3.event.sourceEvent.offsetX - 100;
-                        const yCord = d3.event.sourceEvent.offsetY - 70;
-                        lineDict.set('mid', {xCord: xCord, yCord: yCord})
-                        d3.select(this).attr('cx', xCord).attr('cy', yCord);
-                        that.splitSlopeLine(lineDict, svgContainer);
+                        if (!enableSlopeLine || disableMidpoint) return
+                        const cx = d3.event.sourceEvent.offsetX - dx;
+                        const cy = d3.event.sourceEvent.offsetY - dy;
+                        lineDict.set('mid', {cx, cy})
+                        d3.select(this).attr('cx', cx).attr('cy', cy);
+                        that.splitSlopeLine();
 
 
                     })
                     .on("end", ()=>console.log('end')));
 
         },
-        splitSlopeLine: function (lineDict, svgContainer) {
+        splitSlopeLine: function () {
 
             if (!enableSlopeLine) return
-
             d3.selectAll('.slopeLineSplit').remove();
             d3.selectAll('.slopeLine').remove();
-            const line1 = lineDict.get('start');
-            const line2 = lineDict.get('end');
-            const x1 = line1.xCord;
-            const y1 = line1.yCord;
-            const x2 = line2.xCord;
-            const y2 = line2.yCord;
-            let xMid, yMid;
-
+            const start = lineDict.get('start');
+            const end = lineDict.get('end');
             const mid = lineDict.get('mid')
-            xMid = mid.xCord;
-            yMid = mid.yCord;
-
+            const x1 = start.cx;
+            const y1 = start.cy;
+            const x2 = end.cx;
+            const y2 = end.cy;
+            const mx = mid.cx;
+            const my = mid.cy;
 
             svgContainer.append('path')
                 .classed('slopeLineSplit', true)
-                .attr('d', `M ${x1} ${y1} L ${xMid} ${yMid}`)
+                .attr('d', `M ${x1} ${y1} L ${mx} ${my}`)
                 .attr('stroke', 'red')
                 .attr('stroke-width', 4)
 
             svgContainer.append('path')
                 .classed('slopeLineSplit', true)
-                .attr('d', `M ${xMid} ${yMid} L ${x2} ${y2}`)
+                .attr('d', `M ${mx} ${my} L ${x2} ${y2}`)
                 .attr('stroke', 'red')
                 .attr('stroke-width', 4)
 
@@ -391,9 +401,97 @@ define(function (require) {
                     d3.select(this).classed('selected', enableFlagMode)
                 });
 
+        },
+        toggleCheckBox: function () {
+            const that = this;
+            d3.select('.midpoint')
+                .on('change', function () {
+                    disableMidpoint = d3.select(this).node().checked;
+
+                    if (disableMidpoint) {
+
+                        d3.selectAll('.slopeLineSplit').remove();
+                        d3.selectAll('circle').remove();
+                        that.drawCircle({key: 'start'});
+                        that.drawCircle({key: 'end'})
+                        that.drawMiddleCircle();
+                        that.drawSlopeLine()
+
+                    }
+
+
+                });
+
+        },
+        calcMidPoint: function () {
+            const start = lineDict.get('start');
+            const end = lineDict.get('end');
+            const xDiff = Math.abs((start.cx - end.cx) / 2);
+            const yDiff = Math.abs((start.cy - end.cy) / 2);
+            const cx = Math.min(start.cx, end.cx) + xDiff;
+            const cy = Math.min(start.cy, end.cy) + yDiff;
+            return {cx, cy};
+
+        },
+        drawRectContainer: function (svg, width, height, x2, y2) {
+            svgContainer = svg.append('g').attr("transform", `translate(100,70)`)
+            const that = this;
+            const svgRect = svgContainer.append('rect')
+                .attr('x', 0)
+                .attr('width', width)
+                .attr('height', height)
+                .attr('fill', 'transparent')
+                .attr('stroke', 'red')
+            let clickCount = 0;
+            svgRect.on("click", function () {
+                const cx = d3.event.offsetX - dx;
+                const cy = d3.event.offsetY - dy;
+
+                const slopeLineClass = d3.select('.slopeButton').attr('class');
+                const isSlopeLineEnable = slopeLineClass.indexOf('selected') > 0;
+
+                const FlagLineClass = d3.select('.flagButton').attr('class');
+                const isFlagModeEnable = FlagLineClass.indexOf('selected') > 0;
+
+
+                if (isFlagModeEnable) {
+
+                    svgContainer.append('path')
+                        .classed('flags', true)
+                        .attr('d', arc)
+                        .attr('transform', `translate(${cx},-2)rotate(90)`)
+
+
+                    svgContainer.append('path')
+                        .classed('flagsLine', true)
+                        .attr('d', `M ${cx - 4} -8 L ${cx - 4} 20`)
+                        .attr('stroke', 'red')
+                        .attr('fill', 'none')
+                }
+
+
+                if (isSlopeLineEnable) {
+                    clickCount++
+                    if (clickCount === 1) {
+                        lineDict.set('start', {cx, cy})
+                        that.drawCircle({key: 'start'});
+                    }
+                    if (clickCount === 2) {
+
+                        lineDict.set('end', {cx, cy})
+                        that.drawCircle({key: 'end'})
+                        that.drawMiddleCircle();
+                        that.drawSlopeLine()
+
+
+                    }
+                }
+
+
+            })
+
 
         }
-
 
     }
 
