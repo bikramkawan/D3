@@ -7,7 +7,8 @@ define(function (require) {
     let enableFlagMode = false;
     let disableMidpoint = true;
     const lineDict = new Map();
-    const dx = 100, dy = 70;
+    const dx = 100, dy = 70, slopeTextOffset = 7;
+    let xScale, yScale;
     let svgContainer;
     return {
 
@@ -224,6 +225,8 @@ define(function (require) {
         drawCircle: function ({key}) {
             const {cx, cy} = lineDict.get(key);
             const that = this;
+
+            console.log(xScale.invert(cx), 'sc', cx)
             svgContainer.append('circle')
                 .classed(key, true)
                 .attr('cx', cx)
@@ -240,9 +243,11 @@ define(function (require) {
                         if (disableMidpoint) {
                             that.drawSlopeLine();
                             that.drawMiddleCircle();
+                            that.drawSlopeText()
 
                         } else {
                             that.splitSlopeLine()
+                            that.drawSlopeText()
                         }
 
 
@@ -254,15 +259,8 @@ define(function (require) {
         drawSlopeLine: function () {
             if (!enableSlopeLine) return
             d3.selectAll('.slopeLine').remove();
-            let start = lineDict.get('start');
-            let end = lineDict.get('end');
-            let mid = lineDict.get('mid');
-            let x1 = start.cx;
-            let y1 = start.cy;
-            let x2 = end.cx;
-            let y2 = end.cy;
-            let mx = mid.cx;
-            let my = mid.cy;
+            let {x1, y1, x2, y2, mx, my} = this.getPoints();
+            const that = this;
             svgContainer.append('path')
                 .classed('slopeLine', true)
                 .attr('d', `M ${x1} ${y1} L ${x2} ${y2}`)
@@ -271,23 +269,13 @@ define(function (require) {
                 .call(d3.drag()
                     .on("start", function () {
                         console.log(' Line Dragging start')
-
-                        const tempstart = lineDict.get('start');
-                        const tempend = lineDict.get('end');
-                        const tempmid = lineDict.get('mid');
-                        const tempx1 = tempstart.cx;
-                        const tempy1 = tempstart.cy;
-                        const tempx2 = tempend.cx;
-                        const tempy2 = tempend.cy;
-                        const tempmx = tempmid.cx;
-                        const tempmy = tempmid.cy;
-
-                        x1 = tempx1;
-                        y1 = tempy1;
-                        x2 = tempx2;
-                        y2 = tempy2;
-                        mx = tempmx;
-                        my = tempmy;
+                        const temp = that.getPoints();
+                        x1 = temp.x1;
+                        y1 = temp.y1;
+                        x2 = temp.x2;
+                        y2 = temp.y2;
+                        mx = temp.mx;
+                        my = temp.my;
 
 
                     })
@@ -317,6 +305,7 @@ define(function (require) {
                         lineDict.set('start', {cx: x1 + diffX, cy: y1 + diffY})
                         lineDict.set('mid', {cx: mx + diffX, cy: my + diffY})
                         lineDict.set('end', {cx: x2 + diffX, cy: y2 + diffY})
+                        that.drawSlopeText()
 
 
                     })
@@ -361,16 +350,7 @@ define(function (require) {
             if (!enableSlopeLine) return
             d3.selectAll('.slopeLineSplit').remove();
             d3.selectAll('.slopeLine').remove();
-            const start = lineDict.get('start');
-            const end = lineDict.get('end');
-            const mid = lineDict.get('mid')
-            const x1 = start.cx;
-            const y1 = start.cy;
-            const x2 = end.cx;
-            const y2 = end.cy;
-            const mx = mid.cx;
-            const my = mid.cy;
-
+            const {x1, y1, x2, y2, mx, my} = this.getPoints();
             svgContainer.append('path')
                 .classed('slopeLineSplit', true)
                 .attr('d', `M ${x1} ${y1} L ${mx} ${my}`)
@@ -415,7 +395,8 @@ define(function (require) {
                         that.drawCircle({key: 'start'});
                         that.drawCircle({key: 'end'})
                         that.drawMiddleCircle();
-                        that.drawSlopeLine()
+                        that.drawSlopeLine();
+
 
                     }
 
@@ -433,9 +414,24 @@ define(function (require) {
             return {cx, cy};
 
         },
+        drawSlopeText: function () {
+            d3.selectAll('.slopeText').remove();
+            const slope = this.calculateSlope();
+            const {mx, my} = this.getPoints();
+            svgContainer.append('text')
+                .classed('slopeText', true)
+                .attr('x', mx)
+                .attr('y', my - slopeTextOffset)
+                .text(`${slope} psi/s`)
+
+
+        },
         drawRectContainer: function (svg, width, height, x2, y2) {
-            svgContainer = svg.append('g').attr("transform", `translate(100,70)`)
+            svgContainer = svg.append('g').attr("transform", `translate(100,70)`);
             const that = this;
+            xScale = x2;
+            yScale = y2;
+            console.log(x2.domain(), x2.range(), y2, xScale.domain(), x2(800))
             const svgRect = svgContainer.append('rect')
                 .attr('x', 0)
                 .attr('width', width)
@@ -477,11 +473,11 @@ define(function (require) {
                         that.drawCircle({key: 'start'});
                     }
                     if (clickCount === 2) {
-
                         lineDict.set('end', {cx, cy})
                         that.drawCircle({key: 'end'})
                         that.drawMiddleCircle();
-                        that.drawSlopeLine()
+                        that.drawSlopeLine();
+                        that.drawSlopeText();
 
 
                     }
@@ -490,6 +486,26 @@ define(function (require) {
 
             })
 
+        },
+        calculateSlope: function () {
+
+            const {x1, y1, x2, y2} = this.getPoints();
+            return ((yScale.invert(y2) - yScale.invert(y1)) / (xScale.invert(x2) - xScale.invert(x1))).toFixed(2);
+
+        },
+        getPoints: function () {
+
+            const start = lineDict.get('start');
+            const end = lineDict.get('end');
+            const mid = lineDict.get('mid')
+            const x1 = start.cx;
+            const y1 = start.cy;
+            const x2 = end.cx;
+            const y2 = end.cy;
+            const mx = mid.cx;
+            const my = mid.cy;
+
+            return {x1, y1, x2, y2, mx, my};
 
         }
 

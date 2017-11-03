@@ -27,7 +27,6 @@ define(function (require) {
 
 
             const render = require('./render');
-            render.drawRectContainer(svg,width,height);
 
 
             const xAxis1 = d3.axisBottom(x),
@@ -53,6 +52,7 @@ define(function (require) {
                 })
                 x12.domain(d3.extent(data, d=>d.date));
                 x22.domain(d3.extent(data, d=> d.time2));
+
                 y12.domain(y1Extent);
                 y22.domain(y2Extent);
                 y32.domain(d3.extent(data, d=> d.y31));
@@ -89,6 +89,7 @@ define(function (require) {
                 render.enableSlope();
                 render.enableFlagMode();
                 render.toggleCheckBox();
+                render.drawRectContainer(svg, width, height, x22, y12);
                 const brushDimension = {width, height};
                 const configBrush = {x12, margin, x22, brushDimension, y12, y22, y32, lineData}
 
