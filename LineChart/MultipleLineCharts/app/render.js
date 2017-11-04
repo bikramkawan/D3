@@ -91,7 +91,6 @@ define(function (require) {
 
 
         },
-
         drawLegends: function drawLegends() {
             const {legends} = require('./constants').main();
             const el = d3.select('.legends')
@@ -115,7 +114,6 @@ define(function (require) {
             })
 
         },
-
         toggleMode: function () {
 
             d3.select('.mode').on('click', ()=> {
@@ -127,7 +125,6 @@ define(function (require) {
             })
 
         },
-
         drawBrush: function (param) {
 
             const {selector, scale, brushDimension, orientation, margin, key, lineData} = param
@@ -228,7 +225,6 @@ define(function (require) {
             const {cx, cy} = lineDict.get(key);
             const that = this;
 
-            console.log(xScale.invert(cx), 'sc', cx)
             svgContainer.append('circle')
                 .classed(key, true)
                 .attr('cx', cx)
@@ -433,7 +429,6 @@ define(function (require) {
             const that = this;
             xScale = x2;
             yScale = y2;
-            console.log(x2.domain(), x2.range(), y2, xScale.domain(), x2(800))
             const svgRect = svgContainer.append('rect')
                 .attr('x', 0)
                 .attr('width', width)
