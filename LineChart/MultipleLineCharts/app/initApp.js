@@ -23,7 +23,7 @@ define(function (require) {
 
 
 
-            const arc = d3.symbol().type(d3.symbolTriangle);
+
 
 
             const render = require('./render');

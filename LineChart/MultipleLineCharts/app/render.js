@@ -7,7 +7,9 @@ define(function (require) {
     let enableFlagMode = false;
     let disableMidpoint = true;
     const lineDict = new Map();
+    const flagMap = new Map();
     const dx = 100, dy = 70, slopeTextOffset = 7;
+    const arc = d3.symbol().type(d3.symbolTriangle);
     let xScale, yScale;
     let svgContainer;
     return {
@@ -452,17 +454,8 @@ define(function (require) {
 
                 if (isFlagModeEnable) {
 
-                    svgContainer.append('path')
-                        .classed('flags', true)
-                        .attr('d', arc)
-                        .attr('transform', `translate(${cx},-2)rotate(90)`)
+                    that.drawFlag(cx, cy)
 
-
-                    svgContainer.append('path')
-                        .classed('flagsLine', true)
-                        .attr('d', `M ${cx - 4} -8 L ${cx - 4} 20`)
-                        .attr('stroke', 'red')
-                        .attr('fill', 'none')
                 }
 
 
@@ -506,6 +499,66 @@ define(function (require) {
             const my = mid.cy;
 
             return {x1, y1, x2, y2, mx, my};
+
+        },
+        drawFlag: function (cx, cy) {
+            const xVal = xScale.invert(cx).toFixed(2);
+            const yVal = yScale.invert(cy).toFixed(2);
+            const that = this;
+            const g = svgContainer.append('g')
+                .attr('data-attrFlag', xVal)
+                .attr('transform', `translate(${cx},-2)`)
+                .call(d3.drag()
+                    .on("start", ()=>console.log(' Flag dragging start'))
+                    .on("drag", function () {
+                        const cx = d3.event.sourceEvent.offsetX - dx;
+                        const cy = d3.event.sourceEvent.offsetY - dy;
+                        d3.select(this).attr('transform', `translate(${cx},-2)`)
+                        const xValNew = xScale.invert(cx).toFixed(2);
+                        const yValNew = yScale.invert(cy).toFixed(2);
+                        that.addFlagScore(xVal, xValNew, yValNew);
+
+
+                    })
+                    .on("end", ()=>console.log('Flag dragging end')));
+
+            g.append('path')
+                .classed('flags', true)
+                .attr('d', arc)
+                .attr('transform', `rotate(90)`)
+
+
+            g.append('path')
+                .classed('flagsLine', true)
+                .attr('d', `M -4 -8 L -4 20`)
+                .attr('stroke', 'red')
+                .attr('fill', 'none')
+
+            flagMap.set(xVal, {xVal, yVal});
+            this.addFlagScore(xVal, xVal, yVal)
+
+        },
+        addFlagScore: function (key, xVal, yVal) {
+            d3.selectAll(`[data-flagItem="${key}"]`).remove();
+            const flagScore = d3.select('.inner-items')
+                .append('div')
+                .classed('flagItem', true)
+                .attr('data-flagItem', key);
+
+            flagScore.append('div')
+                .classed('flagValue', true)
+                .text(`x = ${xVal} s, y = ${yVal} psi`)
+
+            flagScore.append('div')
+                .classed('deleteFlag', true)
+                .attr('data-attr', `${xVal},${yVal}`)
+                .on('click', function () {
+                    d3.selectAll(`[data-attrFlag="${key}"]`).remove();
+                    d3.selectAll(`[data-flagItem="${key}"]`).remove();
+                    flagMap.delete(key)
+
+                })
+                .text('X')
 
         }
 

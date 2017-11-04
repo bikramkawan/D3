@@ -127,6 +127,7 @@
 .bottom-container {
   display: flex;
   justify-content: space-around;
+  width: 80%;
 }
 .bottom-container .mode-container {
   width: 350px;
@@ -161,4 +162,37 @@
 }
 .slope-container .midpoint {
   transform: scale(2);
+}
+.flagTable {
+  flex-basis: 215px;
+  justify-content: center;
+  align-items: center;
+}
+.flagTable p {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+.flagTable .inner-items {
+  align-items: center;
+  display: flex;
+  border: 1px solid;
+  flex-direction: column;
+}
+.flagTable .inner-items .flagItem {
+  height: 25px;
+  border-bottom: 1px solid;
+  width: 100%;
+  text-align: center;
+  display: flex;
+}
+.flagTable .inner-items .flagItem .flagValue {
+  width: 90%;
+  /* text-align: center; */
+  border-right: 1px solid;
+}
+.flagTable .inner-items .flagItem .deleteFlag {
+  width: 10%;
+  text-align: center;
+  cursor: pointer;
 }
