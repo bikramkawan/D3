@@ -9,7 +9,6 @@ define(function (require) {
     let svg;
     let axisSVG;
     let brushSVG;
-    const newExtents = new Map();
     const x = d3.scaleTime().range([0, width]),
         y1 = d3.scaleLinear().range([height, 0]),
         y2 = d3.scaleLinear().range([height, 0]),
@@ -30,7 +29,6 @@ define(function (require) {
         yAxis1 = d3.axisLeft(y1),
         yAxis2 = d3.axisLeft(y2),
         yAxis3 = d3.axisLeft(y3);
-
     let data;
     return {
 
@@ -247,7 +245,6 @@ define(function (require) {
                 .attr("transform", `translate(${margin.x},${margin.y})`)
                 .call(axis);
         },
-
         drawBrushRect: function (param) {
             const {selector, scale, orientation, key} = param
             if (orientation === 'hor') {
