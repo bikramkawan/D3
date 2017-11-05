@@ -205,10 +205,21 @@
 }
 
 .flagTable {
-  flex-basis: 215px;
+  width: 300px;
   justify-content: center;
   align-items: center;
-
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  right: 25px;
+  height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  .header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
   p {
     text-align: center;
     font-size: 20px;
@@ -216,21 +227,26 @@
   }
   .inner-items {
     align-items: center;
-    display: flex;
-
+    display: none;
     flex-direction: column;
 
     .flagItem {
-      width: 100%;
+      width: 95%;
       text-align: center;
       display: flex;
       flex-direction: column;
       border: 1px solid;
-      margin-bottom: 8px;
+      margin-bottom: 15px;
+      -webkit-box-shadow: -1px 0px 21px 1px rgba(0, 0, 0, 0.75);
+      -moz-box-shadow: -1px 0px 21px 1px rgba(0, 0, 0, 0.75);
+      box-shadow: -1px 0px 21px 1px rgba(0, 0, 0, 0.75);
       .header {
         display: flex;
         height: 25px;
-        background: darkgray;
+        background: lightblue;
+        &.highlighted {
+          background: orange;
+        }
         .flagValue {
           width: 90%;
           border-right: 1px solid;
@@ -278,4 +294,26 @@
   .selection {
     stroke: none;
   }
+}
+
+.fa {
+  &.hidden {
+    visibility: hidden;
+  }
+}
+
+.flag {
+  cursor: pointer;
+  .flags {
+    fill: black;
+    &.highlighted {
+      fill: orange;
+    }
+  }
+  .flagsLine {
+    stroke: red;
+    fill: none;
+
+  }
+
 }

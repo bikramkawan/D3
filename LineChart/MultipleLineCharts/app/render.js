@@ -6,6 +6,7 @@ define(function (require) {
     let enableSlopeLine = false;
     let enableFlagMode = false;
     let disableMidpoint = true;
+    let displayFlagInformation = false;
     const lineDict = new Map();
     const flagMap = new Map();
     const dx = 100, dy = 70, slopeTextOffset = 7;
@@ -331,7 +332,21 @@ define(function (require) {
             const that = this;
             const g = svgContainer.append('g')
                 .attr('data-attrFlag', xVal)
+                .classed('flag', true)
                 .attr('transform', `translate(${cx},-2)`)
+                .on('mouseover', function () {
+                    console.log('enter')
+                    d3.select(`[data-flagitem="${xVal}"]`)
+                        .select('.header')
+                        .classed('highlighted', true)
+                })
+                .on('mouseleave', function () {
+                    console.log('eleave')
+                    d3.select(`[data-flagitem="${xVal}"]`)
+                        .select('.header')
+                        .classed('highlighted', false)
+
+                })
                 .call(d3.drag()
                     .on("start", ()=>console.log(' Flag dragging start'))
                     .on("drag", function () {
@@ -355,8 +370,7 @@ define(function (require) {
             g.append('path')
                 .classed('flagsLine', true)
                 .attr('d', `M -4 -8 L -4 20`)
-                .attr('stroke', 'red')
-                .attr('fill', 'none')
+
 
             flagMap.set(xVal, {xVal, yVal});
             this.addFlagScore(xVal, cx, cy)
@@ -434,7 +448,20 @@ define(function (require) {
             const flagScore = d3.select('.inner-items')
                 .append('div')
                 .classed('flagItem', true)
-                .attr('data-flagItem', key);
+                .attr('data-flagItem', key)
+                .on('mouseover', function () {
+                    console.log('enter')
+                    d3.select(`[data-attrFlag="${key}"]`)
+                        .select('.flags')
+                        .classed('highlighted', true)
+                })
+                .on('mouseleave', function () {
+                    console.log('eleave')
+                    d3.select(`[data-attrFlag="${key}"]`)
+                        .select('.flags')
+                        .classed('highlighted', false)
+
+                })
 
             const header = flagScore.append('div')
                 .classed('header', true)
@@ -456,7 +483,8 @@ define(function (require) {
                     flagMap.delete(key)
 
                 })
-                .text('X')
+                .append('i')
+                .classed("fa fa-trash-o", true)
 
 
             const row = rowItems.selectAll('div')
@@ -473,7 +501,25 @@ define(function (require) {
                 .attr('class', (d)=>`color ${d.className}`)
 
 
-        }
+        },
+        toggleFlagDisplay: function () {
+            const that = this;
+            d3.select('.toggleFlag')
+                .on('click', function () {
+                    displayFlagInformation = !displayFlagInformation;
+                    if (displayFlagInformation) {
+                        d3.select(this).select('i').attr('class', 'fa fa-toggle-on fa-2x ')
+                        d3.select('.inner-items').style('display', 'flex')
+
+                    } else {
+                        d3.select(this).select('i').attr('class', 'fa fa-toggle-off fa-2x ')
+                        d3.select('.inner-items').style('display', 'none')
+                    }
+
+
+                });
+
+        },
 
     }
 

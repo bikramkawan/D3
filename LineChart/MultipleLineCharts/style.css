@@ -164,8 +164,20 @@
   transform: scale(2);
 }
 .flagTable {
-  flex-basis: 215px;
+  width: 300px;
   justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  right: 25px;
+  height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.flagTable .header {
+  display: flex;
+  justify-content: space-around;
   align-items: center;
 }
 .flagTable p {
@@ -175,21 +187,27 @@
 }
 .flagTable .inner-items {
   align-items: center;
-  display: flex;
+  display: none;
   flex-direction: column;
 }
 .flagTable .inner-items .flagItem {
-  width: 100%;
+  width: 95%;
   text-align: center;
   display: flex;
   flex-direction: column;
   border: 1px solid;
-  margin-bottom: 8px;
+  margin-bottom: 15px;
+  -webkit-box-shadow: -1px 0px 21px 1px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: -1px 0px 21px 1px rgba(0, 0, 0, 0.75);
+  box-shadow: -1px 0px 21px 1px rgba(0, 0, 0, 0.75);
 }
 .flagTable .inner-items .flagItem .header {
   display: flex;
   height: 25px;
-  background: darkgray;
+  background: lightblue;
+}
+.flagTable .inner-items .flagItem .header.highlighted {
+  background: orange;
 }
 .flagTable .inner-items .flagItem .header .flagValue {
   width: 90%;
@@ -225,4 +243,20 @@
 }
 .brush .selection {
   stroke: none;
+}
+.fa.hidden {
+  visibility: hidden;
+}
+.flag {
+  cursor: pointer;
+}
+.flag .flags {
+  fill: black;
+}
+.flag .flags.highlighted {
+  fill: orange;
+}
+.flag .flagsLine {
+  stroke: red;
+  fill: none;
 }

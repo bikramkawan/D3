@@ -48,6 +48,7 @@ define(function (require) {
                 render.drawRectContainer(svg, width, height, x22, y12);
 
                 render.toggleMode();
+                render.toggleFlagDisplay();
                 render.enableSlope();
                 render.enableFlagMode();
                 render.toggleCheckBox();
