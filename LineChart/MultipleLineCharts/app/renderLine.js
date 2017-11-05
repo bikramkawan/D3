@@ -121,7 +121,7 @@ define(function (require) {
         },
         drawLine: function (param) {
             const {lineclass, linefunc, linedata} =param;
-                    d3.selectAll(`.${lineclass}`).remove();
+            d3.selectAll(`.${lineclass}`).remove();
             svg.append("path")
                 .data([linedata])
                 .attr("class", lineclass)
@@ -282,7 +282,6 @@ define(function (require) {
             const lines = filterLines.length > 0 ? filterLines : allLines;
 
 
-
             let filtered = data.slice();
             if (key === 'date') {
                 filtered = filtered.filter((d)=>d.date >= extents[0] && d.date < extents[1]);
@@ -290,7 +289,6 @@ define(function (require) {
                 this.drawAxis(updateAxis[0]);
                 const newLine = lines.map((d)=> Object.assign({}, d, {linedata: filtered}))
                 newLine.forEach(item=>this.drawLine(item));
-
 
 
             }
@@ -303,7 +301,6 @@ define(function (require) {
                 this.drawAxis(updateAxis[0]);
                 const newLine = lines.map((d)=> Object.assign({}, d, {linedata: filtered}))
                 newLine.forEach(item=>this.drawLine(item));
-
 
 
             }
@@ -353,6 +350,10 @@ define(function (require) {
 
             }
 
+
+        },
+        getAxisScales: function () {
+            return {x, x2, y1, y2, y3};
 
         }
 

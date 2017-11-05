@@ -12,6 +12,8 @@ define(function (require) {
     const arc = d3.symbol().type(d3.symbolTriangle);
     let xScale, yScale;
     let svgContainer;
+    const renderLine = require('./renderLine');
+
     return {
         drawLegends: function drawLegends() {
             const {legends} = require('./constants').main();
@@ -252,6 +254,7 @@ define(function (require) {
         },
         drawRectContainer: function (svg, width, height, x2, y2) {
             svgContainer = svg.append('g').attr("transform", `translate(100,70)`);
+
             const that = this;
             xScale = x2;
             yScale = y2;
@@ -356,23 +359,97 @@ define(function (require) {
                 .attr('fill', 'none')
 
             flagMap.set(xVal, {xVal, yVal});
-            this.addFlagScore(xVal, xVal, yVal)
+            this.addFlagScore(xVal, cx, cy)
 
         },
-        addFlagScore: function (key, xVal, yVal) {
+        addFlagScore: function (key, cx, cy) {
+            const {x, x2, y1, y2, y3} = renderLine.getAxisScales();
+            const parseTime = d3.timeFormat("%d %b, %Y")
+            const legends = [
+                {
+                    name: 'Time',
+                    className: 'time',
+                    value: parseTime(x.invert(cx)),
+                    unit: null,
+                    isLine: false
+                },
+                {
+                    name: 'Line Press #1',
+                    className: 'lineY11',
+                    value: y1.invert(cy).toFixed(2),
+                    unit: 'Psi',
+                    isLine: true
+                },
+                {
+
+                    name: 'Line Press #2',
+                    className: 'lineY12',
+                    value: y1.invert(cy).toFixed(2),
+                    unit: 'Psi',
+                    isLine: true
+
+
+                },
+                {
+
+                    name: 'Tubing Press',
+                    className: 'lineY13',
+                    value: y1.invert(cy).toFixed(2),
+                    unit: 'Psi',
+                    isLine: true
+
+
+                }, {
+
+                    name: 'Discharge Rate',
+                    className: 'lineY21',
+                    value: y2.invert(cy).toFixed(2),
+                    unit: 'bbl/min',
+                    isLine: true
+
+
+                }, {
+
+                    name: 'Tubing Rate',
+                    className: 'lineY22',
+                    value: y2.invert(cy).toFixed(2),
+                    unit: 'bbl/min',
+                    isLine: true
+
+
+                }, {
+
+                    name: 'Proppant Conc 40/70',
+                    className: 'lineY31',
+                    value: y3.invert(cy).toFixed(2),
+                    unit: 'ppa',
+                    isLine: true
+
+
+                }
+
+
+            ]
             d3.selectAll(`[data-flagItem="${key}"]`).remove();
             const flagScore = d3.select('.inner-items')
                 .append('div')
                 .classed('flagItem', true)
                 .attr('data-flagItem', key);
 
-            flagScore.append('div')
-                .classed('flagValue', true)
-                .text(`x = ${xVal} s, y = ${yVal} psi`)
+            const header = flagScore.append('div')
+                .classed('header', true)
 
-            flagScore.append('div')
+            const rowItems = flagScore.append('div')
+                .classed('row-items', true)
+
+            header.append('div')
+                .classed('flagValue', true)
+                .text((d)=>`Flag Name`)
+
+
+            header.append('div')
                 .classed('deleteFlag', true)
-                .attr('data-attr', `${xVal},${yVal}`)
+                .attr('data-attr', `tees`)
                 .on('click', function () {
                     d3.selectAll(`[data-attrFlag="${key}"]`).remove();
                     d3.selectAll(`[data-flagItem="${key}"]`).remove();
@@ -380,6 +457,21 @@ define(function (require) {
 
                 })
                 .text('X')
+
+
+            const row = rowItems.selectAll('div')
+                .data(legends)
+                .enter()
+                .append('div')
+                .classed('row', true)
+
+            row.append('div')
+                .classed('flagValue', true)
+                .text((d)=>`${d.name} - ${d.value}`)
+
+            row.append('div')
+                .attr('class', (d)=>`color ${d.className}`)
+
 
         }
 

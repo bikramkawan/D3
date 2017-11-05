@@ -176,22 +176,45 @@
 .flagTable .inner-items {
   align-items: center;
   display: flex;
-  border: 1px solid;
   flex-direction: column;
 }
 .flagTable .inner-items .flagItem {
-  height: 25px;
-  border-bottom: 1px solid;
   width: 100%;
   text-align: center;
   display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  margin-bottom: 8px;
 }
-.flagTable .inner-items .flagItem .flagValue {
+.flagTable .inner-items .flagItem .header {
+  display: flex;
+  height: 25px;
+  background: darkgray;
+}
+.flagTable .inner-items .flagItem .header .flagValue {
   width: 90%;
-  /* text-align: center; */
   border-right: 1px solid;
 }
-.flagTable .inner-items .flagItem .deleteFlag {
+.flagTable .inner-items .flagItem .header .deleteFlag {
+  width: 10%;
+  text-align: center;
+  cursor: pointer;
+}
+.flagTable .inner-items .flagItem .row {
+  height: 25px;
+  display: flex;
+}
+.flagTable .inner-items .flagItem .row:nth-child(even) {
+  background: #CCC;
+}
+.flagTable .inner-items .flagItem .row:nth-child(odd) {
+  background: #FFF;
+}
+.flagTable .inner-items .flagItem .row .flagValue {
+  width: 90%;
+  border-right: 1px solid;
+}
+.flagTable .inner-items .flagItem .row .color {
   width: 10%;
   text-align: center;
   cursor: pointer;

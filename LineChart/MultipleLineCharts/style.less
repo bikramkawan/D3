@@ -217,26 +217,54 @@
   .inner-items {
     align-items: center;
     display: flex;
-    border: 1px solid;
+
     flex-direction: column;
 
     .flagItem {
-      height: 25px;
-      border-bottom: 1px solid;
       width: 100%;
       text-align: center;
       display: flex;
-      .flagValue {
-        width: 90%;
-        /* text-align: center; */
-        border-right: 1px solid;
+      flex-direction: column;
+      border: 1px solid;
+      margin-bottom: 8px;
+      .header {
+        display: flex;
+        height: 25px;
+        background: darkgray;
+        .flagValue {
+          width: 90%;
+          border-right: 1px solid;
+        }
+
+        .deleteFlag {
+          width: 10%;
+          text-align: center;
+          cursor: pointer;
+        }
       }
 
-      .deleteFlag {
-        width: 10%;
-        text-align: center;
-        cursor: pointer;
+      .row {
+        height: 25px;
+        display: flex;
+        &:nth-child(even) {
+          background: #CCC
+        }
+        &:nth-child(odd) {
+          background: #FFF
+        }
+
+        .flagValue {
+          width: 90%;
+          border-right: 1px solid;
+        }
+
+        .color {
+          width: 10%;
+          text-align: center;
+          cursor: pointer;
+        }
       }
+
     }
   }
 
