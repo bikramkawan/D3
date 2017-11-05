@@ -104,6 +104,10 @@ define(function (require) {
                 .attr('d', `M ${x1} ${y1} L ${x2} ${y2}`)
                 .attr('stroke', 'red')
                 .attr('stroke-width', 4)
+                .on('dblclick', function () {
+                    that.deleteSlopeLine(key)
+
+                })
                 .call(d3.drag()
                     .on("start", function () {
                         console.log(' Line Dragging start')
@@ -542,6 +546,32 @@ define(function (require) {
                 });
 
         },
+        deleteSlopeLine: function (key) {
+            console.log(lineDict)
+            const deleteMe = d3.select('.delete');
+            deleteMe.style('display', 'flex')
+                .style("left", (d3.event.pageX + 20) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+
+            d3.select('.yes').on('click', ()=> {
+                d3.selectAll(`[data-midCircle="${key}"]`).remove();
+                d3.selectAll(`[data-slopeLineSplit="${key}"]`).remove()
+                d3.select(`[data-slopeLine="${key}"]`).remove()
+                d3.selectAll(`[data-slopeText="${key}"]`).remove();
+                d3.selectAll(`[data-startCircle="${key}"]`).remove();
+                d3.selectAll(`[data-endCircle="${key}"]`).remove();
+                deleteMe.style('display', 'none');
+                lineDict.delete(key)
+                console.log('Slope Line  deleted Successfully!')
+                console.log(lineDict)
+
+            });
+
+            d3.select('.no').on('click', ()=> deleteMe.style('display', 'none'))
+
+
+        }
+
 
     }
 
