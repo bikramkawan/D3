@@ -6,8 +6,8 @@ define(function (require) {
     let enableSlopeLine = false;
     let enableFlagMode = false;
     let disableMidpoint = true;
-    let displayFlagInformation = false;
-    let displaySettings = true;
+
+
     const lineDict = new Map();
     const flagMap = new Map();
     const dx = 100, dy = 70, slopeTextOffset = 7;
@@ -40,17 +40,7 @@ define(function (require) {
             })
 
         },
-        toggleMode: function () {
 
-            d3.select('.mode').on('click', ()=> {
-                const isDark = d3.select('.mode').attr('class') === 'mode';
-                d3.select('.mode').classed('dark', isDark);
-                d3.selectAll('.axis').classed('darkMode', isDark)
-                d3.select('.chart').classed('darkChart', isDark);
-
-            })
-
-        },
         drawCircle: function ({currentSlopeKey, cx, cy, className}) {
             const that = this;
             svgContainer.append('circle')
@@ -256,6 +246,7 @@ define(function (require) {
                 });
 
         },
+
         calcMidPoint: function (key) {
             const {start, end} = lineDict.get(key);
             const xDiff = Math.abs((start.cx - end.cx) / 2);
@@ -416,7 +407,6 @@ define(function (require) {
 
 
         },
-
         addFlagScore: function ({key, xVal, yVal}) {
 
             const {x, x2, y1, y2, y3} = renderLine.getAxisScales();
@@ -545,24 +535,6 @@ define(function (require) {
 
 
         },
-        toggleFlagDisplay: function () {
-            const that = this;
-            d3.select('.toggleFlag')
-                .on('click', function () {
-                    displayFlagInformation = !displayFlagInformation;
-                    if (displayFlagInformation) {
-                        d3.select(this).select('i').attr('class', 'fa fa-toggle-on fa-2x ')
-                        d3.select('.inner-items').style('display', 'flex')
-
-                    } else {
-                        d3.select(this).select('i').attr('class', 'fa fa-toggle-off fa-2x ')
-                        d3.select('.inner-items').style('display', 'none')
-                    }
-
-
-                });
-
-        },
         deleteSlopeLine: function (key) {
             const deleteMe = d3.select('.delete');
             deleteMe.style('display', 'flex')
@@ -587,24 +559,7 @@ define(function (require) {
 
 
         },
-        toggleSettings: function () {
-            const that = this;
-            d3.select('.settings')
-                .on('click', function () {
-                    displaySettings = !displaySettings;
-                    if (displaySettings) {
-                        d3.select(this).select('i').attr('class', 'fa fa-toggle-off fa-2x')
-                        d3.select('.bottom-container').style('display', 'flex')
 
-                    } else {
-                        d3.select(this).select('i').attr('class', 'fa fa-toggle-on fa-2x ')
-                        d3.select('.bottom-container').style('display', 'none')
-                    }
-
-
-                });
-
-        },
 
 
     }

@@ -27,7 +27,7 @@ define(function (require) {
 
             const renderLine = require('./renderLine');
             const render = require('./render');
-
+            const modes = require('./modes');
 
             d3.csv("data/newdataV2.csv", function (error, rawdata) {
                 if (error) throw error;
@@ -47,14 +47,15 @@ define(function (require) {
                 brushes.forEach(brush=>renderLine.drawBrushRect(brush))
                 render.drawRectContainer(svg, width, height, x22, y12);
 
-                render.toggleMode();
-                render.toggleFlagDisplay();
-                render.toggleSettings();
+
                 render.enableSlope();
                 render.enableFlagMode();
                 render.toggleCheckBox();
                 render.drawLegends();
 
+                modes.toggleMode();
+                modes.toggleFlagDisplay();
+                modes.toggleSettings();
 
             });
 
