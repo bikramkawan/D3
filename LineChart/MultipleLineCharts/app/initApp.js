@@ -49,6 +49,7 @@ define(function (require) {
 
                 render.toggleMode();
                 render.toggleFlagDisplay();
+                render.toggleSettings();
                 render.enableSlope();
                 render.enableFlagMode();
                 render.toggleCheckBox();

@@ -7,6 +7,7 @@ define(function (require) {
     let enableFlagMode = false;
     let disableMidpoint = true;
     let displayFlagInformation = false;
+    let displaySettings = true;
     const lineDict = new Map();
     const flagMap = new Map();
     const dx = 100, dy = 70, slopeTextOffset = 7;
@@ -420,7 +421,7 @@ define(function (require) {
 
             const {x, x2, y1, y2, y3} = renderLine.getAxisScales();
             const parseTime = d3.timeFormat("%d %b, %Y %H:%M:%S")
-            console.log(flagMap)
+
             const legends = [
                 {
                     name: 'Time',
@@ -585,7 +586,25 @@ define(function (require) {
             d3.select('.no').on('click', ()=> deleteMe.style('display', 'none'))
 
 
-        }
+        },
+        toggleSettings: function () {
+            const that = this;
+            d3.select('.settings')
+                .on('click', function () {
+                    displaySettings = !displaySettings;
+                    if (displaySettings) {
+                        d3.select(this).select('i').attr('class', 'fa fa-toggle-off fa-2x')
+                        d3.select('.bottom-container').style('display', 'flex')
+
+                    } else {
+                        d3.select(this).select('i').attr('class', 'fa fa-toggle-on fa-2x ')
+                        d3.select('.bottom-container').style('display', 'none')
+                    }
+
+
+                });
+
+        },
 
 
     }

@@ -92,7 +92,7 @@
   display: flex;
   justify-content: space-around;
   flex-direction: column;
-  width: 500px;
+  width: 350px;
   .row {
     border: 1px solid;
     display: flex;
@@ -118,7 +118,7 @@
 
 .mode {
   text-align: center;
-  font-size: 30px;
+  font-size: 25px;
   cursor: pointer;
   margin-bottom: 5px;
 
@@ -144,6 +144,21 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0px;
+  width: 400px;
+
+  .header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 50%;
+
+    span {
+      cursor: pointer;
+    }
+  }
 }
 
 .chart {
@@ -154,7 +169,10 @@
 .bottom-container {
   display: flex;
   justify-content: space-around;
-  width: 80%;
+  flex-direction: column;
+  -webkit-box-shadow: -1px 0px 21px 1px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: -1px 0px 21px 1px rgba(0, 0, 0, 0.75);
+  box-shadow: -1px 0px 21px 1px rgba(0, 0, 0, 0.75);
 
   .mode-container {
     width: 350px;
@@ -164,13 +182,14 @@
     align-items: center;
     .control {
       height: 50px;
-      font-size: 30px;
+      font-size: 25px;
       font-weight: bold;
       border: 1px solid;
       border-radius: 5px;
       padding: 5px;
       margin: 5px;
       cursor: pointer;
+      line-height: 50px;
 
       &.selected {
         background: steelblue;
@@ -219,6 +238,9 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
+    span {
+      cursor: pointer;
+    }
   }
   p {
     text-align: center;
