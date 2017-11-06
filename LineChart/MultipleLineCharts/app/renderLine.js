@@ -285,66 +285,53 @@ define(function (require) {
             let filtered = data.slice();
             if (key === 'date') {
                 filtered = filtered.filter((d)=>d.date >= extents[0] && d.date < extents[1]);
-                x.domain(d3.extent(filtered, d=>d.date));
+                this.setX1Domain(filtered);
+                this.setY1Domain(filtered);
+                this.setY2Domain(filtered);
+                this.setY3Domain(filtered);
                 this.drawAxis(updateAxis[0]);
                 const newLine = lines.map((d)=> Object.assign({}, d, {linedata: filtered}))
                 newLine.forEach(item=>this.drawLine(item));
-
-
             }
-
 
             if (key === 'time2') {
                 filtered = filtered.filter((d)=>d.time2 >= extents[0] && d.time2 < extents[1])
-                x.domain(d3.extent(filtered, d=> d.date));
-
+                this.setX1Domain(filtered);
+                this.setX2Domain(filtered);
+                this.setY1Domain(filtered);
+                this.setY2Domain(filtered);
+                this.setY3Domain(filtered);
                 this.drawAxis(updateAxis[0]);
                 const newLine = lines.map((d)=> Object.assign({}, d, {linedata: filtered}))
                 newLine.forEach(item=>this.drawLine(item));
-
-
             }
 
             if (key === 'y1') {
                 filtered = filtered.filter((d)=> (d.y11 >= extents[1] && d.y11 < extents[0]) &&
                 (d.y12 >= extents[1] && d.y12 < extents[0]) &&
                 (d.y13 >= extents[1] && d.y13 < extents[0]))
-                let y1Extent = [0, 0];
-                filtered.forEach((d)=> {
-                    const y1Values = d3.extent([d.y11, d.y12, d.y13])
-                    y1Extent = [Math.min(y1Values[0], y1Extent[0]), Math.max(y1Values[1], y1Extent[1])];
-
-                });
-                y1.domain(y1Extent);
+                this.setX1Domain(filtered);
+                this.setY1Domain(filtered);
                 this.drawAxis(updateAxis[0]);
                 const newLine = lines.map((d)=> Object.assign({}, d, {linedata: filtered}))
                 newLine.forEach(item=>this.drawLine(item));
-
-
             }
 
             if (key === 'y2') {
                 filtered = filtered.filter((d)=> (d.y21 >= extents[1] && d.y21 < extents[0]) &&
                 (d.y22 >= extents[1] && d.y22 < extents[0]))
-
-                let y2Extent = [0, 0];
-                filtered.forEach((d)=> {
-                    const y2Values = d3.extent([d.y21, d.y22])
-                    y2Extent = [Math.min(y2Values[0], y2Extent[0]), Math.max(y2Values[1], y2Extent[1])]
-
-                });
-                y2.domain(y2Extent);
+                this.setX1Domain(filtered);
+                this.setY2Domain(filtered);
                 this.drawAxis(updateAxis[0]);
                 const newLine = lines.map((d)=> Object.assign({}, d, {linedata: filtered}))
                 newLine.forEach(item=>this.drawLine(item));
 
-
             }
-
 
             if (key === 'y3') {
                 filtered = filtered.filter((d)=>d.y31 >= extents[1] && d.y31 < extents[0])
-                y3.domain(d3.extent(data, d=> d.y31));
+                this.setX1Domain(filtered);
+                this.setY3Domain(filtered);
                 const newLine = lines.map((d)=> Object.assign({}, d, {linedata: filtered}))
                 newLine.forEach(item=>this.drawLine(item));
 
@@ -354,6 +341,35 @@ define(function (require) {
         },
         getAxisScales: function () {
             return {x, x2, y1, y2, y3};
+
+        },
+        setX1Domain: function (data) {
+            x.domain(d3.extent(data, d=>d.date));
+
+        },
+        setX2Domain: function (data) {
+            x2.domain(d3.extent(data, d=> d.time2));
+        },
+        setY1Domain: function (data) {
+            let y1Extent = [0, 0];
+            data.forEach((d)=> {
+                const y1Values = d3.extent([d.y11, d.y12, d.y13])
+                y1Extent = [Math.min(y1Values[0], y1Extent[0]), Math.max(y1Values[1], y1Extent[1])];
+
+            });
+            y1.domain(y1Extent);
+        },
+        setY2Domain: function (data) {
+            let y2Extent = [0, 0];
+            data.forEach((d)=> {
+                const y2Values = d3.extent([d.y21, d.y22])
+                y2Extent = [Math.min(y2Values[0], y2Extent[0]), Math.max(y2Values[1], y2Extent[1])]
+
+            });
+            y2.domain(y2Extent);
+        },
+        setY3Domain: function (data) {
+            y3.domain(d3.extent(data, d=> d.y31));
 
         }
 
