@@ -381,7 +381,8 @@ define(function (require) {
                         d3.select(this).attr('transform', `translate(${cx},-2)`)
                         const xValNew = xScale.invert(cx).toFixed(2);
                         const yValNew = yScale.invert(cy).toFixed(2);
-                        that.addFlagScore(xVal, xValNew, yValNew);
+                        flagMap.set(xVal, {xVal: xValNew, yVal: yValNew})
+                        that.updateFlagScore();
 
 
                     })
@@ -396,27 +397,42 @@ define(function (require) {
             g.append('path')
                 .classed('flagsLine', true)
                 .attr('d', `M -4 -8 L -4 20`)
-
-
             flagMap.set(xVal, {xVal, yVal});
-            this.addFlagScore(xVal, cx, cy)
+            this.updateFlagScore()
 
         },
-        addFlagScore: function (key, cx, cy) {
+        updateFlagScore: function () {
+
+            const scores = [];
+
+            flagMap.forEach(({xVal, yVal}, key)=> {
+                scores.push({key, xVal, yVal})
+            })
+
+            const sorted = scores.slice().sort((a, b)=>a.xVal - b.xVal)
+
+            sorted.forEach(score=>this.addFlagScore(score))
+
+
+        },
+
+        addFlagScore: function ({key, xVal, yVal}) {
+
             const {x, x2, y1, y2, y3} = renderLine.getAxisScales();
-            const parseTime = d3.timeFormat("%d %b, %Y")
+            const parseTime = d3.timeFormat("%d %b, %Y %H:%M:%S")
+            console.log(flagMap)
             const legends = [
                 {
                     name: 'Time',
                     className: 'time',
-                    value: parseTime(x.invert(cx)),
+                    value: parseTime(x.invert(xVal)),
                     unit: null,
                     isLine: false
                 },
                 {
                     name: 'Line Press #1',
                     className: 'lineY11',
-                    value: y1.invert(cy).toFixed(2),
+                    value: y1.invert(yVal).toFixed(2),
                     unit: 'Psi',
                     isLine: true
                 },
@@ -424,7 +440,7 @@ define(function (require) {
 
                     name: 'Line Press #2',
                     className: 'lineY12',
-                    value: y1.invert(cy).toFixed(2),
+                    value: y1.invert(yVal).toFixed(2),
                     unit: 'Psi',
                     isLine: true
 
@@ -434,7 +450,7 @@ define(function (require) {
 
                     name: 'Tubing Press',
                     className: 'lineY13',
-                    value: y1.invert(cy).toFixed(2),
+                    value: y1.invert(yVal).toFixed(2),
                     unit: 'Psi',
                     isLine: true
 
@@ -443,7 +459,7 @@ define(function (require) {
 
                     name: 'Discharge Rate',
                     className: 'lineY21',
-                    value: y2.invert(cy).toFixed(2),
+                    value: y2.invert(yVal).toFixed(2),
                     unit: 'bbl/min',
                     isLine: true
 
@@ -452,7 +468,7 @@ define(function (require) {
 
                     name: 'Tubing Rate',
                     className: 'lineY22',
-                    value: y2.invert(cy).toFixed(2),
+                    value: y2.invert(yVal).toFixed(2),
                     unit: 'bbl/min',
                     isLine: true
 
@@ -461,7 +477,7 @@ define(function (require) {
 
                     name: 'Proppant Conc 40/70',
                     className: 'lineY31',
-                    value: y3.invert(cy).toFixed(2),
+                    value: y3.invert(yVal).toFixed(2),
                     unit: 'ppa',
                     isLine: true
 
@@ -547,7 +563,6 @@ define(function (require) {
 
         },
         deleteSlopeLine: function (key) {
-            console.log(lineDict)
             const deleteMe = d3.select('.delete');
             deleteMe.style('display', 'flex')
                 .style("left", (d3.event.pageX + 20) + "px")
