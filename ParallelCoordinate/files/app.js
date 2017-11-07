@@ -200,7 +200,7 @@ d3.csv("results.csv", (raw_data) => {
         .attr("class", "label")
         .text(String)
         .on('dblclick', function (d) {
-            deleteAxisOnDblClick(d);
+            // deleteAxisOnDblClick(d);
         })
         .append("title")
         .text("Click to invert. Drag to reorder")
@@ -231,32 +231,19 @@ d3.csv("results.csv", (raw_data) => {
     brush();
 
 
-    function deleteAxisOnDblClick(d) {
-        const deleteMe = d3.select('.delete');
-        deleteMe.style('display', 'flex')
-            .style("left", (d3.event.pageX + 20) + "px")
-            .style("top", (d3.event.pageY - 28) + "px");
-
-        d3.select('.yes').on('click', ()=> {
-
-            var extent = yscale[d].brush.extent();
-            remove_axis(d, g);
-            update_ticks(d, extent);
-            d3.select("#foreground").style("opacity", null);
-            brush();
-            delete this.__dragged__;
-            delete this.__origin__;
-            delete dragging[d];
-            deleteMe.style('display', 'none');
-            console.log(d, 'Axis is  deleted Successfully!')
+    d3.select('.delete').on('click', ()=> {
+        const axisName = 'Write BW demand';
+        const extent = yscale[axisName].brush.extent();
+        remove_axis(axisName, g);
+        update_ticks(axisName, extent);
+        d3.select("#foreground").style("opacity", null);
+        brush();
+        delete dragging[axisName];
+        console.log(axisName, 'Axis is  deleted Successfully!')
 
 
-        });
+    });
 
-        d3.select('.no').on('click', ()=> deleteMe.style('display', 'none'))
-
-
-    }
 
 
 }); // d3.csv()

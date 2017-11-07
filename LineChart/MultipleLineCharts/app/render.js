@@ -368,6 +368,12 @@ define(function (require) {
                 .call(d3.drag()
                     .on("start", ()=>console.log(' Flag dragging start'))
                     .on("drag", function () {
+
+
+
+                    })
+                    .on("end", function () {
+
                         const cx = d3.event.sourceEvent.offsetX - dx;
                         const cy = d3.event.sourceEvent.offsetY - dy;
                         d3.select(this).attr('transform', `translate(${cx},-2)`)
@@ -375,10 +381,8 @@ define(function (require) {
                         const yValNew = yScale.invert(cy).toFixed(2);
                         flagMap.set(xVal, {xVal: xValNew, yVal: yValNew})
                         that.updateFlagScore();
-
-
-                    })
-                    .on("end", ()=>console.log('Flag dragging end')));
+                        console.log('Flag dragging end')
+                    }));
 
             g.append('path')
                 .classed('flags', true)
@@ -559,7 +563,6 @@ define(function (require) {
 
 
         },
-
 
 
     }
