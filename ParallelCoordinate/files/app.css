@@ -351,3 +351,23 @@ button#exclude-data:hover {
 .dark ::-webkit-scrollbar-thumb {
   background: #444;
 }
+.delete {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  position: absolute;
+  text-align: center;
+  width: 150px;
+  height: 70px;
+  padding: 2px;
+  font: 21px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+}
+.delete .confirm {
+  border-bottom: 1px solid;
+}
+.delete .action {
+  cursor: pointer;
+}
