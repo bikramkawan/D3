@@ -24,8 +24,8 @@ let m = [60, 0, 10, 0],
     legend,
     render_speed = 50,
     brush_count = 0,
-    excluded_groups = [];
-
+    excluded_groups = [],
+    g;
 
 // colors here by initiator group
 // key is "initiator"
@@ -106,129 +106,142 @@ d3.csv("results.csv", (raw_data) => {
         return d;
     });
 
+
+    const attributes = d3.keys(data[0]);
+    updateXYScales(attributes);
+
+    function updateXYScales(filters) {
     // 1. Extract the list of numerical dimensions and create a scale for each.
-    xscale.domain(dimensions = d3.keys(data[0]).filter((k) => {
-        console.log('-----');
-        console.log(k);
-        //console.log(data[0][k]);
-
-        isNumber = _.isNumber(data[0][k]);
-        yscale[k] = d3.scale.linear()
-            .domain(d3.extent(data, (d) =>+d[k]))
-            .range([h, 0]);
-
-        if (k.indexOf("supply") !== -1) {
-            //console.log("Supply Found");
+        const xDimensions = filters.filter((k) => {
+            console.log('-----');
+            isNumber = _.isNumber(data[0][k]);
             yscale[k] = d3.scale.linear()
-                .domain([0, 25600])
+                .domain(d3.extent(data, (d) =>+d[k]))
                 .range([h, 0]);
-        }
 
-        //console.log(yscale[k]);
+            if (k.indexOf("supply") !== -1) {
+                //console.log("Supply Found");
+                yscale[k] = d3.scale.linear()
+                    .domain([0, 25600])
+                    .range([h, 0]);
+            }
 
-        return (isNumber && yscale[k]);
-    }));
+            return (isNumber && yscale[k]);
+        })
 
-    // 2. Add a group element for each dimension.
-    var g = svg.selectAll(".dimension")
-        .data(dimensions)
-        .enter().append("svg:g")
-        .attr("class", "dimension")
-        .attr("transform", (d)=> "translate(" + xscale(d) + ")")
-        .call(d3.behavior.drag()
-            .on("dragstart", (d) => {
-                dragging[d] = this.__origin__ = xscale(d);
-                this.__dragged__ = false;
-                d3.select("#foreground").style("opacity", "0.35");
+        dimensions = xDimensions;
+        xscale.domain(xDimensions);
+
+    }
+
+
+
+    drawDimension(dimensions)
+
+    function drawDimension(dimensions) {
+
+        svg.selectAll('.dimension').remove()
+        // 2. Add a group element for each dimension.
+        g = svg.selectAll(".dimension")
+            .data(dimensions)
+            .enter().append("svg:g")
+            .attr("class", "dimension")
+            .attr("transform", (d)=> "translate(" + xscale(d) + ")")
+            .call(d3.behavior.drag()
+                .on("dragstart", (d) => {
+                    dragging[d] = this.__origin__ = xscale(d);
+                    this.__dragged__ = false;
+                    d3.select("#foreground").style("opacity", "0.35");
+                })
+                .on("drag", (d)=> {
+                    dragging[d] = Math.min(w, Math.max(0, this.__origin__ += d3.event.dx));
+                    dimensions.sort((a, b) =>position(a) - position(b));
+                    xscale.domain(dimensions);
+                    g.attr("transform", (d) => "translate(" + position(d) + ")");
+                    brush_count++;
+                    this.__dragged__ = true;
+
+                    // Feedback for axis deletion if dropped
+                    if (dragging[d] < 12 || dragging[d] > w - 12) {
+                        d3.select(this).select(".background").style("fill", "#b00");
+                    } else {
+                        d3.select(this).select(".background").style("fill", null);
+                    }
+                })
+                .on("dragend", (d)=> {
+                    if (!this.__dragged__) {
+                        // no movement, invert axis
+                        var extent = invert_axis(d);
+
+                    } else {
+                        // reorder axes
+                        d3.select(this).transition().attr("transform", "translate(" + xscale(d) + ")");
+
+                        var extent = yscale[d].brush.extent();
+
+                    }
+
+                    // remove axis if dragged all the way left
+                    if (dragging[d] < 12 || dragging[d] > w - 12) {
+                        remove_axis(d, g);
+                    }
+
+                    // TODO required to avoid a bug
+                    xscale.domain(dimensions);
+                    update_ticks(d, extent);
+
+                    // rerender
+                    d3.select("#foreground").style("opacity", null);
+                    brush();
+                    delete this.__dragged__;
+                    delete this.__origin__;
+                    delete dragging[d];
+                }))
+
+        // 3. Add an axis and title.
+        g.append("svg:g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0,0)")
+            .each(function (d) {
+                d3.select(this).call(axis.scale(yscale[d]));
             })
-            .on("drag", (d)=> {
-                dragging[d] = Math.min(w, Math.max(0, this.__origin__ += d3.event.dx));
-                dimensions.sort((a, b) =>position(a) - position(b));
-                xscale.domain(dimensions);
-                g.attr("transform", (d) => "translate(" + position(d) + ")");
-                brush_count++;
-                this.__dragged__ = true;
-
-                // Feedback for axis deletion if dropped
-                if (dragging[d] < 12 || dragging[d] > w - 12) {
-                    d3.select(this).select(".background").style("fill", "#b00");
-                } else {
-                    d3.select(this).select(".background").style("fill", null);
-                }
+            .append("svg:text")
+            .attr("text-anchor", "middle")
+            .attr("y", (d, i) => i % 2 == 0 ? -14 : -30)
+            .attr("x", 0)
+            .attr("class", "label")
+            .text(String)
+            .on('dblclick', function (d) {
+                // deleteAxisOnDblClick(d);
             })
-            .on("dragend", (d)=> {
-                if (!this.__dragged__) {
-                    // no movement, invert axis
-                    var extent = invert_axis(d);
-
-                } else {
-                    // reorder axes
-                    d3.select(this).transition().attr("transform", "translate(" + xscale(d) + ")");
-
-                    var extent = yscale[d].brush.extent();
-
-                }
-
-                // remove axis if dragged all the way left
-                if (dragging[d] < 12 || dragging[d] > w - 12) {
-                    remove_axis(d, g);
-                }
-
-                // TODO required to avoid a bug
-                xscale.domain(dimensions);
-                update_ticks(d, extent);
-
-                // rerender
-                d3.select("#foreground").style("opacity", null);
-                brush();
-                delete this.__dragged__;
-                delete this.__origin__;
-                delete dragging[d];
-            }))
-
-    // 3. Add an axis and title.
-    g.append("svg:g")
-        .attr("class", "axis")
-        .attr("transform", "translate(0,0)")
-        .each(function (d) {
-            d3.select(this).call(axis.scale(yscale[d]));
-        })
-        .append("svg:text")
-        .attr("text-anchor", "middle")
-        .attr("y", (d, i) => i % 2 == 0 ? -14 : -30)
-        .attr("x", 0)
-        .attr("class", "label")
-        .text(String)
-        .on('dblclick', function (d) {
-            // deleteAxisOnDblClick(d);
-        })
-        .append("title")
-        .text("Click to invert. Drag to reorder")
+            .append("title")
+            .text("Click to invert. Drag to reorder")
 
 
-    // 4. Add and store a brush for each axis.
-    g.append("svg:g")
-        .attr("class", "brush")
-        .each(function (d) {
-            d3.select(this).call(yscale[d].brush = d3.svg.brush().y(yscale[d]).on("brush", brush));
-        })
-        .selectAll("rect")
-        .style("visibility", null)
-        .attr("x", -23)
-        .attr("width", 36)
-        .append("title")
-        .text("Drag up or down to brush along this axis");
+        // 4. Add and store a brush for each axis.
+        g.append("svg:g")
+            .attr("class", "brush")
+            .each(function (d) {
+                d3.select(this).call(yscale[d].brush = d3.svg.brush().y(yscale[d]).on("brush", brush));
+            })
+            .selectAll("rect")
+            .style("visibility", null)
+            .attr("x", -23)
+            .attr("width", 36)
+            .append("title")
+            .text("Drag up or down to brush along this axis");
 
 
-    g.selectAll(".extent")
-        .append("title")
-        .text("Drag or resize this filter");
+        g.selectAll(".extent")
+            .append("title")
+            .text("Drag or resize this filter");
 
-    // 5. Create list of initiator types
-    legend = create_legend(colors, brush);
+        // 5. Create list of initiator types
+        legend = create_legend(colors, brush);
 
-    // 5. Render full foreground
-    brush();
+        // 5. Render full foreground
+        brush();
+    }
 
 
     d3.select('.delete').on('click', ()=> {
@@ -244,6 +257,14 @@ d3.csv("results.csv", (raw_data) => {
 
     });
 
+
+    d3.select('.add').on('click', ()=> {
+        const myIndex = attributes.indexOf('Write BW demand');
+        dimensions.splice(myIndex - 2, 0, 'Write BW demand') //-2 is for unnecessary first two categories
+        updateXYScales(dimensions)
+        drawDimension(dimensions)
+
+    });
 
 
 }); // d3.csv()
