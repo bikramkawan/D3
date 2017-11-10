@@ -1,0 +1,255 @@
+@import "fifteen";
+@import "scatterplot";
+@import "dark";
+@import "axis";
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+body {
+  font-family: Ubuntu, Tahoma, Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1.4em;
+  background: #f7f7f7;
+  color: #404040;
+  &.dark {
+    background: #131313;
+    color: #e3e3e3;
+    a {
+      color: #5ae;
+    }
+  }
+  h3 {
+    margin: 12px 0 9px;
+  }
+  h3 small {
+    color: #888;
+    font-weight: normal;
+  }
+
+  p {
+    margin: 0.6em 0;
+  }
+
+  small {
+    line-height: 1.2em;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+}
+
+#wrap {
+  padding: 0 3.5%;
+  width: 100%;
+  height: 70%;
+  display: flex;
+
+}
+
+svg {
+  font-family: Ubuntu, Tahoma, Helvetica, sans-serif;
+}
+
+canvas, svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#chart {
+  position: relative;
+}
+
+.brush {
+  rect.extent {
+    fill: rgba(100, 100, 100, 0.15);
+    stroke: red;
+    &:hover {
+      stroke-dasharray: none;
+    }
+  }
+
+  &:hover {
+    rect.extent {
+      stroke: #222;
+      stroke-dasharray: 5, 5;
+    }
+  }
+
+}
+
+.resize rect {
+  fill: none;
+}
+
+.background {
+  fill: none;
+}
+
+.quarter {
+  float: left;
+  width: 23%;
+  margin: 0 1%;
+}
+
+.third {
+  float: left;
+  width: 15%;
+  margin: 0 1%;
+}
+
+.half {
+  float: left;
+  width: 48%;
+  margin: 0 1%;
+}
+
+button[disabled=disabled] {
+  color: #555 !important;
+  opacity: 0.4;
+}
+
+.settings button[disabled=disabled] {
+  display: none;
+}
+
+button#keep-data,
+button#exclude-data {
+  font-weight: bold
+}
+
+button#keep-data:hover {
+  color: #080;
+}
+
+button#exclude-data:hover {
+  color: #900;
+}
+
+.off {
+  color: #999;
+}
+
+.color-bar {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  margin: 1px 4px 1px 0px;
+}
+
+#rendered-bar,
+#selected-bar {
+  width: 0%;
+  font-weight: bold;
+}
+
+#rendered-bar {
+  background: #888;
+  border-right: 1px solid #666;
+}
+
+#selected-bar {
+  background: rgba(160, 160, 160, 0.5);
+  border-right: 1px solid #999;
+}
+
+.fillbar {
+  height: 12px;
+  line-height: 12px;
+  border: 1px solid rgba(120, 120, 120, 0.5);
+  width: 120px;
+  display: inline-block;
+}
+
+.little-box {
+  width: 15%;
+  float: left;
+}
+
+.tooltopText {
+  fill: black;
+  .dark & {
+    fill: white;
+
+  }
+
+}
+
+#header {
+  border-bottom: 1px solid rgba(100, 100, 100, 0.35);
+  background: #e2e2e2;
+  padding: 6px 24px 4px;
+  line-height: 24px;
+}
+
+#header h1 {
+  display: inline-block;
+  margin: 0px 14px 0 0;
+}
+
+#header button {
+  vertical-align: top;
+}
+
+.controls {
+  float: right;
+  height: 24px;
+  line-height: 24px;
+}
+
+/* Scrollbars */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ddd;
+  border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b5b5b5;
+  border-radius: 12px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #222;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #444;
+}
+
+.delete {
+  position: absolute;
+  height: 20px;
+  font: 16px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  top: 4%;
+  left: 32%;
+  cursor: pointer;
+
+}
+.add {
+  position: absolute;
+  height: 20px;
+  font: 16px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  top: 4%;
+  left: 42%;
+  cursor: pointer;
+
+}

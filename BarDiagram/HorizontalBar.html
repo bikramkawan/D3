@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<style>
+
+
+    body {
+        margin: 15px;
+        color: black;
+        font-family: 'Fira Sans', sans-serif;
+    }
+
+    .bar {
+        fill: #6F257F;
+    }
+
+    .bar:hover {
+        fill: #CC0058;
+        transition: fill 0.15s;
+    }
+
+    text {
+        font-family: 'Fira Sans', sans-serif;
+        font-weight: 500;
+        font-size: 15px;
+        color: #081F2C;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #BDC2C6;
+        stroke-width: 1px;
+        shape-rendering: crispEdges;
+    }
+
+    .x path {
+        display: none;
+    }
+
+    .y line {
+        display: none;
+    }
+
+    .newToolTip {
+        position: absolute;
+        text-align: center;
+        width: 200px;
+        height: 58px;
+        padding: 2px;
+        font: 15px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
+
+    .toolTip:after {
+        content: "";
+        width: 0;
+        height: 0;
+        border-left: 12px solid transparent;
+        border-right: 12px solid transparent;
+        border-top: 12px solid white;
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        margin-left: -12px;
+    }
+
+    .toolTip span {
+        font-weight: 500;
+        color: #081F2C;
+    }
+
+    #tooltip {
+        opacity: 0;
+        position: absolute;
+        text-align: center;
+        width: 60px;
+        height: 40px;
+        background: white;
+        border: 0px;
+    }
+
+</style>
+
+<html>
+
+<body>
+
+<div id="barchart"></div>
+
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+    var data = [{"movie": "The Avengers", "boxoffice": 1519}, {
+        "movie": "Avengers: Age of Ultron",
+        "boxoffice": 1405
+    }, {"movie": "Iron Man 3", "boxoffice": 1215}, {
+        "movie": "Captain America: Civil War",
+        "boxoffice": 1153
+    }, {"movie": "Batman v Superman: Dawn of Justice", "boxoffice": 873}, {
+        "movie": "Guardians of the Galaxy Vol. 2",
+        "boxoffice": 860
+    }, {"movie": "Wonder Woman", "boxoffice": 779}, {
+        "movie": "Guardians of the Galaxy",
+        "boxoffice": 774
+    }, {"movie": "Suicide Squad", "boxoffice": 746}, {
+        "movie": "Captain America: The Winter Soldier",
+        "boxoffice": 715
+    }, {"movie": "Doctor Strange", "boxoffice": 678}, {
+        "movie": "Man of Steel",
+        "boxoffice": 668
+    }, {"movie": "Thor: The Dark World", "boxoffice": 645}, {
+        "movie": "Iron Man 2",
+        "boxoffice": 624
+    }, {"movie": "Iron Man", "boxoffice": 585}, {
+        "movie": "Spider-Man: Homecoming",
+        "boxoffice": 572
+    }, {"movie": "Ant-Man", "boxoffice": 519}, {
+        "movie": "Thor",
+        "boxoffice": 449
+    }, {"movie": "Captain America: The First Avenger", "boxoffice": 371}, {
+        "movie": "The Incredible Hulk",
+        "boxoffice": 263
+    }];
+
+    // set the dimensions and margins of the graph
+    var margin2 = {top2: 20, right2: 20, bottom2: 30, left2: 300},
+            width2 = 1500 - margin2.left2 - margin2.right2,
+            height2 = 750 - margin2.top2 - margin2.bottom2;
+
+    // set the ranges
+    var y2 = d3.scaleBand()
+            .range([height2, 0])
+            .padding(0.1);
+
+    var x2 = d3.scaleLinear()
+            .range([0, width2]);
+
+    // append the svg object to the body of the page
+    // append a 'group' element to 'svg'
+    // moves the 'group' element to the top left margin
+    var svg2 = d3.select("#barchart").append("svg")
+            .attr("width", width2 + margin2.left2 + margin2.right2)
+            .attr("height", height2 + margin2.top2 + margin2.bottom2)
+            .append("g")
+            .attr("transform",
+                    "translate(" + margin2.left2 + "," + margin2.top2 + ")");
+
+    var tooltip = d3.select("#barchart").append("div").attr("class", "toolTip").style("opacity", 0);
+
+    var newToolTip = d3.select("body").append("div")
+            .attr("class", "newToolTip")
+            .style("opacity", 0);
+
+    var div = d3.select("#barchart").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+    // format the data
+    data.forEach(function (d) {
+        d.boxoffice = +d.boxoffice;
+    });
+
+    // Scale the range of the data in the domains
+    x2.domain([0, d3.max(data, function (d) {
+        return d.boxoffice;
+    })])
+    y2.domain(data.map(function (d) {
+        return d.movie;
+    }));
+    //y.domain([0, d3.max(data, function(d) { return d.boxoffice; })]);
+
+    // append the rectangles for the bar chart
+
+    var grp = svg2.selectAll("g")
+            .data(data)
+            .enter().append("g");
+
+
+    grp.append('rect')
+            .attr("class", "bar")
+            //.attr("x", function(d) { return x(d.boxoffice); })
+            .attr("width", function (d) {
+                return x2(d.boxoffice);
+            })
+            .attr("y", function (d) {
+                return y2(d.movie);
+            })
+            .attr("x", function (d) {
+                return 260;
+            })
+            .attr("height", y2.bandwidth())
+            .on("mouseover", function (d) {
+                newToolTip.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                newToolTip.html(`Movie Name : ${d.movie}` + '<br>' + `Boxoffice: ${d.boxoffice}`)
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function (d) {
+                newToolTip.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+            });
+
+
+    grp.append('text')
+            .text(function (d) {
+                return (d.movie);
+            })
+            .attr("x", '0')
+            .attr("y", function (d) {
+                return y2.bandwidth() / 2 + y2(d.movie);
+            }).attr('fill', 'black')
+
+    console.log(data)
+    const widthAvailable = 950;
+    const yearsToShow = [0, 200, 400, 800, 900, 1000, 1200, 1400];
+    const spacing = (widthAvailable / yearsToShow.length);
+    let currentX = 260;
+    const xAxix = yearsToShow.map((d, i)=> {
+                if (i === 0) {
+
+                    currentX = currentX;
+                    return currentX;
+                }
+                currentX = currentX + spacing;
+                return currentX;
+            }
+    )
+    yearsToShow.forEach((d, i)=> {
+
+        svg2.append('text')
+                .text(yearsToShow[i])
+                .attr("x", xAxix[i])
+                .attr("y", (y2.bandwidth() + 5) * data.length)
+                .attr('fill', 'black')
+
+    })
+
+
+</script>
+</div>
+
+</body>
+</html>

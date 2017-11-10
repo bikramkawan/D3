@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <title>D3 Simple Heat Map Example</title>
 </head>
-<script src="../lib/d3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 
 
 <body>
@@ -44,20 +44,20 @@
             .attr("class", "chart")
             .attr("width", width)
             .attr("height", height);
-  var linearGradient=  svg.append("linearGradient")
-    .attr("id", "linear-gradient");
-linearGradient.append("stop")
-    .attr("offset", "0%")
-    .attr("stop-color", "white"); //light blue
+    var linearGradient = svg.append("linearGradient")
+            .attr("id", "linear-gradient");
+    linearGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "white"); //light blue
 
-//Set the color for the end (100%)
-linearGradient.append("stop")
-    .attr("offset", "100%")
-    .attr("stop-color", "black"); //dark blue
-svg.append("rect")
-	.attr("width", 300)
-	.attr("height", 20)
-	.style("fill", "url(#linear-gradient)")
+    //Set the color for the end (100%)
+    linearGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "black"); //dark blue
+    svg.append("rect")
+            .attr("width", 300)
+            .attr("height", 20)
+            .style("fill", "url(#linear-gradient)")
 
 
     var colorscale = d3.scale.linear().range(["#FFE0E0", "#FF0000"]); // Define Color range

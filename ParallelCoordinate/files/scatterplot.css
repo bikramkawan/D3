@@ -1,0 +1,58 @@
+.scatterPlot {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.scatterPlot .bwcorr {
+  float: left;
+  flex-basis: 100%;
+  flex-grow: 1;
+  margin: 1%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.scatterPlot .bwcorr .header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.scatterPlot .bwcorr .score {
+  margin-top: 15vh;
+}
+.scatterPlot .bwcorr #plot1,
+.scatterPlot .bwcorr #plot2,
+.scatterPlot .bwcorr #plot3 {
+  float: left;
+  width: 100%;
+  min-width: 200px;
+  height: 30%;
+  min-height: 200px;
+  margin: 0 1%;
+  position: relative;
+}
+.scatterPlot .bwcorr #plot1 .rectbrush,
+.scatterPlot .bwcorr #plot2 .rectbrush,
+.scatterPlot .bwcorr #plot3 .rectbrush {
+  fill-opacity: 0.2;
+  fill: darkred;
+  stroke: none;
+}
+.dark .scatterPlot .bwcorr #plot1 text,
+.dark .scatterPlot .bwcorr #plot2 text,
+.dark .scatterPlot .bwcorr #plot3 text {
+  fill: white;
+}
+.scatterPlot .latcorr {
+  float: left;
+  width: 20%;
+  height: 20%;
+  margin: 0 1%;
+  position: relative;
+}

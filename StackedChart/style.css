@@ -1,0 +1,48 @@
+.line {
+  fill: none;
+  stroke: grey;
+  stroke-width: 5px;
+  clip-path: url(#linedata);
+}
+.hyper,
+.hypo {
+  stroke: red;
+  stroke-width: 3;
+}
+.target {
+  stroke: green;
+  stroke-width: 3;
+}
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
+}
+.greenArea {
+  fill: lightgreen;
+  opacity: 0.2;
+}
+.bottomBar {
+  fill: grey;
+  opacity: 0.5;
+  clip-path: url(#bottomBar);
+}
+.fadeVis {
+  fill: red;
+  opacity: 0.5;
+  clip-path: url(#bottomBar);
+}
+.topBarGreen {
+  fill: lightgreen;
+  clip-path: url(#topBarGreen);
+}
+.topBarOrange {
+  fill: orange;
+  clip-path: url(#topBarOrange);
+}
+.circles {
+  clip-path: url(#circles);
+}
+.circles circle {
+  r: 4;
+}
