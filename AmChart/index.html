@@ -1,0 +1,193 @@
+<!-- Styles -->
+<style>
+    #chartdiv, #chartdiv1, #chartdiv2 {
+        width: 700px;
+        height: 600px;
+        margin: 10px;
+    }
+
+    .stacked {
+        display: flex;
+    }
+
+    a {
+        display: none !important;
+    }
+
+    .pie-class-legend-div {
+        position: absolute!important;
+        margin-top: 80px!important;
+    }
+</style>
+
+<!-- Resources -->
+<script src="js/amcharts.js"></script>
+<script src="js/serial.js"></script>
+<script src="js/light.js"></script>
+<script src="js/pie.js"></script>
+<script src="js/d3.js"></script>
+
+
+<!-- Chart code -->
+<script>
+
+
+    function generateRandomStacked() {
+        const names = ["Bob", "Tom", "Mike", "Ben"];
+        return names.map((name)=> {
+            const success = Math.floor(Math.random() * 1000);
+            const failure = Math.floor(Math.random() * 1000);
+            const total = success + failure;
+            const successPer = `(${Math.floor(100 * success / total)}%)`;
+            const failurePer = `(${Math.floor(100 * failure / total)}%)`;
+            return {
+                name,
+                success,
+                failure,
+                successPer,
+                failurePer,
+                "bullet": (success > failure) ? "icons/happy.ico" : "icons/sleep.ico"
+            }
+        })
+    }
+    function prepareStackedChartConfig() {
+        return {
+            "type": "serial",
+            "theme": "light",
+            "legend": {
+                "horizontalGap": 10,
+                "maxColumns": 1,
+                "position": "right",
+                "useGraphSettings": true,
+                "markerSize": 10
+            },
+            "dataProvider": generateRandomStacked(),
+            "valueAxes": [{
+                "stackType": "regular",
+                "axisAlpha": 0.3,
+                "gridAlpha": 0
+            }],
+            "startDuration": 1,
+            "graphs": [
+                {
+                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                    "fillAlphas": 1,
+                    "labelText": "[[value]] [[failurePer]]",
+                    "lineAlpha": 0.3,
+                    "title": "Failure",
+                    "type": "column",
+                    "color": "#000000",
+                    "fillColors": "red",
+                    "valueField": "failure",
+                    "labelPosition": "bottom"
+                },
+                {
+                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                    "fillAlphas": 1,
+                    "labelText": "[[value]] [[successPer]]",
+                    "lineAlpha": 0.3,
+                    "title": "Success",
+                    "type": "column",
+                    "color": "#000000",
+                    "fillColors": "lightblue",
+                    "bulletSize": 42,
+                    "customBulletField": "bullet",
+                    "bulletOffset": 45,
+                    "valueField": "success"
+                },],
+            "categoryField": "name",
+            "categoryAxis": {
+                "gridPosition": "start",
+                "axisAlpha": 0,
+                "gridAlpha": 0,
+                "position": "left"
+            }
+        }
+
+    }
+    function generateRandomPie() {
+        const categories = ["Success", "Failure"];
+        const rand = Math.floor(Math.random() * 100);
+        return categories.map((category, index)=> {
+            return {
+                category,
+                value: (index === 0) ? rand : 100 - rand
+            }
+        })
+    }
+
+
+    function preparePieConfig() {
+        return {
+            "type": "pie",
+            "theme": "light",
+            "addClassNames": true,
+            "classNamePrefix": "pie-class",
+            "legend": {
+                "position": "top",
+                "autoMargins": false,
+            },
+            "titles": [{
+                "text": "Success Vs Failure",
+                "size": 16,
+
+            }],
+            "dataProvider": generateRandomPie(),
+            "valueField": "value",
+            "titleField": "category",
+            "startEffect": "elastic",
+            "startDuration": 2,
+            "labelRadius": 15,
+            "innerRadius": "50%",
+            "colors": ["lightblue", "red"],
+            "depth3D": 10,
+            "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
+            "angle": 15,
+            "export": {
+                "enabled": false
+            }
+        }
+
+    }
+    AmCharts.addInitHandler(function (chart) {
+        console.log(chart)
+        // iterate through data
+        for (var i = 0; i < chart.dataProvider.length; i++) {
+            var dp = chart.dataProvider[i];
+            dp.total = 0;
+            dp.totalText = 0;
+            for (var x = 0; x < chart.graphs.length; x++) {
+                var g = chart.graphs[x];
+                console.log(g.valueField, dp[g.valueField]);
+                dp.totalText += dp[g.valueField];
+                dp.totalLabel = "Total";
+                dp.totalFake = "Fake"
+                if (dp[g.valueField] > 0)
+                    dp.total += dp[g.valueField];
+            }
+        }
+
+        // add additional graph
+        var graph = new AmCharts.AmGraph();
+        graph.valueField = "total";
+        graph.labelText = "[[totalLabel]]:[[totalText]]";
+        graph.visibleInLegend = false;
+        graph.showBalloon = false;
+        graph.lineAlpha = 0;
+        graph.fontSize = 15;
+        chart.addGraph(graph);
+    }, ["serial"]);
+    AmCharts.makeChart("chartdiv", prepareStackedChartConfig());
+    AmCharts.makeChart("chartdiv1", prepareStackedChartConfig());
+    AmCharts.makeChart("chartdiv2", preparePieConfig());
+
+
+</script>
+
+
+<div class="stacked"><!-- HTML -->
+    <div id="chartdiv"></div>
+
+    <div id="chartdiv1"></div>
+</div>
+<div id="chartdiv2"></div>
