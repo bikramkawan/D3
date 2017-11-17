@@ -1,7 +1,7 @@
 <!-- Styles -->
 <style>
     #chartdiv, #chartdiv1, #chartdiv2 {
-        width: 700px;
+        width: 600px;
         height: 600px;
         margin: 10px;
     }
@@ -15,8 +15,13 @@
     }
 
     .pie-class-legend-div {
-        position: absolute!important;
-        margin-top: 80px!important;
+        position: absolute !important;
+        margin-top: 80px !important;
+    }
+
+    .mytext {
+
+        fill: black;
     }
 </style>
 
@@ -106,51 +111,73 @@
 
     }
     function generateRandomPie() {
-        const categories = ["Success", "Failure"];
-        const rand = Math.floor(Math.random() * 100);
-        return categories.map((category, index)=> {
-            return {
-                category,
-                value: (index === 0) ? rand : 100 - rand
-            }
-        })
+
+        return [{
+            "name": "Area1",
+            "value": 25,
+            "success": 3,
+            "successP": '30%',
+            "failure": 7,
+            "failureP": '70%',
+            "total": 10,
+            "category": "A"
+
+        }, {
+            "name": "Area2",
+            "value": 25,
+            "success": 5,
+            "successP": '50%',
+            "failure": 5,
+            "failureP": '50%',
+            "total": 10,
+            "category": "B"
+        }, {
+            "name": "Area3",
+            "value": 25,
+            "success": 8,
+            "successP": '80%',
+            "failure": 2,
+            "failureP": '20%',
+            "total": 10,
+            "category": "C"
+        }, {
+            "name": "Area4",
+            "value": 25,
+            "success": 7,
+            "successP": '70%',
+            "failure": 3,
+            "failureP": '30%',
+            "total": 10,
+            "category": "D"
+        }]
+
     }
 
 
-    function preparePieConfig() {
+    function preparePieConfig(chart) {
         return {
             "type": "pie",
             "theme": "light",
             "addClassNames": true,
             "classNamePrefix": "pie-class",
-            "legend": {
-                "position": "top",
-                "autoMargins": false,
-            },
-            "titles": [{
-                "text": "Success Vs Failure",
-                "size": 16,
-
-            }],
-            "dataProvider": generateRandomPie(),
+            "labelText": "[[name]]",
             "valueField": "value",
-            "titleField": "category",
+            "descriptionField": "category",
+            "titleField": "name",
+            "dataProvider": generateRandomPie(),
             "startEffect": "elastic",
             "startDuration": 2,
-            "labelRadius": 15,
-            "innerRadius": "50%",
-            "colors": ["lightblue", "red"],
-            "depth3D": 10,
+            "startAngle": 45,
+            "colors": ["blue", "orange", "yellow", "green"],
             "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
-            "angle": 15,
-            "export": {
-                "enabled": false
-            }
         }
 
     }
+
+
+    const labels = []
+
     AmCharts.addInitHandler(function (chart) {
-        console.log(chart)
         // iterate through data
         for (var i = 0; i < chart.dataProvider.length; i++) {
             var dp = chart.dataProvider[i];
@@ -179,9 +206,37 @@
     }, ["serial"]);
     AmCharts.makeChart("chartdiv", prepareStackedChartConfig());
     AmCharts.makeChart("chartdiv1", prepareStackedChartConfig());
-    AmCharts.makeChart("chartdiv2", preparePieConfig());
+    AmCharts.makeChart("chartdiv2", preparePieConfig('first'));
+
+    function selection() {
+
+        const data = generateRandomPie();
+
+        data.forEach((item, i)=> {
+            const pies = d3.selectAll('.pie-class-pie-item')
+            const el = Array.from(pies._groups[0]).filter((d)=> d.attributes['aria-label'].value.indexOf(item.name) !== -1)[0];
+            const tick = d3.select(el).select('.pie-class-pie-tick');
+            const pathValue = tick._groups[0][0].attributes.d.value;
+            const cord = pathValue.split(' ')[0].slice(1, 20).split(',');
+            const parsedCoord = [parseFloat(cord[0]), parseFloat(cord[1])]
+
+            console.log(parsedCoord)
+            const x = parsedCoord[0] > 310 ? parsedCoord[0] - 40 : parsedCoord[0] < 300 ? parsedCoord[0] + 50 : parsedCoord[0];
+            const y = parsedCoord[1] > 310 ? parsedCoord[1] - 50 : parsedCoord[1] < 300 ? parsedCoord[1] + 50 : parsedCoord[1];
 
 
+            const g = d3.select(el);
+            console.log(x)
+            g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y})`).text(`S-${item.successP},${item.success} calls`).classed('mytext', true)
+            g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y+15})`).text(`F-${item.failureP},${item.failure} calls`).classed('mytext', true)
+            g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y+30})`).text(`Total calls -${item.total}`).classed('mytext', true)
+
+
+        })
+    }
+    setTimeout(()=>selection(), 200)
+
+    //console.log(d.attributes['aria-label'].value)
 </script>
 
 
