@@ -2,77 +2,92 @@
   "stackedChart": [
     {
       "name": "Bob",
-      "success": 997,
-      "failure": 470,
-      "successPer": "(67%)",
-      "failurePer": "(32%)",
-      "bullet": "icons/happy.ico"
+      "success": 40,
+      "failure": 60,
+      "bullet": "icons/sleep.ico"
     },
     {
       "name": "Tom",
-      "success": 22,
-      "failure": 921,
-      "successPer": "(2%)",
-      "failurePer": "(97%)",
-      "bullet": "icons/sleep.ico"
+      "success": 20,
+      "failure": 80,
+       "bullet": "icons/sleep.ico"
     },
     {
-      "name": "Mike",
-      "success": 848,
-      "failure": 373,
-      "successPer": "(69%)",
-      "failurePer": "(30%)",
-      "bullet": "icons/happy.ico"
+      "name": "Mark",
+      "success": 30,
+      "failure": 70,
+      "bullet": "icons/sleep.ico"
     },
     {
       "name": "Ben",
-      "success": 349,
-      "failure": 995,
-      "successPer": "(25%)",
-      "failurePer": "(74%)",
-      "bullet": "icons/sleep.ico"
+      "success": 60,
+      "failure": 40,
+      "bullet": "icons/happy.ico"
+    },
+    {
+      "name": "Harry",
+      "success": 70,
+      "failure": 30,
+      "bullet": "icons/happy.ico"
     }
   ],
   "pieChart": [
     {
-      "name": "Area1",
-      "value": 25,
-      "success": 3,
-      "successP": "30%",
-      "failure": 7,
-      "failureP": "70%",
-      "total": 10,
-      "category": "A"
+      "area": "Area 1",
+      "value":"33",
+      "success": "20%",
+      "failure": "80%",
+      "drilldown": {
+        "Names": [
+          {
+            "value": "Rick"
+          },
+          {
+            "value": "Ben"
+          },
+          {
+            "value": "Erick"
+          }
+        ]
+      }
     },
     {
-      "name": "Area2",
-      "value": 25,
-      "success": 5,
-      "successP": "50%",
-      "failure": 5,
-      "failureP": "50%",
-      "total": 10,
-      "category": "B"
+      "area": "Area 2",
+      "success": "95%",
+      "failure": "05%",
+      "value":"33",
+      "drilldown": {
+        "Names": [
+          {
+            "value": "Nir"
+          },
+          {
+            "value": "Jack"
+          },
+          {
+            "value": "Mike"
+          }
+        ]
+      }
     },
     {
-      "name": "Area3",
-      "value": 25,
-      "success": 8,
-      "successP": "80%",
-      "failure": 2,
-      "failureP": "20%",
-      "total": 10,
-      "category": "C"
-    },
-    {
-      "name": "Area4",
-      "value": 25,
-      "success": 7,
-      "successP": "70%",
-      "failure": 3,
-      "failureP": "30%",
-      "total": 10,
-      "category": "D"
+      "area": "Area 3",
+      "success": "85%",
+      "failure": "15%",
+      "value":"33",
+      "drilldown": {
+        "Names": [
+          {
+            "value": "MK"
+          },
+          {
+            "value": "Tom"
+          },
+          {
+            "value": "Din"
+          }
+        ]
+      }
     }
   ]
 }
