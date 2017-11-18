@@ -1,0 +1,51 @@
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #D4D8DA;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: #F1F3F3;
+  stroke: #6F257F;
+  stroke-width: 5px;
+}
+
+.hover-line {
+  stroke: #6F257F;
+  stroke-width: 2px;
+  stroke-dasharray: 3, 3;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  margin: 50px;
+  align-items: center;
+  flex-direction: column;
+
+  .controls {
+    display: flex;
+    width: 800px;
+    justify-content: space-around;
+    font-size: 30px;
+    cursor: pointer;
+    margin: 20px;
+  }
+}
