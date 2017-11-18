@@ -1,0 +1,78 @@
+{
+  "stackedChart": [
+    {
+      "name": "Bob",
+      "success": 997,
+      "failure": 470,
+      "successPer": "(67%)",
+      "failurePer": "(32%)",
+      "bullet": "icons/happy.ico"
+    },
+    {
+      "name": "Tom",
+      "success": 22,
+      "failure": 921,
+      "successPer": "(2%)",
+      "failurePer": "(97%)",
+      "bullet": "icons/sleep.ico"
+    },
+    {
+      "name": "Mike",
+      "success": 848,
+      "failure": 373,
+      "successPer": "(69%)",
+      "failurePer": "(30%)",
+      "bullet": "icons/happy.ico"
+    },
+    {
+      "name": "Ben",
+      "success": 349,
+      "failure": 995,
+      "successPer": "(25%)",
+      "failurePer": "(74%)",
+      "bullet": "icons/sleep.ico"
+    }
+  ],
+  "pieChart": [
+    {
+      "name": "Area1",
+      "value": 25,
+      "success": 3,
+      "successP": "30%",
+      "failure": 7,
+      "failureP": "70%",
+      "total": 10,
+      "category": "A"
+    },
+    {
+      "name": "Area2",
+      "value": 25,
+      "success": 5,
+      "successP": "50%",
+      "failure": 5,
+      "failureP": "50%",
+      "total": 10,
+      "category": "B"
+    },
+    {
+      "name": "Area3",
+      "value": 25,
+      "success": 8,
+      "successP": "80%",
+      "failure": 2,
+      "failureP": "20%",
+      "total": 10,
+      "category": "C"
+    },
+    {
+      "name": "Area4",
+      "value": 25,
+      "success": 7,
+      "successP": "70%",
+      "failure": 3,
+      "failureP": "30%",
+      "total": 10,
+      "category": "D"
+    }
+  ]
+}
