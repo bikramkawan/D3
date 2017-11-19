@@ -24,11 +24,12 @@
         fill: black;
     }
 
-    .bar-class-graph-label {
-        font-size: 10px;
-    }
-    .bar-class-graph-graphAuto2_1511098987179{
+    .bar-class-graph-graphAuto2_1511098987179 {
         stroke: red;
+    }
+
+    .perText, .bar-class-graph-label {
+        font-size: 15px;
     }
 </style>
 
@@ -65,45 +66,18 @@
                             "markerSize": 10,
                             "position": "right"
                         },
-                        "dataProvider": [{
-                            "name": "Bob",
-                            "success": 4143,
-                            "successP": "50.6%",
-                            "failure": 4039,
-                            "failureP": "49.37%",
-                            "bullet": "icons/happy.ico"
-
-
-                        }, {
-                            "name": "Tom",
-                            "success": 3999,
-                            "failure": 4144,
-                            "bullet": "icons/sleep.ico"
-
-                        }, {
-                            "name": "Mike",
-                            "success": 4012,
-                            "failure": 4128,
-                            "bullet": "icons/sleep.ico"
-
-                        },
-                            {
-                                "name": "Ben",
-                                "success": 3660,
-                                "failure": 3982,
-                                "bullet": "icons/sleep.ico"
-
-                            }],
+                        "dataProvider": stackedData,
                         "startDuration": 1,
                         "valueAxes": [{
                             "stackType": "regular",
-                            "axisAlpha": 0,
-                            "gridAlpha": 0
+                            "axisAlpha": 0.3,
+                            "gridAlpha": 0,
+                            "totalText": "[[total]]"
                         }],
                         "graphs": [{
                             "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
-                            "labelText": "Success:[[value]]([[percents]]%)",
+                            "labelText": "Success:[[value]]",
                             "lineAlpha": 0.3,
                             "title": "success",
                             "type": "column",
@@ -112,7 +86,7 @@
                         }, {
                             "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
-                            "labelText": "Failure:[[value]]([[percents]]%)",
+                            "labelText": "Failure:[[value]]",
                             "lineAlpha": 0.3,
                             "title": "Failure",
                             "type": "column",
@@ -169,64 +143,104 @@
 
                 }
 
+
+//                AmCharts.addInitHandler(function (chart) {
+//                    // iterate through data
+//                    console.log(chart)
+//                    for (var i = 0; i < chart.dataProvider.length; i++) {
+//                        var dp = chart.dataProvider[i];
+//                        dp.total = 0;
+//                        dp.totalText = 0;
+//                        for (var x = 0; x < chart.graphs.length; x++) {
+//                            var g = chart.graphs[x];
+//                            dp.totalText += dp[g.valueField];
+//                            dp.totalLabel = "Total";
+//                            dp.totalFake = "Fake"
 //
-                AmCharts.addInitHandler(function (chart) {
-                    // iterate through data
-                    for (var i = 0; i < chart.dataProvider.length; i++) {
-                        var dp = chart.dataProvider[i];
-                        dp.total = 0;
-                        dp.totalText = 0;
-                        for (var x = 0; x < chart.graphs.length; x++) {
-                            var g = chart.graphs[x];
-                            dp.totalText += dp[g.valueField];
-                            dp.totalLabel = "Total";
-                            dp.totalFake = "Fake"
-                            console.log(dp[g.valueField])
-                            if (dp[g.valueField] > 0)
-                                dp.total += dp[g.valueField];
+//                            if (dp[g.valueField] > 0)
+//                                dp.total += dp[g.valueField];
+//
+//                        }
+//
+//
+//                    }
+//
+//                    // add additional graph
+//                    var graph = new AmCharts.AmGraph();
+//                    graph.valueField = "total";
+//                    graph.labelText = "TESt";
+//                    graph.visibleInLegend = false;
+//                    graph.showBalloon = false;
+//                    graph.lineAlpha = 0;
+//                    graph.fontSize = 15;
+//
+//                     var graph1 = new AmCharts.AmGraph();
+//                    graph1.valueField = "total";
+//                    graph1.labelText = "fsaf";
+//                    graph1.visibleInLegend = false;
+//                    graph1.showBalloon = false;
+//                    graph1.lineAlpha = 0;
+//                    graph1.fontSize = 15;
+//
+//                    chart.addGraph(graph);
+//
+//                }, ["serial"]);
 
-                        }
 
-                        console.log(dp)
-                    }
+                const chart = AmCharts.makeChart("chartdiv", prepareStackedChartConfig());
 
-                    // add additional graph
-                    var graph = new AmCharts.AmGraph();
-                    graph.valueField = "total";
-                    graph.labelText = "[[totalLabel]]:[[totalText]]";
-                    graph.visibleInLegend = false;
-                    graph.showBalloon = false;
-                    graph.lineAlpha = 0;
-                    graph.fontSize = 15;
-                    chart.addGraph(graph);
-                }, ["serial"]);
-                AmCharts.makeChart("chartdiv", prepareStackedChartConfig());
                 // AmCharts.makeChart("chartdiv1", prepareStackedChartConfig());
                 AmCharts.makeChart("chartdiv2", preparePieConfig('first'));
 
                 function selection() {
 
-                    pieData.forEach((item, i)=> {
-                        const pies = d3.selectAll('.pie-class-pie-item')
-                        const el = Array.from(pies._groups[0]).filter((d)=> d.attributes['aria-label'].value.indexOf(item.name) !== -1)[0];
-                        const tick = d3.select(el).select('.pie-class-pie-tick');
-                        const pathValue = tick._groups[0][0].attributes.d.value;
-                        const cord = pathValue.split(' ')[0].slice(1, 20).split(',');
-                        const parsedCoord = [parseFloat(cord[0]), parseFloat(cord[1])]
+                    const stacks = d3.selectAll('.bar-class-graph-label')
+                    const texts = stacks._groups[0]
+                    console.log(texts, texts[0].textContent)
 
-                        const x = parsedCoord[0] > 310 ? parsedCoord[0] - 40 : parsedCoord[0] < 300 ? parsedCoord[0] + 50 : parsedCoord[0];
-                        const y = parsedCoord[1] > 310 ? parsedCoord[1] - 50 : parsedCoord[1] < 300 ? parsedCoord[1] + 50 : parsedCoord[1];
-
-                        const g = d3.select(el);
-                        g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y})`).text(`S-${item.successP},${item.success} calls`).classed('mytext', true)
-                        g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y + 15})`).text(`F-${item.failureP},${item.failure} calls`).classed('mytext', true)
-                        g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y + 30})`).text(`Total calls -${item.total}`).classed('mytext', true)
-
+                    texts.forEach((d)=> {
+                        const trasn = d3.select(d).attr('transform');
+                        const str = d.textContent.split(':');
+                        if (str[1]) {
+                            const textVal = parseFloat(str[1].replace(',', ''));
+                            console.log(textVal, str)
+                            console.log(stackedData)
+                            const data = stackedData.filter((e)=>e[str[0].toLowerCase()] == textVal)
+                            console.log(data, str[0].toLowerCase(), textVal)
+                            const isSuccess = str[0].toLowerCase() === 'success';
+                            const dataDisp = isSuccess ? 'successP' : 'failureP'
+                            d3.select(d.parentNode).append('g')
+                                    .attr('transform', trasn)
+                                    .append('text')
+                                    .classed('perText', true)
+                                    .text(`Percentage: ${data[0][dataDisp]}`)
+                                    .attr('transform', "translate(-60,35)")
+                        }
 
                     })
+
+
+                    /*               pieData.forEach((item, i)=> {
+                     const pies = d3.selectAll('.pie-class-pie-item')
+                     const el = Array.from(pies._groups[0]).filter((d)=> d.attributes['aria-label'].value.indexOf(item.name) !== -1)[0];
+                     const tick = d3.select(el).select('.pie-class-pie-tick');
+                     const pathValue = tick._groups[0][0].attributes.d.value;
+                     const cord = pathValue.split(' ')[0].slice(1, 20).split(',');
+                     const parsedCoord = [parseFloat(cord[0]), parseFloat(cord[1])]
+
+                     const x = parsedCoord[0] > 310 ? parsedCoord[0] - 40 : parsedCoord[0] < 300 ? parsedCoord[0] + 50 : parsedCoord[0];
+                     const y = parsedCoord[1] > 310 ? parsedCoord[1] - 50 : parsedCoord[1] < 300 ? parsedCoord[1] + 50 : parsedCoord[1];
+
+                     const g = d3.select(el);
+                     g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y})`).text(`S-${item.successP},${item.success} calls`).classed('mytext', true)
+                     g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y + 15})`).text(`F-${item.failureP},${item.failure} calls`).classed('mytext', true)
+                     g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y + 30})`).text(`Total calls -${item.total}`).classed('mytext', true)
+
+
+                     })*/
                 }
 
-                //  setTimeout(()=>selection(), 200)
+                setTimeout(()=>selection(), 200)
 
 
             }

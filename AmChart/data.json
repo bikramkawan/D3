@@ -2,39 +2,41 @@
   "stackedChart": [
     {
       "name": "Bob",
-      "success": 40,
-      "failure": 60,
-      "bullet": "icons/sleep.ico"
+      "success": 4143,
+      "successP": "50.63%",
+      "failure": 4039,
+      "failureP": "49.37%",
+      "bullet": "icons/happy.ico"
     },
     {
       "name": "Tom",
-      "success": 20,
-      "failure": 80,
-       "bullet": "icons/sleep.ico"
+      "success": 3999,
+      "successP": "49.10%",
+      "failure": 4144,
+      "failureP": "51.90%",
+      "bullet": "icons/sleep.ico"
     },
     {
-      "name": "Mark",
-      "success": 30,
-      "failure": 70,
+      "name": "Mike",
+      "success": 4012,
+      "successP": "49.28%",
+      "failure": 4128,
+      "failureP": "51.27%",
       "bullet": "icons/sleep.ico"
     },
     {
       "name": "Ben",
-      "success": 60,
-      "failure": 40,
-      "bullet": "icons/happy.ico"
-    },
-    {
-      "name": "Harry",
-      "success": 70,
-      "failure": 30,
-      "bullet": "icons/happy.ico"
+      "success": 3660,
+      "successP": "47.89%",
+      "failure": 3982,
+      "failureP": "52.11%",
+      "bullet": "icons/sleep.ico"
     }
   ],
   "pieChart": [
     {
       "area": "Area 1",
-      "value":"33",
+      "value": "33",
       "success": "20%",
       "failure": "80%",
       "drilldown": {
@@ -55,7 +57,7 @@
       "area": "Area 2",
       "success": "95%",
       "failure": "05%",
-      "value":"33",
+      "value": "33",
       "drilldown": {
         "Names": [
           {
@@ -74,7 +76,7 @@
       "area": "Area 3",
       "success": "85%",
       "failure": "15%",
-      "value":"33",
+      "value": "33",
       "drilldown": {
         "Names": [
           {
