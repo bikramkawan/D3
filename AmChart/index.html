@@ -1,8 +1,8 @@
 <!-- Styles -->
 <style>
     #chartdiv, #chartdiv1, #chartdiv2 {
-        width: 1200px;
-        height: 600px;
+        width: 500px;
+        height: 400px;
         margin: 10px;
     }
 
@@ -29,7 +29,7 @@
     }
 
     .perText, .bar-class-graph-label {
-        font-size: 15px;
+        font-size: 11px;
     }
 </style>
 
@@ -77,7 +77,7 @@
                         "graphs": [{
                             "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
-                            "labelText": "Success:[[value]]",
+                            "labelText": "Success",
                             "lineAlpha": 0.3,
                             "title": "success",
                             "type": "column",
@@ -86,7 +86,7 @@
                         }, {
                             "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
-                            "labelText": "Failure:[[value]]",
+                            "labelText": "Failure",
                             "lineAlpha": 0.3,
                             "title": "Failure",
                             "type": "column",
@@ -195,26 +195,29 @@
                 function selection() {
 
                     const stacks = d3.selectAll('.bar-class-graph-label')
-                    const texts = stacks._groups[0]
-                    console.log(texts, texts[0].textContent)
+                    const texts = Array.from(stacks._groups[0]).filter(d=>d.classList.length === 1)
 
-                    texts.forEach((d)=> {
+                    const tempData  = stackedData.concat(stackedData);
+
+                    texts.forEach((d, i)=> {
                         const trasn = d3.select(d).attr('transform');
-                        const str = d.textContent.split(':');
-                        if (str[1]) {
-                            const textVal = parseFloat(str[1].replace(',', ''));
-                            console.log(textVal, str)
-                            console.log(stackedData)
-                            const data = stackedData.filter((e)=>e[str[0].toLowerCase()] == textVal)
-                            console.log(data, str[0].toLowerCase(), textVal)
-                            const isSuccess = str[0].toLowerCase() === 'success';
+                        const str = d.textContent;
+                        if (str) {
+                            const attr = str.toLowerCase();
+                            const isSuccess = str.toLowerCase() === 'success';
                             const dataDisp = isSuccess ? 'successP' : 'failureP'
-                            d3.select(d.parentNode).append('g')
+                            const g = d3.select(d.parentNode).append('g')
                                     .attr('transform', trasn)
-                                    .append('text')
+                            g.append('text')
                                     .classed('perText', true)
-                                    .text(`Percentage: ${data[0][dataDisp]}`)
-                                    .attr('transform', "translate(-60,35)")
+                                    .text(tempData[i][attr])
+                                    .attr('transform', "translate(-15,25)")
+
+
+                            g.append('text')
+                                    .classed('perText', true)
+                                    .text(tempData[i][dataDisp])
+                                    .attr('transform', "translate(-15,45)")
                         }
 
                     })
