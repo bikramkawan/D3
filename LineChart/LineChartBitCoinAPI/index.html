@@ -10,17 +10,21 @@
 
 
 <div class="app">
+    <div class="reset">Reset Zoom</div>
     <div class="chart">
-
+        <div class="tooltip">
+            <span class="date">Date</span>
+            <div class="price">$$$$</div>
+        </div>
     </div>
     <div class="controls">
 
-        <div class="days30"> 30 Days</div>
-        <div class="days60"> 60 Days</div>
-        <div class="days180"> 180 Days</div>
-        <div class="year1"> 1 Year</div>
-        <div class="year2"> 2 Year</div>
-        <div class="alltime"> All Time</div>
+        <div class="btn days30"> 30 Days</div>
+        <div class="btn days60"> 60 Days</div>
+        <div class="btn days180"> 180 Days</div>
+        <div class="btn year1"> 1 Year</div>
+        <div class="btn year2"> 2 Year</div>
+        <div class="btn alltime"> All Time</div>
 
     </div>
 </div>
@@ -51,13 +55,15 @@
     const y = d3.scaleLinear().range([height, 0]);
     const y2 = d3.scaleLinear().range([height, 0]);
 
+    const formatTime = d3.timeFormat("%-m/%-d/%Y %-I:%M:%S %p")
+
     const xAxis = d3.axisBottom(x),
             yAxis = d3.axisLeft(y);
     const valueline = d3.line()
             .x(d=>x(d.x))
             .y(d=>y(d.y));
 
-
+    let initialData = null;
     makeChart(URL_180Days);
     d3.select('.days30').on('click', ()=> makeChart(URL_30Days));
     d3.select('.days60').on('click', ()=> makeChart(URL_60Days));
@@ -66,23 +72,22 @@
     d3.select('.year2').on('click', ()=> makeChart(URL_2Year));
     d3.select('.alltime').on('click', ()=> makeChart(URL_ALLTime));
 
+
     function makeChart(URL) {
 
         d3.selectAll('.innerSVG').remove();
         d3.selectAll('g').remove();
         d3.json(URL, function (jsondata) {
             const data = jsondata.values.map(d => ({x: new Date(d.x * 1000), y: d.y}))
+
             x.domain(d3.extent(data, d=> d.x));
             x2.domain(d3.extent(data, d=> d.x));
 
             y.domain([0, d3.max(data, d=>d.y)]);
             y2.domain([0, d3.max(data, d=>d.y)]);
 
-            const svg = svgContainer.append('g').classed('innerSVG', true)
 
-            const brush = d3.brushX()
-                    .extent([[0, 0], [width, height]])
-                    .on("brush end", brushed);
+            const svg = svgContainer.append('g').classed('innerSVG', true)
             console.log(data)
             bisectDate = d3.bisector(d=>d.x).left;
 
@@ -114,18 +119,7 @@
                     .attr("class", "line")
                     .attr("d", valueline);
 
-            const focus = line.append("g")
-                    .attr("class", "focus")
-                    .style("display", "none");
-
-            focus.append("circle")
-                    .attr("r", 4)
-                    .attr('fill', 'none')
-
-            focus.append("text")
-                    .attr("x", 15)
-                    .attr("dy", ".31em");
-
+            const toolTip = d3.select('.tooltip');
             let initialX = null;
             let mouseDown = false;
             let extents = [];
@@ -133,7 +127,6 @@
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
                     .classed('brushRect', true)
                     .attr("height", height)
-                    .attr('stroke', 'red')
                     .attr('fill', ' gainsboro')
 
 
@@ -143,18 +136,16 @@
                     .attr("width", width)
                     .attr("height", height)
                     .on("mouseover", function () {
-                        focus.style("display", null);
+                        toolTip.style("display", 'flex');
                     })
                     .on("mouseout", function () {
-                        focus.style("display", "none");
+                        toolTip.style('visibility', 'hidden');
                     })
                     .on("mousemove", mousemove)
                     .on("mouseup", mouseup)
                     .on("mousedown", mousedown)
 
             function mousedown() {
-
-                //  console.log(d3.mouse(this), 'clickeddown')
 
                 mouseDown = true;
                 initialX = d3.mouse(this)[0];
@@ -165,69 +156,67 @@
 
             function mouseup() {
 
-                //  console.log(d3.mouse(this), 'clickedup')
                 mouseDown = false;
                 initialX = null;
                 extents[1] = d3.mouse(this)[0];
+                const start = x.invert(Math.min(...extents));
+                const end = x.invert(Math.max(...extents));
+                const filtered = data.filter((d)=>d.x > start && d.x < end)
 
-//
-//
-//                const filteredData = data.filter()
-//
-//
-//                x.domain([data[163].x, data[179].x])
-//
-//
-//
-//                console.log(x2.invert(extents[0]))
-//                line.select(".axis--x").call(xAxis);
-//                line.select('.axis--y').call(yAxis);
-//                  line.select(".line").attr("d", valueline(data.slice(163,179)));
-//                console.log(x2.domain(), x.domain())
+                d3.select('.brushRect')
+                        .style('display', 'none')
+                if (filtered.length < 3) return;
+
+                updateLineAndAxis(filtered);
+
+
             }
 
             function mousemove() {
-                const select = d3.mouse(this)[0];
-                const x0 = x.invert(select),
+                const select = d3.mouse(this);
+                const x0 = x.invert(select[0]),
                         i = bisectDate(data, x0, 1),
                         d0 = data[i - 1],
                         d1 = data[i],
                         d = x0 - d0.x > d1.x - x0 ? d1 : d0;
                 if (mouseDown) {
-
-
-                    if (select > initialX) {
+                    d3.select('.brushRect')
+                            .style('display', 'block')
+                    if (select[0] > initialX) {
                         d3.select('.brushRect')
                                 .attr('x', initialX)
-                                .attr('width', select - initialX)
-
+                                .attr('width', select[0] - initialX)
                     } else {
 
                         d3.select('.brushRect')
-                                .attr('x', select)
-                                .attr('width', initialX - select)
+                                .attr('x', select[0])
+                                .attr('width', initialX - select[0])
                     }
 
 
                 }
 
-                focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
-                focus.select("text").text(function () {
-                    return d.y;
-                });
+                toolTip.select('.date').text(`${formatTime(d.x)}`)
+                toolTip.select('.price').text(`USD: ${d.y}`)
+                toolTip.style("left", (x(d.x) - 25) + "px")
+                        .style("top", y(d.y) + "px")
+                        .style('visibility', 'visible')
+
             }
 
-            function brushed() {
-                if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
-                var s = d3.event.selection || x2.range();
+            d3.select('.reset').on('click', ()=> {
 
-//
-// x.domain(s.map(x2.invert, x2));
-//                focus.select(".area").attr("d", area);
-//                focus.select(".axis--x").call(xAxis);
-//                svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
-//                        .scale(width / (s[1] - s[0]))
-//                        .translate(-s[0], 0));
+                updateLineAndAxis(data);
+            })
+
+
+            function updateLineAndAxis(filter) {
+                x.domain(d3.extent(filter, d=> d.x));
+                y.domain([0, d3.max(filter, d=>d.y)]);
+                line.select(".axis--x").call(xAxis);
+                line.select('.axis--y').call(yAxis);
+                line.select(".line").attr("d", valueline(filter));
+
             }
 
 

@@ -39,6 +39,12 @@
   margin: 50px;
   align-items: center;
   flex-direction: column;
+  .reset {
+    align-self: center;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+  }
 
   .controls {
     display: flex;
@@ -47,5 +53,34 @@
     font-size: 30px;
     cursor: pointer;
     margin: 20px;
+    border: 1px solid;
+    color: steelblue;
+    & > div {
+      padding: 9px;
+    }
+
+    .btn:not(:last-child) {
+      border-right: 1px solid steelblue;
+    }
+
+  }
+}
+
+.tooltip {
+  position: relative;
+  display: flex;
+  width: 170px;
+  height: 45px;
+  pointer-events: none;
+  background: white;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+
+  flex-direction: column;
+  border: 2px solid steelblue;
+
+  & > span {
+    padding: 5px;
   }
 }

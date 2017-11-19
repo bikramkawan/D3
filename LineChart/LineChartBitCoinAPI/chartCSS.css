@@ -34,6 +34,12 @@
   align-items: center;
   flex-direction: column;
 }
+.app .reset {
+  align-self: center;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
 .app .controls {
   display: flex;
   width: 800px;
@@ -41,4 +47,28 @@
   font-size: 30px;
   cursor: pointer;
   margin: 20px;
+  border: 1px solid;
+  color: steelblue;
+}
+.app .controls > div {
+  padding: 9px;
+}
+.app .controls .btn:not(:last-child) {
+  border-right: 1px solid steelblue;
+}
+.tooltip {
+  position: relative;
+  display: flex;
+  width: 170px;
+  height: 45px;
+  pointer-events: none;
+  background: white;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  flex-direction: column;
+  border: 2px solid steelblue;
+}
+.tooltip > span {
+  padding: 5px;
 }
