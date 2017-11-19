@@ -1,7 +1,7 @@
 <!-- Styles -->
 <style>
     #chartdiv, #chartdiv1, #chartdiv2 {
-        width: 600px;
+        width: 1200px;
         height: 600px;
         margin: 10px;
     }
@@ -22,6 +22,13 @@
     .mytext {
 
         fill: black;
+    }
+
+    .bar-class-graph-label {
+        font-size: 10px;
+    }
+    .bar-class-graph-graphAuto2_1511098987179{
+        stroke: red;
     }
 </style>
 
@@ -49,6 +56,9 @@
                         "theme": "light",
                         "depth3D": 20,
                         "angle": 30,
+                        "addClassNames": true,
+                        "classNamePrefix": "bar-class",
+                        "columnWidth": 0.8,
                         "legend": {
                             "horizontalGap": 10,
                             "useGraphSettings": true,
@@ -57,24 +67,33 @@
                         },
                         "dataProvider": [{
                             "name": "Bob",
-                            "success": 30,
-                            "failure": 70,
-                            "bullet": "icons/sleep.ico"
+                            "success": 4143,
+                            "successP": "50.6%",
+                            "failure": 4039,
+                            "failureP": "49.37%",
+                            "bullet": "icons/happy.ico"
 
 
                         }, {
                             "name": "Tom",
-                            "success": 70,
-                            "failure": 30,
+                            "success": 3999,
+                            "failure": 4144,
                             "bullet": "icons/sleep.ico"
 
                         }, {
                             "name": "Mike",
-                            "success": 50,
-                            "failure": 50,
+                            "success": 4012,
+                            "failure": 4128,
                             "bullet": "icons/sleep.ico"
 
-                        }],
+                        },
+                            {
+                                "name": "Ben",
+                                "success": 3660,
+                                "failure": 3982,
+                                "bullet": "icons/sleep.ico"
+
+                            }],
                         "startDuration": 1,
                         "valueAxes": [{
                             "stackType": "regular",
@@ -84,7 +103,7 @@
                         "graphs": [{
                             "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
-                            "labelText": "Success: [[value]]",
+                            "labelText": "Success:[[value]]([[percents]]%)",
                             "lineAlpha": 0.3,
                             "title": "success",
                             "type": "column",
@@ -93,7 +112,7 @@
                         }, {
                             "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
                             "fillAlphas": 0.8,
-                            "labelText": " Failure : [[value]]",
+                            "labelText": "Failure:[[value]]([[percents]]%)",
                             "lineAlpha": 0.3,
                             "title": "Failure",
                             "type": "column",
@@ -139,11 +158,9 @@
                             const names = v.drilldown.Names.map(e=>e.value);
                             return `Success:${v.success} <br> Failure: ${v.failure} <br> Names: ${names.join(',')}`
                         },
-//                        "labelFunction": function (d) {
-//
-//                            console.log(d)
-//                            return 'tes'
-//                        },
+                        "labelFunction": function (d) {
+                            return d.title
+                        },
                         "angle": 15,
                         "export": {
                             "enabled": true
