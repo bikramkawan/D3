@@ -1,8 +1,8 @@
 <!-- Styles -->
 <style>
     #chartdiv, #chartdiv1, #chartdiv2 {
-        width: 700px;
-        height: 600px;
+        width: 500px;
+        height: 400px;
         margin: 10px;
     }
 
@@ -15,8 +15,21 @@
     }
 
     .pie-class-legend-div {
-        position: absolute!important;
-        margin-top: 80px!important;
+        position: absolute !important;
+        margin-top: 80px !important;
+    }
+
+    .mytext {
+
+        fill: black;
+    }
+
+    .bar-class-graph-graphAuto2_1511098987179 {
+        stroke: red;
+    }
+
+    .perText, .bar-class-graph-label {
+        font-size: 11px;
     }
 </style>
 
@@ -32,156 +45,211 @@
 <script>
 
 
-    function generateRandomStacked() {
-        const names = ["Bob", "Tom", "Mike", "Ben"];
-        return names.map((name)=> {
-            const success = Math.floor(Math.random() * 1000);
-            const failure = Math.floor(Math.random() * 1000);
-            const total = success + failure;
-            const successPer = `(${Math.floor(100 * success / total)}%)`;
-            const failurePer = `(${Math.floor(100 * failure / total)}%)`;
-            return {
-                name,
-                success,
-                failure,
-                successPer,
-                failurePer,
-                "bullet": (success > failure) ? "icons/happy.ico" : "icons/sleep.ico"
+    d3.json('data.json', (jsondata)=> {
+
+                console.log(jsondata)
+                const stackedData = jsondata.stackedChart;
+                const pieData = jsondata.pieChart;
+
+                function prepareStackedChartConfig() {
+                    return {
+                        "type": "serial",
+                        "theme": "light",
+                        "depth3D": 20,
+                        "angle": 30,
+                        "addClassNames": true,
+                        "classNamePrefix": "bar-class",
+                        "columnWidth": 0.8,
+                        "legend": {
+                            "horizontalGap": 10,
+                            "useGraphSettings": true,
+                            "markerSize": 10,
+                            "position": "right"
+                        },
+                        "dataProvider": stackedData,
+                        "startDuration": 1,
+                        "valueAxes": [{
+                            "stackType": "regular",
+                            "axisAlpha": 0.3,
+                            "gridAlpha": 0,
+                            "totalText": "[[total]]"
+                        }],
+                        "graphs": [{
+                            "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "Success",
+                            "lineAlpha": 0.3,
+                            "title": "success",
+                            "type": "column",
+                            "color": "#000000",
+                            "valueField": "success",
+                        }, {
+                            "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                            "fillAlphas": 0.8,
+                            "labelText": "Failure",
+                            "lineAlpha": 0.3,
+                            "title": "Failure",
+                            "type": "column",
+                            "color": "#000000",
+                            "valueField": "failure",
+                            "customBulletField": "bullet",
+                            "bulletSize": 42,
+                            "bulletOffset": 45,
+
+                        },],
+                        "categoryField": "name",
+                        "categoryAxis": {
+                            "gridPosition": "start",
+                            "axisAlpha": 0,
+                            "gridAlpha": 0,
+                            "position": "left"
+                        }
+
+                    }
+                }
+
+                function preparePieConfig(chart) {
+                    return {
+                        "type": "pie",
+                        "theme": "light",
+                        "titles": [{
+                            "text": "Pie Chart",
+                            "size": 16
+                        }],
+                        "addClassNames": true,
+                        "classNamePrefix": "pie-class",
+                        "dataProvider": pieData,
+                        "valueField": "value",
+                        "titleField": "area",
+                        "startEffect": "elastic",
+                        "startDuration": 2,
+                        "labelRadius": 15,
+                        "innerRadius": "50%",
+                        "depth3D": 10,
+                        "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[name]]</b> ([[percents]]%)</span>",
+                        "balloonFunction": function (d) {
+                            const v = d.dataContext;
+                            const names = v.drilldown.Names.map(e=>e.value);
+                            return `Success:${v.success} <br> Failure: ${v.failure} <br> Names: ${names.join(',')}`
+                        },
+                        "labelFunction": function (d) {
+                            return d.title
+                        },
+                        "angle": 15,
+                        "export": {
+                            "enabled": true
+                        }
+                    }
+
+                }
+
+
+//                AmCharts.addInitHandler(function (chart) {
+//                    // iterate through data
+//                    console.log(chart)
+//                    for (var i = 0; i < chart.dataProvider.length; i++) {
+//                        var dp = chart.dataProvider[i];
+//                        dp.total = 0;
+//                        dp.totalText = 0;
+//                        for (var x = 0; x < chart.graphs.length; x++) {
+//                            var g = chart.graphs[x];
+//                            dp.totalText += dp[g.valueField];
+//                            dp.totalLabel = "Total";
+//                            dp.totalFake = "Fake"
+//
+//                            if (dp[g.valueField] > 0)
+//                                dp.total += dp[g.valueField];
+//
+//                        }
+//
+//
+//                    }
+//
+//                    // add additional graph
+//                    var graph = new AmCharts.AmGraph();
+//                    graph.valueField = "total";
+//                    graph.labelText = "TESt";
+//                    graph.visibleInLegend = false;
+//                    graph.showBalloon = false;
+//                    graph.lineAlpha = 0;
+//                    graph.fontSize = 15;
+//
+//                     var graph1 = new AmCharts.AmGraph();
+//                    graph1.valueField = "total";
+//                    graph1.labelText = "fsaf";
+//                    graph1.visibleInLegend = false;
+//                    graph1.showBalloon = false;
+//                    graph1.lineAlpha = 0;
+//                    graph1.fontSize = 15;
+//
+//                    chart.addGraph(graph);
+//
+//                }, ["serial"]);
+
+
+                const chart = AmCharts.makeChart("chartdiv", prepareStackedChartConfig());
+
+                // AmCharts.makeChart("chartdiv1", prepareStackedChartConfig());
+                AmCharts.makeChart("chartdiv1", preparePieConfig('first'));
+
+                function selection() {
+
+                    const stacks = d3.selectAll('.bar-class-graph-label')
+                    const texts = Array.from(stacks._groups[0]).filter(d=>d.classList.length === 1)
+
+                    const tempData  = stackedData.concat(stackedData);
+
+                    texts.forEach((d, i)=> {
+                        const trasn = d3.select(d).attr('transform');
+                        const str = d.textContent;
+                        if (str) {
+                            const attr = str.toLowerCase();
+                            const isSuccess = str.toLowerCase() === 'success';
+                            const dataDisp = isSuccess ? 'successP' : 'failureP'
+                            const g = d3.select(d.parentNode).append('g')
+                                    .attr('transform', trasn)
+                            g.append('text')
+                                    .classed('perText', true)
+                                    .text(tempData[i][attr])
+                                    .attr('transform', "translate(-15,25)")
+
+
+                            g.append('text')
+                                    .classed('perText', true)
+                                    .text(tempData[i][dataDisp])
+                                    .attr('transform', "translate(-15,45)")
+                        }
+
+                    })
+
+
+                    /*               pieData.forEach((item, i)=> {
+                     const pies = d3.selectAll('.pie-class-pie-item')
+                     const el = Array.from(pies._groups[0]).filter((d)=> d.attributes['aria-label'].value.indexOf(item.name) !== -1)[0];
+                     const tick = d3.select(el).select('.pie-class-pie-tick');
+                     const pathValue = tick._groups[0][0].attributes.d.value;
+                     const cord = pathValue.split(' ')[0].slice(1, 20).split(',');
+                     const parsedCoord = [parseFloat(cord[0]), parseFloat(cord[1])]
+
+                     const x = parsedCoord[0] > 310 ? parsedCoord[0] - 40 : parsedCoord[0] < 300 ? parsedCoord[0] + 50 : parsedCoord[0];
+                     const y = parsedCoord[1] > 310 ? parsedCoord[1] - 50 : parsedCoord[1] < 300 ? parsedCoord[1] + 50 : parsedCoord[1];
+
+                     const g = d3.select(el);
+                     g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y})`).text(`S-${item.successP},${item.success} calls`).classed('mytext', true)
+                     g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y + 15})`).text(`F-${item.failureP},${item.failure} calls`).classed('mytext', true)
+                     g.append('text').attr('transform', `translate(${x > 400 ? x - 60 : x - 40},${y + 30})`).text(`Total calls -${item.total}`).classed('mytext', true)
+
+
+                     })*/
+                }
+
+                setTimeout(()=>selection(), 200)
+
+
             }
-        })
-    }
-    function prepareStackedChartConfig() {
-        return {
-            "type": "serial",
-            "theme": "light",
-            "legend": {
-                "horizontalGap": 10,
-                "maxColumns": 1,
-                "position": "right",
-                "useGraphSettings": true,
-                "markerSize": 10
-            },
-            "dataProvider": generateRandomStacked(),
-            "valueAxes": [{
-                "stackType": "regular",
-                "axisAlpha": 0.3,
-                "gridAlpha": 0
-            }],
-            "startDuration": 1,
-            "graphs": [
-                {
-                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
-                    "fillAlphas": 1,
-                    "labelText": "[[value]] [[failurePer]]",
-                    "lineAlpha": 0.3,
-                    "title": "Failure",
-                    "type": "column",
-                    "color": "#000000",
-                    "fillColors": "red",
-                    "valueField": "failure",
-                    "labelPosition": "bottom"
-                },
-                {
-                    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
-                    "fillAlphas": 1,
-                    "labelText": "[[value]] [[successPer]]",
-                    "lineAlpha": 0.3,
-                    "title": "Success",
-                    "type": "column",
-                    "color": "#000000",
-                    "fillColors": "lightblue",
-                    "bulletSize": 42,
-                    "customBulletField": "bullet",
-                    "bulletOffset": 45,
-                    "valueField": "success"
-                },],
-            "categoryField": "name",
-            "categoryAxis": {
-                "gridPosition": "start",
-                "axisAlpha": 0,
-                "gridAlpha": 0,
-                "position": "left"
-            }
-        }
+    )
 
-    }
-    function generateRandomPie() {
-        const categories = ["Success", "Failure"];
-        const rand = Math.floor(Math.random() * 100);
-        return categories.map((category, index)=> {
-            return {
-                category,
-                value: (index === 0) ? rand : 100 - rand
-            }
-        })
-    }
-
-
-    function preparePieConfig() {
-        return {
-            "type": "pie",
-            "theme": "light",
-            "addClassNames": true,
-            "classNamePrefix": "pie-class",
-            "legend": {
-                "position": "top",
-                "autoMargins": false,
-            },
-            "titles": [{
-                "text": "Success Vs Failure",
-                "size": 16,
-
-            }],
-            "dataProvider": generateRandomPie(),
-            "valueField": "value",
-            "titleField": "category",
-            "startEffect": "elastic",
-            "startDuration": 2,
-            "labelRadius": 15,
-            "innerRadius": "50%",
-            "colors": ["lightblue", "red"],
-            "depth3D": 10,
-            "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
-            "angle": 15,
-            "export": {
-                "enabled": false
-            }
-        }
-
-    }
-    AmCharts.addInitHandler(function (chart) {
-        console.log(chart)
-        // iterate through data
-        for (var i = 0; i < chart.dataProvider.length; i++) {
-            var dp = chart.dataProvider[i];
-            dp.total = 0;
-            dp.totalText = 0;
-            for (var x = 0; x < chart.graphs.length; x++) {
-                var g = chart.graphs[x];
-                console.log(g.valueField, dp[g.valueField]);
-                dp.totalText += dp[g.valueField];
-                dp.totalLabel = "Total";
-                dp.totalFake = "Fake"
-                if (dp[g.valueField] > 0)
-                    dp.total += dp[g.valueField];
-            }
-        }
-
-        // add additional graph
-        var graph = new AmCharts.AmGraph();
-        graph.valueField = "total";
-        graph.labelText = "[[totalLabel]]:[[totalText]]";
-        graph.visibleInLegend = false;
-        graph.showBalloon = false;
-        graph.lineAlpha = 0;
-        graph.fontSize = 15;
-        chart.addGraph(graph);
-    }, ["serial"]);
-    AmCharts.makeChart("chartdiv", prepareStackedChartConfig());
-    AmCharts.makeChart("chartdiv1", prepareStackedChartConfig());
-    AmCharts.makeChart("chartdiv2", preparePieConfig());
-
-
+    //console.log(d.attributes['aria-label'].value)
 </script>
 
 

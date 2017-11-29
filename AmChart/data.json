@@ -1,0 +1,95 @@
+{
+  "stackedChart": [
+    {
+      "name": "Bob",
+      "success": 4143,
+      "successP": "50.63%",
+      "failure": 4039,
+      "failureP": "49.37%",
+      "bullet": "icons/happy.ico"
+    },
+    {
+      "name": "Tom",
+      "success": 3999,
+      "successP": "49.10%",
+      "failure": 4144,
+      "failureP": "51.90%",
+      "bullet": "icons/sleep.ico"
+    },
+    {
+      "name": "Mike",
+      "success": 4012,
+      "successP": "49.28%",
+      "failure": 4128,
+      "failureP": "51.27%",
+      "bullet": "icons/sleep.ico"
+    },
+    {
+      "name": "Ben",
+      "success": 3660,
+      "successP": "47.89%",
+      "failure": 3982,
+      "failureP": "52.11%",
+      "bullet": "icons/sleep.ico"
+    }
+  ],
+  "pieChart": [
+    {
+      "area": "Area 1",
+      "value": "33",
+      "success": "20%",
+      "failure": "80%",
+      "drilldown": {
+        "Names": [
+          {
+            "value": "Rick"
+          },
+          {
+            "value": "Ben"
+          },
+          {
+            "value": "Erick"
+          }
+        ]
+      }
+    },
+    {
+      "area": "Area 2",
+      "success": "95%",
+      "failure": "05%",
+      "value": "33",
+      "drilldown": {
+        "Names": [
+          {
+            "value": "Nir"
+          },
+          {
+            "value": "Jack"
+          },
+          {
+            "value": "Mike"
+          }
+        ]
+      }
+    },
+    {
+      "area": "Area 3",
+      "success": "85%",
+      "failure": "15%",
+      "value": "33",
+      "drilldown": {
+        "Names": [
+          {
+            "value": "MK"
+          },
+          {
+            "value": "Tom"
+          },
+          {
+            "value": "Din"
+          }
+        ]
+      }
+    }
+  ]
+}

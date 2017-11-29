@@ -64,7 +64,12 @@ These are some line charts with different interaction. Please see the demo.
     * User brush for focus and context 
     * User can specify the threshold value for the color of line. 
     * The value below the threshold will have one color and the value above the threshold will have another color. 
-     
+   
+  * [Bitcoin API Line ](https://bikramkawan.github.io/D3/LineChart/LineChartBitCoinAPI/index.html) - Some features are
+    * API of blockchain.info
+    * User brush for focus and context on the window of the chart 
+    * User can change data [Each data uses different API]
+    * Simple tooltip
 
 ## Network Monitoring Dashboard
 This dashboard uses parallel coordinates, scatter plot, line charts 
@@ -73,6 +78,17 @@ This dashboard uses parallel coordinates, scatter plot, line charts
     * User can filter the data in different ways.
     * When user hover over the scatter plot the point of interested will be highlight in all other charts
     * Scoreboard and the line to indicate the point of interest on scatter plot.
+
+## Multiple Line Chart Dashboard
+* [Live Demo ](http://multilinechart.surge.sh/) - Some Features
+   
+   * Different data attributes with multiple axis
+   * Filtering , dragging, zoom, Add point of intrest , Add Flag (for highlight)
+   * Sorting for the point of interest
+   * Remove the flags, slope line
+   * Draw slope line
+   * Implemented based on React,Redux and D3
+
 
 ## Radial Histogram 
 
@@ -94,8 +110,15 @@ This dashboard uses parallel coordinates, scatter plot, line charts
 [Simple Tree Diagram 2 ](https://bikramkawan.github.io/D3/TreeDiagram/SimpleTreeDiagram/index.html) - Simple Tree Diagram 2
 
 
-
 ## Stream Graph 
 
 [Simple Stream Graph ](https://bikramkawan.github.io/D3/Streamgraph/dummy.html) - Simple Stream Graph
+
+
+## Stacked Chart
+
+[Stacked Chart ](https://bikramkawan.github.io/D3/StackedChart/index.html) - Stacked Chart
+  * Combination of line chart, Bar chart , area cover
+  * Pan and Zoom on X-axis only 
+
 

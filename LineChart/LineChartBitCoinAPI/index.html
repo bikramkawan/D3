@@ -1,0 +1,232 @@
+<head>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link href="chartCSS.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+
+<div class="app">
+    <div class="reset">Reset Zoom</div>
+    <div class="chart">
+        <div class="tooltip">
+            <span class="date">Date</span>
+            <div class="price">$$$$</div>
+        </div>
+    </div>
+    <div class="controls">
+
+        <div class="btn days30"> 30 Days</div>
+        <div class="btn days60"> 60 Days</div>
+        <div class="btn days180"> 180 Days</div>
+        <div class="btn year1"> 1 Year</div>
+        <div class="btn year2"> 2 Year</div>
+        <div class="btn alltime"> All Time</div>
+
+    </div>
+</div>
+
+
+<script>
+
+
+    const URL_30Days = "https://api.blockchain.info/charts/market-price?cors=true&timespan=30days&format=json&lang=en";
+    const URL_60Days = "https://api.blockchain.info/charts/market-price?cors=true&timespan=60days&format=json&lang=en";
+    const URL_180Days = "https://api.blockchain.info/charts/market-price?cors=true&timespan=180days&format=json&lang=en";
+    const URL_1Year = "https://api.blockchain.info/charts/market-price?cors=true&timespan=1year&format=json&lang=en";
+    const URL_2Year = "https://api.blockchain.info/charts/market-price?cors=true&timespan=2years&format=json&lang=en";
+    const URL_ALLTime = "https://api.blockchain.info/charts/market-price?cors=true&timespan=all&format=json&lang=en";
+
+    const width = 900;
+    const height = 500;
+    const margin = {top: 20, right: 20, bottom: 30, left: 40};
+
+    const svgContainer = d3.select(".chart").append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+
+
+    const x = d3.scaleTime().range([0, width]);
+    const x2 = d3.scaleTime().range([0, width]);
+
+    const y = d3.scaleLinear().range([height, 0]);
+    const y2 = d3.scaleLinear().range([height, 0]);
+
+    const formatTime = d3.timeFormat("%-m/%-d/%Y %-I:%M:%S %p")
+
+    const xAxis = d3.axisBottom(x),
+            yAxis = d3.axisLeft(y);
+    const valueline = d3.line()
+            .x(d=>x(d.x))
+            .y(d=>y(d.y));
+
+    let initialData = null;
+    makeChart(URL_180Days);
+    d3.select('.days30').on('click', ()=> makeChart(URL_30Days));
+    d3.select('.days60').on('click', ()=> makeChart(URL_60Days));
+    d3.select('.days180').on('click', ()=> makeChart(URL_180Days));
+    d3.select('.year1').on('click', ()=> makeChart(URL_1Year));
+    d3.select('.year2').on('click', ()=> makeChart(URL_2Year));
+    d3.select('.alltime').on('click', ()=> makeChart(URL_ALLTime));
+
+
+    function makeChart(URL) {
+
+        d3.selectAll('.innerSVG').remove();
+        d3.selectAll('g').remove();
+        d3.json(URL, function (jsondata) {
+            const data = jsondata.values.map(d => ({x: new Date(d.x * 1000), y: d.y}))
+
+            x.domain(d3.extent(data, d=> d.x));
+            x2.domain(d3.extent(data, d=> d.x));
+
+            y.domain([0, d3.max(data, d=>d.y)]);
+            y2.domain([0, d3.max(data, d=>d.y)]);
+
+
+            const svg = svgContainer.append('g').classed('innerSVG', true)
+            console.log(data)
+            bisectDate = d3.bisector(d=>d.x).left;
+
+
+            const line = svg.append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+            line.append("g")
+                    .attr("class", "axis axis--x")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
+
+            line.append("g")
+                    .attr("class", "axis axis--y")
+                    .attr("transform", 'translate(0,0 )')
+                    .call(yAxis)
+                    .append("text")
+                    .attr("class", "axis-title")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 6)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .attr("fill", "#5D6971")
+                    .text("Price ($)");
+
+            line.append("path")
+                    .datum(data)
+                    .attr("class", "line")
+                    .attr("d", valueline);
+
+            const toolTip = d3.select('.tooltip');
+            let initialX = null;
+            let mouseDown = false;
+            let extents = [];
+            svg.append("rect")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                    .classed('brushRect', true)
+                    .attr("height", height)
+                    .attr('fill', ' gainsboro')
+
+
+            svg.append("rect")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                    .attr("class", "overlay")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .on("mouseover", function () {
+                        toolTip.style("display", 'flex');
+                    })
+                    .on("mouseout", function () {
+                        toolTip.style('visibility', 'hidden');
+                    })
+                    .on("mousemove", mousemove)
+                    .on("mouseup", mouseup)
+                    .on("mousedown", mousedown)
+
+            function mousedown() {
+
+                mouseDown = true;
+                initialX = d3.mouse(this)[0];
+                extents[0] = initialX;
+
+
+            }
+
+            function mouseup() {
+
+                mouseDown = false;
+                initialX = null;
+                extents[1] = d3.mouse(this)[0];
+                const start = x.invert(Math.min(...extents));
+                const end = x.invert(Math.max(...extents));
+                const filtered = data.filter((d)=>d.x > start && d.x < end)
+
+                d3.select('.brushRect')
+                        .style('display', 'none')
+                if (filtered.length < 3) return;
+
+                updateLineAndAxis(filtered);
+
+
+            }
+
+            function mousemove() {
+                const select = d3.mouse(this);
+                const x0 = x.invert(select[0]),
+                        i = bisectDate(data, x0, 1),
+                        d0 = data[i - 1],
+                        d1 = data[i],
+                        d = x0 - d0.x > d1.x - x0 ? d1 : d0;
+                if (mouseDown) {
+                    d3.select('.brushRect')
+                            .style('display', 'block')
+                    if (select[0] > initialX) {
+                        d3.select('.brushRect')
+                                .attr('x', initialX)
+                                .attr('width', select[0] - initialX)
+                    } else {
+
+                        d3.select('.brushRect')
+                                .attr('x', select[0])
+                                .attr('width', initialX - select[0])
+                    }
+
+
+                }
+
+                toolTip.select('.date').text(`${formatTime(d.x)}`)
+                toolTip.select('.price').text(`USD: ${d.y}`)
+                toolTip.style("left", (x(d.x) - 25) + "px")
+                        .style("top", y(d.y) + "px")
+                        .style('visibility', 'visible')
+
+            }
+
+            d3.select('.reset').on('click', ()=> {
+
+                updateLineAndAxis(data);
+            })
+
+
+            function updateLineAndAxis(filter) {
+                x.domain(d3.extent(filter, d=> d.x));
+                y.domain([0, d3.max(filter, d=>d.y)]);
+                line.select(".axis--x").call(xAxis);
+                line.select('.axis--y').call(yAxis);
+                line.select(".line").attr("d", valueline(filter));
+
+            }
+
+
+        });
+
+
+    }
+
+
+</script>
+</body>
+
+</html>

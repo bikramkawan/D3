@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<body>
+<div class="delete">
+    <div class="addMe">Add</div>
+    <div class="editMe">Edit</div>
+    <div class="deleteMe">Delete</div>
+</div>
+<div class="tooltip">
+    <div class="name">Name:</div>
+    <div class="org">Organization:</div>
+    <div class="location">Location:</div>
+    <div class="date">Date:</div>
+    <div class="money">Money:</div>
+</div>
+
+<div class="add">
+    <div class="closeAdd">Close</div>
+    <div>
+        <span>Name:</span>
+        <input type="text" class="inputName">
+    </div>
+    <div>
+        <span>Oragnization: </span>
+        <input type="text" class="inputOrg">
+    </div>
+    <div>
+        <span>Location:</span>
+        <input type="text" class="inputLocation">
+    </div>
+    <div>
+        <span>Date:</span>
+        <input type="text" class="inputDate">
+    </div>
+    <div>
+        <span>Money:</span>
+        <input type="text" class="inputMoney">
+    </div>
+
+    <button class="addbtn">Add</button>
+</div>
+
+<div class="edit">
+    <div class="closeEdit">Close</div>
+    <div>
+        <span class="curId">Current ID:</span>
+        <input type="text" class="editVal">
+    </div>
+    <button class="editbtn">Update</button>
+</div>
+<button class="reset">RESET</button>
+<svg width="960" height="600"></svg>
+
+<script>
+
+
+    const manColor = 'red';
+    const orgColor = 'green';
+    const locationColor = 'grey';
+    const dateColor = 'blue';
+    const priceColor = 'orange';
+
+
+    d3.json('data.json', (error, rawdata)=> {
+
+
+        const baseNodes = rawdata.baseNodes;
+        const baseLinks = rawdata.baseLinks;
+
+
+        updateWholeChart(baseNodes.slice(), baseLinks.slice())
+
+        function updateWholeChart(baseNodes, baseLinks) {
+            const myBaseNodes = baseNodes.slice();
+            const mybaseLinks = baseLinks.slice();
+            let nodes = [...myBaseNodes];
+            let links = [...mybaseLinks];
+            const nodesBackup = nodes.slice();
+            const linksBackup = links.slice();
+            const deleteMeDialog = d3.select('.delete');
+            const addMeDialog = d3.select('.add');
+            const tooltip = d3.select(".tooltip")
+            const editMeDialog = d3.select(".edit")
+
+
+            const getNeighbors = (node)=> {
+
+                return mybaseLinks.reduce((neighbors, link) => {
+
+                            console.log(mybaseLinks, 'link')
+                            if (link.target.id === node.id) {
+                                neighbors.push(link.source.id)
+                            } else if (link.source.id === node.id) {
+                                neighbors.push(link.target.id)
+                            }
+                            return neighbors
+                        },
+                        [node.id]
+                )
+            }
+
+            const isNeighborLink = (node, link) => link.target.id === node.id || link.source.id === node.id;
+
+
+            const getNodeColor = (node, neighbors) => {
+                if (Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1) {
+                    return node.level === 1 ? 'blue' : 'green'
+                }
+
+                return node.color;
+            }
+
+
+            const getLinkColor = (node, link) => isNeighborLink(node, link) ? 'green' : '#E5E5E5';
+
+            const getTextColor = (node, neighbors) => Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1 ? 'green' : 'black';
+
+            const width = window.innerWidth
+            const height = window.innerHeight
+
+            const svg = d3.select('svg')
+            svg.attr('width', width).attr('height', height)
+
+            let linkElements,
+                    nodeElements,
+                    textElements,
+                    selectedId
+            const DELAY = 300;
+            let clicks = 0, timer = null;
+            let idToRemove = null;
+            // we use svg groups to logically group the elements together
+            const linkGroup = svg.append('g').attr('class', 'links')
+            const nodeGroup = svg.append('g').attr('class', 'nodes')
+            const textGroup = svg.append('g').attr('class', 'texts')
+
+            // we use this reference to select/deselect
+            // after clicking the same element twice
+
+
+            // simulation setup with all forces
+            const linkForce = d3
+                    .forceLink()
+                    .id(link=>link.id)
+                    .strength(link=>link.strength)
+
+            const simulation = d3
+                    .forceSimulation()
+                    .force('link', linkForce)
+                    .force('charge', d3.forceManyBody().strength(-120))
+                    .force('center', d3.forceCenter(width / 2, height / 2))
+
+            const dragDrop = d3.drag().on('start', (node)=> {
+                node.fx = node.x
+                node.fy = node.y
+            }).on('drag', (node)=> {
+                simulation.alphaTarget(0.7).restart()
+                node.fx = d3.event.x
+                node.fy = d3.event.y
+            }).on('end', (node)=> {
+                if (!d3.event.active) {
+                    simulation.alphaTarget(0)
+                }
+                node.fx = null
+                node.fy = null
+            })
+
+            // select node is called on every click
+            // we either update the data according to the selection
+            // or reset the data if the same node is clicked twice
+            const selectNode = (selectedNode)=> {
+                if (selectedId === selectedNode.id) {
+                    selectedId = undefined
+                    resetData()
+                    updateSimulation()
+
+                } else {
+                    selectedId = selectedNode.id
+                    updateData(selectedNode)
+                    updateSimulation()
+                }
+
+                var neighbors = getNeighbors(selectedNode)
+
+                // we modify the styles to highlight selected nodes
+                nodeElements.attr('fill', node=>getNodeColor(node, neighbors));
+                textElements.attr('fill', node=>getTextColor(node, neighbors));
+                linkElements.attr('stroke', link=>getLinkColor(selectedNode, link));
+            }
+
+            // this helper simple adds all nodes and links
+            // that are missing, to recreate the initial state
+            const resetData = ()=> {
+                console.log(nodes, 'sss')
+                const nodeIds = nodes.map(node => node.id);
+
+                myBaseNodes.forEach((node)=> {
+                    if (nodeIds.indexOf(node.id) === -1) {
+                        nodes.push(node)
+                    }
+                })
+
+                links = mybaseLinks
+
+            }
+
+            // diffing and mutating the data
+            const updateData = (selectedNode) => {
+                console.log(nodes, 'update')
+
+                const neighbors = getNeighbors(selectedNode)
+                const newNodes = myBaseNodes.filter(node=>neighbors.indexOf(node.id) > -1 || node.level === 1);
+
+                const diff = {
+                    removed: nodes.filter(node=>newNodes.indexOf(node) === -1),
+                    added: newNodes.filter(node=>nodes.indexOf(node) === -1)
+                }
+
+                diff.removed.forEach(node=> nodes.splice(nodes.indexOf(node), 1))
+                diff.added.forEach(node=> nodes.push(node))
+
+                links = mybaseLinks.filter(link=>link.target.id === selectedNode.id || link.source.id === selectedNode.id)
+            }
+
+
+            const updateGraph = ()=> {
+                // links
+                linkElements = linkGroup.selectAll('line')
+                        .data(links, link=>link.target.id + link.source.id)
+
+                linkElements.exit().remove()
+
+                var linkEnter = linkElements
+                        .enter().append('line')
+                        .attr('stroke-width', 1)
+                        .attr('stroke', 'rgba(50, 50, 50, 0.2)')
+
+                linkElements = linkEnter.merge(linkElements)
+
+                // nodes
+                nodeElements = nodeGroup.selectAll('circle')
+                        .data(nodes, node=> node.id)
+
+                nodeElements.exit().remove()
+
+                const nodeEnter = nodeElements
+                        .enter()
+                        .append('circle')
+                        .attr('r', 10)
+                        .attr('fill', node=> node.color)
+                        .call(dragDrop)
+                        // we link the selectNode method here
+                        // to update the graph on every click
+                        .on('click', function (d) {
+                            clicks++;  //count clicks
+                            if (clicks === 1) {
+                                timer = setTimeout(function () {
+                                    clicks = 0;
+                                    selectNode(d)
+                                    console.log(d, 'single')
+
+                                }, DELAY);
+
+                            } else {
+                                // This is the block for double click event
+                                clearTimeout(timer);    //prevent single-click action
+                                deleteMeDialog.style('display', 'flex')
+                                        .style("left", (d3.event.pageX + 20) + "px")
+                                        .style("top", (d3.event.pageY - 28) + "px");
+                                idToRemove = d;
+                                clicks = 0;         //after action performed, reset counter
+                            }
+                        })
+                        .on('mouseover', (d)=> {
+                            const index = d.index;
+                            const name = links[index].target.label;
+                            const attrs = links.filter(d=>d.target.id === links[index].target.id)
+                            const labels = attrs.map(d=>d.source.label)
+                            tooltip.select('.name').text(`Name : ${name}`);
+                            tooltip.select('.org').text(`Organization : ${labels[0]}`);
+                            tooltip.select('.location').text(`Location : ${labels[1]}`);
+                            tooltip.select('.date').text(`Date : ${labels[2]}`);
+                            tooltip.select('.money').text(`Money : ${labels[3]}`)
+                            tooltip.style("display", 'flex')
+                                    .style("left", (d3.event.pageX + 5) + "px")
+                                    .style("top", (d3.event.pageY - 28) + "px");
+                        })
+                        .on('mouseout', function (d) {
+                            tooltip.style("display", 'none');
+                        })
+
+
+                nodeElements = nodeEnter.merge(nodeElements)
+
+                // texts
+                textElements = textGroup.selectAll('text')
+                        .data(nodes, function (node) {
+                            return node.id
+                        })
+
+                textElements.exit().remove()
+
+                const textEnter = textElements
+                        .enter()
+                        .append('text')
+                        .text(node=>node.label)
+                        .attr('font-size', 15)
+                        .attr('dx', 15)
+                        .attr('dy', 4)
+
+                textElements = textEnter.merge(textElements)
+            }
+
+            const updateSimulation = ()=> {
+                updateGraph()
+                simulation.nodes(nodes).on('tick', () => {
+                    nodeElements
+                            .attr('cx', node=>node.x)
+                            .attr('cy', node=> node.y)
+                    textElements
+                            .attr('x', node=> node.x)
+                            .attr('y', node=>node.y)
+                    linkElements
+                            .attr('x1', link=>link.source.x)
+                            .attr('y1', link=>link.source.y)
+                            .attr('x2', link=>link.target.x)
+                            .attr('y2', link=>link.target.y)
+                })
+
+                simulation.force('link').links(links.slice())
+                simulation.alphaTarget(0.7).restart()
+            }
+
+            // last but not least, we call updateSimulation
+            // to trigger the initial render
+            updateSimulation()
+
+
+            //For deleting the circle action
+            d3.select('.deleteMe').on('click', ()=> {
+                const indexNode = nodes.findIndex(e=>e.id === idToRemove.id);
+                nodes.splice(indexNode, 1);
+                const indexLink = links.filter(e=>e.source.id === idToRemove.id);
+                indexLink.forEach(e=> links.splice(links.indexOf(e), 1))
+                updateSimulation()
+                console.log('Updated  Successfully!')
+                deleteMeDialog.style('display', 'none')
+
+            });
+
+            d3.select('.closeAdd').on('click', ()=> {
+                addMeDialog.style('display', 'none');
+                d3.select('body').classed('dark', false);
+                d3.select('svg').classed('dark', false);
+            })
+
+            d3.select('.closeEdit').on('click', ()=> {
+                editMeDialog.style('display', 'none');
+                d3.select('body').classed('dark', false);
+                d3.select('svg').classed('dark', false);
+            })
+            d3.select('.reset').on('click', ()=> {
+                nodes = nodesBackup;
+                links = linksBackup;
+                updateSimulation();
+
+            })
+            d3.select('.addMe').on('click', ()=> {
+                addMeDialog.style('display', 'flex');
+                d3.select('body').classed('dark', true);
+                d3.select('svg').classed('dark', true);
+                deleteMeDialog.style('display', 'none');
+
+            })
+
+
+            d3.select('.editMe').on('click', ()=> {
+                editMeDialog.style('display', 'flex');
+                d3.select('.editVal').attr('value', idToRemove.id);
+                d3.select('body').classed('dark', true);
+                d3.select('svg').classed('dark', true);
+                deleteMeDialog.style('display', 'none');
+
+            })
+
+            //Add Area
+
+
+            d3.select('.addbtn').on('click', ()=> {
+                const name = d3.select('.inputName').property('value');
+                const organization = d3.select('.inputOrg').property('value');
+                const location = d3.select('.inputLocation').property('value');
+                const date = d3.select('.inputDate').property('value');
+                const money = d3.select('.inputMoney').property('value');
+
+                const nameNode = {id: name, group: 0, label: name, level: 1, color: manColor};
+                const orgNode = {id: organization, group: 1, label: organization, level: 2, color: orgColor};
+                const locationNode = {id: location, group: 2, label: location, level: 2, color: locationColor};
+                const dateNode = {id: date, group: 2, label: date, level: 2, color: dateColor};
+                const moneyNode = {id: money, group: 2, label: money, level: 2, color: priceColor};
+
+                const temp = nodes.slice();
+                temp.push(nameNode);
+                temp.push(orgNode);
+                temp.push(locationNode);
+                temp.push(dateNode);
+                temp.push(moneyNode);
+
+                const orgLink = {target: name, source: organization, strength: 0.5};
+                const locLink = {target: name, source: location, strength: 0.5};
+                const datLink = {target: name, source: date, strength: 0.5};
+                const priceLink = {target: name, source: money, strength: 0.2};
+                const tempLink = mybaseLinks.slice();
+                tempLink.push(orgLink);
+                tempLink.push(locLink);
+                tempLink.push(datLink);
+                tempLink.push(priceLink);
+                nodes = temp;
+                links = tempLink;
+                updateSimulation();
+
+            })
+
+
+            d3.select('.edit').on('click', ()=> {
+                const idNew = d3.select('.editVal').property('value');
+                const indexEdit = linksBackup.filter(e=>e.source.id === idToRemove.id);
+                indexEdit.forEach((e)=> {
+                    const i = linksBackup.indexOf(e);
+                    linksBackup[i].source.id = idNew;
+                    linksBackup[i].source.label = idNew;
+
+                })
+
+
+                const indexNodeEdit = nodesBackup.findIndex(e=>e.id === idToRemove.id);
+                nodesBackup[indexNodeEdit].id = idNew;
+                nodesBackup[indexNodeEdit].label = idNew;
+                nodes = nodesBackup;
+                links = linksBackup
+                updateSimulation();
+
+            })
+
+
+        }
+
+
+    })
+
+
+    // Based on https://medium.com/ninjaconcept/interactive-dynamic-force-directed-graphs-with-d3-da720c6d7811
+</script>
+
+</body>
