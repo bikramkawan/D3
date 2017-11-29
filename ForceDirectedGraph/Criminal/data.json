@@ -1,307 +1,291 @@
 {
-  baseNodes: [
-    //Names
-    {
-      "id": "abdul",
-      "group": 0,
-      "label": "Abdul Ramazi",
-      "level": 1,
-      "color": man"color"
-    },
-    {
-      "id": "mukhtar",
-      "group": 0,
-      "label": "Mukhtar Galab",
-      "level": 1,
-      "color": man"color"
-    },
-    {
-      "id": "al",
-      "group": 1,
-      "label": "Al Adel",
-      "level": 1,
-      "color": man"color"
-    },
-    {
-      "id": "bagwant",
-      "group": 0,
-      "label": "Bagwant Dhaliwal",
-      "level": 1,
-      "color": man"color"
-    },
-    {
-      "id": "faysal",
-      "group": 0,
-      "label": "Faysal Goba",
-      "level": 1,
-      "color": man"color"
-    },
-    {
-      "id": "tawfiq",
-      "group": 1,
-      "label": "Tawfiq Al Adel",
-      "level": 1,
-      "color": man"color"
-    },
-    {
-      "id": "abu",
-      "group": 2,
-      "label": "Abu Al Masri",
-      "level": 1,
-      "color": man"color"
-    },
-    //Organization
-    {
-      "id": "taliban",
-      "group": 0,
-      "label": "Taliban",
-      "level": 2,
-      "color": org"color"
-    },
-    {
-      "id": "uov",
-      "group": 1,
-      "label": "University of Virginia",
-      "level": 2,
-      "color": org"color"
-    },
-    {
-      "id": "alqaeda",
-      "group": 2,
-      "label": "Al Qaeda",
-      "level": 2,
-      "color": org"color"
-    },
-    // Location
-    {
-      "id": "virginia",
-      "group": 0,
-      "label": "Virginia",
-      "level": 2,
-      "color": location"color"
-    },
-    {
-      "id": "amsterdam",
-      "group": 1,
-      "label": "Amsterdam",
-      "level": 2,
-      "color": location"color"
-    },
-    {
-      "id": "afghanistan",
-      "group": 2,
-      "label": "Afghanistan",
-      "level": 2,
-      "color": location"color"
-    },
-    //Date
-    {
-      "id": "04/27/2003",
-      "group": 0,
-      "label": "04/27/2003",
-      "level": 2,
-      "color": date"color"
-    },
-    {
-      "id": "04/29/2003",
-      "group": 1,
-      "label": "04/29/2003",
-      "level": 2,
-      "color": date"color"
-    },
-    {
-      "id": "04/25/2003",
-      "group": 2,
-      "label": "04/25/2003",
-      "level": 2,
-      "color": date"color"
-    },
-    //Price
-    {
-      "id": "35,000",
-      "group": 0,
-      "label": "$ 35,000",
-      "level": 2,
-      "color": price"color"
-    },
-    {
-      "id": "13,000",
-      "group": 1,
-      "label": "$ 13,000",
-      "level": 2,
-      "color": price"color"
-    },
-    {
-      "id": "405",
-      "group": 2,
-      "label": "$ 405",
-      "level": 2,
-      "color": price"color"
-    },
-    {
-      "id": "500",
-      "group": 2,
-      "label": "$ 500",
-      "level": 2,
-      "color": price"color"
-    },
-    {
-      "id": "250",
-      "group": 2,
-      "label": "$ 250",
-      "level": 2,
-      "color": price"color"
-    },
-    //        {"id": "testname", "group": 2, "label": "TestName", "level": 1, "color": man"color"},
-    //        {"id": "testOrg", "group": 0, "label": "testOrg", "level": 2, "color": org"color"},
-    //        {"id": "testloc", "group": 1, "label": "testloc", "level": 2, "color": location"color"},
-    //        {"id": "04/30/2003", "group": 2, "label": "04/30/2003", "level": 2, "color": date"color"},
-    //        {"id": "1000000", "group": 2, "label": "1000000", "level": 2, "color": date"color"},
-  ],
-  baseLinks: [
-    {
-      target: "abdul",
-      source: "taliban",
-      strength: 0.5
-    },
-    {
-      target: "abdul",
-      source: "virginia",
-      strength: 0.5
-    },
-    {
-      target: "abdul",
-      source: "04/27/2003",
-      strength: 0.2
-    },
-    {
-      target: "abdul",
-      source: "35,000",
-      strength: 0.2
-    },
-    {
-      target: "mukhtar",
-      source: "uov",
-      strength: 0.5
-    },
-    {
-      target: "mukhtar",
-      source: "virginia",
-      strength: 0.5
-    },
-    {
-      target: "mukhtar",
-      source: "04/29/2003",
-      strength: 0.2
-    },
-    {
-      target: "mukhtar",
-      source: "13,000",
-      strength: 0.2
-    },
-    {
-      target: "al",
-      source: "alqaeda",
-      strength: 0.5
-    },
-    {
-      target: "al",
-      source: "amsterdam",
-      strength: 0.5
-    },
-    {
-      target: "al",
-      source: "04/25/2003",
-      strength: 0.2
-    },
-    {
-      target: "al",
-      source: "250",
-      strength: 0.2
-    },
-    {
-      target: "bagwant",
-      source: "taliban",
-      strength: 0.5
-    },
-    {
-      target: "bagwant",
-      source: "virginia",
-      strength: 0.5
-    },
-    {
-      target: "bagwant",
-      source: "04/27/2003",
-      strength: 0.2
-    },
-    {
-      target: "bagwant",
-      source: "405",
-      strength: 0.2
-    },
-    {
-      target: "faysal",
-      source: "alqaeda",
-      strength: 0.5
-    },
-    {
-      target: "faysal",
-      source: "virginia",
-      strength: 0.5
-    },
-    {
-      target: "faysal",
-      source: "04/25/2003",
-      strength: 0.2
-    },
-    {
-      target: "faysal",
-      source: "13,000",
-      strength: 0.2
-    },
-    {
-      target: "tawfiq",
-      source: "alqaeda",
-      strength: 0.5
-    },
-    {
-      target: "tawfiq",
-      source: "amsterdam",
-      strength: 0.5
-    },
-    {
-      target: "tawfiq",
-      source: "04/25/2003",
-      strength: 0.2
-    },
-    {
-      target: "tawfiq",
-      source: "250",
-      strength: 0.2
-    },
-    {
-      target: "abu",
-      source: "alqaeda",
-      strength: 0.5
-    },
-    {
-      target: "abu",
-      source: "afghanistan",
-      strength: 0.5
-    },
-    {
-      target: "abu",
-      source: "04/25/2003",
-      strength: 0.2
-    },
-    {
-      target: "abu",
-      source: "500",
-      strength: 0.2
-    },
-    //        {target: "testname", source: "testOrg", strength: 0.5},
-    //        {target: "testname", source: "testloc", strength: 0.5},
-    //        {target: "testname", source: "04/30/2003", strength: 0.5},
-    //        {target: "testname", source: "13,000", strength: 0.7},
-  ]
+	"baseNodes": [{
+			"id": "abdul",
+			"group": 0,
+			"label": "Abdul Ramazi",
+			"level": 1,
+			"color": "red"
+		},
+		{
+			"id": "mukhtar",
+			"group": 0,
+			"label": "Mukhtar Galab",
+			"level": 1,
+			"color": "red"
+		},
+		{
+			"id": "al",
+			"group": 1,
+			"label": "Al Adel",
+			"level": 1,
+			"color": "red"
+		},
+		{
+			"id": "bagwant",
+			"group": 0,
+			"label": "Bagwant Dhaliwal",
+			"level": 1,
+			"color": "red"
+		},
+		{
+			"id": "faysal",
+			"group": 0,
+			"label": "Faysal Goba",
+			"level": 1,
+			"color": "red"
+		},
+		{
+			"id": "tawfiq",
+			"group": 1,
+			"label": "Tawfiq Al Adel",
+			"level": 1,
+			"color": "red"
+		},
+		{
+			"id": "abu",
+			"group": 2,
+			"label": "Abu Al Masri",
+			"level": 1,
+			"color": "red"
+		},
+		{
+			"id": "taliban",
+			"group": 0,
+			"label": "Taliban",
+			"level": 2,
+			"color": "green"
+		},
+		{
+			"id": "uov",
+			"group": 1,
+			"label": "University of Virginia",
+			"level": 2,
+			"color": "green"
+		},
+		{
+			"id": "alqaeda",
+			"group": 2,
+			"label": "Al Qaeda",
+			"level": 2,
+			"color": "green"
+		},
+		{
+			"id": "virginia",
+			"group": 0,
+			"label": "Virginia",
+			"level": 2,
+			"color": "grey"
+		},
+		{
+			"id": "amsterdam",
+			"group": 1,
+			"label": "Amsterdam",
+			"level": 2,
+			"color": "grey"
+		},
+		{
+			"id": "afghanistan",
+			"group": 2,
+			"label": "Afghanistan",
+			"level": 2,
+			"color": "grey"
+		},
+		{
+			"id": "04/27/2003",
+			"group": 0,
+			"label": "04/27/2003",
+			"level": 2,
+			"color": "blue"
+		},
+		{
+			"id": "04/29/2003",
+			"group": 1,
+			"label": "04/29/2003",
+			"level": 2,
+			"color": "blue"
+		},
+		{
+			"id": "04/25/2003",
+			"group": 2,
+			"label": "04/25/2003",
+			"level": 2,
+			"color": "blue"
+		},
+		{
+			"id": "35,000",
+			"group": 0,
+			"label": "$ 35,000",
+			"level": 2,
+			"color": "orange"
+		},
+		{
+			"id": "13,000",
+			"group": 1,
+			"label": "$ 13,000",
+			"level": 2,
+			"color": "orange"
+		},
+		{
+			"id": "405",
+			"group": 2,
+			"label": "$ 405",
+			"level": 2,
+			"color": "orange"
+		},
+		{
+			"id": "500",
+			"group": 2,
+			"label": "$ 500",
+			"level": 2,
+			"color": "orange"
+		},
+		{
+			"id": "250",
+			"group": 2,
+			"label": "$ 250",
+			"level": 2,
+			"color": "orange"
+		}
+	],
+	"baseLinks": [{
+			"target": "abdul",
+			"source": "taliban",
+			"strength": 0.5
+		},
+		{
+			"target": "abdul",
+			"source": "virginia",
+			"strength": 0.5
+		},
+		{
+			"target": "abdul",
+			"source": "04/27/2003",
+			"strength": 0.2
+		},
+		{
+			"target": "abdul",
+			"source": "35,000",
+			"strength": 0.2
+		},
+		{
+			"target": "mukhtar",
+			"source": "uov",
+			"strength": 0.5
+		},
+		{
+			"target": "mukhtar",
+			"source": "virginia",
+			"strength": 0.5
+		},
+		{
+			"target": "mukhtar",
+			"source": "04/29/2003",
+			"strength": 0.2
+		},
+		{
+			"target": "mukhtar",
+			"source": "13,000",
+			"strength": 0.2
+		},
+		{
+			"target": "al",
+			"source": "alqaeda",
+			"strength": 0.5
+		},
+		{
+			"target": "al",
+			"source": "amsterdam",
+			"strength": 0.5
+		},
+		{
+			"target": "al",
+			"source": "04/25/2003",
+			"strength": 0.2
+		},
+		{
+			"target": "al",
+			"source": "250",
+			"strength": 0.2
+		},
+		{
+			"target": "bagwant",
+			"source": "taliban",
+			"strength": 0.5
+		},
+		{
+			"target": "bagwant",
+			"source": "virginia",
+			"strength": 0.5
+		},
+		{
+			"target": "bagwant",
+			"source": "04/27/2003",
+			"strength": 0.2
+		},
+		{
+			"target": "bagwant",
+			"source": "405",
+			"strength": 0.2
+		},
+		{
+			"target": "faysal",
+			"source": "alqaeda",
+			"strength": 0.5
+		},
+		{
+			"target": "faysal",
+			"source": "virginia",
+			"strength": 0.5
+		},
+		{
+			"target": "faysal",
+			"source": "04/25/2003",
+			"strength": 0.2
+		},
+		{
+			"target": "faysal",
+			"source": "13,000",
+			"strength": 0.2
+		},
+		{
+			"target": "tawfiq",
+			"source": "alqaeda",
+			"strength": 0.5
+		},
+		{
+			"target": "tawfiq",
+			"source": "amsterdam",
+			"strength": 0.5
+		},
+		{
+			"target": "tawfiq",
+			"source": "04/25/2003",
+			"strength": 0.2
+		},
+		{
+			"target": "tawfiq",
+			"source": "250",
+			"strength": 0.2
+		},
+		{
+			"target": "abu",
+			"source": "alqaeda",
+			"strength": 0.5
+		},
+		{
+			"target": "abu",
+			"source": "afghanistan",
+			"strength": 0.5
+		},
+		{
+			"target": "abu",
+			"source": "04/25/2003",
+			"strength": 0.2
+		},
+		{
+			"target": "abu",
+			"source": "500",
+			"strength": 0.2
+		}
+	]
 }
