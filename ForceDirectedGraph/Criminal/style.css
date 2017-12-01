@@ -1,0 +1,64 @@
+.delete {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  position: absolute;
+  text-align: center;
+  width: 150px;
+  height: 80px;
+  padding: 2px;
+  font: 21px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.reset {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  font-size: 25px;
+  padding: 2px;
+  top: 10px;
+  margin-top: 100px;
+  cursor: pointer;
+}
+.tooltip {
+  display: none;
+  position: absolute;
+  width: 200px;
+  height: 95px;
+  background: gainsboro;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.add,
+.edit {
+  width: 351px;
+  display: none;
+  flex-direction: column;
+  border: 1px solid;
+  padding: 5px;
+  position: absolute;
+  top: 20%;
+  left: 40%;
+  background: white;
+  z-index: 200;
+}
+.add .closeAdd,
+.edit .closeAdd {
+  cursor: pointer;
+  align-self: flex-end;
+}
+.add .closeEdit,
+.edit .closeEdit {
+  cursor: pointer;
+  align-self: flex-end;
+}
+body.dark {
+  background: grey;
+}
+svg.dark {
+  pointer-events: none;
+}
