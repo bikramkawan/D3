@@ -2,7 +2,7 @@
 <style>
 
     .states :hover {
-        fill: grey;
+        fill: #146c36;
     }
 
     .state-borders {
@@ -18,18 +18,43 @@
     div.tooltip {
         position: absolute;
         text-align: center;
-        width: 60px;
-        height: 28px;
+        width: 150px;
+        height: 80px;
         padding: 2px;
-        font: 12px sans-serif;
+        font: 15px sans-serif;
         background: white;
         border: 0px;
         border-radius: 8px;
         pointer-events: none;
     }
 
+    .wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 5%;
+    }
+
+    .logo {
+        height: 200px;
+        width: 250px;
+        align-self: flex-end;
+    }
+
+    img {
+        height: 100%;
+        width: 100%
+    }
+
 </style>
-<svg width="960" height="600"></svg>
+<body>
+
+<div class="wrapper">
+    <div class="logo"><img src="cooltree.png"></div>
+    <svg width="960" height="600"></svg>
+
+</div>
+</body>
+
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
 <script>
@@ -66,22 +91,22 @@
                 .enter()
                 .append("path")
                 .attr("d", path)
-                .attr('fill', 'rgb(213,222,217)')
-                .on("mouseover", (d)=> {
-                    const name = states.filter(e=>e.id === d.id)[0].name
-                    stateName.transition()
-                            .duration(200)
-                            .style("opacity", .9);
-                    stateName.text(name)
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
-                })
-
-                .on("mouseout", (d)=> {
-                    property.transition()
-                            .duration(500)
-                            .style("opacity", 0);
-                });
+                .attr('fill', '#e5e514')
+//                .on("mouseover", (d)=> {
+//                    const name = states.filter(e=>e.id === d.id)[0].name
+//                    stateName.transition()
+//                            .duration(200)
+//                            .style("opacity", .9);
+//                    stateName.text(name)
+//                            .style("left", (d3.event.pageX) + "px")
+//                            .style("top", (d3.event.pageY - 28) + "px");
+//                })
+//
+//                .on("mouseout", (d)=> {
+//                    property.transition()
+//                            .duration(500)
+//                            .style("opacity", 0);
+//                });
 
         svg.append("path")
                 .attr("class", "state-borders")
@@ -108,10 +133,11 @@
                 .style("fill", "rgb(217,91,67)")
                 .style("opacity", 0.85)
                 .on("mouseover", (d)=> {
+                    console.log(d)
                     property.transition()
                             .duration(200)
                             .style("opacity", .9);
-                    property.text(d.consensus_name)
+                    property.text(d.location)
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");
                 })
