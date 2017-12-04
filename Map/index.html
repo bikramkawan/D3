@@ -7,7 +7,7 @@
 
     .state-borders {
         fill: none;
-        stroke: #fff;
+        stroke: grey;
         stroke-width: 0.5px;
         stroke-linejoin: round;
         stroke-linecap: round;
@@ -112,7 +112,8 @@
                 .enter()
                 .append("path")
                 .attr("d", path)
-                .attr('fill', 'grey')
+                .attr('fill', 'white')
+                .attr('stroke','grey')
 //                .on("mouseover", (d)=> {
 //                    const name = states.filter(e=>e.id === d.id)[0].name
 //                    stateName.transition()
@@ -158,7 +159,7 @@
                     property.transition()
                             .duration(200)
                             .style("opacity", .9);
-                    property.text(`${d.location}  ${Math.floor(d.confidence)}%` )
+                    property.html(`${d.location} </br> Confidence: ${Math.floor(d.confidence)}%` )
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");
                 })
