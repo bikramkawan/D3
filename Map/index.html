@@ -103,7 +103,7 @@
         const confidenceExtents = d3.max(raw, d=>d.confidence)
 
         console.log(raw, 'data', confidenceExtents)
-        const scale = d3.scaleOrdinal()
+        const scale = d3.scaleLinear()
                 .range(['#e5e514', '#146c36']).domain([0, (d3.max(raw, d=>d.confidence))])
         map.append("g")
                 .attr("class", "states")
@@ -158,7 +158,7 @@
                     property.transition()
                             .duration(200)
                             .style("opacity", .9);
-                    property.text(`${d.location}  ${d.confidence}` )
+                    property.text(`${d.location}  ${Math.floor(d.confidence)}%` )
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");
                 })
