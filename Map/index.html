@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<style>
+
+    .states :hover {
+       // fill: #146c36;
+    }
+
+    .state-borders {
+        fill: none;
+        stroke: grey;
+        stroke-width: 0.5px;
+        stroke-linejoin: round;
+        stroke-linecap: round;
+        pointer-events: none;
+    }
+
+    /* Style for Custom Tooltip */
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        width: 150px;
+        height: 80px;
+        padding: 2px;
+        font: 15px sans-serif;
+        background: white;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
+
+    .wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 5%;
+    }
+
+    .logo {
+        height: 200px;
+        width: 250px;
+        align-self: flex-end;
+    }
+
+    img {
+        height: 100%;
+        width: 100%
+    }
+
+    .stop-left {
+        stop-color: #e5e514; /* Indigo */
+    }
+
+    .stop-right {
+        stop-color: #146c36 /* Teal */
+    }
+
+    .filled {
+        fill: url(#mainGradient);
+    }
+
+
+</style>
+<body>
+
+<div class="wrapper">
+    <div class="logo"><img src="cooltree.png"></div>
+    <div class="container"></div>
+
+</div>
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+<script>
+    const chartWidth = 960;
+    const chartHeight = 700;
+    const legendWidth = 300;
+    const legendHeight = 20;
+    const svg = d3.select(".container").append('svg').attr('width', chartWidth).attr('height', chartHeight)
+    const map = svg.append('g').classed('map', true).attr('width', chartWidth).attr('height', chartHeight - legendHeight);
+    const path = d3.geoPath();
+    const property = d3.select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+    const stateName = d3.select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+    d3.queue()
+            .defer(d3.json, 'https://d3js.org/us-10m.v1.json')
+            .defer(d3.csv, 'data.csv')
+            .defer(d3.tsv, 'https://gist.githubusercontent.com/mbostock/4090846/raw/07e73f3c2d21558489604a0bc434b3a5cf41a867/us-state-names.tsv')
+            .awaitAll(ready);
+
+    function ready(error, results) {
+        const us = results[0];
+        const raw = results[1];
+        const states = results[2];
+
+        const data = raw.filter(d=>d.country === 'USA');
+
+        const confidenceExtents = d3.max(raw, d=>d.confidence)
+
+        console.log(raw, 'data', confidenceExtents)
+        const scale = d3.scaleLinear()
+                .range(['#e5e514', '#146c36']).domain([0, (d3.max(raw, d=>d.confidence))])
+        map.append("g")
+                .attr("class", "states")
+                .selectAll("path")
+                .data(topojson.feature(us, us.objects.states).features)
+                .enter()
+                .append("path")
+                .attr("d", path)
+                .attr('fill', 'white')
+                .attr('stroke','grey')
+//                .on("mouseover", (d)=> {
+//                    const name = states.filter(e=>e.id === d.id)[0].name
+//                    stateName.transition()
+//                            .duration(200)
+//                            .style("opacity", .9);
+//                    stateName.text(name)
+//                            .style("left", (d3.event.pageX) + "px")
+//                            .style("top", (d3.event.pageY - 28) + "px");
+//                })
+//
+//                .on("mouseout", (d)=> {
+//                    property.transition()
+//                            .duration(500)
+//                            .style("opacity", 0);
+//                });
+
+        map.append("path")
+                .attr("class", "state-borders")
+                .attr("d", path(topojson.mesh(us, us.objects.states, (a, b)=> a !== b)));
+
+        // D3 Projection
+        const projection = d3.geoAlbersUsa()
+                .translate([chartWidth / 2, chartHeight / 2])    // translate to center of screen
+                .scale([1000]);          // scale things down so see entire US
+
+        map.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", (d)=> {
+                    const project = projection([d.longitude, d.latitude]);
+                    if (project) return project[0]
+                })
+                .attr("cy", (d)=> {
+                    const project = projection([d.longitude, d.latitude]);
+                    if (project) return project[1]
+                })
+                .attr("r", d=> 4)
+                .style("fill", d=> scale(d.confidence))
+                .style("opacity", 0.85)
+                .on("mouseover", (d)=> {
+                    console.log(d)
+                    property.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                    property.html(`${d.location} </br> Confidence: ${Math.floor(d.confidence)}%` )
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                })
+
+                // fade out tooltip on mouse out
+                .on("mouseout", (d)=> {
+                    property.transition()
+                            .duration(500)
+                            .style("opacity", 0);
+                });
+
+
+        const legend = svg.append('g')
+                .attr("transform", "translate(400,600)")
+
+        legend.attr('width', legendWidth).attr('height', legendHeight)
+        const svgDefs = legend.append('defs');
+
+        const mainGradient = svgDefs.append('linearGradient')
+                .attr('id', 'mainGradient');
+        mainGradient.append('stop')
+                .attr('class', 'stop-left')
+                .attr('offset', '0');
+        mainGradient.append('stop')
+                .attr('class', 'stop-right')
+                .attr('offset', '1');
+        legend.append('rect')
+                .classed('filled', true)
+                .attr('width', legendWidth)
+                .attr('height', legendHeight);
+
+        legend.append('text').text('0')
+        legend.append('text').text('100').attr("transform", "translate(280,0)")
+        legend.append('text').text('Confidence').attr("transform", "translate(130,15)")
+    }
+    // Based on https://bl.ocks.org/mbostock/4090848
+
+</script>
