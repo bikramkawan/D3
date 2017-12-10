@@ -6,6 +6,7 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://chriszarate.github.io/sheetrock/dist/sheetrock.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 
     <style>
         #heatmap {
@@ -40,6 +41,11 @@
             display: flex;
             justify-content: center;
             margin-top: 50px;
+        }
+
+        .today {
+            stroke: red !important;
+            stroke-width: 3px !important;
         }
 
     </style>
@@ -94,6 +100,7 @@
 
 
             const filteredPlanned = plannedData.filter(d=>isNaN(d.date2));
+
             // Filter data date greater thatn 11/2/2007
             const FILTER_MONTH = 10;
             const FILTER_DAY = 2;
@@ -117,18 +124,19 @@
 
             const trace1 = {
                 type: "scatter",
-                mode: "lines",
+                mode: 'lines+markers',
                 name: 'Completed',
                 x: unpack(filteredCompleted, 'date'),
                 y: unpack(filteredCompleted, 'value'),
+
                 line: {
                     color: 'blue',
-                    dash: 'dot',
+                    dash: 'solid',
                 }
             }
             const trace2 = {
                 type: "scatter",
-                mode: "lines",
+                mode: 'lines+markers',
                 name: 'Planned DHI',
                 x: unpack(filteredPlanned, 'date2'),
                 y: unpack(filteredPlanned, 'dhi'),
@@ -139,7 +147,7 @@
             }
             const trace3 = {
                 type: "scatter",
-                mode: "lines",
+                mode: 'lines+markers',
                 name: 'Planned DHL',
                 x: unpack(filteredPlanned, 'date2'),
                 y: unpack(filteredPlanned, 'dhl'),
@@ -156,7 +164,6 @@
                 xaxis: {
                     title: 'Date',
                     tickangle: 45,
-                    nticks: 8
                 },
                 yaxis: {
                     title: 'Value'
@@ -165,6 +172,25 @@
             };
 
             Plotly.newPlot('myDiv', data, layout);
+            const gridLayers = d3.select('.gridlayer').selectAll('path');
+            const allPaths = gridLayers._groups[0];
+            const todayPath = allPaths[filteredCompleted.length + 1];
+            d3.select(todayPath).classed('today', true);
+            const attr = d3.select(todayPath).attr('transform');
+            const value = attr.substring(attr.indexOf("(")+1, attr.indexOf(")"))
+                    .split(",")
+                    .map(d=>parseFloat(d));
+            const textOffset = 20;
+            d3.select('.gridlayer')
+                    .append('text').text('Today')
+                    .attr('transform', `translate(${value[0]-textOffset},-5)`)
+
+            const ticks = d3.select('.xaxislayer-above').selectAll('.xtick');
+            const allTicks = ticks._groups[0];
+            const removeDate2 = allTicks[filteredCompleted.length];
+
+            d3.select(removeDate2).remove();
+
             const heatDate = unpack(filteredPlanned, 'date2').filter(d=>!isNaN(parseFloat(d)));
             const heatData = unpack(filteredPlanned, 'dhi').filter(d=>!isNaN(parseFloat(d))).map(d=>parseFloat(d));
             updateHeatMap([heatData[0]]);
