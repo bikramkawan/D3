@@ -1,0 +1,382 @@
+<head>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://chriszarate.github.io/sheetrock/dist/sheetrock.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <style>
+
+
+        .today {
+            stroke: red !important;
+            stroke-width: 3px !important;
+        }
+
+        #myDiv1 {
+            height: 500px;
+            width: 800px;
+            margin-left: 15px;
+            z-index: 1;
+            position: absolute;
+        }
+
+        #myDiv2 {
+            height: 500px;
+            width: 800px;
+            margin-left: -82px;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        #myDiv3 {
+            height: 345px;
+            width: 2px;
+            background: red;
+            z-index: 5;
+            margin-top: 69px;
+        }
+
+        .title {
+            position: absolute;
+            z-index: 3;
+            left: 35%;
+            top: 30px;
+            font-size: 20px;
+        }
+
+    </style>
+
+</head>
+<body>
+<!-- Plotly chart will be drawn inside this DIV -->
+<div class="title">
+    Completed Vs Planned
+</div>
+<div class="container">
+    <div id="myDiv1">
+    </div>
+    <div id="myDiv3">
+    </div>
+    <div id="myDiv2">
+    </div>
+</div>
+
+
+<script>
+
+
+    const myCallback = function (error, options, response) {
+        if (!error) {
+            console.log(response)
+            const ids = ["Date", "Hactual", "desiredH", "dhi", "adsv-dh", "Lactual", "desiredL", "dlow", "adsv-dl", "Value", "planned", "date2", "dhi2", "dhl"];
+            const rawData = response.rows.map((d, i) => {
+                const cellData = d.cellsArray;
+                const labels = d.labels;
+                const collectIndexes = ids.map((id, i) => ({id, index: labels.indexOf(id)}));
+                const rows = collectIndexes.map((d, i) => ({
+                    id: d.id,
+                    value: cellData[d.index]
+                })).reduce((acc, cur) => acc.concat(cur), []);
+
+                return rows;
+
+            })
+
+
+            const compeletedData = rawData.map((d, i) => {
+                const value = d.filter(e => e.id === 'Value')[0].value;
+                const date = d.filter(e => e.id === 'Date')[0].value;
+                return {date, value}
+            })
+            const plannedData = rawData.map((d, i) => {
+
+                const date2 = d.filter(e => e.id === 'date2')[0].value;
+                const dhi = d.filter(e => e.id === 'dhi2')[0].value;
+                const dhl = d.filter(e => e.id === 'dhl')[0].value;
+                return {date2, dhi, dhl}
+            })
+
+
+            const filteredPlanned = plannedData.filter(d => isNaN(d.date2));
+            // Filter data date greater thatn 11/2/2007
+            const FILTER_MONTH = 10;
+            const FILTER_DAY = 2;
+            const filteredCompleted = compeletedData.filter(d => isNaN(d.date)).filter((d) => {
+                const parsed = new Date(d.date);
+                const getMonth = parsed.getMonth();
+                const getDate = parsed.getDate();
+
+                if (getMonth >= FILTER_MONTH && getDate >= FILTER_DAY) return true;
+                return false
+
+            })
+
+
+            function unpack(rows, key) {
+                return rows.map(function (row) {
+                    return row[key];
+                });
+            }
+
+
+            const trace1 = {
+                type: "scatter",
+                mode: 'lines+markers',
+                name: 'Completed',
+                x: unpack(filteredCompleted, 'date'),
+                y: unpack(filteredCompleted, 'value'),
+
+                line: {
+                    color: 'blue',
+                    dash: 'solid',
+                }
+            };
+
+
+            var frames = []
+            var x2 = unpack(filteredPlanned, 'date2');
+            var y2 = unpack(filteredPlanned, 'dhi')
+            var x = unpack(filteredPlanned, 'date2')
+            var y = unpack(filteredPlanned, 'dhl')
+            var n = 100;
+            for (var i = 0; i < n; i++) {
+                frames[i] = {data: [{x: [], y: []}, {x: [], y: []}]}
+                frames[i].data[1].x = x.slice(0, i + 1);
+                frames[i].data[1].y = y.slice(0, i + 1);
+                frames[i].data[0].x = x2.slice(0, i + 1);
+                frames[i].data[0].y = y2.slice(0, i + 1);
+
+                console.log('framing')
+            }
+            const trace2 = {
+                type: "scatter",
+                mode: 'lines+markers',
+                name: 'Planned DHI',
+                text: frames[5].data[0].y,
+                x: unpack(filteredPlanned, 'date2'),
+                y: unpack(filteredPlanned, 'dhi'),
+                line: {
+                    color: 'pink',
+                    dash: 'solid',
+                },
+                textposition: 'bottom center',
+
+                textfont: {
+                    family: 'sans serif',
+                    size: 18,
+                    color: '#ff7f0e'
+                },
+                hoverinfo: "text"
+            };
+
+            const trace3 = {
+                type: "scatter",
+                mode: 'lines+markers',
+                name: 'Planned DHL',
+                text: frames[5].data[1].y,
+                x: unpack(filteredPlanned, 'date2'),
+                y: unpack(filteredPlanned, 'dhl'),
+                line: {
+                    color: 'orange',
+                    dash: 'solid',
+                },
+                textfont: {
+                    family: 'sans serif',
+                    size: 18,
+                    color: '#ff7f0e'
+                },
+                hoverinfo: "text",
+            };
+
+            const data = [trace2, trace3];
+
+            var layout = {
+                // title: 'Completed Vs Planned',
+                xaxis: {
+                    title: 'Date',
+                    tickangle: 45,
+                    range: [frames[99].data[0].x[0], frames[99].data[0].x[99]],
+                    showgrid: true
+                },
+                yaxis: {
+                    // title: 'Value',
+                    //side: 'right',
+                    range: [1, 2],
+                    showgrid: true
+                },
+                legend: {
+                    orientation: 'h',
+                    x: 0.5,
+                    y: 1.2,
+                    xanchor: 'center'
+                },
+                updatemenus: [{
+                    x: 0.5,
+                    y: 0,
+                    yanchor: "top",
+                    xanchor: "center",
+                    showactive: false,
+                    direction: "left",
+                    type: "buttons",
+                    pad: {"t": 87, "r": 10},
+                    buttons: [{
+                        method: "animate",
+                        args: [null, {
+                            fromcurrent: true,
+                            transition: {
+                                duration: 0,
+                            },
+                            frame: {
+                                duration: 40,
+                                redraw: true
+                            }
+                        }],
+                        label: ""
+                    }, {
+                        method: "animate",
+                        args: [
+                            [null],
+                            {
+                                mode: "immediate",
+                                transition: {
+                                    duration: 0
+                                },
+                                frame: {
+                                    duration: 0,
+                                    redraw: true
+                                }
+                            }
+                        ],
+                        label: ""
+                    }]
+                }]
+            };
+            var layout2 = {
+                xaxis: {
+                    title: 'Date',
+                    tickangle: 45,
+                    range: [frames[99].data[0].x[0], frames[99].data[0].x[99]],
+                    showgrid: true
+                },
+                yaxis: {
+                    title: 'Value',
+                    side: 'right',
+                    range: [1, 2],
+                    showgrid: true
+                },
+                legend: {
+
+                    x: 1,
+                    y: 15,
+                    xanchor: 'center'
+                },
+                updatemenus: [{
+                    x: 0.5,
+                    y: 0,
+                    yanchor: "top",
+                    xanchor: "center",
+                    showactive: false,
+                    direction: "left",
+                    type: "buttons",
+                    pad: {"t": 87, "r": 10},
+                    buttons: [{
+                        method: "animate",
+                        args: [null, {
+                            fromcurrent: true,
+                            transition: {
+                                duration: 0,
+                            },
+                            frame: {
+                                duration: 40,
+                                redraw: true
+                            }
+                        }],
+                        label: "Play"
+                    }, {
+                        method: "animate",
+                        args: [
+                            [null],
+                            {
+                                mode: "immediate",
+                                transition: {
+                                    duration: 0
+                                },
+                                frame: {
+                                    duration: 0,
+                                    redraw: true
+                                }
+                            }
+                        ],
+                        label: "Pause"
+                    }]
+                }]
+            };
+
+
+            Plotly.newPlot('myDiv1', [trace1], layout);
+            Plotly.newPlot('myDiv2', data, layout2).then(function () {
+                Plotly.addFrames('myDiv2', frames)
+
+            })
+
+
+            const allButons = d3.select('.updatemenu-container').remove()
+            const first = allButons._groups[0][0];
+            const second = allButons._groups[0][1];
+
+            redraw();
+
+
+            function redraw() {
+                console.log('inside d3')
+
+
+                const div1Width = document.getElementById('myDiv1').clientWidth;
+                console.log(div1Width)
+                d3.select('#myDiv3').style('margin-left', div1Width + 19 + 'px')
+                const gridLayers = d3.selectAll('.gridlayer');
+                const allPaths = gridLayers._groups[0][1];
+                const mypaths = d3.select(allPaths).selectAll('path')
+
+                const todayPath = mypaths._groups[0][0]
+                //  d3.select(todayPath).classed('today', true);
+
+                d3.select('.cartesianlayer').attr('transform', 'translate(50,0)')
+                d3.select(allPaths).attr('transform', 'translate(60,100)')
+
+                const allCartesian = d3.selectAll('.cartesianlayer');
+                const secondChild = allCartesian._groups[0][1];
+
+                d3.select(secondChild).select('.plot').attr('transform', 'translate(40,100)')
+                d3.select(secondChild).select('.gridlayer')
+                        .append('text')
+                        .text('Today')
+                        .attr('transform', 'translate(25,-10)')
+
+                d3.select(secondChild).select('.xaxislayer-above').attr('transform', 'translate(40,100)')
+                d3.select(secondChild).select('.xaxislayer-above').select('.xtick').remove()
+                // console.log(d3.select(secondChild).select('.xaxislayer-above'))
+
+                // d3.select(secondChild).select('.yaxislayer-above').remove()
+
+            }
+
+        }
+    };
+
+    sheetrock({
+        url: "https://docs.google.com/spreadsheets/d/1NzN68_A_0QyoVhbPen5r1fN3LCWT0Qk8KGWKsTAp8Ws/edit#gid=1095113896",
+        query: "select H,I,J,K,L,M,N,O,P,Q,R,S,T,U",
+        callback: myCallback
+    });
+
+
+</script>
+</body>
+</html>

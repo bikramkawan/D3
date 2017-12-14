@@ -1,0 +1,117 @@
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+.container .main {
+  display: flex;
+  width: 80vw;
+  height: 80vh;
+  border: 1px solid;
+  justify-content: center;
+  align-items: center;
+}
+.container .main .col {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  flex-basis: 100%;
+  flex-grow: 1;
+  height: 100%;
+}
+.container .main .col .line {
+  flex-basis: 100%;
+  flex-grow: 1;
+  height: 100%;
+}
+.container .main .col .bar {
+  flex-basis: 100%;
+  flex-grow: 1;
+  fill: orange;
+}
+.container .main .col .pie {
+  flex-basis: 100%;
+  flex-grow: 1;
+  height: 100%;
+  border: 1px solid;
+}
+.container .main .col .time {
+  flex-basis: 100%;
+  flex-grow: 1;
+  fill: orange;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+.container .main .col .time .header {
+  height: 40px;
+  font-size: 25px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+}
+.container .main .col .time .header .transparent {
+  background: transparent;
+  flex-basis: 25%;
+  flex-grow: 1;
+  height: 30px;
+}
+.container .main .col .time .header > div {
+  padding: 5px;
+  flex-basis: 100%;
+  flex-grow: 1;
+  width: 100%;
+  text-align: center;
+}
+.container .main .col .time .timeBody {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  flex-basis: 80%;
+  width: 90%;
+}
+.container .main .col .time .timeBody .row {
+  font-size: 20px;
+  display: flex;
+  height: 30px;
+  flex-basis: 100%;
+  flex-grow: 1;
+  width: 100%;
+  padding: 5px;
+  align-items: center;
+  justify-content: center;
+}
+.container .main .col .time .timeBody .row .legendColor {
+  flex-basis: 25%;
+  flex-grow: 1;
+  height: 30px;
+}
+.container .main .col .time .timeBody .row > div {
+  padding: 5px;
+  flex-basis: 100%;
+  flex-grow: 1;
+  width: 100%;
+  text-align: center;
+}
+.line .area1 {
+  fill: grey;
+  fill-opacity: 0.2;
+}
+.line .area2 {
+  fill: grey;
+  fill-opacity: 0.3;
+}
+.line .line1 {
+  stroke: lightblue;
+  stroke-width: 3;
+  fill: none;
+}
+.line .line2 {
+  fill: none;
+  stroke: green;
+  stroke-width: 3;
+}
