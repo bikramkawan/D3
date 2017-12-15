@@ -56,9 +56,10 @@ const lineEl = document.querySelector('.line');
 const lineWidth = lineEl.clientWidth;
 const lineHeight = lineEl.clientHeight;
 
-const lineSVG = d3.select(".line").append('svg').attr('width', lineWidth).attr('height', lineHeight)
+const lineSVG = d3.select(".line").append('svg').attr('width', lineWidth).attr('height', lineHeight);
+const barSVG = d3.select('.bar').append('svg').attr('width', lineWidth).attr('height', lineHeight);
+const pieSVG = d3.select('.pie').append('svg').attr('width', lineWidth).attr('height', lineHeight);
 
-const barSVG = d3.select('.bar').append('svg').attr('width', lineWidth).attr('height', lineHeight)
 const width = lineWidth - margin.left - margin.right;
 const height = lineHeight - margin.top - margin.bottom;
 const line1Config = {data, lineSVG, width, height, margin, randomData}
@@ -74,8 +75,9 @@ bar.draw();
 const table = new Table(data);
 table.draw();
 
-
-
+const pieConfig = {data,pieSVG,margin, width, height}
+const pie = new PieChart(pieConfig);
+pie.draw();
 
 
 
