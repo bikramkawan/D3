@@ -1,7 +1,6 @@
 class PieChart {
     constructor(param) {
         this.data = formatTableData(param.data);
-        this.svg = param.pieSVG;
         this.margin = param.margin;
         this.width = param.width;
         this.height = param.height;
@@ -9,26 +8,15 @@ class PieChart {
 
     draw() {
         console.log(this.data, 'data');
-        const g = this.svg
+        const svg = d3.select('.pie').append('svg').attr('width', this.width).attr('height', this.height)
             .append('g')
+            .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
 
         const radius = Math.min(this.width, this.height) / 2;
-        const color = d3.scaleOrdinal([
-            '#98abc5',
-            '#8a89a6',
-            '#7b6888',
-            '#6b486b',
-            '#a05d56',
-            '#d0743c',
-            '#ff8c00',
-        ]);
-
         const pie = d3
             .pie()
             .sort(null)
-            .value(function(d) {
-                return d.count;
-            });
+            .value(d=> d.count);
 
         const path = d3
             .arc()
@@ -37,10 +25,10 @@ class PieChart {
 
         const label = d3
             .arc()
-            .outerRadius(radius - 10)
-            .innerRadius(radius - 10);
+            .outerRadius(radius - 40)
+            .innerRadius(radius - 40);
 
-        const arc = g
+        const arc = svg
             .selectAll('.arc')
             .data(pie(this.data))
             .enter()
@@ -50,18 +38,12 @@ class PieChart {
         arc
             .append('path')
             .attr('d', path)
-            .attr('fill', function(d) {
-                return color(d.data.group);
-            });
+            .attr('fill', d=> d.data.color);
 
-        arc
-            .append('text')
-            .attr('transform', function(d) {
-                return 'translate(' + label.centroid(d) + ')';
-            })
-            .attr('dy', '0.35em')
-            .text(function(d) {
-                return d.data.group;
-            });
+        // arc
+        //     .append('text')
+        //     .attr('transform', d=> `translate(${label.centroid(d)})`)
+        //     .attr('dy', '0.35em')
+        //     .text(d=>d.data.label);
     }
 }
