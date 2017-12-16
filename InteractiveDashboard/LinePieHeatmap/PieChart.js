@@ -8,15 +8,22 @@ class PieChart {
 
     draw() {
         console.log(this.data, 'data');
-        const svg = d3.select('.pie').append('svg').attr('width', this.width).attr('height', this.height)
+        const svg = d3
+            .select('.pie')
+            .append('svg')
+            .attr('width', this.width)
+            .attr('height', this.height)
             .append('g')
-            .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
+            .attr(
+                'transform',
+                `translate(${this.width / 2},${this.height / 2})`,
+            );
 
         const radius = Math.min(this.width, this.height) / 2;
         const pie = d3
             .pie()
             .sort(null)
-            .value(d=> d.count);
+            .value(d => d.count);
 
         const path = d3
             .arc()
@@ -27,7 +34,6 @@ class PieChart {
             .arc()
             .outerRadius(radius - 40)
             .innerRadius(radius - 40);
-
         const arc = svg
             .selectAll('.arc')
             .data(pie(this.data))
@@ -38,7 +44,7 @@ class PieChart {
         arc
             .append('path')
             .attr('d', path)
-            .attr('fill', d=> d.data.color);
+            .attr('fill', d => d.data.color);
 
         // arc
         //     .append('text')
