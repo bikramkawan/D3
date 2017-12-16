@@ -1,172 +1,186 @@
 .container {
-  display: flex;
-  justify-content: center;
-  margin-top: 50px;
-  flex-direction: column;
-  align-items: center;
-  .main {
     display: flex;
-    width: 80vw;
-    height: 80vh;
-    border: 1px solid;
     justify-content: center;
+    margin-top: 50px;
+    flex-direction: column;
     align-items: center;
 
-    .col {
-      display: flex;
-      flex-direction: column;
-      border: 1px solid;
-      flex-basis: 100%;
-      flex-grow: 1;
-      height: 100%;
-
-      .line {
-        flex-basis: 100%;
-        flex-grow: 1;
-        height: 100%;
-
-      }
-      .bar {
-
-        flex-basis: 100%;
-        flex-grow: 1;
-        fill: orange;
-
-      }
-
-      .pie {
-        flex-basis: 100%;
-        flex-grow: 1;
-        height: 100%;
-        border: 1px solid;
-
-      }
-      .time {
-        flex-basis: 100%;
-        flex-grow: 1;
-        fill: orange;
-        border: 1px solid;
+    .main {
         display: flex;
+
         flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-        .header {
-          height: 40px;
-          font-size: 25px;
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          width: 90%;
-          .transparent {
-            background: transparent;
-            flex-basis: 25%;
-            flex-grow: 1;
-            height: 30px;
-          }
-          & > div {
-            padding: 5px;
-            flex-basis: 100%;
-            flex-grow: 1;
-            width: 100%;
-            text-align: center;
-
-          }
-        }
-        .timeBody {
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          flex-direction: column;
-          flex-basis: 80%;
-          width: 90%;
-          .row {
-            font-size: 20px;
+        .lineFilter {
             display: flex;
-            height: 30px;
-            flex-basis: 100%;
-            flex-grow: 1;
-            width: 100%;
-            padding: 5px;
-            align-items: center;
-            justify-content: center;
-
-            .legendColor {
-              flex-basis: 25%;
-              flex-grow: 1;
-              height: 30px;
-            }
+            justify-content: flex-end;
 
             & > div {
-              padding: 5px;
-              flex-basis: 100%;
-              flex-grow: 1;
-              width: 100%;
-              text-align: center;
-
+                padding: 5px;
+                font-size: 18px;
+                color: white;
+                cursor: pointer;
             }
-
-          }
-
+            .weekday {
+                background: lightblue;
+            }
+            .weekend {
+                background: green;
+            }
         }
 
-      }
+        .chartContainer {
+            display: flex;
+            width: 80vw;
+            height: 80vh;
+            .col {
+                display: flex;
+                flex-direction: column;
+                border: 1px solid;
+                flex-basis: 100%;
+                flex-grow: 1;
+                height: 100%;
 
+                .line {
+                    flex-basis: 100%;
+                    flex-grow: 1;
+                    height: 100%;
+                }
+                .bar {
+                    flex-basis: 100%;
+                    flex-grow: 1;
+                    fill: orange;
+                }
+
+                .pie {
+                    flex-basis: 100%;
+                    flex-grow: 1;
+                    height: 100%;
+                    border: 1px solid;
+                }
+                .time {
+                    flex-basis: 100%;
+                    flex-grow: 1;
+                    fill: orange;
+                    border: 1px solid;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    align-items: center;
+                    .header {
+                        height: 40px;
+                        font-size: 25px;
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                        width: 90%;
+                        .transparent {
+                            background: transparent;
+                            flex-basis: 25%;
+                            flex-grow: 1;
+                            height: 30px;
+                        }
+                        & > div {
+                            padding: 5px;
+                            flex-basis: 100%;
+                            flex-grow: 1;
+                            width: 100%;
+                            text-align: center;
+                        }
+                    }
+                    .timeBody {
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                        flex-direction: column;
+                        flex-basis: 80%;
+                        width: 90%;
+                        .row {
+                            font-size: 20px;
+                            display: flex;
+                            height: 30px;
+                            flex-basis: 100%;
+                            flex-grow: 1;
+                            width: 100%;
+                            padding: 5px;
+                            align-items: center;
+                            justify-content: center;
+
+                            .legendColor {
+                                flex-basis: 25%;
+                                flex-grow: 1;
+                                height: 30px;
+                            }
+
+                            & > div {
+                                padding: 5px;
+                                flex-basis: 100%;
+                                flex-grow: 1;
+                                width: 100%;
+                                text-align: center;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
-  }
+    .mainBottom {
+      .heatFilter{
+            display: flex;
+    justify-content: center;
 
-  .mainBottom {
-
-  }
+        & > div,select{
+          padding: 10px;
+          margin-left: 10px;
+        }
+      }
+    }
 }
 
 .line {
-  .area1 {
-    fill: grey;
-    fill-opacity: 0.2;
-  }
-  .area2 {
-    fill: grey;
-    fill-opacity: 0.3;
-
-  }
-  .line1 {
-    stroke: lightblue;
-    stroke-width: 3;
-    fill: none;
-
-  }
-  .line2 {
-    fill: none;
-    stroke: green;
-    stroke-width: 3;
-  }
-
+    .area1 {
+        fill: grey;
+        fill-opacity: 0.2;
+    }
+    .area2 {
+        fill: grey;
+        fill-opacity: 0.2;
+    }
+    .line1 {
+        stroke: lightblue;
+        stroke-width: 3;
+        fill: none;
+    }
+    .line2 {
+        fill: none;
+        stroke: green;
+        stroke-width: 3;
+    }
 }
 
 .arc text {
-  font: 10px sans-serif;
-  text-anchor: middle;
+    font: 10px sans-serif;
+    text-anchor: middle;
 }
 
 .arc path {
-  stroke: #fff;
+    stroke: #fff;
 }
 rect.bordered {
-        stroke: #E6E6E6;
-        stroke-width:2px;
-      }
+    stroke: #e6e6e6;
+    stroke-width: 2px;
+}
 
-      text.mono {
-        font-size: 9pt;
-        font-family: Consolas, courier;
-        fill: #aaa;
-      }
+text.mono {
+    font-size: 9pt;
+    font-family: Consolas, courier;
+    fill: #aaa;
+}
 
-      text.axis-workweek {
-        fill: #000;
-      }
+text.axis-workweek {
+    fill: #000;
+}
 
-      text.axis-worktime {
-        fill: #000;
-      }
+text.axis-worktime {
+    fill: #000;
+}

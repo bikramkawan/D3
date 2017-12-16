@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,12 +6,17 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
-
 </head>
 <body>
 <div class="container">
+
     <div class="main">
-        <div class="col">
+          <div class="lineFilter">
+                <div class="weekday">Weekdays</div>
+                <div class="weekend">WeekEnd</div>
+            </div>
+        <div class="chartContainer">
+            <div class="col">
             <div class="pie">
 
             </div>
@@ -43,10 +48,15 @@
 
             </div>
         </div>
+        </div>
+
     </div>
     <div class="mainBottom">
         <div class="heatmap">
-
+        </div>
+        <div class="heatFilter">
+             <div class="month">Month</div>
+                <div class="week">Weeks</div>
         </div>
     </div>
 </div>

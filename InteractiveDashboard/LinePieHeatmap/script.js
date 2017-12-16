@@ -131,3 +131,52 @@ const heatConfig = {
 };
 const heatmapObj = new HeatMap(heatConfig);
 heatmapObj.draw();
+
+const month = [
+    { label: 'Jan', id: 0 },
+    { label: 'Feb', id: 1 },
+    { label: 'Mar', id: 2 },
+    { label: 'Apr', id: 3 },
+    { label: 'May', id: 4 },
+    { label: 'Jun', id: 5 },
+    { label: 'Jul', id: 6 },
+    { label: 'Aug', id: 7 },
+    { label: 'Sep', id: 8 },
+    { label: 'Oct', id: 9 },
+    { label: 'Nov', id: 10 },
+    { label: 'Dec', id: 11 },
+];
+
+const monthSelect = d3
+    .select('.month')
+    .append('select')
+    .attr('class', 'monthSelect')
+    .on('change', () => {
+        const selectValue = d3.select('.monthSelect').property('value');
+        const monthId = month.find(d => d.label === selectValue);
+        heatmapObj.setData({ ...monthId, filterBy: 'month' });
+    });
+
+monthSelect
+    .selectAll('option')
+    .data(month)
+    .enter()
+    .append('option')
+    .text(d => d.label);
+
+const weeks = Array.from({ length: 52 }, (v, i) => i + 1);
+const weekSelect = d3
+    .select('.week')
+    .append('select')
+    .attr('class', 'weekSelect')
+    .on('change', () => {
+        const selectValue = d3.select('.weekSelect').property('value');
+        heatmapObj.setData({ id: selectValue, filterBy: 'week' });
+    });
+
+weekSelect
+    .selectAll('option')
+    .data(weeks)
+    .enter()
+    .append('option')
+    .text(d => d);

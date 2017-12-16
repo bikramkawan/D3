@@ -8,6 +8,7 @@ class HeatMap {
         this.width = param.width - this.margin.left - this.margin.right;
         this.height = param.height - this.margin.top - this.margin.bottom;
         this.data = randomHeatData();
+        this.rawData = randomHeatData();
         this.setScale();
     }
 
@@ -22,8 +23,30 @@ class HeatMap {
             .range(colors);
     }
 
+    setData(filterParam) {
+        const { id, filterBy } = filterParam;
+        let filtered = null;
+        if (filterBy === 'month') {
+            filtered = this.rawData.filter(d => d.month === id);
+        }
+        if (filterBy === 'week') {
+            filtered = this.rawData.filter(d => d.week === id - 1);
+        }
+        if (filtered.length > 0) {
+            this.data = filtered;
+            this.draw();
+        } else {
+            alert('No Data Found in this Range');
+        }
+    }
+
     draw() {
         const that = this;
+        d3
+            .select('.heatmap')
+            .select('svg')
+            .remove();
+
         const svg = d3
             .select('.heatmap')
             .append('svg')
@@ -145,10 +168,16 @@ const times = [
     '11p',
     '12p',
 ];
+
+//https://gist.github.com/IamSilviu/5899269
+function parseWeek(date) {
+    var onejan = new Date(date.getFullYear(), 0, 1);
+    return Math.ceil(((date - onejan) / 86400000 + onejan.getDay() + 1) / 7);
+}
 function randomHeatData() {
     const randomHours = d3.timeHour.range(
-        new Date(2017, 1, 1),
-        new Date(2017, 1, 15),
+        new Date(2017, 0, 1),
+        new Date(2017, 3, 15),
         1,
     );
 
@@ -168,10 +197,13 @@ function randomHeatData() {
                 .map(e => {
                     let groupedBy = _.groupBy(d, f => f.time.getHours() === e)
                         .true;
+
                     return groupedBy.map((g, f) => ({
                         ...g,
                         day: i,
                         hour: groupedBy[0].time.getHours(),
+                        month: g.time.getMonth(),
+                        week: parseWeek(g.time) - 1,
                     }));
                 })
                 .reduce((acc, cur) => acc.concat(cur), []);
