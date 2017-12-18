@@ -3,14 +3,11 @@
  */
 class TopScore {
     constructor(data) {
-        this.data = randomHeatData();
+        this.data = data;
     }
 
     updateScores() {
-        console.log(this.data);
         const todayDate = new Date();
-        console.log(todayDate);
-
         const thisWeek = parseWeek(todayDate);
         const thisMonth = todayDate.getMonth();
         const thisYear = todayDate.getFullYear();
@@ -22,15 +19,6 @@ class TopScore {
         const yearCount = Math.round(_.sumBy(thisYearData, 'count'));
         const monthCount = Math.round(_.sumBy(thisMonthData, 'count'));
         const weekCount = Math.round(_.sumBy(thisWeekData, 'count'));
-        console.log(
-            thisWeekData,
-            thisYearData,
-            thisMonthData,
-            allTimeCount,
-            yearCount,
-            weekCount,
-            monthCount,
-        );
 
         const mapData = [
             {

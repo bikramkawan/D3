@@ -67,16 +67,28 @@ const rawData = {
     ],
 };
 const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+
+const heatMapMargin = { top: 50, right: 0, bottom: 100, left: 30 };
+const heatmapWidth = 960;
+const heatMapHeight = 430;
 const dateParse = d3.utcParse('%Y-%m-%dT%H:%M:%S.%LZ');
 const data = rawData.message.map(d => ({
     time: dateParse(d.time),
     count: d.wifiCount,
 }));
 
-const randomData = data.map(d => ({ time: d.time, count: 0.8 * d.count }));
+const heatConfig = {
+    margin: heatMapMargin,
+    width: heatmapWidth,
+    height: heatMapHeight,
+};
 
-console.log(data, 'main');
-console.log(d3.max(data,d=>d.time))
+const heatMap = new HeatMap(heatConfig);
+heatMap.draw();
+const getHeatData = heatMap.getData();
+
+console.log(getHeatData, 'random data');
+const randomData = data.map(d => ({ time: d.time, count: 0.8 * d.count }));
 const randomDate = d3.timeDay.range(
     new Date(2017, 1, 1),
     new Date(2017, 1, 30),
@@ -105,39 +117,56 @@ const barSVG = d3
 
 const width = lineWidth - margin.left - margin.right;
 const height = lineHeight - margin.top - margin.bottom;
-const line1Config = { data, lineSVG, width, height, margin, randomData };
-const line1 = new LineChart(line1Config);
-line1.draw();
-
-const barConfig = { data: randBarData, margin, width, height, barSVG };
-console.log(barConfig);
-const bar = new BarChart(barConfig);
-bar.draw();
-
-const table = new Table(data);
-table.draw();
-
-const pieConfig = { data, margin, width, height };
-const pie = new PieChart(pieConfig);
-pie.draw();
-
-const heatMapMargin = { top: 50, right: 0, bottom: 100, left: 30 };
-const heatmapWidth = 960;
-const heatMapHeight = 430;
-const heatConfig = {
-    margin: heatMapMargin,
-    width: heatmapWidth,
-    height: heatMapHeight,
+const lineChartConfig = {
+    data,
+    lineSVG,
+    width,
+    height,
+    margin,
+    randomData,
 };
-const heatmapObj = new HeatMap(heatConfig);
-heatmapObj.draw();
+const lineChart = new LineChart(lineChartConfig);
+lineChart.draw();
 
-const topScore = new TopScore();
+const barChartConfig = { data: getHeatData, margin, width, height, barSVG };
+
+const barChart = new BarChart(barChartConfig);
+barChart.draw();
+
+const tableView = new Table(getHeatData);
+tableView.draw();
+
+const pieChartConfig = { data: getHeatData, margin, width, height };
+const pieChart = new PieChart(pieChartConfig);
+pieChart.draw();
+
+const topScore = new TopScore(getHeatData);
 topScore.updateScores();
 
+const uniqueYears = [{ year: 'All' }].concat(_.uniqBy(getHeatData, 'year'));
 
+let selectedYear = null;
+let selectedMonth = null;
+let selectedWeek = null;
+
+const yearSelect = d3
+    .select('.year')
+    .append('select')
+    .attr('class', 'yearSelect')
+    .on('change', () => {
+        selectedYear = d3.select('.yearSelect').property('value');
+        filterData();
+    });
+
+yearSelect
+    .selectAll('option')
+    .data(uniqueYears)
+    .enter()
+    .append('option')
+    .text(d => d.year);
 
 const month = [
+    { label: 'All', id: -1 },
     { label: 'Jan', id: 0 },
     { label: 'Feb', id: 1 },
     { label: 'Mar', id: 2 },
@@ -157,9 +186,8 @@ const monthSelect = d3
     .append('select')
     .attr('class', 'monthSelect')
     .on('change', () => {
-        const selectValue = d3.select('.monthSelect').property('value');
-        const monthId = month.find(d => d.label === selectValue);
-        heatmapObj.setData({ ...monthId, filterBy: 'month' });
+        selectedMonth = d3.select('.monthSelect').property('value');
+        filterData();
     });
 
 monthSelect
@@ -169,14 +197,14 @@ monthSelect
     .append('option')
     .text(d => d.label);
 
-const weeks = Array.from({ length: 52 }, (v, i) => i + 1);
+const weeks = ['All'].concat(Array.from({ length: 52 }, (v, i) => i + 1));
 const weekSelect = d3
     .select('.week')
     .append('select')
     .attr('class', 'weekSelect')
     .on('change', () => {
-        const selectValue = d3.select('.weekSelect').property('value');
-        heatmapObj.setData({ id: selectValue, filterBy: 'week' });
+        selectedWeek = d3.select('.weekSelect').property('value');
+        filterData();
     });
 
 weekSelect
@@ -185,3 +213,27 @@ weekSelect
     .enter()
     .append('option')
     .text(d => d);
+
+function filterData() {
+    let filtered = getHeatData;
+    if (selectedYear && selectedYear !== 'All') {
+        filtered = filtered.filter(d => d.year === parseFloat(selectedYear));
+    }
+    if (selectedMonth && selectedMonth !== 'All') {
+        const monthId = month.find(d => d.label === selectedMonth);
+        filtered = filtered.filter(d => d.month === monthId.id);
+    }
+    if (selectedWeek && selectedWeek !== 'All') {
+        filtered = filtered.filter(d => d.week === parseFloat(selectedWeek));
+    }
+
+    if (filtered.length > 0) {
+        heatMap.update(filtered);
+        lineChart.update();
+        barChart.update(filtered);
+        tableView.update(filtered);
+        pieChart.update(filtered);
+    } else {
+        alert('No Data Found in this Range');
+    }
+}

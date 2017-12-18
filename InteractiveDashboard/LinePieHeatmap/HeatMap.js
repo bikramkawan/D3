@@ -14,7 +14,6 @@ class HeatMap {
 
     /**/
     setScale() {
-        console.log(this.data,'data')
         this.gridSize = Math.floor(this.width / 24);
         this.legendElementWidth = this.gridSize * 2;
         const buckets = 4;
@@ -24,21 +23,14 @@ class HeatMap {
             .range(colors);
     }
 
-    setData(filterParam) {
-        const { id, filterBy } = filterParam;
-        let filtered = null;
-        if (filterBy === 'month') {
-            filtered = this.rawData.filter(d => d.month === id);
-        }
-        if (filterBy === 'week') {
-            filtered = this.rawData.filter(d => d.week === id - 1);
-        }
-        if (filtered.length > 0) {
-            this.data = filtered;
-            this.draw();
-        } else {
-            alert('No Data Found in this Range');
-        }
+    update(filtered) {
+        if (filtered.length < 0) return;
+        this.data = filtered;
+        this.draw();
+    }
+
+    getData() {
+        return this.rawData;
     }
 
     draw() {
@@ -177,8 +169,8 @@ function parseWeek(date) {
 }
 function randomHeatData() {
     const randomHours = d3.timeHour.range(
-        new Date(2017, 0, 1),
-        new Date(2017, 3, 15),
+        new Date(2016, 6, 1),
+        new Date(2017, 12, 30),
         1,
     );
 
@@ -205,7 +197,7 @@ function randomHeatData() {
                         hour: groupedBy[0].time.getHours(),
                         month: g.time.getMonth(),
                         week: parseWeek(g.time) - 1,
-                        year:g.time.getFullYear()
+                        year: g.time.getFullYear(),
                     }));
                 })
                 .reduce((acc, cur) => acc.concat(cur), []);

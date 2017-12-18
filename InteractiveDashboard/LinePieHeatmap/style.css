@@ -33,7 +33,6 @@
 .container .main .chartContainer .col {
   display: flex;
   flex-direction: column;
-  border: 1px solid;
   flex-basis: 100%;
   flex-grow: 1;
   height: 100%;
@@ -52,13 +51,11 @@
   flex-basis: 100%;
   flex-grow: 1;
   height: 100%;
-  border: 1px solid;
 }
 .container .main .chartContainer .col .time {
   flex-basis: 100%;
   flex-grow: 1;
   fill: orange;
-  border: 1px solid;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -194,8 +191,16 @@ text.axis-worktime {
 }
 .infoPanel .box.filter {
   flex-basis: 30%;
+  border: 1px solid;
 }
 .infoPanel .box.filter .heatFilter {
   display: flex;
+  font-size: 22px;
+  justify-content: space-around;
+  flex-basis: 100%;
+  flex-grow: 1;
+}
+.infoPanel .box.filter .heatFilter select {
   font-size: 18px;
+  margin: 10px;
 }

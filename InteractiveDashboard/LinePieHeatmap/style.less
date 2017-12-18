@@ -34,7 +34,6 @@
             .col {
                 display: flex;
                 flex-direction: column;
-                border: 1px solid;
                 flex-basis: 100%;
                 flex-grow: 1;
                 height: 100%;
@@ -54,13 +53,11 @@
                     flex-basis: 100%;
                     flex-grow: 1;
                     height: 100%;
-                    border: 1px solid;
                 }
                 .time {
                     flex-basis: 100%;
                     flex-grow: 1;
                     fill: orange;
-                    border: 1px solid;
                     display: flex;
                     flex-direction: column;
                     justify-content: space-around;
@@ -215,10 +212,18 @@ text.axis-worktime {
         }
         &.filter {
             flex-basis: 30%;
-
+            border: 1px solid;
             .heatFilter {
                 display: flex;
-                font-size: 18px;
+                font-size: 22px;
+                justify-content: space-around;
+                flex-basis: 100%;
+                flex-grow: 1;
+
+                select {
+                    font-size: 18px;
+                    margin: 10px;
+                }
             }
         }
     }

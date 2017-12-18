@@ -6,8 +6,18 @@ class PieChart {
         this.height = param.height;
     }
 
+    update(filtered) {
+        if (filtered.length < 0) return;
+        this.data = formatTableData(filtered);
+        this.draw();
+    }
+
     draw() {
-        console.log(this.data, 'data');
+        d3
+            .select('.pie')
+            .select('svg')
+            .remove();
+
         const svg = d3
             .select('.pie')
             .append('svg')
