@@ -193,20 +193,28 @@ text.axis-worktime {
     background: #efeeee;
 
     .box {
-        border: 1px solid;
         flex-basis: 70%;
         flex-grow: 1;
         display: flex;
-        flex-direction: column;
         justify-content: space-around;
         align-items: center;
-        font-size: 20px;
-        padding: 2px;
-        margin: 2px;
-        font-weight: bold;
 
-        &.filter {
+        .innerbox {
+            border: 1px solid;
+            font-size: 20px;
+            padding: 2px;
+            margin: 2px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
             flex-basis: 100%;
+            flex-grow: 1;
+            justify-content: center;
+            align-items: center;
+            height: 91%;
+        }
+        &.filter {
+            flex-basis: 30%;
 
             .heatFilter {
                 display: flex;

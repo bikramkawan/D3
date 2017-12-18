@@ -76,7 +76,7 @@ const data = rawData.message.map(d => ({
 const randomData = data.map(d => ({ time: d.time, count: 0.8 * d.count }));
 
 console.log(data, 'main');
-
+console.log(d3.max(data,d=>d.time))
 const randomDate = d3.timeDay.range(
     new Date(2017, 1, 1),
     new Date(2017, 1, 30),
@@ -131,6 +131,11 @@ const heatConfig = {
 };
 const heatmapObj = new HeatMap(heatConfig);
 heatmapObj.draw();
+
+const topScore = new TopScore();
+topScore.updateScores();
+
+
 
 const month = [
     { label: 'Jan', id: 0 },

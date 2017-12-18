@@ -1,0 +1,75 @@
+/**
+ * Created by bikramkawan on 12/18/17.
+ */
+class TopScore {
+    constructor(data) {
+        this.data = randomHeatData();
+    }
+
+    updateScores() {
+        console.log(this.data);
+        const todayDate = new Date();
+        console.log(todayDate);
+
+        const thisWeek = parseWeek(todayDate);
+        const thisMonth = todayDate.getMonth();
+        const thisYear = todayDate.getFullYear();
+        const thisYearData = this.data.filter(d => d.year === thisYear);
+        const thisMonthData = thisYearData.filter(d => d.month === thisMonth);
+        const thisWeekData = thisYearData.filter(d => d.week === thisWeek);
+
+        const allTimeCount = Math.round(_.sumBy(this.data, 'count'));
+        const yearCount = Math.round(_.sumBy(thisYearData, 'count'));
+        const monthCount = Math.round(_.sumBy(thisMonthData, 'count'));
+        const weekCount = Math.round(_.sumBy(thisWeekData, 'count'));
+        console.log(
+            thisWeekData,
+            thisYearData,
+            thisMonthData,
+            allTimeCount,
+            yearCount,
+            weekCount,
+            monthCount,
+        );
+
+        const mapData = [
+            {
+                label: 'This Week',
+                id: 'week',
+                value: weekCount,
+            },
+            {
+                label: 'This Month',
+                id: 'month',
+                value: monthCount,
+            },
+            {
+                label: 'This Year',
+                id: 'year',
+                value: yearCount,
+            },
+            {
+                label: 'All Time',
+                id: 'allTime',
+                value: allTimeCount,
+            },
+        ];
+
+        const box = d3
+            .select('.score')
+            .selectAll('div')
+            .data(mapData)
+            .enter()
+            .append('div')
+            .classed('innerbox', true);
+
+        box
+            .append('div')
+            .classed('name', true)
+            .text(d => d.label);
+        box
+            .append('div')
+            .classed('value', true)
+            .text(d => d.value);
+    }
+}

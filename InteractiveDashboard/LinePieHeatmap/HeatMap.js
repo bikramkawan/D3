@@ -14,6 +14,7 @@ class HeatMap {
 
     /**/
     setScale() {
+        console.log(this.data,'data')
         this.gridSize = Math.floor(this.width / 24);
         this.legendElementWidth = this.gridSize * 2;
         const buckets = 4;
@@ -204,6 +205,7 @@ function randomHeatData() {
                         hour: groupedBy[0].time.getHours(),
                         month: g.time.getMonth(),
                         week: parseWeek(g.time) - 1,
+                        year:g.time.getFullYear()
                     }));
                 })
                 .reduce((acc, cur) => acc.concat(cur), []);
