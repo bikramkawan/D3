@@ -8,7 +8,7 @@ class LineChart {
         this.width = params.width;
         this.height = params.height;
         this.margin = params.margin;
-        this.random = params.randomData;
+        this.random = params.randomDataForLine;
         this.setScale();
     }
 
@@ -35,9 +35,9 @@ class LineChart {
             .y(d => this.yScale(d.count));
     }
 
-    update() {
-        this.data = this.data.slice(0, 10);
-        this.random = this.random.slice(0, 10);
+    update(filtered) {
+        this.data = filtered;
+        this.random = filtered;
         this.setScale();
         this.draw();
     }

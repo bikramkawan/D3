@@ -8,7 +8,6 @@ class BarChart {
         this.width = params.width;
         this.height = params.height;
         this.margin = params.margin;
-        this.random = params.randomData;
         this.setScale();
     }
 
