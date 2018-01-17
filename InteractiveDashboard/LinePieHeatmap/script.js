@@ -37,22 +37,12 @@ const times = [
 const dateParse = d3.utcParse('%Y-%m-%dT%H:%M:%S.%LZ');
 
 d3.json('data.json', (err, rawData) => {
-    const data = rawData.message.map(d => ({
-        time: dateParse(d.time),
-        count: d.wifiCount,
-    }));
-
-    const randomData = d3.timeHour
-        .range(new Date(2016, 6, 1), new Date(2017, 12, 30), 1)
-        .map(d => ({
-            time: d,
-            count: Math.random() * 100,
-        }));
+    const data = formatInitialData(rawData);
 
     //Replace data with randomdata inside the format raw data
     const formattedData = formatRawData(data);
 
-    console.log(formattedData, 'formatted data', data,'rawdata');
+    console.log(formattedData, 'formatted data', data, 'rawdata');
 
     const heatConfig = {
         margin: heatMapMargin,
@@ -118,13 +108,14 @@ d3.json('data.json', (err, rawData) => {
     const topScore = new TopScore(formattedData);
     topScore.updateScores();
 
-    const uniqueYears = [{ year: 'All' }].concat(
-        _.uniqBy(formattedData, 'year'),
-    );
+    const extractYear = d3.timeFormat('%Y');
+    const yearsData = formattedData.slice();
+    yearsData.push({ year: parseFloat(extractYear(new Date())) });
+    const uniqueYears = [{ year: ' ' }].concat(_.uniqBy(yearsData, 'year'));
 
-    let selectedYear = null;
-    let selectedMonth = null;
-    let selectedWeek = null;
+    let selectedYear = undefined;
+    let selectedMonth = undefined;
+    let selectedDay = undefined;
 
     const yearSelect = d3
         .select('.year')
@@ -143,19 +134,19 @@ d3.json('data.json', (err, rawData) => {
         .text(d => d.year);
 
     const month = [
-        { label: 'All', id: -1 },
-        { label: 'Jan', id: 0 },
-        { label: 'Feb', id: 1 },
-        { label: 'Mar', id: 2 },
-        { label: 'Apr', id: 3 },
-        { label: 'May', id: 4 },
-        { label: 'Jun', id: 5 },
-        { label: 'Jul', id: 6 },
-        { label: 'Aug', id: 7 },
-        { label: 'Sep', id: 8 },
-        { label: 'Oct', id: 9 },
-        { label: 'Nov', id: 10 },
-        { label: 'Dec', id: 11 },
+        { label: ' ', id: -1 },
+        { label: 'Jan', id: 1 },
+        { label: 'Feb', id: 2 },
+        { label: 'Mar', id: 3 },
+        { label: 'Apr', id: 4 },
+        { label: 'May', id: 5 },
+        { label: 'Jun', id: 6 },
+        { label: 'Jul', id: 7 },
+        { label: 'Aug', id: 8 },
+        { label: 'Sep', id: 9 },
+        { label: 'Oct', id: 10 },
+        { label: 'Nov', id: 11 },
+        { label: 'Dec', id: 12 },
     ];
 
     const monthSelect = d3
@@ -174,51 +165,86 @@ d3.json('data.json', (err, rawData) => {
         .append('option')
         .text(d => d.label);
 
-    const weeks = ['All'].concat(Array.from({ length: 52 }, (v, i) => i + 1));
-    const weekSelect = d3
+    const days = [' '].concat(Array.from({ length: 32 }, (v, i) => i + 1));
+    const daySelect = d3
         .select('.week')
         .append('select')
         .attr('class', 'weekSelect')
         .on('change', () => {
-            selectedWeek = d3.select('.weekSelect').property('value');
+            selectedDay = d3.select('.weekSelect').property('value');
             filterData();
         });
 
-    weekSelect
+    daySelect
         .selectAll('option')
-        .data(weeks)
+        .data(days)
         .enter()
         .append('option')
         .text(d => d);
 
+    const parseTime = d3.timeParse('%Y %m %d');
+    const formatTime = d3.timeFormat('%Y-%m-%d');
     function filterData() {
-        let filtered = getHeatData;
-        if (selectedYear && selectedYear !== 'All') {
-            filtered = filtered.filter(
-                d => d.year === parseFloat(selectedYear),
-            );
-        }
-        if (selectedMonth && selectedMonth !== 'All') {
-            const monthId = month.find(d => d.label === selectedMonth);
-            filtered = filtered.filter(d => d.month === monthId.id);
-        }
-        if (selectedWeek && selectedWeek !== 'All') {
-            filtered = filtered.filter(
-                d => d.week === parseFloat(selectedWeek),
-            );
-        }
+        const monthId = month.find(d => d.label === selectedMonth);
+        const parsedTime = parseTime(
+            `${selectedYear} ${monthId && monthId.id} ${selectedDay}`,
+        );
+        if (!parsedTime) return;
+        const formattedTime = formatTime(parsedTime);
+        var dataPost = JSON.stringify({
+            id: 'testunit',
+            namespace: '/readerWifiCount',
+            message: {
+                beaconReaderId:
+                    'device-id-8f373a31-a510-4a3f-9472-4a0f5bb56245',
+                startDateTime: formattedTime,
+                endDateTime: formatTime(new Date()),
+                timeInterval: '60',
+            },
+        });
 
-        if (filtered.length > 0) {
-            heatMap.update(filtered);
-            lineChart.update(filtered);
-            barChart.update(filtered);
-            tableView.update(filtered);
-            pieChart.update(filtered);
-        } else {
-            alert('No Data Found in this Range');
-        }
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = false;
+
+        xhr.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                const responseData = JSON.parse(this.responseText);
+                const formatResponse = formatInitialData(responseData);
+                const renderFormat = formatRawData(formatResponse);
+                if (renderFormat.length > 0) {
+                    heatMap.update(renderFormat);
+                    lineChart.update(renderFormat);
+                    barChart.update(renderFormat);
+                    tableView.update(renderFormat);
+                    pieChart.update(renderFormat);
+                } else {
+                    alert('No Data Found in this Range');
+                }
+            }
+        });
+
+        xhr.open('POST', 'https://ebs-granite.bigbang.io/api/v1/call');
+        xhr.setRequestHeader(
+            'authorization',
+            'Bearer at_1fbc4851-8c41-4c27-80a3-d0a884f9f684',
+        );
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Cache-Control', 'no-cache');
+        xhr.setRequestHeader(
+            'Postman-Token',
+            '8d7989e0-b3de-8adb-7a3f-495cdb7605fb',
+        );
+
+        xhr.send(dataPost);
     }
 });
+
+function formatInitialData(rawData) {
+    return rawData.message.map(d => ({
+        time: dateParse(d.time),
+        count: d.wifiCount,
+    }));
+}
 
 //https://gist.github.com/IamSilviu/5899269
 function parseWeek(date) {

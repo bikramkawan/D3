@@ -16,16 +16,17 @@ class HeatMap {
     setScale() {
         this.gridSize = Math.floor(this.width / 24);
         this.legendElementWidth = this.gridSize * 2;
-        const buckets = 4;
+        const maxValue = d3.max(this.data, d => d.count);
         this.colorScale = d3
             .scaleQuantile()
-            .domain([0, buckets - 1, d3.max(this.data, d => d.count)])
+            .domain([maxValue/3, maxValue/2, maxValue])
             .range(colors);
     }
 
     update(filtered) {
         if (filtered.length < 0) return;
         this.data = filtered;
+        this.setScale();
         this.draw();
     }
 
