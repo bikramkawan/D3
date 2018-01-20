@@ -112,26 +112,45 @@ d3.json('data.json', (err, rawData) => {
     const yearsData = formattedData.slice();
     yearsData.push({ year: parseFloat(extractYear(new Date())) });
     const uniqueYears = [{ year: ' ' }].concat(_.uniqBy(yearsData, 'year'));
-
+    const formatTime = d3.timeFormat('%Y-%m-%d');
     let selectedYear = undefined;
     let selectedMonth = undefined;
     let selectedDay = undefined;
-
-    const yearSelect = d3
-        .select('.year')
-        .append('select')
-        .attr('class', 'yearSelect')
+    let fromDate = undefined;
+    let toDate = undefined;
+    d3
+        .select('.fromdate')
+        .attr('value', formatTime(_.min(formattedData, 'time').time))
         .on('change', () => {
-            selectedYear = d3.select('.yearSelect').property('value');
+            fromDate = d3.select('.fromdate').property('value');
+            //console.log(fromDate);
             filterData();
         });
 
-    yearSelect
-        .selectAll('option')
-        .data(uniqueYears)
-        .enter()
-        .append('option')
-        .text(d => d.year);
+    d3
+        .select('.todate')
+        .attr('value', formatTime(new Date()))
+        .on('change', () => {
+            toDate = d3.select('.todate').property('value');
+            // console.log(toDate);
+            filterData();
+        });
+
+    // const yearSelect = d3
+    //     .select('.year')
+    //     .append('select')
+    //     .attr('class', 'yearSelect')
+    //     .on('change', () => {
+    //         selectedYear = d3.select('.yearSelect').property('value');
+    //         filterData();
+    //     });
+    //
+    // yearSelect
+    //     .selectAll('option')
+    //     .data(uniqueYears)
+    //     .enter()
+    //     .append('option')
+    //     .text(d => d.year);
 
     const month = [
         { label: ' ', id: -1 },
@@ -149,21 +168,21 @@ d3.json('data.json', (err, rawData) => {
         { label: 'Dec', id: 12 },
     ];
 
-    const monthSelect = d3
-        .select('.month')
-        .append('select')
-        .attr('class', 'monthSelect')
-        .on('change', () => {
-            selectedMonth = d3.select('.monthSelect').property('value');
-            filterData();
-        });
-
-    monthSelect
-        .selectAll('option')
-        .data(month)
-        .enter()
-        .append('option')
-        .text(d => d.label);
+    // const monthSelect = d3
+    //     .select('.month')
+    //     .append('select')
+    //     .attr('class', 'monthSelect')
+    //     .on('change', () => {
+    //         selectedMonth = d3.select('.monthSelect').property('value');
+    //         filterData();
+    //     });
+    //
+    // monthSelect
+    //     .selectAll('option')
+    //     .data(month)
+    //     .enter()
+    //     .append('option')
+    //     .text(d => d.label);
 
     const days = [' '].concat(Array.from({ length: 32 }, (v, i) => i + 1));
     const daySelect = d3
@@ -183,22 +202,20 @@ d3.json('data.json', (err, rawData) => {
         .text(d => d);
 
     const parseTime = d3.timeParse('%Y %m %d');
-    const formatTime = d3.timeFormat('%Y-%m-%d');
+
     function filterData() {
-        const monthId = month.find(d => d.label === selectedMonth);
-        const parsedTime = parseTime(
-            `${selectedYear} ${monthId && monthId.id} ${selectedDay}`,
-        );
-        if (!parsedTime) return;
-        const formattedTime = formatTime(parsedTime);
+        if (!fromDate || !toDate) {
+            return;
+        }
+
         var dataPost = JSON.stringify({
             id: 'testunit',
             namespace: '/readerWifiCount',
             message: {
                 beaconReaderId:
                     'device-id-8f373a31-a510-4a3f-9472-4a0f5bb56245',
-                startDateTime: formattedTime,
-                endDateTime: formatTime(new Date()),
+                startDateTime: fromDate,
+                endDateTime: toDate,
                 timeInterval: '60',
             },
         });
@@ -213,7 +230,7 @@ d3.json('data.json', (err, rawData) => {
                 const renderFormat = formatRawData(formatResponse);
                 if (renderFormat.length > 0) {
                     heatMap.update(renderFormat);
-                    lineChart.update(renderFormat);
+                    lineChart.update(formatResponse);
                     barChart.update(renderFormat);
                     tableView.update(renderFormat);
                     pieChart.update(renderFormat);
