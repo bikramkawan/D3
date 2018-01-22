@@ -8,13 +8,12 @@ class TopScore {
 
     updateScores() {
         const todayDate = new Date();
-        const thisWeek = parseWeek(todayDate);
+        const thisWeek = parseWeek(todayDate)-1;
         const thisMonth = todayDate.getMonth();
         const thisYear = todayDate.getFullYear();
         const thisYearData = this.data.filter(d => d.year === thisYear);
         const thisMonthData = thisYearData.filter(d => d.month === thisMonth);
         const thisWeekData = thisYearData.filter(d => d.week === thisWeek);
-
         const allTimeCount = Math.round(_.sumBy(this.data, 'count'));
         const yearCount = Math.round(_.sumBy(thisYearData, 'count'));
         const monthCount = Math.round(_.sumBy(thisMonthData, 'count'));
