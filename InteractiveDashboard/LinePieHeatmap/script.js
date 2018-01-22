@@ -123,7 +123,6 @@ d3.json('data.json', (err, rawData) => {
         .attr('value', formatTime(_.min(formattedData, 'time').time))
         .on('change', () => {
             fromDate = d3.select('.fromdate').property('value');
-            //console.log(fromDate);
             filterData();
         });
 
@@ -132,57 +131,8 @@ d3.json('data.json', (err, rawData) => {
         .attr('value', formatTime(new Date()))
         .on('change', () => {
             toDate = d3.select('.todate').property('value');
-            // console.log(toDate);
             filterData();
         });
-
-    // const yearSelect = d3
-    //     .select('.year')
-    //     .append('select')
-    //     .attr('class', 'yearSelect')
-    //     .on('change', () => {
-    //         selectedYear = d3.select('.yearSelect').property('value');
-    //         filterData();
-    //     });
-    //
-    // yearSelect
-    //     .selectAll('option')
-    //     .data(uniqueYears)
-    //     .enter()
-    //     .append('option')
-    //     .text(d => d.year);
-
-    const month = [
-        { label: ' ', id: -1 },
-        { label: 'Jan', id: 1 },
-        { label: 'Feb', id: 2 },
-        { label: 'Mar', id: 3 },
-        { label: 'Apr', id: 4 },
-        { label: 'May', id: 5 },
-        { label: 'Jun', id: 6 },
-        { label: 'Jul', id: 7 },
-        { label: 'Aug', id: 8 },
-        { label: 'Sep', id: 9 },
-        { label: 'Oct', id: 10 },
-        { label: 'Nov', id: 11 },
-        { label: 'Dec', id: 12 },
-    ];
-
-    // const monthSelect = d3
-    //     .select('.month')
-    //     .append('select')
-    //     .attr('class', 'monthSelect')
-    //     .on('change', () => {
-    //         selectedMonth = d3.select('.monthSelect').property('value');
-    //         filterData();
-    //     });
-    //
-    // monthSelect
-    //     .selectAll('option')
-    //     .data(month)
-    //     .enter()
-    //     .append('option')
-    //     .text(d => d.label);
 
     const days = [' '].concat(Array.from({ length: 32 }, (v, i) => i + 1));
     const daySelect = d3
