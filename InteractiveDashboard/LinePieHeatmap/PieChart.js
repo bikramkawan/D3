@@ -4,6 +4,7 @@ class PieChart {
         this.margin = param.margin;
         this.width = param.width;
         this.height = param.height;
+        this.selector = param.selector;
     }
 
     update(filtered) {
@@ -21,12 +22,11 @@ class PieChart {
 
     draw() {
         d3
-            .select('.pie')
+            .select(`.${this.selector}`)
             .select('svg')
             .remove();
-
         const svg = d3
-            .select('.pie')
+            .select(`.${this.selector}`)
             .append('svg')
             .attr('width', this.width)
             .attr('height', this.height)

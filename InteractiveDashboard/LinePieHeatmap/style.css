@@ -40,6 +40,22 @@
   width: 100%;
   overflow: auto;
 }
+.container .main .chartContainer .col.right {
+  flex-direction: column;
+}
+.container .main .chartContainer .col .childRow {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+.container .main .chartContainer .col .childRow .childCol {
+  flex-basis: 100%;
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
 .container .main .chartContainer .col .line {
   flex-basis: 100%;
   flex-grow: 1;
@@ -55,6 +71,7 @@
   flex-basis: 100%;
   flex-grow: 1;
   height: 100%;
+  width: 100%;
 }
 .container .main .chartContainer .col .time {
   flex-basis: 100%;

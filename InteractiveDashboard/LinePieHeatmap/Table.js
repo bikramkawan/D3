@@ -10,8 +10,9 @@ const DATE_CONST = [
 ];
 
 class Table {
-    constructor(data) {
-        this.data = formatTableData(data);
+    constructor(param) {
+        this.data = formatTableData(param.data);
+        this.selector = param.selector;
     }
 
     update(filtered) {
@@ -22,12 +23,12 @@ class Table {
 
     draw() {
         d3
-            .select('.timeBody')
+            .select(`.${this.selector}`)
             .selectAll('div')
             .remove();
 
         const tableRow = d3
-            .select('.timeBody')
+            .select(`.${this.selector}`)
             .selectAll('div')
             .data(this.data)
             .enter()
@@ -54,6 +55,7 @@ class Table {
 }
 
 function formatTableData(rawdata) {
+    console.log(rawdata)
     const parseTime = d3.timeFormat('%H');
     const groupData = DATE_CONST.map(d => {
         const filtered = rawdata.filter(e => {

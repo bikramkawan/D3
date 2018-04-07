@@ -40,6 +40,23 @@
                 height: 100%;
                 width: 100%;
                 overflow: auto;
+                &.right {
+                    flex-direction: column;
+                }
+
+                .childRow {
+                    display: flex;
+                    height: 100%;
+                    width: 100%;
+                    .childCol {
+                        flex-basis: 100%;
+                        flex-grow: 1;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        width: 50%;
+                    }
+                }
 
                 .line {
                     flex-basis: 100%;
@@ -57,6 +74,7 @@
                     flex-basis: 100%;
                     flex-grow: 1;
                     height: 100%;
+                    width: 100%;
                 }
                 .time {
                     flex-basis: 100%;

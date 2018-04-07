@@ -44,8 +44,6 @@ d3.json('data.json', (err, rawData) => {
 
     console.log(formattedData, 'formatted data', data, 'rawdata');
 
-
-
     const heatEl = document.querySelector('.heatmap');
     const heatWidth = heatEl.clientWidth;
     const heatHeight = heatEl.clientHeight;
@@ -70,13 +68,14 @@ d3.json('data.json', (err, rawData) => {
     const lineHeight = lineEl.clientHeight;
 
     const pieEl = document.querySelector('.pie');
-    const pieElWidth = lineEl.clientWidth;
-    const pieElHeight = lineEl.clientHeight;
+    console.log(pieEl);
+    const pieElWidth = pieEl.clientWidth;
+    const pieElHeight = pieEl.clientHeight;
+    console.log(pieElWidth);
 
     const barEl = document.querySelector('.bar');
     const barWidth = lineEl.clientWidth;
     const barHeight = lineEl.clientHeight;
-
 
     const lineSVG = d3
         .select('.line')
@@ -113,12 +112,67 @@ d3.json('data.json', (err, rawData) => {
     const barChart = new BarChart(barChartConfig);
     barChart.draw();
 
-    const tableView = new Table(formattedData);
-    tableView.draw();
+    const pieChartConfig1 = {
+        data: formattedData,
+        margin,
+        width: pieElWidth,
+        height: pieElHeight,
+        selector: 'pie1',
+    };
+    const pieChart1 = new PieChart(pieChartConfig1);
+    pieChart1.draw();
 
-    const pieChartConfig = { data: formattedData, margin, width, height };
-    const pieChart = new PieChart(pieChartConfig);
-    pieChart.draw();
+    const tableView1 = new Table({
+        data: formattedData,
+        selector: 'timeBody1',
+    });
+    tableView1.draw();
+
+    const pieChartConfig2 = {
+        data: formattedData,
+        margin,
+        width: pieElWidth,
+        height: pieElHeight,
+        selector: 'pie2',
+    };
+    const pieChart2 = new PieChart(pieChartConfig2);
+    pieChart2.draw();
+
+    const tableView2 = new Table({
+        data: formattedData,
+        selector: 'timeBody2',
+    });
+    tableView2.draw();
+    const pieChartConfig3 = {
+        data: formattedData,
+        margin,
+        width: pieElWidth,
+        height: pieElHeight,
+        selector: 'pie3',
+    };
+    const pieChart3 = new PieChart(pieChartConfig3);
+    pieChart3.draw();
+
+    const tableView3 = new Table({
+        data: formattedData,
+        selector: 'timeBody3',
+    });
+    tableView3.draw();
+    const pieChartConfig4 = {
+        data: formattedData,
+        margin,
+        width: pieElWidth,
+        height: pieElHeight,
+        selector: 'pie4',
+    };
+    const pieChart4 = new PieChart(pieChartConfig4);
+    pieChart4.draw();
+
+    const tableView4 = new Table({
+        data: formattedData,
+        selector: 'timeBody4',
+    });
+    tableView4.draw();
 
     const topScore = new TopScore(formattedData);
     topScore.updateScores();
@@ -130,7 +184,6 @@ d3.json('data.json', (err, rawData) => {
         barChart.updateDimension(barEl.clientHeight, barEl.clientWidth);
         pieChart.updateDimension(pieEl.clientHeight, pieEl.clientWidth);
         heatMap.updateDimension(heatEl.clientHeight, heatEl.clientWidth);
-
 
         console.log(barEl.clientHeight, barEl.clientWidth, updateWidth);
     });
