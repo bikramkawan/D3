@@ -31,6 +31,24 @@ class BarChart {
         this.draw();
     }
 
+    updateDimension(height, width) {
+        this.height = height - this.margin.top - this.margin.bottom;
+        this.width = width - this.margin.left - this.margin.right;
+        this.setScale();
+
+        d3
+            .select('.bar')
+            .selectAll('svg')
+            .remove();
+
+        this.svg = d3
+            .select('.bar')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+        this.draw();
+    }
+
     draw() {
         this.svg.selectAll('g').remove();
         const svg = this.svg

@@ -12,6 +12,13 @@ class PieChart {
         this.draw();
     }
 
+    updateDimension(height, width) {
+        this.height = height;
+        this.width = width;
+
+        this.draw();
+    }
+
     draw() {
         d3
             .select('.pie')

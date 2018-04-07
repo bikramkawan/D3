@@ -30,6 +30,20 @@ class HeatMap {
         this.draw();
     }
 
+
+
+    updateDimension(height, width) {
+        this.height = height - this.margin.top - this.margin.bottom;
+        this.width = width - this.margin.left - this.margin.right;
+        this.setScale();
+
+        d3
+            .select('.heatmap')
+            .selectAll('svg')
+            .remove();
+
+        this.draw();
+    }
     getData() {
         return this.rawData;
     }

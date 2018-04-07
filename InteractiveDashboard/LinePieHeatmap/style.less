@@ -28,6 +28,7 @@
         }
 
         .chartContainer {
+            overflow: hidden;
             display: flex;
             width: 80vw;
             height: 80vh;
@@ -37,11 +38,14 @@
                 flex-basis: 100%;
                 flex-grow: 1;
                 height: 100%;
+                width: 100%;
+                overflow: auto;
 
                 .line {
                     flex-basis: 100%;
                     flex-grow: 1;
                     height: 100%;
+                    width: 100%;
                 }
                 .bar {
                     flex-basis: 100%;
@@ -122,6 +126,12 @@
     }
 
     .mainBottom {
+        width: 80vw;
+        .heatmap {
+            width: 100%;
+            height: 70%;
+        }
+
         .heatFilter {
             display: flex;
             justify-content: center;

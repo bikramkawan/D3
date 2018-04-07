@@ -26,6 +26,7 @@
   background: green;
 }
 .container .main .chartContainer {
+  overflow: hidden;
   display: flex;
   width: 80vw;
   height: 80vh;
@@ -36,11 +37,14 @@
   flex-basis: 100%;
   flex-grow: 1;
   height: 100%;
+  width: 100%;
+  overflow: auto;
 }
 .container .main .chartContainer .col .line {
   flex-basis: 100%;
   flex-grow: 1;
   height: 100%;
+  width: 100%;
 }
 .container .main .chartContainer .col .bar {
   flex-basis: 100%;
@@ -112,6 +116,13 @@
   flex-grow: 1;
   width: 100%;
   text-align: center;
+}
+.container .mainBottom {
+  width: 80vw;
+}
+.container .mainBottom .heatmap {
+  width: 100%;
+  height: 70%;
 }
 .container .mainBottom .heatFilter {
   display: flex;

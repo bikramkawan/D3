@@ -4,8 +4,8 @@
 
 const margin = { top: 20, right: 20, bottom: 30, left: 50 };
 const heatMapMargin = { top: 50, right: 0, bottom: 100, left: 30 };
-const heatmapWidth = 960;
-const heatMapHeight = 430;
+// const heatmapWidth = 960;
+// const heatMapHeight = 430;
 const colors = ['blue', 'green', 'yellow', 'red']; // alternatively colorbrewer.YlGnBu[9]
 const days = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 const times = [
@@ -44,10 +44,16 @@ d3.json('data.json', (err, rawData) => {
 
     console.log(formattedData, 'formatted data', data, 'rawdata');
 
+
+
+    const heatEl = document.querySelector('.heatmap');
+    const heatWidth = heatEl.clientWidth;
+    const heatHeight = heatEl.clientHeight;
+
     const heatConfig = {
         margin: heatMapMargin,
-        width: heatmapWidth,
-        height: heatMapHeight,
+        width: heatWidth,
+        height: heatHeight,
         data: formattedData,
     };
 
@@ -62,6 +68,15 @@ d3.json('data.json', (err, rawData) => {
     const lineEl = document.querySelector('.line');
     const lineWidth = lineEl.clientWidth;
     const lineHeight = lineEl.clientHeight;
+
+    const pieEl = document.querySelector('.pie');
+    const pieElWidth = lineEl.clientWidth;
+    const pieElHeight = lineEl.clientHeight;
+
+    const barEl = document.querySelector('.bar');
+    const barWidth = lineEl.clientWidth;
+    const barHeight = lineEl.clientHeight;
+
 
     const lineSVG = d3
         .select('.line')
@@ -108,6 +123,17 @@ d3.json('data.json', (err, rawData) => {
     const topScore = new TopScore(formattedData);
     topScore.updateScores();
 
+    window.addEventListener('resize', function(d) {
+        const updateHeight = lineEl.clientHeight;
+        const updateWidth = lineEl.clientWidth;
+        lineChart.updateDimension(updateHeight, updateWidth);
+        barChart.updateDimension(barEl.clientHeight, barEl.clientWidth);
+        pieChart.updateDimension(pieEl.clientHeight, pieEl.clientWidth);
+        heatMap.updateDimension(heatEl.clientHeight, heatEl.clientWidth);
+
+
+        console.log(barEl.clientHeight, barEl.clientWidth, updateWidth);
+    });
     const extractYear = d3.timeFormat('%Y');
     const yearsData = formattedData.slice();
     yearsData.push({ year: parseFloat(extractYear(new Date())) });

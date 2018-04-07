@@ -42,6 +42,23 @@ class LineChart {
         this.draw();
     }
 
+    updateDimension(height, width) {
+        this.height = height - this.margin.top - this.margin.bottom;
+        this.width = width - this.margin.left - this.margin.right;
+        this.setScale();
+
+        d3
+            .select('.line')
+            .selectAll('svg')
+            .remove();
+
+        this.svg = d3
+            .select('.line')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+        this.draw();
+    }
     draw() {
         this.svg.selectAll('g').remove();
 
