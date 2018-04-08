@@ -42,20 +42,23 @@ class Table {
         tableRow
             .append('div')
             .text(d => d.label)
-            .classed('hour', true);
+            .classed('hour', true)
+            .attr('title', d => d.label);
+
         tableRow
             .append('div')
             .text(d => d.percents + ' %')
+            .attr('title', d => d.percents + ' %')
             .classed('per', true);
         tableRow
             .append('div')
             .text(d => d.count)
+            .attr('title', d => d.count)
             .classed('total', true);
     }
 }
 
 function formatTableData(rawdata) {
-    console.log(rawdata)
     const parseTime = d3.timeFormat('%H');
     const groupData = DATE_CONST.map(d => {
         const filtered = rawdata.filter(e => {

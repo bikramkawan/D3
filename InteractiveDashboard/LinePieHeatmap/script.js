@@ -38,11 +38,13 @@ const dateParse = d3.utcParse('%Y-%m-%dT%H:%M:%S.%LZ');
 
 d3.json('data.json', (err, rawData) => {
     const data = formatInitialData(rawData);
-
     //Replace data with randomdata inside the format raw data
     const formattedData = formatRawData(data);
 
-    console.log(formattedData, 'formatted data', data, 'rawdata');
+    const multipleData = [rawData, rawData, rawData, rawData];
+    const formattedMultipleDataSource = multipleData
+        .map(d => formatInitialData(d))
+        .map(d => formatRawData(d));
 
     const heatEl = document.querySelector('.heatmap');
     const heatWidth = heatEl.clientWidth;
@@ -68,10 +70,8 @@ d3.json('data.json', (err, rawData) => {
     const lineHeight = lineEl.clientHeight;
 
     const pieEl = document.querySelector('.pie');
-    console.log(pieEl);
     const pieElWidth = pieEl.clientWidth;
     const pieElHeight = pieEl.clientHeight;
-    console.log(pieElWidth);
 
     const barEl = document.querySelector('.bar');
     const barWidth = lineEl.clientWidth;
@@ -102,7 +102,7 @@ d3.json('data.json', (err, rawData) => {
     lineChart.draw();
 
     const barChartConfig = {
-        data: formattedData,
+        data: formattedMultipleDataSource,
         margin,
         width,
         height,
@@ -112,80 +112,60 @@ d3.json('data.json', (err, rawData) => {
     const barChart = new BarChart(barChartConfig);
     barChart.draw();
 
-    const pieChartConfig1 = {
-        data: formattedData,
-        margin,
-        width: pieElWidth,
-        height: pieElHeight,
-        selector: 'pie1',
-    };
-    const pieChart1 = new PieChart(pieChartConfig1);
-    pieChart1.draw();
-
-    const tableView1 = new Table({
-        data: formattedData,
-        selector: 'timeBody1',
+    const pieChartConfig = formattedMultipleDataSource.map(
+        (singlePieData, index) => {
+            return {
+                data: singlePieData,
+                margin,
+                width: pieElWidth,
+                height: pieElHeight,
+                selector: `pie${index + 1}`,
+            };
+        },
+    );
+    const pieCharts = [];
+    pieChartConfig.forEach(pie => {
+        const pieChart = new PieChart(pie);
+        pieChart.draw();
+        pieCharts.push(pieChart);
     });
-    tableView1.draw();
 
-    const pieChartConfig2 = {
-        data: formattedData,
-        margin,
-        width: pieElWidth,
-        height: pieElHeight,
-        selector: 'pie2',
-    };
-    const pieChart2 = new PieChart(pieChartConfig2);
-    pieChart2.draw();
+    const tableViews = formattedMultipleDataSource.map(
+        (singleTableView, index) => {
+            return {
+                data: singleTableView,
+                selector: `timeBody${index + 1}`,
+            };
+        },
+    );
 
-    const tableView2 = new Table({
-        data: formattedData,
-        selector: 'timeBody2',
+    tableViews.forEach(table => {
+        const tableView = new Table(table);
+        tableView.draw();
     });
-    tableView2.draw();
-    const pieChartConfig3 = {
-        data: formattedData,
-        margin,
-        width: pieElWidth,
-        height: pieElHeight,
-        selector: 'pie3',
-    };
-    const pieChart3 = new PieChart(pieChartConfig3);
-    pieChart3.draw();
 
-    const tableView3 = new Table({
-        data: formattedData,
-        selector: 'timeBody3',
+    const topScores = formattedMultipleDataSource.map((data, index) => {
+        return {
+            data,
+            selector: `score${index + 1}`,
+        };
     });
-    tableView3.draw();
-    const pieChartConfig4 = {
-        data: formattedData,
-        margin,
-        width: pieElWidth,
-        height: pieElHeight,
-        selector: 'pie4',
-    };
-    const pieChart4 = new PieChart(pieChartConfig4);
-    pieChart4.draw();
 
-    const tableView4 = new Table({
-        data: formattedData,
-        selector: 'timeBody4',
+    topScores.forEach(score => {
+        const topScore = new TopScore(score);
+        topScore.updateScores();
     });
-    tableView4.draw();
-
-    const topScore = new TopScore(formattedData);
-    topScore.updateScores();
 
     window.addEventListener('resize', function(d) {
         const updateHeight = lineEl.clientHeight;
         const updateWidth = lineEl.clientWidth;
         lineChart.updateDimension(updateHeight, updateWidth);
         barChart.updateDimension(barEl.clientHeight, barEl.clientWidth);
-        pieChart.updateDimension(pieEl.clientHeight, pieEl.clientWidth);
-        heatMap.updateDimension(heatEl.clientHeight, heatEl.clientWidth);
+        pieCharts.forEach(pie => {
+            pie.updateDimension(pieEl.clientHeight, pieEl.clientWidth);
+        });
 
-        console.log(barEl.clientHeight, barEl.clientWidth, updateWidth);
+        heatMap.updateDimension(heatEl.clientHeight, heatEl.clientWidth);
     });
     const extractYear = d3.timeFormat('%Y');
     const yearsData = formattedData.slice();

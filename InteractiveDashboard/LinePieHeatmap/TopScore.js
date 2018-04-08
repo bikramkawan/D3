@@ -2,13 +2,14 @@
  * Created by bikramkawan on 12/18/17.
  */
 class TopScore {
-    constructor(data) {
-        this.data = data;
+    constructor(param) {
+        this.data = param.data;
+        this.selector = param.selector;
     }
 
     updateScores() {
         const todayDate = new Date();
-        const thisWeek = parseWeek(todayDate)-1;
+        const thisWeek = parseWeek(todayDate) - 1;
         const thisMonth = todayDate.getMonth();
         const thisYear = todayDate.getFullYear();
         const thisYearData = this.data.filter(d => d.year === thisYear);
@@ -43,7 +44,7 @@ class TopScore {
         ];
 
         const box = d3
-            .select('.score')
+            .select(`.${this.selector}`)
             .selectAll('div')
             .data(mapData)
             .enter()

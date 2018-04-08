@@ -28,7 +28,7 @@
 .container .main .chartContainer {
   overflow: hidden;
   display: flex;
-  width: 80vw;
+  width: 95vw;
   height: 80vh;
 }
 .container .main .chartContainer .col {
@@ -89,6 +89,16 @@
   justify-content: space-around;
   align-items: center;
   width: 90%;
+  border-bottom: 1px solid;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media only screen and (max-width: 1300px) {
+  .container .main .chartContainer .col .time .header {
+    font-size: 20px;
+  }
 }
 .container .main .chartContainer .col .time .header .transparent {
   background: transparent;
@@ -122,8 +132,13 @@
   align-items: center;
   justify-content: center;
 }
+@media only screen and (max-width: 1300px) {
+  .container .main .chartContainer .col .time .timeBody .row {
+    font-size: 15px;
+  }
+}
 .container .main .chartContainer .col .time .timeBody .row .legendColor {
-  flex-basis: 25%;
+  flex-basis: 1%;
   flex-grow: 1;
   height: 30px;
 }
@@ -133,6 +148,9 @@
   flex-grow: 1;
   width: 100%;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .container .mainBottom {
   width: 80vw;
@@ -195,6 +213,7 @@ text.axis-worktime {
   justify-content: space-around;
   height: 80px;
   background: #efeeee;
+  margin-bottom: 5px;
 }
 .infoPanel .box {
   flex-basis: 70%;
