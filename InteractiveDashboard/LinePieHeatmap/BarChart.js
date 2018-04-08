@@ -105,7 +105,9 @@ class BarChart {
             })
             .attr('fill', function(d) {
                 return that.zScale(d.key);
-            });
+            })
+            .append('title')
+            .text(d=>d.value.toFixed(2))
 
         svg
             .append('g')

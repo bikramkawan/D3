@@ -156,6 +156,13 @@ d3.json('data.json', (err, rawData) => {
         topScore.updateScores();
     });
 
+
+    formattedMultipleDataSource.forEach((source,index)=>{
+
+        d3.select(`.source${index+1}`).text(`Data Source ${index+1}`)
+
+    })
+
     window.addEventListener('resize', function(d) {
         const updateHeight = lineEl.clientHeight;
         const updateWidth = lineEl.clientWidth;
