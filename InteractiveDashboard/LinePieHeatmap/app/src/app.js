@@ -2,6 +2,14 @@
  * Created by bikramkawan on 12/13/17.
  */
 
+import LineChart from './renderers/LineChart'
+import BarChart from './renderers/BarChart'
+import HeatMap from './renderers/HeatMap'
+import PieChart from './renderers/PieChart'
+import Table from './renderers/Table'
+import TopScore from './renderers/TopScore'
+import './style.less'
+
 const margin = { top: 20, right: 20, bottom: 30, left: 50 };
 const heatMapMargin = { top: 50, right: 0, bottom: 100, left: 30 };
 // const heatmapWidth = 960;
@@ -36,9 +44,11 @@ const times = [
 ];
 const dateParse = d3.utcParse('%Y-%m-%dT%H:%M:%S.%LZ');
 
-d3.json('data.json', (err, rawData) => {
+d3.json('data/newdata.json', (err, rawData) => {
+    console.error(rawData,'dafafasjfalsf')
     const data = formatInitialData(rawData);
     //Replace data with randomdata inside the format raw data
+
     const formattedData = formatRawData(data);
 
     const multipleData = [rawData, rawData, rawData, rawData];
@@ -56,10 +66,10 @@ d3.json('data.json', (err, rawData) => {
         height: heatHeight,
         data: formattedData,
     };
-
-    const heatMap = new HeatMap(heatConfig);
-    heatMap.draw();
-    const getHeatData = heatMap.getData();
+    //
+    // const heatMap = new HeatMap(heatConfig);
+    // heatMap.draw();
+    // const getHeatData = heatMap.getData();
 
     const randomDataForLine = data.map(d => ({
         time: d.time,
@@ -273,9 +283,11 @@ d3.json('data.json', (err, rawData) => {
 });
 
 function formatInitialData(rawData) {
-    return rawData.message.map(d => ({
-        time: dateParse(d.time),
-        count: d.wifiCount,
+    const date = d3.isoParse(rawData.message.results[0].time)
+    console.error((rawData.message.results[0].time),('2018-01-03T00:00:00.000Z'),date)
+    return rawData.message.results.map(d => ({
+        time: d3.isoParse(d.time),
+        count: d.count,
     }));
 }
 
@@ -285,6 +297,7 @@ function parseWeek(date) {
     return Math.ceil(((date - onejan) / 86400000 + onejan.getDay() + 1) / 7);
 }
 function formatRawData(data) {
+    console.error(data,'dafas')
     const daysIndex = days.map((d, i) => i);
     const timeIndex = times.map((d, i) => i);
     const dataByWeek = daysIndex

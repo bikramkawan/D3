@@ -1,15 +1,7 @@
-/**
- * Created by bikramkawan on 12/13/17.
- */
+import {DATE_CONST} from "../utils/utils";
 
-const DATE_CONST = [
-    { group: 'A', range: [5, 11], label: '5am - 11am', color: 'orange' },
-    { group: 'B', range: [11, 17], label: '11am - 5pm', color: 'green' },
-    { group: 'C', range: [17, 23], label: '5pm - 11pm', color: 'lightblue' },
-    { group: 'D', range: [23, 5], label: '11pm - 5am', color: 'red' },
-];
 
-class Table {
+export  default class Table {
     constructor(param) {
         this.data = formatTableData(param.data);
         this.selector = param.selector;

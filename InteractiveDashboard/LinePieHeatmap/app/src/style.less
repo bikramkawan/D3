@@ -1,0 +1,281 @@
+.container {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    flex-direction: column;
+    align-items: center;
+
+    .main {
+        display: flex;
+
+        flex-direction: column;
+        .lineFilter {
+            display: flex;
+            justify-content: flex-end;
+
+            & > div {
+                padding: 5px;
+                font-size: 18px;
+                color: white;
+                cursor: pointer;
+            }
+            .weekday {
+                background: lightblue;
+            }
+            .weekend {
+                background: green;
+            }
+        }
+
+        .chartContainer {
+            overflow: hidden;
+            display: flex;
+            width: 95vw;
+            height: 80vh;
+            .col {
+                display: flex;
+                flex-direction: column;
+                flex-basis: 100%;
+                flex-grow: 1;
+                height: 100%;
+                width: 100%;
+                overflow: auto;
+                &.right {
+                    flex-direction: column;
+                }
+
+                .childRow {
+                    display: flex;
+                    height: 100%;
+                    width: 100%;
+                    margin-bottom: 10px;
+
+                    .childCol {
+                        flex-basis: 100%;
+                        flex-grow: 1;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        width: 50%;
+                        .dataSource {
+                            text-align: center;
+                            text-transform: capitalize;
+                        }
+                    }
+                }
+
+                .line {
+                    flex-basis: 100%;
+                    flex-grow: 1;
+                    height: 100%;
+                    width: 100%;
+                }
+                .bar {
+                    flex-basis: 100%;
+                    flex-grow: 1;
+                    fill: orange;
+                }
+
+                .pie {
+                    flex-basis: 100%;
+                    flex-grow: 1;
+                    height: 100%;
+                    width: 100%;
+                }
+                .time {
+                    flex-basis: 100%;
+                    flex-grow: 1;
+                    fill: orange;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    align-items: center;
+                    .header {
+                        height: 40px;
+                        font-size: 25px;
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                        width: 90%;
+                        border-bottom: 1px solid;
+                        margin-bottom: 5px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        @media only screen and (max-width: 1300px) {
+                            font-size: 20px;
+                        }
+
+                        .transparent {
+                            background: transparent;
+                            flex-basis: 25%;
+                            flex-grow: 1;
+                            height: 30px;
+                        }
+                        & > div {
+                            padding: 5px;
+                            flex-basis: 100%;
+                            flex-grow: 1;
+                            width: 100%;
+                            text-align: center;
+                        }
+                    }
+                    .timeBody {
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                        flex-direction: column;
+                        flex-basis: 80%;
+                        width: 90%;
+                        .row {
+                            font-size: 20px;
+                            @media only screen and (max-width: 1300px) {
+                                font-size: 15px;
+                            }
+
+                            display: flex;
+                            height: 30px;
+                            flex-basis: 100%;
+                            flex-grow: 1;
+                            width: 100%;
+                            padding: 5px;
+                            align-items: center;
+                            justify-content: center;
+
+                            .legendColor {
+                                flex-basis: 1%;
+                                flex-grow: 1;
+                                height: 30px;
+                            }
+
+                            & > div {
+                                padding: 5px;
+                                flex-basis: 100%;
+                                flex-grow: 1;
+                                width: 100%;
+                                text-align: center;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .mainBottom {
+        width: 80vw;
+        .heatmap {
+            width: 100%;
+            height: 70%;
+        }
+
+        .heatFilter {
+            display: flex;
+            justify-content: center;
+
+            & > div,
+            select {
+                padding: 10px;
+                margin-left: 10px;
+            }
+        }
+    }
+}
+
+.line {
+    .area1 {
+        fill: grey;
+        fill-opacity: 0.2;
+    }
+    .area2 {
+        fill: grey;
+        fill-opacity: 0.2;
+    }
+    .line1 {
+        stroke: lightblue;
+        stroke-width: 3;
+        fill: none;
+    }
+    .line2 {
+        fill: none;
+        stroke: green;
+        stroke-width: 3;
+    }
+}
+
+.arc text {
+    font: 10px sans-serif;
+    text-anchor: middle;
+}
+
+.arc path {
+    stroke: #fff;
+}
+rect.bordered {
+    stroke: #e6e6e6;
+    stroke-width: 2px;
+}
+
+text.mono {
+    font-size: 9pt;
+    font-family: Consolas, courier;
+    fill: #aaa;
+}
+
+text.axis-workweek {
+    fill: #000;
+}
+
+text.axis-worktime {
+    fill: #000;
+}
+
+.infoPanel {
+    display: flex;
+    justify-content: space-around;
+    height: 80px;
+    background: #efeeee;
+    margin-bottom: 5px;
+
+    .box {
+        flex-basis: 70%;
+        flex-grow: 1;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        .innerbox {
+            border: 1px solid;
+            font-size: 20px;
+            padding: 2px;
+            margin: 2px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            flex-basis: 100%;
+            flex-grow: 1;
+            justify-content: center;
+            align-items: center;
+            height: 91%;
+        }
+        &.filter {
+            flex-basis: 30%;
+            border: 1px solid;
+            .heatFilter {
+                display: flex;
+                font-size: 22px;
+                justify-content: space-around;
+                flex-basis: 100%;
+                flex-grow: 1;
+
+                select {
+                    font-size: 18px;
+                    margin: 10px;
+                }
+            }
+        }
+    }
+}
