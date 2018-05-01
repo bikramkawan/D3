@@ -1,7 +1,7 @@
 /**
  * Created by bikramkawan on 12/13/17.
  */
-class BarChart {
+export default class BarChart {
     constructor(params) {
         this.data = formatData(params.data);
         this.svg = params.barSVG;
