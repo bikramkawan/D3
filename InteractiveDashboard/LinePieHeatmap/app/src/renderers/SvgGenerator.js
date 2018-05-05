@@ -55,6 +55,31 @@ export default class SvgGenerator {
         };
     }
 
+    attachResizer(props) {
+        const { heatMap, tablePies, lineChart, barChart, pieCharts } = props;
+
+        window.addEventListener('resize', function(d) {
+            const updateHeight = this.lineEl.clientHeight;
+            const updateWidth = this.lineEl.clientWidth;
+            lineChart.updateDimension(updateHeight, updateWidth);
+            barChart.updateDimension(
+                this.barEl.clientHeight,
+                this.barEl.clientWidth,
+            );
+            pieCharts.forEach(pie => {
+                pie.updateDimension(
+                    this.pieEl.clientHeight,
+                    this.pieEl.clientWidth,
+                );
+            });
+
+            heatMap.updateDimension(
+                this.heatEl.clientHeight,
+                this.heatEl.clientWidth,
+            );
+        });
+    }
+
     getSvg() {
         return { lineSVG: this.lineSVG, barSVG: this.barSVG };
     }
