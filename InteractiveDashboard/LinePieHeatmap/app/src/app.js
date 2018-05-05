@@ -1,53 +1,33 @@
 /**
  * Created by bikramkawan on 12/13/17.
  */
-
-import LineChart from './renderers/LineChart'
-import BarChart from './renderers/BarChart'
-import HeatMap from './renderers/HeatMap'
-import PieChart from './renderers/PieChart'
-import Table from './renderers/Table'
-import TopScore from './renderers/TopScore'
-import './style.less'
-
-const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-const heatMapMargin = { top: 50, right: 0, bottom: 100, left: 30 };
-// const heatmapWidth = 960;
-// const heatMapHeight = 430;
-const colors = ['blue', 'green', 'yellow', 'red']; // alternatively colorbrewer.YlGnBu[9]
-const days = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-const times = [
-    '1a',
-    '2a',
-    '3a',
-    '4a',
-    '5a',
-    '6a',
-    '7a',
-    '8a',
-    '9a',
-    '10a',
-    '11a',
-    '12a',
-    '1p',
-    '2p',
-    '3p',
-    '4p',
-    '5p',
-    '6p',
-    '7p',
-    '8p',
-    '9p',
-    '10p',
-    '11p',
-    '12p',
-];
-const dateParse = d3.utcParse('%Y-%m-%dT%H:%M:%S.%LZ');
+import $ from 'jquery';
+import moment from 'moment';
+import 'bootstrap/dist/js/bootstrap';
+import 'bootstrap-datetimepicker-npm/build/js/bootstrap-datetimepicker.min';
+import 'bootstrap/js/collapse';
+import 'bootstrap/js/transition';
+import 'bootstrap-datetimepicker-npm/build/css/bootstrap-datetimepicker.css';
+import LineChart from './renderers/LineChart';
+import BarChart from './renderers/BarChart';
+import HeatMap from './renderers/HeatMap';
+import PieChart from './renderers/PieChart';
+import Table from './renderers/Table';
+import TopScore from './renderers/TopScore';
+import { formatInitialData, formatRawData } from './utils/utils';
+import 'bootstrap/dist/css/bootstrap.css';
+import './style.less';
+import * as d3 from 'd3';
+import DatePicker from './renderers/DatePicker';
+import SvgGenerator from './renderers/SvgGenerator';
 
 d3.json('data/newdata.json', (err, rawData) => {
-    console.error(rawData,'dafafasjfalsf')
+    console.error(rawData, 'dafafasjfalsf');
     const data = formatInitialData(rawData);
     //Replace data with randomdata inside the format raw data
+
+    const datePicker = new DatePicker();
+    datePicker.appendDatePicker();
 
     const formattedData = formatRawData(data);
 
@@ -56,9 +36,23 @@ d3.json('data/newdata.json', (err, rawData) => {
         .map(d => formatInitialData(d))
         .map(d => formatRawData(d));
 
-    const heatEl = document.querySelector('.heatmap');
-    const heatWidth = heatEl.clientWidth;
-    const heatHeight = heatEl.clientHeight;
+    const svg = new SvgGenerator();
+    const {
+        width,
+        height,
+        lineWidth,
+        lineHeight,
+        heatWidth,
+        heatHeight,
+        pieElHeight,
+        pieElWidth,
+        barWidth,
+        barHeight,
+        margin,
+        heatMapMargin,
+    } = svg.getDimension();
+
+    const { lineSVG, barSVG } = svg.getSvg();
 
     const heatConfig = {
         margin: heatMapMargin,
@@ -67,39 +61,15 @@ d3.json('data/newdata.json', (err, rawData) => {
         data: formattedData,
     };
     //
-    // const heatMap = new HeatMap(heatConfig);
-    // heatMap.draw();
-    // const getHeatData = heatMap.getData();
+    const heatMap = new HeatMap(heatConfig);
+    heatMap.draw();
+    const getHeatData = heatMap.getData();
 
     const randomDataForLine = data.map(d => ({
         time: d.time,
         count: 0.8 * d.count,
     }));
-    const lineEl = document.querySelector('.line');
-    const lineWidth = lineEl.clientWidth;
-    const lineHeight = lineEl.clientHeight;
 
-    const pieEl = document.querySelector('.pie');
-    const pieElWidth = pieEl.clientWidth;
-    const pieElHeight = pieEl.clientHeight;
-
-    const barEl = document.querySelector('.bar');
-    const barWidth = lineEl.clientWidth;
-    const barHeight = lineEl.clientHeight;
-
-    const lineSVG = d3
-        .select('.line')
-        .append('svg')
-        .attr('width', lineWidth)
-        .attr('height', lineHeight);
-    const barSVG = d3
-        .select('.bar')
-        .append('svg')
-        .attr('width', lineWidth)
-        .attr('height', lineHeight);
-
-    const width = lineWidth - margin.left - margin.right;
-    const height = lineHeight - margin.top - margin.bottom;
     const lineChartConfig = {
         data,
         lineSVG,
@@ -154,24 +124,24 @@ d3.json('data/newdata.json', (err, rawData) => {
         tableView.draw();
     });
 
-    const topScores = formattedMultipleDataSource.map((data, index) => {
-        return {
-            data,
-            selector: `score${index + 1}`,
-        };
+    // const topScores = formattedMultipleDataSource.map((data, index) => {
+    //     return {
+    //         data,
+    //         selector: `score${index + 1}`,
+    //     };
+    // });
+    //
+    // topScores.forEach(score => {
+    //     const topScore = new TopScore(score);
+    //     topScore.updateScores();
+    // });
+
+    const topScore = new TopScore({ data: formattedMultipleDataSource });
+    topScore.updateScores();
+
+    formattedMultipleDataSource.forEach((source, index) => {
+        d3.select(`.source${index + 1}`).text(`Data Source ${index + 1}`);
     });
-
-    topScores.forEach(score => {
-        const topScore = new TopScore(score);
-        topScore.updateScores();
-    });
-
-
-    formattedMultipleDataSource.forEach((source,index)=>{
-
-        d3.select(`.source${index+1}`).text(`Data Source ${index+1}`)
-
-    })
 
     window.addEventListener('resize', function(d) {
         const updateHeight = lineEl.clientHeight;
@@ -281,47 +251,3 @@ d3.json('data/newdata.json', (err, rawData) => {
         xhr.send(dataPost);
     }
 });
-
-function formatInitialData(rawData) {
-    const date = d3.isoParse(rawData.message.results[0].time)
-    console.error((rawData.message.results[0].time),('2018-01-03T00:00:00.000Z'),date)
-    return rawData.message.results.map(d => ({
-        time: d3.isoParse(d.time),
-        count: d.count,
-    }));
-}
-
-//https://gist.github.com/IamSilviu/5899269
-function parseWeek(date) {
-    var onejan = new Date(date.getFullYear(), 0, 1);
-    return Math.ceil(((date - onejan) / 86400000 + onejan.getDay() + 1) / 7);
-}
-function formatRawData(data) {
-    console.error(data,'dafas')
-    const daysIndex = days.map((d, i) => i);
-    const timeIndex = times.map((d, i) => i);
-    const dataByWeek = daysIndex
-        .map(d => _.groupBy(data, e => e.time.getDay() === d).true)
-        .filter(d => d !== undefined);
-
-    return dataByWeek
-        .map((d, i) => {
-            return timeIndex
-                .map(e => {
-                    let groupedBy = _.groupBy(d, f => f.time.getHours() === e)
-                        .true;
-                    return groupedBy
-                        ? groupedBy.map((g, f) => ({
-                              ...g,
-                              day: i,
-                              hour: groupedBy[0].time.getHours(),
-                              month: g.time.getMonth(),
-                              week: parseWeek(g.time) - 1,
-                              year: g.time.getFullYear(),
-                          }))
-                        : [];
-                })
-                .reduce((acc, cur) => acc.concat(cur), []);
-        })
-        .reduce((acc, cur) => acc.concat(cur), []);
-}

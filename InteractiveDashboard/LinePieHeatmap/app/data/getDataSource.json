@@ -1,0 +1,117 @@
+{
+  "devices": [
+    {
+      "id": "device-id-45c3fb7d-70a8-403d-a58f-c7a4a490e539",
+      "tags": ["testreader"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-af27a587-b28b-496e-ab70-53c2fbc13e98",
+      "tags": ["testreader", "beacon-test"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-14a1457b-30b6-46ee-bc45-c1ba3ed7746b",
+      "tags": ["testreader"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-ee355c64-c91b-4195-8cdc-86ddb2b7d090",
+      "tags": ["reader"],
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-32b2bcc4-ac0e-469d-a6ae-d942d3fc5fd1",
+      "tags": ["reader2"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-9bafbc74-32d1-4706-9e37-b62f695b99f4",
+      "tags": ["testreader", "ebs-test"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-866c19f6-c6de-41b0-b6b0-b13459bb5d28",
+      "tags": ["foo", "bar"],
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-2cd34c6e-a101-4943-a86b-bfec273ac788",
+      "tags": ["testreader"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-60d95a55-ed0e-47bc-87ee-36e4a62ce374",
+      "tags": ["reader", "beacon-test"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-ec0d94e5-25da-46da-b02f-4a01de5153ae",
+      "tags": ["testreader", "test2"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-2e1be0f7-081d-4dc0-99f4-66c69995b77b",
+      "tags": ["beaconhub"],
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-f5757564-7b55-4cef-8567-9b56ebbbafc5",
+      "tags": ["reader"],
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-47b05187-bd34-4a55-9aa7-7881a3da6f48",
+      "tags": ["reader"],
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-a804cc11-c9c2-47fa-a7b3-9c0e37410f98",
+      "tags": ["testreader"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-eff317e6-8d53-4b6a-b3a4-4791060630dc",
+      "tags": ["reader"],
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-9f2050e2-d51e-4449-b078-5ee65461bf1e",
+      "tags": ["testreader"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-f7201143-c440-4534-8d93-08fcad109bfe",
+      "tags": ["reader", "ebs-test"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-66e8b4ed-8b79-4e55-902e-beb0765ea10c",
+      "tags": ["testreader"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-499c707e-8beb-43ff-825f-d9cca48312ce",
+      "tags": ["testreader", "test4"],
+      "virtual": false,
+      "status": { "connected": true }
+    },
+    {
+      "id": "device-id-939b8f2d-35dd-48cf-9f4d-9549347ad1a7",
+      "tags": ["reader"],
+      "status": { "connected": true }
+    }
+  ]
+}

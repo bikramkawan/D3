@@ -1,6 +1,7 @@
 /**
  * Created by bikramkawan on 12/13/17.
  */
+import * as d3 from 'd3'
 export  default class LineChart {
     constructor(params) {
         this.data = params.data;

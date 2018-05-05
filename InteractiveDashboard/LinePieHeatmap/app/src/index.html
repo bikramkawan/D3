@@ -3,139 +3,104 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
 </head>
 <body>
 <div class="container">
 
     <div class="main">
-       <div class="infoPanelContainer">
-           <div class="infoPanel">
-               <div class="box score1">
-               </div>
+        <div class="infoPanelContainer">
+            <div class="infoPanel">
+                <div class="box score">
+                </div>
 
-               <div class="box filter">
-                   <div class="heatFilter">
-                       <div class="year">Start
-                           <input class="fromdate" type="date">
-                       </div>
-                       <div class="month">End
-                           <input class="todate" type="date">
-                       </div>
+            </div>
+            <div class="box filter">
+                <div class="heatFilter">
+                    <div class="datepickerwrapper year">
 
-                   </div>
-               </div>
+                        <div class="h3"> Start Date</div>
+                        <div class='input-group date' id='datetimepicker1'>
+                            <input type='text' class="form-control"/>
+                            <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                        </div>
+                    </div>
+                    <div class="datepickerwrapper month">
+                        <div class="h3">End Date</div>
+                        <div class='input-group date' id='datetimepicker2'>
+                            <input type='text' class="form-control"/>
+                            <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                        </div>
+                    </div>
+                    <div class="datepickerwrapper submit">
 
-           </div>
-           <div class="infoPanel">
-               <div class="box score2">
-               </div>
+                        <div class="filterDate btn btn-primary">Apply</div>
 
-               <div class="box filter">
-                   <div class="heatFilter">
-                       <div class="year">Start
-                           <input class="fromdate" type="date">
-                       </div>
-                       <div class="month">End
-                           <input class="todate" type="date">
-                       </div>
 
-                   </div>
-               </div>
+                    </div>
+                </div>
+            </div>
 
-           </div>
-           <div class="infoPanel">
-               <div class="box score3">
-               </div>
-
-               <div class="box filter">
-                   <div class="heatFilter">
-                       <div class="year">Start
-                           <input class="fromdate" type="date">
-                       </div>
-                       <div class="month">End
-                           <input class="todate" type="date">
-                       </div>
-
-                   </div>
-               </div>
-
-           </div>
-           <div class="infoPanel">
-               <div class="box score4">
-               </div>
-
-               <div class="box filter">
-                   <div class="heatFilter">
-                       <div class="year">Start
-                           <input class="fromdate" type="date">
-                       </div>
-                       <div class="month">End
-                           <input class="todate" type="date">
-                       </div>
-
-                   </div>
-               </div>
-
-           </div>
-       </div>
+        </div>
         <div class="lineFilter">
             <div class="weekday">Weekdays</div>
             <div class="weekend">WeekEnd</div>
         </div>
         <div class="chartContainer">
             <div class="col left">
-              <div class="childRow">
-                  <div class="childCol">
-                      <div class="dataSource source1">
+                <div class="childRow">
+                    <div class="childCol">
+                        <div class="dataSource source1">
 
-                      </div>
-                      <div class="pie pie1">
-                      </div>
-                      <div class="time">
-                          <div class=" row header">
-                              <div class="transparent">
-                              </div>
-                              <div>
-                                  Hours
-                              </div>
-                              <div>
-                                  %
-                              </div>
-                              <div>
-                                  Total
-                              </div>
-                          </div>
-                          <div class="timeBody timeBody1">
-                          </div>
-                      </div>
-                  </div>
-                  <div class="childCol">
-                      <div class="dataSource source2">
+                        </div>
+                        <div class="pie pie1">
+                        </div>
+                        <div class="time">
+                            <div class=" row header">
+                                <div class="transparent">
+                                </div>
+                                <div>
+                                    Hours
+                                </div>
+                                <div>
+                                    %
+                                </div>
+                                <div>
+                                    Total
+                                </div>
+                            </div>
+                            <div class="timeBody timeBody1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="childCol">
+                        <div class="dataSource source2">
 
-                      </div>
-                      <div class="pie pie2">
-                      </div>
-                      <div class="time">
-                          <div class=" row header">
-                              <div class="transparent">
-                              </div>
-                              <div>
-                                  Hours
-                              </div>
-                              <div>
-                                  %
-                              </div>
-                              <div>
-                                  Total
-                              </div>
-                          </div>
-                          <div class="timeBody timeBody2">
-                          </div>
-                      </div>
-                  </div>
-              </div>
+                        </div>
+                        <div class="pie pie2">
+                        </div>
+                        <div class="time">
+                            <div class=" row header">
+                                <div class="transparent">
+                                </div>
+                                <div>
+                                    Hours
+                                </div>
+                                <div>
+                                    %
+                                </div>
+                                <div>
+                                    Total
+                                </div>
+                            </div>
+                            <div class="timeBody timeBody2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="childRow">
                     <div class="childCol">
                         <div class="dataSource source3">

@@ -1,6 +1,9 @@
 /**
  * Created by bikramkawan on 12/15/17.
  */
+import * as d3 from 'd3'
+
+import {colors,days,times} from "../utils/utils";
 
 export default class HeatMap {
     constructor(param) {

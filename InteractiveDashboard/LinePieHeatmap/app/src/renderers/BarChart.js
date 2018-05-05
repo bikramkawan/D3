@@ -1,6 +1,7 @@
 /**
  * Created by bikramkawan on 12/13/17.
  */
+import * as d3 from 'd3'
 export default class BarChart {
     constructor(params) {
         this.data = formatData(params.data);
