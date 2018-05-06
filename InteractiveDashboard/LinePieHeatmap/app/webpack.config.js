@@ -9,7 +9,7 @@ module.exports = {
     entry: ['./src/app.js'],
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'data-viewing.js',
+        filename: 'bundle.js',
     },
     devServer: {
         contentBase: './dist',
@@ -85,7 +85,7 @@ module.exports = {
             template: './src/index.html',
             filename: './index.html',
         }),
-        new ExtractTextPlugin('data-viewing.css'),
+        new ExtractTextPlugin('style.css'),
         new CopyWebpackPlugin([
             {
                 from: path.join(__dirname, 'data'),
