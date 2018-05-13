@@ -1,47 +1,62 @@
-.heatmap {
-    // width: 700px;
-    //height: 200px;
-    background: grey;
-    display: flex;
-    .col {
-        width: 200px;
-        height: 100%;
-        border: 1px solid;
+.app {
+    .heatmap {
+        width: 700px;
+        height: 200px;
+        background: grey;
         display: flex;
-        flex-direction: column;
-        .top {
-            height: 80%;
-            background: rebeccapurple;
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-end;
-
-            .inset {
-                background: #1aa4cd;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-        .bottom {
-            height: 20%;
-            width: 100%;
+        .col {
+            width: 200px;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: lightgray;
-            .label {
-                width: 100%;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                text-align: center;
-                text-transform: capitalize;
+            .top {
+                height: 100%;
+                background: rebeccapurple;
+                display: flex;
+                justify-content: flex-end;
+                align-items: flex-end;
+
+                .inset {
+                    background: #1aa4cd;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
             }
         }
     }
+
+    .bottom {
+        height: 20%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .label {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+            text-transform: capitalize;
+        }
+        .scoreCol {
+            display: flex;
+            flex-direction: column;
+
+            flex-basis: 100%;
+            flex-grow: 1;
+            align-items: center;
+        }
+    }
+}
+
+.heatmap1 {
+    background: red;
+    width: 700px;
+    height: 200px;
 }
