@@ -1,17 +1,336 @@
-const width = 700;
-const height = 200;
-const maxPercentage = 100;
-
-const color = {
-    ignored: '#B4C3CA',
-    skimmed: '#76E49C',
-    read: '#3ED772',
-    other1: '#2CC7B4',
-    other2: '#2CC7B4',
-};
-
-const opacityAdjust = 0.2;
 const newData = [
+    {
+        date: '01-Apr-07',
+        category: 'ignored',
+        percentage: 50,
+        clicked: 3,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'ignored',
+        percentage: 30,
+        clicked: 5,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'ignored',
+        percentage: 7,
+        clicked: 7,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'ignored',
+        percentage: 5,
+        clicked: 1,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'ignored',
+        percentage: 7,
+        clicked: 3,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'ignored',
+        percentage: 6,
+        clicked: 5,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'ignored',
+        percentage: 5,
+        clicked: 4,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'ignored',
+        percentage: 2,
+        clicked: 1,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'ignored',
+        percentage: 6,
+        clicked: 2,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'skimmed',
+        percentage: 5,
+        clicked: 3,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'skimmed',
+        percentage: 8,
+        clicked: 3,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'skimmed',
+        percentage: 5,
+        clicked: 5,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'skimmed',
+        percentage: 2,
+        clicked: 7,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'skimmed',
+        percentage: 7,
+        clicked: 4,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'skimmed',
+        percentage: 9,
+        clicked: 2,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'skimmed',
+        percentage: 2,
+        clicked: 6,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'skimmed',
+        percentage: 5,
+        clicked: 2,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'skimmed',
+        percentage: 5,
+        clicked: 5,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'read',
+        percentage: 5,
+        clicked: 5,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'read',
+        percentage: 7,
+        clicked: 15,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'read',
+        percentage: 5,
+        clicked: 2,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'read',
+        percentage: 6,
+        clicked: 5,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'read',
+        percentage: 5,
+        clicked: 5,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'read',
+        percentage: 5,
+        clicked: 5,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'read',
+        percentage: 5,
+        clicked: 2,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'read',
+        percentage: 5,
+        clicked: 4,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'read',
+        percentage: 7,
+        clicked: 3,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'undeliverable',
+        percentage: 8,
+        clicked: 1,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'undeliverable',
+        percentage: 7,
+        clicked: 5,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'undeliverable',
+        percentage: 8,
+        clicked: 5,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'undeliverable',
+        percentage: 6,
+        clicked: 7,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'undeliverable',
+        percentage: 5,
+        clicked: 5,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'undeliverable',
+        percentage: 5,
+        clicked: 3,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'undeliverable',
+        percentage: 6,
+        clicked: 5,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'undeliverable',
+        percentage: 5,
+        clicked: 7,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'undeliverable',
+        percentage: 5,
+        clicked: 3,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'out of office',
+        percentage: 8,
+        clicked: 5,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'out of office',
+        percentage: 5,
+        clicked: 5,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'out of office',
+        percentage: 7,
+        clicked: 5,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'out of office',
+        percentage: 7,
+        clicked: 5,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'out of office',
+        percentage: 5,
+        clicked: 3,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'out of office',
+        percentage: 8,
+        clicked: 3,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'out of office',
+        percentage: 2,
+        clicked: 7,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'out of office',
+        percentage: 5,
+        clicked: 7,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'out of office',
+        percentage: 7,
+        clicked: 8,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'unsubscribed',
+        percentage: 2,
+        clicked: 1,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'unsubscribed',
+        percentage: 5,
+        clicked: 3,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'unsubscribed',
+        percentage: 4,
+        clicked: 7,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'unsubscribed',
+        percentage: 4,
+        clicked: 2,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'unsubscribed',
+        percentage: 7,
+        clicked: 4,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'unsubscribed',
+        percentage: 3,
+        clicked: 1,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'unsubscribed',
+        percentage: 1,
+        clicked: 0,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'unsubscribed',
+        percentage: 2,
+        clicked: 1,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'unsubscribed',
+        percentage: 7,
+        clicked: 5,
+    },
+];
+
+const correctData = [
     [
         {
             label: 'ignored',
@@ -56,108 +375,618 @@ const newData = [
     ],
 ];
 
-const dataWithColorAdjust = newData.map((item, index) => {
-    return item.map(d => {
-        return {
-            ...d,
-            opacity: 1 - opacityAdjust * index,
-        };
-    });
-});
+const stackedData = [
+    {
+        date: '01-Apr-07',
+        category: 'ignored',
+        amount: 10,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'ignored',
+        amount: 20,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'ignored',
+        amount: 25,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'ignored',
+        amount: 5,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'ignored',
+        amount: 7,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'ignored',
+        amount: 10,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'ignored',
+        amount: 32,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'ignored',
+        amount: 2,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'ignored',
+        amount: 6,
+    },
 
-const app = d3
-    .select('.heatmap-container')
-    .selectAll('div')
-    .data(dataWithColorAdjust);
-const heatmapEnter = app
-    .enter()
-    .append('div')
-    .classed('heatmap', true)
-    .style('width', `${width}px`)
-    .style('height', `${height}px`)
-    .style('position', 'absolute')
-    .style('opacity', (d, i) => 1 - 0.2 * i);
+    {
+        date: '01-Apr-07',
+        category: 'skimmed',
+        amount: 5,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'skimmed',
+        amount: 8,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'skimmed',
+        amount: 15,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'skimmed',
+        amount: 10,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'skimmed',
+        amount: 17,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'skimmed',
+        amount: 9,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'skimmed',
+        amount: 21,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'skimmed',
+        amount: 5,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'skimmed',
+        amount: 10,
+    },
 
-const itemScale = d3.scale
-    .linear()
-    .domain([0, maxPercentage])
-    .range([0, width]);
-const clickedHeightScale = d3.scale
-    .linear()
-    .range([0, 0.8 * height])
-    .domain([0, maxPercentage]);
+    {
+        date: '01-Apr-07',
+        category: 'read',
+        amount: 15,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'read',
+        amount: 20,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'read',
+        amount: 5,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'read',
+        amount: 12,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'read',
+        amount: 20,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'read',
+        amount: 15,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'read',
+        amount: 5,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'read',
+        amount: 10,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'read',
+        amount: 7,
+    },
 
-const itemColumn = heatmapEnter
-    .selectAll('.col')
-    .data(d => {
-        return d;
-    })
-    .enter()
-    .append('div')
-    .classed('col', true)
-    .style('width', d => `${itemScale(d.value.percentage)}px`);
+    {
+        date: '01-Apr-07',
+        category: 'other1',
+        amount: 8,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'other1',
+        amount: 15,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'other1',
+        amount: 20,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'other1',
+        amount: 30,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'other1',
+        amount: 10,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'other1',
+        amount: 5,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'other1',
+        amount: 15,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'other1',
+        amount: 10,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'other1',
+        amount: 5,
+    },
 
-const topContainer = itemColumn
-    .append('div')
-    .classed('top', true)
-    .style('background', (d, i) => {
-        return color[d.label];
-    })
-    .style('opacity', d => d.opacity);
+    {
+        date: '01-Apr-07',
+        category: 'other2',
+        amount: 18,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'other2',
+        amount: 10,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'other2',
+        amount: 15,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'other2',
+        amount: 10,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'other2',
+        amount: 5,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'other2',
+        amount: 10,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'other2',
+        amount: 10,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'other2',
+        amount: 20,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'other2',
+        amount: 15,
+    },
+];
 
-const labels = newData
-    .map(d => d.map(e => e.label))
-    .reduce((c, b) => c.concat(b), []);
-const uniq = _.uniq(labels);
-
-const filterBy = uniq
-    .map(u => newData.map(d => d.filter((e, i) => e.label === u)))
-    .reduce((c, b) => c.concat(b), [])
-    .reduce((c, b) => c.concat(b), []);
-const filteredAndSum = uniq.map(u => filterBy.filter(f => f.label === u));
-const totalSumScore = filteredAndSum.map(d => ({
-    label: d[0].label,
-    percentage: _.sumBy(d, o => o.value.percentage),
-}));
-
-const bottomContainer = d3
-    .select('.heatmap-container')
-    .append('div')
-    .classed('bottom', true)
-    .style('width', `${width}px`)
-    .style('height', `${100}px`)
-    .style('position', 'relative')
-    .style('top', `${height}px`);
-
-const scoreCol = bottomContainer
-    .selectAll('.scoreCol')
-    .data(totalSumScore)
-    .enter()
-    .append('div')
-    .classed('scoreCol', true)
-    .style('background', d => color[d.label]);
-
-scoreCol
-    .append('div')
-    .classed('label', true)
-    .text(d => d.label);
-
-scoreCol
-    .append('div')
-    .classed('perc', true)
-    .text(d => `${d.percentage} %`);
-
-const calculateClicked = item => {
-    const clickedWidthScale = d3.scale
-        .linear()
-        .range([0, itemScale(item.value.percentage)])
-        .domain([0, maxPercentage]);
-    return `${clickedWidthScale(item.value.clicked)}px`;
+const color = {
+    ignored: '#B4C3CA',
+    skimmed: '#76E49C',
+    read: '#3ED772',
+    other1: '#2CC7B4',
+    other2: '#2CC7B4',
+    undeliverable: '#2CC7B4',
+    'out of office': '#2CC7B4',
+    unsubscribed: '#1489c7',
 };
-topContainer
-    .append('div')
-    .classed('inset', true)
-    .style('width', d => calculateClicked(d))
-    .style('height', d => `${clickedHeightScale(d.value.clicked)}px`)
-    // .text(d => `${d.value.clicked}%`)
-    .attr('title', d => `Clicked (${d.value.clicked}%)`);
+
+const singleHeatmap = [
+    {
+        label: 'ignored',
+        color: '#B4C3CA',
+        value: { percentage: 4, clicked: 30 },
+    },
+    {
+        label: 'skimmed',
+        color: '#76E49C',
+        value: { percentage: 20, clicked: 5 },
+    },
+    {
+        label: 'read',
+        color: '#3ED772',
+        value: { percentage: 37, clicked: 50 },
+    },
+
+    {
+        label: 'other1',
+        color: '#2CC7B4',
+        value: { percentage: 24, clicked: 20 },
+    },
+
+    {
+        label: 'other2',
+        color: '#2CC7B4',
+        value: { percentage: 15, clicked: 15 },
+    },
+];
+
+const taskPiData = [
+    {
+        date: '01-Apr-07',
+        category: 'ignored',
+        amount: 10,
+        previous: 3,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'ignored',
+        amount: 20,
+        previous: 5,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'ignored',
+        amount: 25,
+        previous: 7,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'ignored',
+        amount: 5,
+        previous: 1,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'ignored',
+        amount: 7,
+        previous: 3,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'ignored',
+        amount: 10,
+        previous: 5,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'ignored',
+        amount: 32,
+        previous: 10,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'ignored',
+        amount: 2,
+        previous: 1,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'ignored',
+        amount: 6,
+        previous: 2,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'skimmed',
+        amount: 5,
+        previous: 3,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'skimmed',
+        amount: 8,
+        previous: 3,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'skimmed',
+        amount: 15,
+        previous: 5,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'skimmed',
+        amount: 10,
+        previous: 7,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'skimmed',
+        amount: 17,
+        previous: 10,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'skimmed',
+        amount: 9,
+        previous: 2,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'skimmed',
+        amount: 21,
+        previous: 12,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'skimmed',
+        amount: 5,
+        previous: 2,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'skimmed',
+        amount: 10,
+        previous: 5,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'read',
+        amount: 15,
+        previous: 10,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'read',
+        amount: 20,
+        previous: 15,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'read',
+        amount: 5,
+        previous: 2,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'read',
+        amount: 12,
+        previous: 10,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'read',
+        amount: 20,
+        previous: 10,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'read',
+        amount: 15,
+        previous: 10,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'read',
+        amount: 5,
+        previous: 2,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'read',
+        amount: 10,
+        previous: 4,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'read',
+        amount: 7,
+        previous: 3,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'undeliverable',
+        amount: 8,
+        previous: 1,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'undeliverable',
+        amount: 15,
+        previous: 10,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'undeliverable',
+        amount: 20,
+        previous: 5,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'undeliverable',
+        amount: 30,
+        previous: 7,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'undeliverable',
+        amount: 10,
+        previous: 5,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'undeliverable',
+        amount: 5,
+        previous: 3,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'undeliverable',
+        amount: 15,
+        previous: 5,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'undeliverable',
+        amount: 10,
+        previous: 7,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'undeliverable',
+        amount: 5,
+        previous: 3,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'out of office',
+        amount: 18,
+        previous: 10,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'out of office',
+        amount: 10,
+        previous: 5,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'out of office',
+        amount: 15,
+        previous: 10,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'out of office',
+        amount: 10,
+        previous: 5,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'out of office',
+        amount: 5,
+        previous: 3,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'out of office',
+        amount: 10,
+        previous: 3,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'out of office',
+        amount: 10,
+        previous: 7,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'out of office',
+        amount: 20,
+        previous: 7,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'out of office',
+        amount: 15,
+        previous: 8,
+    },
+
+    {
+        date: '01-Apr-07',
+        category: 'unsubscribed',
+        amount: 2,
+        previous: 1,
+    },
+    {
+        date: '03-Apr-07',
+        category: 'unsubscribed',
+        amount: 5,
+        previous: 3,
+    },
+    {
+        date: '04-Apr-07',
+        category: 'unsubscribed',
+        amount: 10,
+        previous: 7,
+    },
+    {
+        date: '05-Apr-07',
+        category: 'unsubscribed',
+        amount: 4,
+        previous: 2,
+    },
+    {
+        date: '06-Apr-07',
+        category: 'unsubscribed',
+        amount: 7,
+        previous: 4,
+    },
+    {
+        date: '07-Apr-07',
+        category: 'unsubscribed',
+        amount: 3,
+        previous: 1,
+    },
+    {
+        date: '08-Apr-07',
+        category: 'unsubscribed',
+        amount: 1,
+        previous: 0,
+    },
+    {
+        date: '09-Apr-07',
+        category: 'unsubscribed',
+        amount: 2,
+        previous: 1,
+    },
+    {
+        date: '10-Apr-07',
+        category: 'unsubscribed',
+        amount: 7,
+        previous: 5,
+    },
+];
+
+const singleHeatMap = new SingleHeatMap({ data: newData });
+singleHeatMap.draw();
+const arrayHeatMap = new CombinedHeatMap({ newData, color });
+arrayHeatMap.draw();
+
+const stackedChart = new StackedChart({ stackedData, color });
+stackedChart.draw();
+
+const stackedScore = new ScoresInStacked({ data: taskPiData });
+stackedScore.draw();

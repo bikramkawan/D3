@@ -51,15 +51,64 @@
   flex-grow: 1;
   align-items: center;
 }
-.app .stackedChart-container {
+.app .singleHeatmap-container {
+  margin-bottom: 50px;
+  background: grey;
   display: flex;
 }
-.app .stackedChart-container .legends {
+.app .singleHeatmap-container .col {
+  width: 200px;
+  height: 100%;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+}
+.app .singleHeatmap-container .col .top {
+  height: 80%;
+  background: rebeccapurple;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.app .singleHeatmap-container .col .top .inset {
+  background: #1aa4cd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app .singleHeatmap-container .col .bottom {
+  height: 20%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: lightgray;
+}
+.app .singleHeatmap-container .col .bottom .label {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  text-transform: capitalize;
+}
+.app .stackedChart-container {
+  display: flex;
+  flex-direction: column;
+}
+.app .stackedChart-container .stackChart-Main {
+  display: flex;
+}
+.app .stackedChart-container .stackChart-Main .legends {
   display: flex;
   width: 200px;
   flex-direction: column;
 }
-.app .stackedChart-container .legends .legendColumn {
+.app .stackedChart-container .stackChart-Main .legends .legendColumn {
   text-transform: capitalize;
   height: 25px;
   padding: 5px;
@@ -67,12 +116,51 @@
   display: flex;
   border-bottom: 1px solid;
 }
-.app .stackedChart-container .legends .legendColumn .name {
+.app .stackedChart-container .stackChart-Main .legends .legendColumn .name {
   width: 80%;
 }
-.app .stackedChart-container .legends .legendColumn .color {
+.app .stackedChart-container .stackChart-Main .legends .legendColumn .color {
   width: 20%;
   height: 100%;
+}
+.app .stackedChart-container .score-top {
+  width: 700px;
+  height: 100px;
+  border: 1px solid;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+}
+.app .stackedChart-container .score-top div {
+  padding: 5px;
+}
+.app .stackedChart-container .score-top .top {
+  display: flex;
+  justify-content: space-around;
+  font-size: 20px;
+}
+.app .stackedChart-container .score-top .top div {
+  display: flex;
+}
+.app .stackedChart-container .score-top .top div:nth-child(1) .value,
+.app .stackedChart-container .score-top .top div:nth-child(1) .label {
+  color: grey;
+}
+.app .stackedChart-container .score-top .bottom {
+  display: flex;
+  justify-content: space-around;
+}
+.app .stackedChart-container .score-top .bottom :first-child {
+  display: flex;
+}
+.app .stackedChart-container .score-top .bottom :first-child:nth-child(1) .value,
+.app .stackedChart-container .score-top .bottom :first-child:nth-child(1) .label {
+  font-size: 30px;
+}
+.app .stackedChart-container .score-bottom {
+  display: flex;
+  justify-content: space-around;
+  text-transform: capitalize;
 }
 .heatmap1 {
   background: red;
