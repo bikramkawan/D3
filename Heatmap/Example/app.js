@@ -2,7 +2,14 @@ const width = 700;
 const height = 200;
 const maxPercentage = 100;
 
-const color = { ignored: '#B4C3CA', skimmed: '#76E49C', read: '#3ED772' };
+const color = {
+    ignored: '#B4C3CA',
+    skimmed: '#76E49C',
+    read: '#3ED772',
+    other1: '#2CC7B4',
+    other2: '#2CC7B4',
+};
+
 const opacityAdjust = 0.2;
 const newData = [
     [
@@ -59,7 +66,7 @@ const dataWithColorAdjust = newData.map((item, index) => {
 });
 
 const app = d3
-    .select('.app')
+    .select('.heatmap-container')
     .selectAll('div')
     .data(dataWithColorAdjust);
 const heatmapEnter = app
@@ -114,7 +121,7 @@ const totalSumScore = filteredAndSum.map(d => ({
 }));
 
 const bottomContainer = d3
-    .select('.app')
+    .select('.heatmap-container')
     .append('div')
     .classed('bottom', true)
     .style('width', `${width}px`)

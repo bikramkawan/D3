@@ -1,56 +1,86 @@
 .app {
-    .heatmap {
-        width: 700px;
-        height: 200px;
-        background: grey;
-        display: flex;
-        .col {
-            width: 200px;
-            height: 100%;
+    .heatmap-container {
+        height: 300px;
+        .heatmap {
+            width: 700px;
+            height: 200px;
+            background: grey;
             display: flex;
-            flex-direction: column;
-            .top {
+            .col {
+                width: 200px;
                 height: 100%;
-                background: rebeccapurple;
                 display: flex;
-                justify-content: flex-end;
-                align-items: flex-end;
-
-                .inset {
-                    background: #1aa4cd;
+                flex-direction: column;
+                .top {
+                    height: 100%;
+                    background: rebeccapurple;
                     display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
+                    justify-content: flex-end;
+                    align-items: flex-end;
+
+                    .inset {
+                        background: #1aa4cd;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
                 }
+            }
+        }
+
+        .bottom {
+            height: 20%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .label {
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-align: center;
+                text-transform: capitalize;
+            }
+            .scoreCol {
+                display: flex;
+                flex-direction: column;
+
+                flex-basis: 100%;
+                flex-grow: 1;
+                align-items: center;
             }
         }
     }
 
-    .bottom {
-        height: 20%;
-        width: 100%;
+    .stackedChart-container {
         display: flex;
-        justify-content: center;
-        align-items: center;
 
-        .label {
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-align: center;
-            text-transform: capitalize;
-        }
-        .scoreCol {
+        .legends {
             display: flex;
+            width: 200px;
             flex-direction: column;
 
-            flex-basis: 100%;
-            flex-grow: 1;
-            align-items: center;
+            .legendColumn {
+                text-transform: capitalize;
+                height: 25px;
+                padding: 5px;
+                width: 100%;
+                display: flex;
+                border-bottom: 1px solid;
+                .name {
+                    width: 80%;
+
+                }
+                .color {
+                    width: 20%;
+                    height: 100%;
+                }
+            }
         }
     }
 }

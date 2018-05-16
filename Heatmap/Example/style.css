@@ -1,23 +1,26 @@
-.app .heatmap {
+.app .heatmap-container {
+  height: 300px;
+}
+.app .heatmap-container .heatmap {
   width: 700px;
   height: 200px;
   background: grey;
   display: flex;
 }
-.app .heatmap .col {
+.app .heatmap-container .heatmap .col {
   width: 200px;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
-.app .heatmap .col .top {
+.app .heatmap-container .heatmap .col .top {
   height: 100%;
   background: rebeccapurple;
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
 }
-.app .heatmap .col .top .inset {
+.app .heatmap-container .heatmap .col .top .inset {
   background: #1aa4cd;
   display: flex;
   justify-content: center;
@@ -26,14 +29,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.app .bottom {
+.app .heatmap-container .bottom {
   height: 20%;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.app .bottom .label {
+.app .heatmap-container .bottom .label {
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
@@ -41,12 +44,35 @@
   text-align: center;
   text-transform: capitalize;
 }
-.app .bottom .scoreCol {
+.app .heatmap-container .bottom .scoreCol {
   display: flex;
   flex-direction: column;
   flex-basis: 100%;
   flex-grow: 1;
   align-items: center;
+}
+.app .stackedChart-container {
+  display: flex;
+}
+.app .stackedChart-container .legends {
+  display: flex;
+  width: 200px;
+  flex-direction: column;
+}
+.app .stackedChart-container .legends .legendColumn {
+  text-transform: capitalize;
+  height: 25px;
+  padding: 5px;
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid;
+}
+.app .stackedChart-container .legends .legendColumn .name {
+  width: 80%;
+}
+.app .stackedChart-container .legends .legendColumn .color {
+  width: 20%;
+  height: 100%;
 }
 .heatmap1 {
   background: red;
