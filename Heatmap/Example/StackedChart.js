@@ -7,7 +7,7 @@ class StackedChart {
     draw() {
         const color = this.color;
         const stackedData = this.data;
-        console.error(stackedData, 'stacked');
+
         const groupBy = _.groupBy(stackedData, d => d.category);
         const uniques = _.uniqBy(stackedData, d => d.category).map(
             d => d.category,

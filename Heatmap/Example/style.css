@@ -1,3 +1,15 @@
+.app {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  top: 50px;
+  margin-top: 50px;
+}
+.app > div {
+  border-top: 1px solid red;
+  padding: 50px;
+}
 .app .heatmap-container {
   height: 300px;
 }
@@ -118,7 +130,6 @@
 .app .score-top {
   width: 700px;
   height: 100px;
-  border: 1px solid;
   display: flex;
   justify-content: space-around;
   flex-direction: column;
@@ -130,29 +141,55 @@
   display: flex;
   justify-content: space-around;
   font-size: 20px;
+  flex-basis: 100%;
+  flex-grow: 1;
 }
-.app .score-top .top div {
+.app .score-top .top .colItem {
   display: flex;
+  flex-basis: 100%;
+  flex-grow: 1;
 }
-.app .score-top .top div:nth-child(1) .value,
-.app .score-top .top div:nth-child(1) .label {
-  color: grey;
+.app .score-top .top .colItem.addUOpenEl {
+  justify-content: flex-end;
 }
 .app .score-top .bottom {
   display: flex;
   justify-content: space-around;
+  flex-basis: 100%;
+  flex-grow: 1;
 }
-.app .score-top .bottom :first-child {
+.app .score-top .bottom .colItem {
   display: flex;
+  flex-basis: 100%;
+  flex-grow: 1;
 }
-.app .score-top .bottom :first-child:nth-child(1) .value,
-.app .score-top .bottom :first-child:nth-child(1) .label {
+.app .score-top .bottom .colItem.readSkimmedDiff {
+  justify-content: flex-end;
+  font-size: 18px;
+  font-weight: bold;
+}
+.app .score-top .bottom .colItem.readSkimmedEl {
   font-size: 30px;
 }
 .app .score-bottom {
   display: flex;
-  justify-content: space-around;
   text-transform: capitalize;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+}
+.app .score-bottom .colItem {
+  display: flex;
+  flex-basis: 100%;
+  flex-grow: 1;
+  justify-content: center;
+  height: 30px;
+  align-items: center;
+  background: #f4f4f4;
+  margin: 10px;
+}
+.app .score-bottom .colItem div {
+  padding: 2px;
 }
 .readSkimmedDiff {
   display: flex;

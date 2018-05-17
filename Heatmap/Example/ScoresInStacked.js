@@ -4,46 +4,167 @@ class ScoresInStacked {
     }
 
     draw() {
-        const margin = { top: 20, right: 20, bottom: 30, left: 50 },
-            width = 700,
-            height = 100;
+        this.width = 700;
+        this.height = 100;
+        var margin = { top: 30, right: 20, bottom: 30, left: 50 };
         this.topSvg = d3
             .select('.score-top')
-            .style('width', `${width}px`)
-            .style('height', `${height}px`)
-            .style('border', '1px solid');
+            .style('width', `${this.width - margin.left - margin.right}px`)
+            .style('height', `${this.height}px`)
+            .style('margin-left', `${margin.left}px`);
 
         this.innerTop = this.topSvg.append('div').classed('top', true);
         this.innerBottom = this.topSvg.append('div').classed('bottom', true);
 
-        this.lineChartSvg = d3
-            .select('.stacked-line')
-            .append('svg')
-            .attr('width', width)
-            .attr('height', 300);
-
         this.bottomSvg = d3
             .select('.score-bottom')
-            .style('width', `${width}px`)
-            .style('height', `${height}px`)
-            .style('border', '1px solid');
-
-        console.error(this.data, 'ata');
+            .style('width', `${this.width - margin.left - margin.right}px`)
+            .style('margin-left', `${margin.left}px`);
 
         this.addTotalSumFromAll();
         this.addUndeliverable();
         this.addTotalReadAndSkimmed();
         this.addSumDiffReadAndSkimmed();
+        this.addLineChart();
         this.addPieChart();
     }
 
-    addPieChart() {
-        const svg = d3.select('.pieChart');
+    addLineChart() {
+        var margin = { top: 30, right: 20, bottom: 30, left: 50 },
+            width = this.width - margin.left - margin.right,
+            height = this.height + 200 - margin.top - margin.bottom;
 
+        this.lineChartSvg = d3
+            .select('.stacked-line')
+            .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr(
+                'transform',
+                'translate(' + margin.left + ',' + margin.top + ')',
+            );
+
+        const parseDate = d3.time.format('%d-%b-%y').parse;
+
+        const x = d3.time.scale().range([0, width]);
+        const yScale = d3.scale.linear().range([height, 0]);
+
+        const xAxis = d3.svg
+            .axis()
+            .scale(x)
+            .orient('bottom')
+            .ticks(5);
+
+        const yAxis = d3.svg
+            .axis()
+            .scale(yScale)
+            .orient('left')
+            .ticks(5);
+
+        const valuelineAmount = d3.svg
+            .line()
+            .x(d => x(d.date))
+            .y(d => yScale(d.amount));
+
+        const valuelinePrevious = d3.svg
+            .line()
+            .x(d => x(d.date))
+            .y(d => yScale(d.previous));
+
+        const dataOnlyReadAndSkimmed = this.data.filter(
+            d => d.category === 'skimmed' || d.category === 'read',
+        );
+
+        const uniqueDate = _.uniqBy(dataOnlyReadAndSkimmed, 'date');
+        const collectData = uniqueDate.map(d => {
+            const thisDate = dataOnlyReadAndSkimmed.filter(
+                rs => rs.date === d.date,
+            );
+            const sumByPrevious = _.sumBy(thisDate, 'previous');
+            const sumByAmount = _.sumBy(thisDate, 'amount');
+
+            return {
+                date: parseDate(d.date),
+                previous: sumByPrevious,
+                amount: sumByAmount,
+            };
+        });
+
+        const meanByAmount = _.meanBy(collectData, 'amount');
+        const meanByPrevious = _.meanBy(collectData, 'previous');
+        const totalMean = _.meanBy([meanByPrevious, meanByAmount]);
+
+        x.domain(
+            d3.extent(collectData, function(d) {
+                return d.date;
+            }),
+        );
+        const extentAmount = d3.extent(collectData, d => d.amount);
+        const extentPrevious = d3.extent(collectData, d => d.previous);
+        yScale.domain([0, d3.max([...extentAmount, ...extentPrevious])]);
+
+        const topRectHeight = yScale(totalMean);
+
+        this.lineChartSvg
+            .append('rect')
+            .attr('width', width)
+            .attr('height', topRectHeight)
+            .attr('class', 'topRect')
+            .attr('fill', '#F0FCE5');
+
+        this.lineChartSvg
+            .append('rect')
+            .attr('width', width)
+            .attr('height', 2)
+            .attr('y', topRectHeight)
+            .attr('class', 'average')
+            .attr('fill', 'red');
+
+        this.lineChartSvg
+            .append('rect')
+            .attr('width', width)
+            .attr('height', height - topRectHeight)
+            .attr('y', topRectHeight)
+            .attr('class', 'bottomRect')
+            .attr('fill', '#F4F8EF');
+
+        this.lineChartSvg
+            .append('path')
+            .attr('class', 'amount-line')
+            .attr('fill', 'none')
+            .attr('stroke', 'green')
+            .attr('d', valuelineAmount(collectData));
+
+        this.lineChartSvg
+            .append('path')
+            .attr('class', 'previous-line')
+            .attr('fill', 'none')
+            .attr('stroke', 'grey')
+            .attr('d', valuelinePrevious(collectData));
+
+        this.lineChartSvg
+            .append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(xAxis);
+
+        this.lineChartSvg
+            .append('g')
+            .attr('class', 'y axis')
+            .call(yAxis);
+    }
+    addPieChart() {
+        const svg = d3
+            .select('.stacked-line')
+            .append('svg')
+            .attr('width', 300)
+            .attr('height', 300);
         const filter = this.data.filter(d => d.category === 'read');
         const previousRead = _.sumBy(filter, 'previous');
         const amountRead = _.sumBy(filter, 'amount');
-        const diff = (100 * amountRead - previousRead) / amountRead;
+        const diff =
+            (100 * amountRead - previousRead) / amountRead + previousRead;
         const amountReadPerc = 100 * amountRead / this.totalAmountSumFromAllCat;
         const totalPrevous = _.sumBy(this.data, 'previous');
 
@@ -69,19 +190,44 @@ class ScoresInStacked {
 
         svg
             .append('text')
-            .attr('x', 150)
+            .attr('x', 120)
             .attr('y', 150)
             .text(`${amountReadPerc.toFixed(1)}%`)
             .attr('stroke', 'none')
+            .style('font-size', '35px')
             .attr('fill', 'black');
+
+        const diffText =
+            diff > 0 ? `+ ${diff.toFixed(1)}` : `- ${diff.toFixed(1)}`;
 
         svg
             .append('text')
             .attr('x', 150)
             .attr('y', 200)
-            .text(`${diff.toFixed(1)}%`)
+            .text(`${diffText}%`)
             .attr('stroke', 'none')
-            .attr('fill', 'black');
+            .attr('fill', d => (diff > 0 ? 'green' : 'red'));
+
+        const scale = d3.scale
+            .linear()
+            .domain([1, 6])
+            .range([100, 1000]);
+        const triangleUp = d3.svg
+            .symbol()
+            .type('triangle-up')
+            .size(d => scale(2.5));
+
+        const triangleDown = d3.svg
+            .symbol()
+            .type('triangle-down')
+            .size(d => scale(2.5));
+
+        svg
+            .append('path')
+            .attr('d', diff > 0 ? triangleUp : triangleDown)
+            .attr('fill', () => (diff > 0 ? 'green' : 'red'))
+            .attr('stroke-width', 1)
+            .attr('transform', `translate(120,190)`);
     }
 
     addSumDiffReadAndSkimmed() {
@@ -95,27 +241,23 @@ class ScoresInStacked {
         const triangleUp = d3.svg
             .symbol()
             .type('triangle-up')
-            .size(function(d) {
-                return scale(2.5);
-            });
+            .size(d => scale(2.5));
 
         const triangleDown = d3.svg
             .symbol()
             .type('triangle-down')
-            .size(function(d) {
-                return scale(2.5);
-            });
+            .size(d => scale(2.5));
         const sumByAmount = _.sumBy(filter, 'amount');
         const sumByPrevious = _.sumBy(filter, 'previous');
 
         const difference = sumByAmount - sumByPrevious;
         const perc = 100 * difference / (sumByAmount + sumByPrevious);
-        console.error(sumByAmount, sumByPrevious, 'dfaffaf', difference, perc);
 
         const differenceEl = this.innerBottom
             .append('div')
-            .classed('readSkimmedDiff', true)
-            .style('display', 'flex');
+            .classed('colItem readSkimmedDiff', true)
+            .style('display', 'flex')
+            .style('color', () => (difference > 0 ? 'green' : 'red'));
 
         const triangle = differenceEl
             .append('svg')
@@ -126,16 +268,15 @@ class ScoresInStacked {
         triangle
             .append('path')
             .attr('d', difference > 0 ? triangleUp : triangleDown)
-            .attr('fill', function(d) {
-                return difference > 0 ? 'green' : 'red';
-            })
-            .attr('stroke', '#000')
+            .attr('fill', () => (difference > 0 ? 'green' : 'red'))
             .attr('stroke-width', 1)
             .attr('transform', `translate(25,25)`);
 
         const scores = differenceEl.append('div').classed('scores', true);
 
-        const diffText = difference > 0 ? `+ ${difference}` : `- ${difference}`;
+        const diffText = difference > 0 ? `+ ${difference}` : `${difference}`;
+        const percText =
+            difference > 0 ? `+ ${perc.toFixed(1)} %` : `${perc.toFixed(1)} %`;
         scores
             .append('div')
             .classed('diff', true)
@@ -143,15 +284,14 @@ class ScoresInStacked {
         scores
             .append('div')
             .classed('perc', true)
-            .text(`+ ${perc.toFixed(1)} %`);
+            .text(percText);
     }
     addTotalSumFromAll() {
         this.totalAmountSumFromAllCat = _.sumBy(this.data, 'amount');
 
-        console.error(this.totalAmountSumFromAllCat);
         const totalSumEl = this.innerTop
             .append('div')
-            .classed('totalSumFromAllCat', true);
+            .classed('colItem totalSumFromAllCat', true);
         totalSumEl
             .append('div')
             .classed('value', true)
@@ -177,12 +317,10 @@ class ScoresInStacked {
             sum: _.sumBy(d, 'amount'),
         }));
 
-        console.error(totalSum, filters);
-        const bottomEl = this.bottomSvg
-            .append('div')
-            .classed('undeliverable', true);
-
         totalSum.forEach(item => {
+            const bottomEl = this.bottomSvg
+                .append('div')
+                .classed('colItem', true);
             bottomEl
                 .append('div')
                 .classed('sum', true)
@@ -210,7 +348,7 @@ class ScoresInStacked {
 
         const readSkimmedEl = this.innerBottom
             .append('div')
-            .classed('readSkimmedEl', true);
+            .classed('colItem readSkimmedEl', true);
 
         readSkimmedEl
             .append('div')
@@ -228,7 +366,7 @@ class ScoresInStacked {
     addUOpen(sum) {
         const addUOpenEl = this.innerTop
             .append('div')
-            .classed('addUOpenEl', true);
+            .classed('colItem addUOpenEl', true);
 
         addUOpenEl
             .append('div')
