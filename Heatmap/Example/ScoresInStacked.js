@@ -170,23 +170,69 @@ class ScoresInStacked {
 
         const previousPerc = 100 * previousRead / totalPrevous;
 
-        svg
-            .append('circle')
-            .attr('cx', 150)
-            .attr('cy', 150)
-            .attr('r', 125)
-            .attr('fill', 'none')
-            .attr('stroke', 'green')
-            .attr('stroke-width', '25');
+        let makeAmoutReadDataForCircle = [];
+        if (amountReadPerc < 100) {
+            const amountRead = {
+                legend: 'Amount',
+                value: amountReadPerc,
+                color: 'green',
+            };
+            const amountReadPercGrey = {
+                legend: 'Amount',
+                value: 100 - amountReadPerc,
+                color: 'grey',
+            };
 
-        svg
-            .append('circle')
-            .attr('cx', 150)
-            .attr('cy', 150)
-            .attr('r', 100)
-            .attr('fill', 'none')
-            .attr('stroke', 'lightgreen')
-            .attr('stroke-width', '25');
+            makeAmoutReadDataForCircle.push(amountRead);
+            makeAmoutReadDataForCircle.push(amountReadPercGrey);
+        } else {
+            makeAmoutReadDataForCircle.push({
+                legend: 'Amount',
+                value: amountReadPerc,
+                color: 'green',
+            });
+        }
+
+        let makePreviousReadDataForCircle = [];
+        if (diff < 100) {
+            const previousReadPerc = {
+                legend: 'Amount',
+                value: diff,
+                color: 'lightgreen',
+            };
+            const previousReadPercGrey = {
+                legend: 'Amount',
+                value: 100 - diff,
+                color: 'grey',
+            };
+
+            makePreviousReadDataForCircle.push(previousReadPerc);
+            makePreviousReadDataForCircle.push(previousReadPercGrey);
+        } else {
+            makePreviousReadDataForCircle.push({
+                legend: 'Amount',
+                value: diff,
+                color: 'lightgreen',
+            });
+        }
+
+        // svg
+        //     .append('circle')
+        //     .attr('cx', 50)
+        //     .attr('cy', 50)
+        //     .attr('r', 205)
+        //     .attr('fill', 'none')
+        //     .attr('stroke', 'green')
+        //     .attr('stroke-width', '25');
+        //
+        // svg
+        //     .append('circle')
+        //     .attr('cx', 150)
+        //     .attr('cy', 150)
+        //     .attr('r', 100)
+        //     .attr('fill', 'none')
+        //     .attr('stroke', 'lightgreen')
+        //     .attr('stroke-width', '25');
 
         svg
             .append('text')
@@ -228,6 +274,48 @@ class ScoresInStacked {
             .attr('fill', () => (diff > 0 ? 'green' : 'red'))
             .attr('stroke-width', 1)
             .attr('transform', `translate(120,190)`);
+
+        const amountArc = d3.svg
+            .arc()
+            .outerRadius(150)
+            .innerRadius(125);
+
+        const pie = d3.layout
+            .pie()
+            .sort(null)
+            .value(d => d.value);
+
+        const pieChart = svg
+            .append('g')
+            .attr('transform', 'translate(' + 300 / 2 + ',' + 300 / 2 + ')');
+        const amountG = pieChart
+            .selectAll('.amountPie')
+            .data(pie(makeAmoutReadDataForCircle))
+            .enter()
+            .append('g')
+            .attr('class', 'amountPie');
+
+        amountG
+            .append('path')
+            .attr('d', amountArc)
+            .attr('fill', d => d.data.color);
+
+        const diffArc = d3.svg
+            .arc()
+            .outerRadius(125)
+            .innerRadius(100);
+
+        const diffG = pieChart
+            .selectAll('.diffPie')
+            .data(pie(makePreviousReadDataForCircle))
+            .enter()
+            .append('g')
+            .attr('class', 'diffPie');
+
+        diffG
+            .append('path')
+            .attr('d', diffArc)
+            .attr('fill', d => d.data.color);
     }
 
     addSumDiffReadAndSkimmed() {
