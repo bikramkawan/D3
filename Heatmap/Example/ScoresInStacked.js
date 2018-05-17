@@ -13,8 +13,15 @@ class ScoresInStacked {
             .style('height', `${height}px`)
             .style('border', '1px solid');
 
-        this.innerTop = this.topSvg.append('div').classed('top',true)
-        this.innerBottom = this.topSvg.append('div').classed('bottom',true)
+        this.innerTop = this.topSvg.append('div').classed('top', true);
+        this.innerBottom = this.topSvg.append('div').classed('bottom', true);
+
+        this.lineChartSvg = d3
+            .select('.stacked-line')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', 300);
+
         this.bottomSvg = d3
             .select('.score-bottom')
             .style('width', `${width}px`)
@@ -81,26 +88,62 @@ class ScoresInStacked {
         const filter = this.data.filter(
             d => d.category === 'skimmed' || d.category === 'read',
         );
+        const scale = d3.scale
+            .linear()
+            .domain([1, 6])
+            .range([100, 1000]);
+        const triangleUp = d3.svg
+            .symbol()
+            .type('triangle-up')
+            .size(function(d) {
+                return scale(2.5);
+            });
 
+        const triangleDown = d3.svg
+            .symbol()
+            .type('triangle-down')
+            .size(function(d) {
+                return scale(2.5);
+            });
         const sumByAmount = _.sumBy(filter, 'amount');
         const sumByPrevious = _.sumBy(filter, 'previous');
 
         const difference = sumByAmount - sumByPrevious;
-        const perc = 100 * difference / sumByAmount;
+        const perc = 100 * difference / (sumByAmount + sumByPrevious);
         console.error(sumByAmount, sumByPrevious, 'dfaffaf', difference, perc);
 
         const differenceEl = this.innerBottom
             .append('div')
-            .classed('readSkimmedDiff', true);
+            .classed('readSkimmedDiff', true)
+            .style('display', 'flex');
 
-        differenceEl
+        const triangle = differenceEl
+            .append('svg')
+            .classed('triangle', true)
+            .attr('width', 50)
+            .attr('height', 50);
+
+        triangle
+            .append('path')
+            .attr('d', difference > 0 ? triangleUp : triangleDown)
+            .attr('fill', function(d) {
+                return difference > 0 ? 'green' : 'red';
+            })
+            .attr('stroke', '#000')
+            .attr('stroke-width', 1)
+            .attr('transform', `translate(25,25)`);
+
+        const scores = differenceEl.append('div').classed('scores', true);
+
+        const diffText = difference > 0 ? `+ ${difference}` : `- ${difference}`;
+        scores
             .append('div')
             .classed('diff', true)
-            .text(difference);
-        differenceEl
+            .text(diffText);
+        scores
             .append('div')
             .classed('perc', true)
-            .text(perc.toFixed(1));
+            .text(`+ ${perc.toFixed(1)} %`);
     }
     addTotalSumFromAll() {
         this.totalAmountSumFromAllCat = _.sumBy(this.data, 'amount');

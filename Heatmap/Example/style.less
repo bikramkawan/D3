@@ -61,13 +61,11 @@
         background: grey;
         display: flex;
         .col {
-            width: 200px;
             height: 100%;
             border: 1px solid;
             display: flex;
             flex-direction: column;
             .top {
-                height: 80%;
                 background: rebeccapurple;
                 display: flex;
                 justify-content: flex-end;
@@ -84,8 +82,6 @@
                 }
             }
             .bottom {
-                height: 20%;
-                width: 100%;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -103,79 +99,81 @@
         }
     }
 
-    .stackedChart-container {
+    .stackChart-Main {
         display: flex;
-        flex-direction: column;
-        .stackChart-Main {
+
+        .legends {
             display: flex;
-
-            .legends {
-                display: flex;
-                width: 200px;
-                flex-direction: column;
-
-                .legendColumn {
-                    text-transform: capitalize;
-                    height: 25px;
-                    padding: 5px;
-                    width: 100%;
-                    display: flex;
-                    border-bottom: 1px solid;
-                    .name {
-                        width: 80%;
-                    }
-                    .color {
-                        width: 20%;
-                        height: 100%;
-                    }
-                }
-            }
-        }
-
-        .score-top {
-            width: 700px;
-            height: 100px;
-            border: 1px solid;
-            display: flex;
-            justify-content: space-around;
+            width: 200px;
             flex-direction: column;
-            & div {
+
+            .legendColumn {
+                text-transform: capitalize;
+                height: 25px;
                 padding: 5px;
-            }
-            .top {
+                width: 100%;
                 display: flex;
-                justify-content: space-around;
-                font-size: 20px;
-                & div {
-                    display: flex;
-                    &:nth-child(1) {
-                        .value,
-                        .label {
-                            color: grey;
-                        }
-                    }
+                border-bottom: 1px solid;
+                .name {
+                    width: 80%;
+                }
+                .color {
+                    width: 20%;
+                    height: 100%;
                 }
             }
-            .bottom {
-                display: flex;
-                justify-content: space-around;
-                & :first-child {
-                    display: flex;
-                    &:nth-child(1) {
-                        .value,
-                        .label {
-                            font-size: 30px;
-                        }
-                    }
-                }
-            }
-        }
-        .score-bottom {
-            display: flex;
-            justify-content: space-around;
-            text-transform: capitalize;
         }
     }
+
+    .score-top {
+        width: 700px;
+        height: 100px;
+        border: 1px solid;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: column;
+        & div {
+            padding: 5px;
+        }
+        .top {
+            display: flex;
+            justify-content: space-around;
+            font-size: 20px;
+            & div {
+                display: flex;
+                &:nth-child(1) {
+                    .value,
+                    .label {
+                        color: grey;
+                    }
+                }
+            }
+        }
+        .bottom {
+            display: flex;
+            justify-content: space-around;
+            & :first-child {
+                display: flex;
+                &:nth-child(1) {
+                    .value,
+                    .label {
+                        font-size: 30px;
+                    }
+                }
+            }
+        }
+    }
+    .score-bottom {
+        display: flex;
+        justify-content: space-around;
+        text-transform: capitalize;
+    }
+}
+
+.readSkimmedDiff {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .heatmap1 {

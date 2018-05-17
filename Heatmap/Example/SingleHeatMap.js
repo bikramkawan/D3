@@ -20,9 +20,11 @@ class SingleHeatMap {
                 value: { percentage: totalPerc, clicked: totalClicked },
             };
         });
+
         const width = 700;
         const height = 200;
-        const maxPercentage = 100;
+        const maxPercentage = _.sumBy(data, d => d.value.percentage);
+
         d3
             .select('.singleHeatmap-container')
             .style('width', `${width}px`)
@@ -32,6 +34,7 @@ class SingleHeatMap {
             .linear()
             .domain([0, maxPercentage])
             .range([0, width]);
+
         const clickedHeightScale = d3.scale
             .linear()
             .range([0, 0.8 * height])
@@ -49,10 +52,12 @@ class SingleHeatMap {
         const topContainer = itemColumn
             .append('div')
             .classed('top', true)
-            .style('background', d => d.color);
+            .style('background', d => d.color)
+            .style('height', `${0.8 * height}px`);
         const bottomContainer = itemColumn
             .append('div')
             .classed('bottom', true)
+            .style('height', `${0.2 * height}px`)
             .attr('title', d => `${d.label}(${d.value.percentage}%)`);
 
         bottomContainer
@@ -65,18 +70,23 @@ class SingleHeatMap {
             .classed('perc', true)
             .text(d => `${d.value.percentage} %`);
 
-        const calculateClicked = item => {
-            const clickedWidthScale = d3.scale
-                .linear()
-                .range([0, itemScale(item.value.percentage)])
-                .domain([0, maxPercentage]);
-            return `${clickedWidthScale(item.value.clicked)}px`;
+        const calculateWidth = item => {
+            const clickedWidthScale =
+                itemScale(item.value.percentage) * item.value.clicked / 100;
+
+            return `${clickedWidthScale}px`;
+        };
+
+        const calculateHeight = item => {
+            const clickedHeight = 0.8 * height * item.value.clicked / 100;
+
+            return `${clickedHeight}px`;
         };
         topContainer
             .append('div')
             .classed('inset', true)
-            .style('width', d => calculateClicked(d))
-            .style('height', d => `${clickedHeightScale(d.value.clicked)}px`)
+            .style('width', d => calculateWidth(d))
+            .style('height', d => calculateHeight(d))
             .text(d => `${d.value.clicked}%`)
             .attr('title', d => `Clicked (${d.value.clicked}%)`);
     }

@@ -119,19 +119,10 @@ class StackedChart {
             .attr('class', 'y axis')
             .call(yAxis);
 
-        const rightContainer = d3
+        const legends = d3
             .select('.stackChart-Main')
             .append('div')
-            .classed('rightContainer', true);
-
-        rightContainer
-            .append('svg')
-            .classed('pieChart', true)
-            .attr('width', 300)
-            .attr('height', 300);
-
-
-        const legends = rightContainer.append('div').classed('legends', true);
+            .classed('legends', true);
         const row = legends
             .selectAll('div')
             .data(uniques)
