@@ -73,13 +73,11 @@ class SingleHeatMap {
         const calculateWidth = item => {
             const clickedWidthScale =
                 itemScale(item.value.percentage) * item.value.clicked / 100;
-
             return `${clickedWidthScale}px`;
         };
 
         const calculateHeight = item => {
             const clickedHeight = 0.8 * height * item.value.clicked / 100;
-
             return `${clickedHeight}px`;
         };
         topContainer

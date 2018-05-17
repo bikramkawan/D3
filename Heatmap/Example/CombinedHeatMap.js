@@ -1,15 +1,16 @@
 class CombinedHeatMap {
-    constructor({ newData, color }) {
+    constructor({ newData, color, correctData }) {
         this.data = newData;
         this.color = color;
+        this.correctData = correctData;
     }
 
     draw() {
         const newData = this.data;
+
         const color = this.color;
         const width = 700;
         const height = 200;
-        const maxPercentage = 100;
 
         const opacityAdjust = 0.2;
 
@@ -40,6 +41,12 @@ class CombinedHeatMap {
             });
         });
 
+        const maxPercentage = dataWithColorAdjust.map(data => {
+            const percScore = _.sumBy(data, 'percentage');
+            const clickedScore = _.sumBy(data, 'clicked');
+            return { percScore, clickedScore };
+        });
+
         const app = d3
             .select('.heatmap-container')
             .selectAll('div')
@@ -53,10 +60,22 @@ class CombinedHeatMap {
             .style('position', 'absolute')
             .style('opacity', (d, i) => 1 - 0.2 * i);
 
-        const itemScale = d3.scale
-            .linear()
-            .domain([0, maxPercentage])
-            .range([0, width]);
+        const percentageScale = maxPercentage.map(item => {
+            const scale = d3.scale
+                .linear()
+                .domain([0, item.percScore])
+                .range([0, width]);
+            return scale;
+        });
+
+        const clickedScale = maxPercentage.map(item => {
+            const scale = d3.scale
+                .linear()
+                .domain([0, item.clickedScore])
+                .range([0, width]);
+            return scale;
+        });
+
         const clickedHeightScale = d3.scale
             .linear()
             .range([0, 0.8 * height])
@@ -70,13 +89,15 @@ class CombinedHeatMap {
             .enter()
             .append('div')
             .classed('col', true)
-            .style('width', d => `${itemScale(d.percentage)}px`);
+            .style('width', (d, i) => {
+                return `${percentageScale[i](d.percentage)}px`;
+            });
 
         const topContainer = itemColumn
             .append('div')
             .classed('top', true)
             .style('background', (d, i) => {
-                return color[d.label];
+                return color[d.category];
             })
             .style('opacity', d => d.opacity);
 
@@ -129,18 +150,21 @@ class CombinedHeatMap {
             .classed('perc', true)
             .text(d => `${d.percentage} %`);
 
-        const calculateClicked = item => {
-            const clickedWidthScale = d3.scale
-                .linear()
-                .range([0, itemScale(item.percentage)])
-                .domain([0, maxPercentage]);
-            return `${clickedWidthScale(item.clicked)}px`;
+        const calculateWidth = (item, index) => {
+            const clickedWidthScale =
+                percentageScale[index](item.percentage) * item.clicked / 100;
+            return `${clickedWidthScale}px`;
+        };
+
+        const calculateHeight = (item, index) => {
+            const clickedHeight = 0.8 * height * item.clicked / 100;
+            return `${clickedHeight}px`;
         };
         topContainer
             .append('div')
             .classed('inset', true)
-            .style('width', d => calculateClicked(d))
-            .style('height', d => `${clickedHeightScale(d.clicked)}px`)
+            .style('width', (d, i) => calculateWidth(d, i))
+            .style('height', (d, i) => calculateHeight(d, i))
             // .text(d => `${d.value.clicked}%`)
             .attr('title', d => `Clicked (${d.clicked}%)`);
     }

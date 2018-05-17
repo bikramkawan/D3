@@ -2,7 +2,7 @@ const newData = [
     {
         date: '01-Apr-07',
         category: 'ignored',
-        percentage: 50,
+        percentage: 20,
         clicked: 3,
     },
     {
@@ -14,19 +14,19 @@ const newData = [
     {
         date: '04-Apr-07',
         category: 'ignored',
-        percentage: 7,
+        percentage: 10,
         clicked: 7,
     },
     {
         date: '05-Apr-07',
         category: 'ignored',
-        percentage: 5,
+        percentage: 50,
         clicked: 1,
     },
     {
         date: '06-Apr-07',
         category: 'ignored',
-        percentage: 7,
+        percentage: 27,
         clicked: 3,
     },
     {
@@ -982,7 +982,7 @@ const taskPiData = [
 
 const singleHeatMap = new SingleHeatMap({ data: newData });
 singleHeatMap.draw();
-const arrayHeatMap = new CombinedHeatMap({ newData, color });
+const arrayHeatMap = new CombinedHeatMap({ newData, color,correctData });
 arrayHeatMap.draw();
 
 const stackedChart = new StackedChart({ stackedData, color });
