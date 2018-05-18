@@ -11,6 +11,7 @@
   padding: 50px;
 }
 .app .heatmap-container {
+  display: none;
   height: 300px;
 }
 .app .heatmap-container .heatmap {
@@ -66,7 +67,7 @@
 .app .singleHeatmap-container {
   margin-bottom: 50px;
   background: grey;
-  display: flex;
+  display: none;
 }
 .app .singleHeatmap-container .col {
   height: 100%;
