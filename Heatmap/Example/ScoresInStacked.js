@@ -4,9 +4,13 @@ class ScoresInStacked {
     }
 
     draw() {
-        this.width = 700;
-        this.height = 100;
-        var margin = { top: 30, right: 20, bottom: 30, left: 50 };
+        this.width = 900;
+        this.height = 600;
+        const margin = { top: 30, right: 20, bottom: 30, left: 50 };
+        this.lineChartHeight = 380;
+        this.pieChartHeight = 300;
+        this.labelHeight = 100;
+
         this.topSvg = d3
             .select('.score-top')
             .style('width', `${this.width - margin.left - margin.right}px`)
@@ -20,7 +24,7 @@ class ScoresInStacked {
             .select('.score-bottom')
             .style('width', `${this.width - margin.left - margin.right}px`)
             .style('margin-left', `${margin.left}px`);
-
+        this.addSvg();
         this.addTotalSumFromAll();
         this.addUndeliverable();
         this.addTotalReadAndSkimmed();
@@ -29,21 +33,70 @@ class ScoresInStacked {
         this.addPieChart();
     }
 
-    addLineChart() {
-        var margin = { top: 30, right: 20, bottom: 30, left: 50 },
-            width = this.width - margin.left - margin.right,
-            height = this.height + 200 - margin.top - margin.bottom;
+    addSvg() {
+        const margin = { top: 30, right: 20, bottom: 30, left: 50 };
+        const mainWidth = this.width;
+        const mainHeight = this.lineChartHeight;
+        this.pieWidth = mainWidth - 350;
+        const labelEnterheight = 50;
+        this.pieAreaWidth = mainWidth - this.pieWidth;
+        this.svg = d3
+            .select('#scorestackchart')
+            .attr('width', this.width)
+            .attr('height', this.height);
 
-        this.lineChartSvg = d3
-            .select('.stacked-line')
-            .append('svg')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
+        this.topLabel = this.svg
             .append('g')
+            .classed('topLabel', true)
+            .attr('transform', `translate(${0},${10})`);
+
+        this.lineChartSvg = this.svg
+            .append('g')
+            .classed('stackedChart', true)
             .attr(
                 'transform',
-                'translate(' + margin.left + ',' + margin.top + ')',
+                `translate(${margin.left} ,${this.labelHeight})`,
             );
+
+        this.pieSvg = this.svg
+            .append('g')
+            .classed('pie', true)
+            .attr(
+                'transform',
+                `translate(${this.pieWidth},${this.labelHeight})`,
+            );
+
+        this.bottomLabel = this.svg
+            .append('g')
+            .classed('bottomLabel', true)
+            .attr(
+                'transform',
+                `translate(${0},${this.labelHeight +
+                    this.lineChartHeight +
+                    30})`,
+            );
+    }
+    addLineChart() {
+        const mainWidth = this.width;
+        const mainHeight = this.lineChartHeight;
+        this.pieWidth = mainWidth - 350;
+        const labelEnterheight = 50;
+        this.pieAreaWidth = mainWidth - this.pieWidth;
+
+        const margin = { top: 30, right: 20, bottom: 30, left: 50 },
+            width = this.pieWidth - margin.left - margin.right,
+            height = mainHeight - margin.top - margin.bottom;
+
+        // d3
+        //     .select('.stacked-line')
+        //     .append('svg')
+        //     .attr('width', width + margin.left + margin.right)
+        //     .attr('height', height + margin.top + margin.bottom)
+        //     .append('g')
+        //     .attr(
+        //         'transform',
+        //         'translate(' + margin.left + ',' + margin.top + ')',
+        //     );
 
         const parseDate = d3.time.format('%d-%b-%y').parse;
 
@@ -155,11 +208,7 @@ class ScoresInStacked {
             .call(yAxis);
     }
     addPieChart() {
-        const svg = d3
-            .select('.stacked-line')
-            .append('svg')
-            .attr('width', 300)
-            .attr('height', 300);
+        const svg = this.pieSvg;
         const filter = this.data.filter(d => d.category === 'read');
         const previousRead = _.sumBy(filter, 'previous');
         const amountRead = _.sumBy(filter, 'amount');
@@ -347,24 +396,30 @@ class ScoresInStacked {
             .style('display', 'flex')
             .style('color', () => (difference > 0 ? 'green' : 'red'));
 
-        const triangle = differenceEl
-            .append('svg')
-            .classed('triangle', true)
-            .attr('width', 50)
-            .attr('height', 50);
+        const svg = this.topLabel
+            .append('g')
+            .classed('readSkimmedDiff', true)
+            .attr('transform', `translate(${this.width - 200},${40})`);
 
-        triangle
+        // const triangle = differenceEl
+        //     .append('svg')
+        //     .classed('triangle', true)
+        //     .attr('width', 50)
+        //     .attr('height', 50);
+
+        svg
             .append('path')
             .attr('d', difference > 0 ? triangleUp : triangleDown)
             .attr('fill', () => (difference > 0 ? 'green' : 'red'))
             .attr('stroke-width', 1)
-            .attr('transform', `translate(25,25)`);
+            .attr('transform', `translate(10,0)`);
 
         const scores = differenceEl.append('div').classed('scores', true);
 
         const diffText = difference > 0 ? `+ ${difference}` : `${difference}`;
         const percText =
             difference > 0 ? `+ ${perc.toFixed(1)} %` : `${perc.toFixed(1)} %`;
+
         scores
             .append('div')
             .classed('diff', true)
@@ -373,6 +428,24 @@ class ScoresInStacked {
             .append('div')
             .classed('perc', true)
             .text(percText);
+
+        svg
+            .append('text')
+            .attr('x', 50)
+            .attr('y', -5)
+            .classed('diff', true)
+            .text(diffText)
+            .attr('fill', () => (difference > 0 ? 'green' : 'red'))
+            .style('font-size', '18px');
+
+        svg
+            .append('text')
+            .attr('x', 50)
+            .attr('y', 15)
+            .classed('perc', true)
+            .text(percText)
+            .attr('fill', () => (difference > 0 ? 'green' : 'red'))
+            .style('font-size', '18px');
     }
     addTotalSumFromAll() {
         this.totalAmountSumFromAllCat = _.sumBy(this.data, 'amount');
@@ -388,6 +461,26 @@ class ScoresInStacked {
             .append('div')
             .classed('label', true)
             .text('SENT');
+
+        const svg = this.topLabel
+            .append('g')
+            .classed('totalSumFromAllCat', true)
+            .attr('transform', `translate(${10},${10})`);
+
+        svg
+            .append('text')
+            .classed('value', true)
+            .text(this.totalAmountSumFromAllCat)
+            .style('font-size', '20px')
+            .attr('fill', 'black');
+
+        svg
+            .append('text')
+            .classed('label', true)
+            .attr('x', 50)
+            .text('SENT')
+            .style('font-size', '20px')
+            .attr('fill', 'black');
     }
 
     addUndeliverable() {
@@ -426,6 +519,61 @@ class ScoresInStacked {
                     )}%`,
                 );
         });
+
+        const binWidth = 250;
+        const height = 30;
+        const offSet = 10;
+
+        const svg = this.bottomLabel
+            .selectAll('g')
+            .data(totalSum)
+            .enter()
+            .append('g')
+            .classed('colItem', true)
+            .attr(
+                'transform',
+                (d, i) => `translate(${offSet * i + binWidth * i},${10})`,
+            );
+
+        svg
+            .append('rect')
+            .classed('background', true)
+            .attr('width', binWidth)
+            .attr('height', height)
+            .attr('fill', '#f4f4f4');
+
+        const textOffset = 10;
+        svg
+            .append('text')
+            .classed('sum', true)
+            .text(d => d.sum)
+            .attr('x', (d, i) => textOffset * 2)
+            .attr('y', (d, i) => 5 + height / 2)
+            .style('text-transform', 'capitalize')
+            .style('font-size', '18px');
+
+        svg
+            .append('text')
+            .classed('label', true)
+            .attr('x', (d, i) => textOffset * 7)
+            .text(d => d.label)
+            .attr('y', (d, i) => 5 + height / 2)
+            .style('text-transform', 'capitalize')
+            .style('font-size', '18px');
+
+        svg
+            .append('text')
+            .attr('x', (d, i) => binWidth - textOffset * 6)
+            .classed('perc', true)
+            .text(
+                d =>
+                    `${(100 * d.sum / this.totalAmountSumFromAllCat).toFixed(
+                        1,
+                    )}%`,
+            )
+            .attr('y', (d, i) => 5 + height / 2)
+            .style('text-transform', 'capitalize')
+            .style('font-size', '18px');
     }
 
     addTotalReadAndSkimmed() {
@@ -448,6 +596,26 @@ class ScoresInStacked {
             .classed('label', true)
             .text('Reach');
 
+        const svg = this.topLabel
+            .append('g')
+            .classed('readSkimmedEl', true)
+            .attr('transform', `translate(${10},${50})`);
+
+        svg
+            .append('text')
+            .classed('value', true)
+            .text(`${(100 * sum / this.totalAmountSumFromAllCat).toFixed(1)}%`)
+            .style('font-size', '35px')
+            .attr('fill', 'black');
+
+        svg
+            .append('text')
+            .classed('label', true)
+            .attr('x', 100)
+            .text('Reach')
+            .style('font-size', '35px')
+            .attr('fill', 'black');
+
         this.addUOpen(sum);
     }
 
@@ -465,5 +633,26 @@ class ScoresInStacked {
             .append('div')
             .classed('label', true)
             .text(`u Open`);
+
+        const svg = this.topLabel
+            .append('g')
+            .classed('addUOpenEl', true)
+            .attr('transform', `translate(${this.width - 200},${10})`);
+
+        svg
+            .append('text')
+            .classed('value', true)
+            .text(sum)
+            .style('font-size', '20px')
+            .attr('fill', 'black');
+
+        svg
+            .append('text')
+
+            .classed('label', true)
+            .attr('x', 50)
+            .text(`u Open`)
+            .style('font-size', '20px')
+            .attr('fill', 'black');
     }
 }

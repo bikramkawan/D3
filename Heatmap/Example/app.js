@@ -980,6 +980,11 @@ const taskPiData = [
     },
 ];
 
+
+
+
+
+
 const singleHeatMap = new SingleHeatMap({ data: newData });
 singleHeatMap.draw();
 const arrayHeatMap = new CombinedHeatMap({ newData, color,correctData });

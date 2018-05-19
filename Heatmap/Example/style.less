@@ -1,5 +1,16 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+        margin-bottom: 50px;
+    }
+}
 
 .app {
+    display: none;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -112,7 +123,7 @@
     }
 
     .stackChart-Main {
-        display: flex;
+        display: none;
 
         .legends {
             display: flex;
@@ -137,6 +148,9 @@
         }
     }
 
+    .scoresStacked-container {
+        display: none;
+    }
     .score-top {
         width: 700px;
         height: 100px;

@@ -1,4 +1,14 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+body svg {
+  margin-bottom: 50px;
+}
 .app {
+  display: none;
   justify-content: center;
   align-items: center;
   display: flex;
@@ -106,7 +116,7 @@
   text-transform: capitalize;
 }
 .app .stackChart-Main {
-  display: flex;
+  display: none;
 }
 .app .stackChart-Main .legends {
   display: flex;
@@ -127,6 +137,9 @@
 .app .stackChart-Main .legends .legendColumn .color {
   width: 20%;
   height: 100%;
+}
+.app .scoresStacked-container {
+  display: none;
 }
 .app .score-top {
   width: 700px;

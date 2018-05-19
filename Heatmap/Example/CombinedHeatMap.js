@@ -10,8 +10,9 @@ class CombinedHeatMap {
 
         const color = this.color;
         const width = 700;
-        const height = 400;
-
+        const height = 300;
+        const topHeight = 0.7 * height;
+        const bottomHeight = 0.2 * height;
         const opacityAdjust = 0.2;
 
         const groupByHeatmap = _.groupBy(newData, d => d.category);
@@ -74,14 +75,18 @@ class CombinedHeatMap {
                 .domain([0, maxPercentage])
                 .range([0, width]);
 
-            const heatMapEnter = svg.append('g').classed('heatmap', true);
+            const heatMapEnter = svg
+                .append('g')
+                .classed('heatmap', true)
+                .attr('data-arrt', data[0].date);
 
             const gEnter = heatMapEnter
                 .selectAll('g')
                 .data(data)
                 .enter()
                 .append('g')
-                .classed('col', true)
+                .classed('item', true)
+                .attr('data-arrt', d => d.category)
                 .attr('transform', (d, i) => {
                     const previousArrayLength = Array.from(
                         { length: i },
@@ -101,7 +106,7 @@ class CombinedHeatMap {
                 .append('rect')
                 .classed('top', true)
                 .attr('width', d => itemScale(d.percentage))
-                .attr('height', 0.8 * height)
+                .attr('height', topHeight)
                 .attr('fill', d => color[d.category])
                 .attr('opacity', d => d.opacity);
 
@@ -112,7 +117,7 @@ class CombinedHeatMap {
             };
 
             const calculateHeight = item => {
-                const clickedHeight = 0.8 * height * item.clicked / 100;
+                const clickedHeight = topHeight * item.clicked / 100;
                 return `${clickedHeight}px`;
             };
 
@@ -120,21 +125,25 @@ class CombinedHeatMap {
                 .append('rect')
                 .classed('inset', true)
                 .attr('width', d => itemScale(d.percentage) * d.clicked / 100)
-                .attr('height', d => 0.8 * height * d.clicked / 100)
+                .attr('height', d => topHeight * d.clicked / 100)
                 .attr('x', d => {
                     const binWidth = itemScale(d.percentage) * d.clicked / 100;
                     return itemScale(d.percentage) - binWidth;
                 })
                 .attr('y', d => {
-                    const binHeight = 0.8 * height * d.clicked / 100;
-                    return 0.8 * height - binHeight;
+                    const binHeight = topHeight * d.clicked / 100;
+                    return topHeight - binHeight;
                 })
                 .attr('fill', '#1aa4cd')
                 .append('title')
                 .text(d => d.clicked);
         });
 
-        const labelSvg = svg.append('g').classed('label', true);
+        const labelSvg = svg
+            .append('g')
+            .classed('label', true)
+            .attr('transform', (d, i) => `translate(0,${0.75 * height})`);
+
         const labels = heatmapData
             .map(d => d.values.map(e => e.category))
             .reduce((c, b) => c.concat(b), []);
@@ -166,14 +175,14 @@ class CombinedHeatMap {
             .append('g')
             .classed('category', true)
             .attr('transform', (d, i) => {
-                return `translate(${binSize * i},${0.8 * height})`;
+                return `translate(${binSize * i},${0})`;
             });
-        const labelHeight = 0.2 * height;
+
         labelEnter
             .append('rect')
             .classed('top', true)
             .attr('width', (d, i) => binSize)
-            .attr('height', labelHeight)
+            .attr('height', bottomHeight)
             .attr('fill', d => color[d.label]);
 
         labelEnter
@@ -183,7 +192,7 @@ class CombinedHeatMap {
                 return 10;
             })
             .attr('y', (d, i) => {
-                return 0.7 * labelHeight;
+                return 0.7 * bottomHeight;
             })
 
             .text(d => d.label)
@@ -198,7 +207,7 @@ class CombinedHeatMap {
                 return 10;
             })
             .attr('y', (d, i) => {
-                return 0.5 * labelHeight;
+                return 0.5 * bottomHeight;
             })
 
             .text(d => `${d.percentage}%`)
