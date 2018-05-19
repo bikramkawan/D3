@@ -1,7 +1,9 @@
 class StackedChart {
-    constructor({ stackedData, color }) {
+    constructor({ stackedData, color, height, width }) {
         this.data = stackedData;
         this.color = color;
+        this.width = width;
+        this.height = height;
     }
 
     draw() {
@@ -26,11 +28,13 @@ class StackedChart {
             return obj;
         });
 
-        const mainWidth = 900;
-        const mainHeight = 400;
-        const stackChartWidth = mainWidth - 200;
-        const labelEnterheight = 50;
-        const labelAreaWidth = mainWidth - stackChartWidth;
+        const mainHeight = this.height + 100;
+        const stackChartWidth = this.width - 200;
+        const labelEnterHeight = 50;
+        const labelAreaWidth = this.width - stackChartWidth;
+        const labelRectWidth = labelAreaWidth * 0.9;
+        const labelRectHeight = labelEnterHeight * 0.9;
+        const offsetForText = -30;
         const stackedMargin = { top: 20, right: 20, bottom: 30, left: 50 },
             stackedWidth =
                 stackChartWidth - stackedMargin.left - stackedMargin.right,
@@ -54,23 +58,14 @@ class StackedChart {
 
         const area = d3.svg
             .area()
-            .x(function(d) {
-                return stackedXScale(d.date);
-            })
-            .y0(function(d) {
-                return stackedYScale(d.y0);
-            })
-            .y1(function(d) {
-                return stackedYScale(d.y0 + d.y);
-            });
-
-        const stack = d3.layout.stack().values(function(d) {
-            return d.values;
-        });
+            .x(d => stackedXScale(d.date))
+            .y0(d => stackedYScale(d.y0))
+            .y1(d => stackedYScale(d.y0 + d.y));
+        const stack = d3.layout.stack().values(d => d.values);
 
         const svg = d3
             .select('#stacklinechart')
-            .attr('width', mainWidth)
+            .attr('width', this.width)
             .attr('height', mainHeight);
 
         const stackedChartSvg = svg
@@ -87,10 +82,10 @@ class StackedChart {
 
         const labelSvg = svg
             .append('g')
-            .classed('stackedChart', true)
+            .classed('stackedChartLabel', true)
             .attr(
                 'transform',
-                `translate(${stackChartWidth},${stackedMargin.top})`,
+                `translate(${stackChartWidth},${0.3 * this.height})`,
             );
 
         const itemCollections = stack(
@@ -141,21 +136,21 @@ class StackedChart {
             .classed('legendColumn', true)
             .attr(
                 'transform',
-                (d, i) => `translate(0,${labelEnterheight * i})`,
+                (d, i) => `translate(0,${labelEnterHeight * i})`,
             );
 
         labelEnter
             .append('rect')
             .classed('labelColor', true)
-            .attr('width', labelAreaWidth * 0.9)
-            .attr('height', labelEnterheight * 0.9)
+            .attr('width', labelRectWidth)
+            .attr('height', labelRectHeight)
             .attr('fill', d => color[d]);
 
         labelEnter
             .append('text')
             .classed('label', true)
-            .attr('x', d => -30 + labelAreaWidth * 0.9 / 2)
-            .attr('y', labelEnterheight * 0.9 / 2)
+            .attr('x', d => offsetForText + labelRectWidth / 2)
+            .attr('y', labelRectHeight / 2)
             .text(d => `${d}`)
             .style('text-transform', 'capitalize');
     }

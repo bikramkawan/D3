@@ -980,18 +980,16 @@ const taskPiData = [
     },
 ];
 
+const width = 900;
+const height = 300;
 
-
-
-
-
-const singleHeatMap = new SingleHeatMap({ data: newData });
+const singleHeatMap = new SingleHeatMap({ data: newData, width, height });
 singleHeatMap.draw();
-const arrayHeatMap = new CombinedHeatMap({ newData, color,correctData });
+const arrayHeatMap = new CombinedHeatMap({ newData, color, width, height });
 arrayHeatMap.draw();
 
-const stackedChart = new StackedChart({ stackedData, color });
+const stackedChart = new StackedChart({ stackedData, color, width, height });
 stackedChart.draw();
 
-const stackedScore = new ScoresInStacked({ data: taskPiData });
+const stackedScore = new ScoresInStacked({ data: taskPiData, width, height });
 stackedScore.draw();

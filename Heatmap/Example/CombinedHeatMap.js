@@ -1,61 +1,21 @@
 class CombinedHeatMap {
-    constructor({ newData, color, correctData }) {
+    constructor({ newData, color, height, width }) {
         this.data = newData;
         this.color = color;
-        this.correctData = correctData;
+        this.height = height;
+        this.width = width;
     }
 
     draw() {
-        const newData = this.data;
+        this.width = this.width - 200;
+        const topHeight = 0.7 * this.height;
+        const bottomHeight = 0.2 * this.height;
 
-        const color = this.color;
-        const width = 700;
-        const height = 300;
-        const topHeight = 0.7 * height;
-        const bottomHeight = 0.2 * height;
-        const opacityAdjust = 0.2;
-        const groupByHeatmap = _.groupBy(newData, d => d.category);
-        const uniquesHeatmap = _.uniqBy(newData, d => d.category).map(
-            d => d.category,
-        );
-
-        const parseDateHeatmap = d3.time.format('%d-%b-%y').parse;
-        const heatmapData = groupByHeatmap[uniquesHeatmap[0]].map(d => {
-            const obj = {};
-            obj['date'] = parseDateHeatmap(d.date);
-            obj['values'] = uniquesHeatmap.map(c => {
-                return groupByHeatmap[c].filter(e => e.date === d.date)[0];
-            });
-
-            return obj;
-        });
-
-        const dataWithColorAdjust = heatmapData.map((item, index) => {
-            return item.values.map(d => {
-                return {
-                    ...d,
-                    opacity: 1 - opacityAdjust * index,
-                };
-            });
-        });
-
-        const maxPercentage = dataWithColorAdjust.map(data => {
-            const percScore = _.sumBy(data, 'percentage');
-            const clickedScore = _.sumBy(data, 'clicked');
-            return { percScore, clickedScore };
-        });
-
-        const percentageScale = maxPercentage.map(item => {
-            return d3.scale
-                .linear()
-                .domain([0, item.percScore])
-                .range([0, width]);
-        });
-
+        const { heatmapData, dataWithColorAdjust } = this.prepareData();
         const svg = d3
             .select('#combinedheatmap')
-            .style('width', `${width}px`)
-            .style('height', `${height}px`);
+            .style('width', `${this.width}px`)
+            .style('height', `${this.height}px`);
 
         dataWithColorAdjust.forEach(data => {
             const maxPercentage = _.sumBy(data, 'percentage');
@@ -64,7 +24,7 @@ class CombinedHeatMap {
             const itemScale = d3.scale
                 .linear()
                 .domain([0, maxPercentage])
-                .range([0, width]);
+                .range([0, this.width]);
 
             const heatMapEnter = svg
                 .append('g')
@@ -98,7 +58,7 @@ class CombinedHeatMap {
                 .classed('top', true)
                 .attr('width', d => itemScale(d.percentage))
                 .attr('height', topHeight)
-                .attr('fill', d => color[d.category])
+                .attr('fill', d => this.color[d.category])
                 .attr('opacity', d => d.opacity);
 
             gEnter
@@ -122,7 +82,7 @@ class CombinedHeatMap {
         const labelSvg = svg
             .append('g')
             .classed('label', true)
-            .attr('transform', (d, i) => `translate(0,${0.75 * height})`);
+            .attr('transform', (d, i) => `translate(0,${0.75 * this.height})`);
 
         const labels = heatmapData
             .map(d => d.values.map(e => e.category))
@@ -146,7 +106,7 @@ class CombinedHeatMap {
             label: d[0].category,
             percentage: _.sumBy(d, o => o.percentage),
         }));
-        const binSize = width / totalSumScore.length;
+        const binSize = this.width / totalSumScore.length;
 
         const labelEnter = labelSvg
             .selectAll('g')
@@ -163,7 +123,7 @@ class CombinedHeatMap {
             .classed('top', true)
             .attr('width', (d, i) => binSize)
             .attr('height', bottomHeight)
-            .attr('fill', d => color[d.label]);
+            .attr('fill', d => this.color[d.label]);
 
         labelEnter
             .append('text')
@@ -187,12 +147,42 @@ class CombinedHeatMap {
                 return 10;
             })
             .attr('y', (d, i) => {
-                return 0.5 * bottomHeight;
+                return 0.4 * bottomHeight;
             })
 
             .text(d => `${d.percentage}%`)
             .style('text-transform', 'capitalize')
             .append('title')
             .text(d => d.percentage);
+    }
+
+    prepareData() {
+        const opacityAdjust = 0.2;
+        const groupByHeatmap = _.groupBy(this.data, d => d.category);
+        const uniquesHeatmap = _.uniqBy(this.data, d => d.category).map(
+            d => d.category,
+        );
+
+        const parseDateHeatmap = d3.time.format('%d-%b-%y').parse;
+        const heatmapData = groupByHeatmap[uniquesHeatmap[0]].map(d => {
+            const obj = {};
+            obj['date'] = parseDateHeatmap(d.date);
+            obj['values'] = uniquesHeatmap.map(c => {
+                return groupByHeatmap[c].filter(e => e.date === d.date)[0];
+            });
+
+            return obj;
+        });
+
+        const dataWithColorAdjust = heatmapData.map((item, index) => {
+            return item.values.map(d => {
+                return {
+                    ...d,
+                    opacity: 1 - opacityAdjust * index,
+                };
+            });
+        });
+
+        return { heatmapData, dataWithColorAdjust };
     }
 }

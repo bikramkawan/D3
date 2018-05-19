@@ -1,16 +1,14 @@
 class ScoresInStacked {
-    constructor({ data }) {
+    constructor({ data, height, width }) {
         this.data = data;
+        this.height = height;
+        this.width = width;
     }
 
     draw() {
-        this.width = 900;
-        this.height = 600;
-        const margin = { top: 30, right: 20, bottom: 30, left: 50 };
-        this.lineChartHeight = 380;
-        this.pieChartHeight = 300;
+        this.lineChartHeight = this.height;
+        this.height = this.height + 150;
         this.labelHeight = 100;
-
         this.addSvg();
         this.addTotalSumFromAll();
         this.addUndeliverable();
@@ -56,7 +54,7 @@ class ScoresInStacked {
             .attr(
                 'transform',
                 `translate(${0},${this.labelHeight +
-                    this.lineChartHeight +
+                    this.lineChartHeight -
                     30})`,
             );
     }
@@ -67,8 +65,6 @@ class ScoresInStacked {
         const margin = { top: 30, right: 20, bottom: 30, left: 50 },
             width = this.pieWidth - margin.left - margin.right,
             height = mainHeight - margin.top - margin.bottom;
-
-        const parseDate = d3.time.format('%d-%b-%y').parse;
 
         const x = d3.time.scale().range([0, width]);
         const yScale = d3.scale.linear().range([height, 0]);
@@ -95,36 +91,13 @@ class ScoresInStacked {
             .x(d => x(d.date))
             .y(d => yScale(d.previous));
 
-        const dataOnlyReadAndSkimmed = this.data.filter(
-            d => d.category === 'skimmed' || d.category === 'read',
-        );
-
-        const uniqueDate = _.uniqBy(dataOnlyReadAndSkimmed, 'date');
-        const collectData = uniqueDate.map(d => {
-            const thisDate = dataOnlyReadAndSkimmed.filter(
-                rs => rs.date === d.date,
-            );
-            const sumByPrevious = _.sumBy(thisDate, 'previous');
-            const sumByAmount = _.sumBy(thisDate, 'amount');
-
-            return {
-                date: parseDate(d.date),
-                previous: sumByPrevious,
-                amount: sumByAmount,
-            };
-        });
-
-        const meanByAmount = _.meanBy(collectData, 'amount');
-        const meanByPrevious = _.meanBy(collectData, 'previous');
-        const totalMean = _.meanBy([meanByPrevious, meanByAmount]);
-
-        x.domain(
-            d3.extent(collectData, function(d) {
-                return d.date;
-            }),
-        );
-        const extentAmount = d3.extent(collectData, d => d.amount);
-        const extentPrevious = d3.extent(collectData, d => d.previous);
+        const {
+            collectData,
+            extentAmount,
+            extentPrevious,
+            totalMean,
+        } = this.getLineChartdata();
+        x.domain(d3.extent(collectData, d => d.date));
         yScale.domain([0, d3.max([...extentAmount, ...extentPrevious])]);
 
         const topRectHeight = yScale(totalMean);
@@ -178,74 +151,33 @@ class ScoresInStacked {
             .call(yAxis);
     }
     addPieChart() {
-        const svg = this.pieSvg;
-        const filter = this.data.filter(d => d.category === 'read');
-        const previousRead = _.sumBy(filter, 'previous');
-        const amountRead = _.sumBy(filter, 'amount');
-        const diff =
-            (100 * amountRead - previousRead) / amountRead + previousRead;
-        const amountReadPerc = 100 * amountRead / this.totalAmountSumFromAllCat;
-        let makeAmoutReadDataForCircle = [];
-        if (amountReadPerc < 100) {
-            const amountRead = {
-                legend: 'Amount',
-                value: amountReadPerc,
-                color: 'green',
-            };
-            const amountReadPercGrey = {
-                legend: 'Amount',
-                value: 100 - amountReadPerc,
-                color: 'grey',
-            };
+        const {
+            amountReadPerc,
+            diff,
+            makeAmoutReadDataForCircle,
+            makePreviousReadDataForCircle,
+        } = this.getPieData();
 
-            makeAmoutReadDataForCircle.push(amountRead);
-            makeAmoutReadDataForCircle.push(amountReadPercGrey);
-        } else {
-            makeAmoutReadDataForCircle.push({
-                legend: 'Amount',
-                value: amountReadPerc,
-                color: 'green',
-            });
-        }
-
-        let makePreviousReadDataForCircle = [];
-        if (diff < 100) {
-            const previousReadPerc = {
-                legend: 'Amount',
-                value: diff,
-                color: 'lightgreen',
-            };
-            const previousReadPercGrey = {
-                legend: 'Amount',
-                value: 100 - diff,
-                color: 'grey',
-            };
-
-            makePreviousReadDataForCircle.push(previousReadPerc);
-            makePreviousReadDataForCircle.push(previousReadPercGrey);
-        } else {
-            makePreviousReadDataForCircle.push({
-                legend: 'Amount',
-                value: diff,
-                color: 'lightgreen',
-            });
-        }
-        svg
+        const pieWidth = 250;
+        const outerRadius = pieWidth - 150;
+        const innerRadius = outerRadius - 25;
+        this.pieSvg
             .append('text')
-            .attr('x', 120)
-            .attr('y', 150)
+            .attr('x', -30 + pieWidth / 2)
+            .attr('y', -30 + pieWidth / 2)
             .text(`${amountReadPerc.toFixed(1)}%`)
             .attr('stroke', 'none')
-            .style('font-size', '35px')
+            .style('font-size', '30px')
             .attr('fill', 'black');
 
         const diffText =
             diff > 0 ? `+ ${diff.toFixed(1)}` : `- ${diff.toFixed(1)}`;
 
-        svg
+        this.pieSvg
             .append('text')
-            .attr('x', 150)
-            .attr('y', 200)
+            .attr('x', -30 + pieWidth / 2)
+            .attr('y', 5 + pieWidth / 2)
+            .classed('diffText', true)
             .text(`${diffText}%`)
             .attr('stroke', 'none')
             .attr('fill', d => (diff > 0 ? 'green' : 'red'));
@@ -264,26 +196,29 @@ class ScoresInStacked {
             .type('triangle-down')
             .size(d => scale(2.5));
 
-        svg
+        this.pieSvg
             .append('path')
             .attr('d', diff > 0 ? triangleUp : triangleDown)
             .attr('fill', () => (diff > 0 ? 'green' : 'red'))
             .attr('stroke-width', 1)
-            .attr('transform', `translate(120,190)`);
+            .attr(
+                'transform',
+                `translate(${pieWidth / 2},${30 + pieWidth / 2})`,
+            );
 
         const amountArc = d3.svg
             .arc()
-            .outerRadius(150)
-            .innerRadius(125);
+            .outerRadius(outerRadius + 25)
+            .innerRadius(innerRadius + 25);
 
         const pie = d3.layout
             .pie()
             .sort(null)
             .value(d => d.value);
 
-        const pieChart = svg
+        const pieChart = this.pieSvg
             .append('g')
-            .attr('transform', 'translate(' + 300 / 2 + ',' + 300 / 2 + ')');
+            .attr('transform', `translate(${pieWidth / 2},${pieWidth / 2})`);
         const amountG = pieChart
             .selectAll('.amountPie')
             .data(pie(makeAmoutReadDataForCircle))
@@ -298,8 +233,8 @@ class ScoresInStacked {
 
         const diffArc = d3.svg
             .arc()
-            .outerRadius(125)
-            .innerRadius(100);
+            .outerRadius(outerRadius)
+            .innerRadius(innerRadius);
 
         const diffG = pieChart
             .selectAll('.diffPie')
@@ -315,9 +250,6 @@ class ScoresInStacked {
     }
 
     addSumDiffReadAndSkimmed() {
-        const filter = this.data.filter(
-            d => d.category === 'skimmed' || d.category === 'read',
-        );
         const scale = d3.scale
             .linear()
             .domain([1, 6])
@@ -331,12 +263,7 @@ class ScoresInStacked {
             .symbol()
             .type('triangle-down')
             .size(d => scale(2.5));
-        const sumByAmount = _.sumBy(filter, 'amount');
-        const sumByPrevious = _.sumBy(filter, 'previous');
-
-        const difference = sumByAmount - sumByPrevious;
-        const perc = 100 * difference / (sumByAmount + sumByPrevious);
-
+        const { difference, perc } = this.getAddSumDiffReadAndSkimmedData();
         const svg = this.topLabel
             .append('g')
             .classed('readSkimmedDiff', true)
@@ -514,5 +441,108 @@ class ScoresInStacked {
             .text(`u Open`)
             .style('font-size', '20px')
             .attr('fill', 'black');
+    }
+
+    getPieData() {
+        const filter = this.data.filter(d => d.category === 'read');
+        const previousRead = _.sumBy(filter, 'previous');
+        const amountRead = _.sumBy(filter, 'amount');
+        const diff =
+            (100 * amountRead - previousRead) / amountRead + previousRead;
+        const amountReadPerc = 100 * amountRead / this.totalAmountSumFromAllCat;
+        let makeAmoutReadDataForCircle = [];
+        if (amountReadPerc < 100) {
+            const amountRead = {
+                legend: 'Amount',
+                value: amountReadPerc,
+                color: 'green',
+            };
+            const amountReadPercGrey = {
+                legend: 'Amount',
+                value: 100 - amountReadPerc,
+                color: 'grey',
+            };
+
+            makeAmoutReadDataForCircle.push(amountRead);
+            makeAmoutReadDataForCircle.push(amountReadPercGrey);
+        } else {
+            makeAmoutReadDataForCircle.push({
+                legend: 'Amount',
+                value: amountReadPerc,
+                color: 'green',
+            });
+        }
+
+        let makePreviousReadDataForCircle = [];
+        if (diff < 100) {
+            const previousReadPerc = {
+                legend: 'Amount',
+                value: diff,
+                color: 'lightgreen',
+            };
+            const previousReadPercGrey = {
+                legend: 'Amount',
+                value: 100 - diff,
+                color: 'grey',
+            };
+
+            makePreviousReadDataForCircle.push(previousReadPerc);
+            makePreviousReadDataForCircle.push(previousReadPercGrey);
+        } else {
+            makePreviousReadDataForCircle.push({
+                legend: 'Amount',
+                value: diff,
+                color: 'lightgreen',
+            });
+        }
+
+        return {
+            amountReadPerc,
+            diff,
+            makeAmoutReadDataForCircle,
+            makePreviousReadDataForCircle,
+        };
+    }
+
+    getLineChartdata() {
+        const dataOnlyReadAndSkimmed = this.data.filter(
+            d => d.category === 'skimmed' || d.category === 'read',
+        );
+        const parseDate = d3.time.format('%d-%b-%y').parse;
+        const uniqueDate = _.uniqBy(dataOnlyReadAndSkimmed, 'date');
+        const collectData = uniqueDate.map(d => {
+            const thisDate = dataOnlyReadAndSkimmed.filter(
+                rs => rs.date === d.date,
+            );
+            const sumByPrevious = _.sumBy(thisDate, 'previous');
+            const sumByAmount = _.sumBy(thisDate, 'amount');
+
+            return {
+                date: parseDate(d.date),
+                previous: sumByPrevious,
+                amount: sumByAmount,
+            };
+        });
+
+        const meanByAmount = _.meanBy(collectData, 'amount');
+        const meanByPrevious = _.meanBy(collectData, 'previous');
+        const totalMean = _.meanBy([meanByPrevious, meanByAmount]);
+        const extentAmount = d3.extent(collectData, d => d.amount);
+        const extentPrevious = d3.extent(collectData, d => d.previous);
+
+        return { collectData, extentAmount, extentPrevious, totalMean };
+    }
+
+    getAddSumDiffReadAndSkimmedData() {
+        const filter = this.data.filter(
+            d => d.category === 'skimmed' || d.category === 'read',
+        );
+        const sumByAmount = _.sumBy(filter, 'amount');
+        const sumByPrevious = _.sumBy(filter, 'previous');
+
+        const difference = sumByAmount - sumByPrevious;
+        const perc = 100 * difference / (sumByAmount + sumByPrevious);
+
+        return { difference, perc };
     }
 }
