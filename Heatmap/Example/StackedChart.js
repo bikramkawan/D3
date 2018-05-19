@@ -144,14 +144,6 @@ class StackedChart {
                 (d, i) => `translate(0,${labelEnterheight * i})`,
             );
 
-        // labelEnter
-        //     .append('rect')
-        //     .classed('labelColor', true)
-        //     .attr('width', 40)
-        //     .attr('height', 30)
-        //     .attr('fill', d => color[d])
-        //     .attr('x', d => labelAreaWidth * 0.5);
-
         labelEnter
             .append('rect')
             .classed('labelColor', true)
@@ -166,21 +158,5 @@ class StackedChart {
             .attr('y', labelEnterheight * 0.9 / 2)
             .text(d => `${d}`)
             .style('text-transform', 'capitalize');
-
-        const row = legends
-            .selectAll('div')
-            .data(uniques)
-            .enter()
-            .append('div')
-            .classed('legendColumn', true);
-
-        row
-            .append('div')
-            .classed('name', true)
-            .text(d => d);
-        row
-            .append('div')
-            .classed('color', true)
-            .style('background', d => color[d]);
     }
 }

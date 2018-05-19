@@ -5,7 +5,7 @@ body {
   justify-content: center;
 }
 body svg {
-  margin-bottom: 50px;
+  margin-top: 50px;
 }
 .app {
   display: none;

@@ -11,19 +11,6 @@ class ScoresInStacked {
         this.pieChartHeight = 300;
         this.labelHeight = 100;
 
-        this.topSvg = d3
-            .select('.score-top')
-            .style('width', `${this.width - margin.left - margin.right}px`)
-            .style('height', `${this.height}px`)
-            .style('margin-left', `${margin.left}px`);
-
-        this.innerTop = this.topSvg.append('div').classed('top', true);
-        this.innerBottom = this.topSvg.append('div').classed('bottom', true);
-
-        this.bottomSvg = d3
-            .select('.score-bottom')
-            .style('width', `${this.width - margin.left - margin.right}px`)
-            .style('margin-left', `${margin.left}px`);
         this.addSvg();
         this.addTotalSumFromAll();
         this.addUndeliverable();
@@ -36,10 +23,7 @@ class ScoresInStacked {
     addSvg() {
         const margin = { top: 30, right: 20, bottom: 30, left: 50 };
         const mainWidth = this.width;
-        const mainHeight = this.lineChartHeight;
         this.pieWidth = mainWidth - 350;
-        const labelEnterheight = 50;
-        this.pieAreaWidth = mainWidth - this.pieWidth;
         this.svg = d3
             .select('#scorestackchart')
             .attr('width', this.width)
@@ -80,23 +64,9 @@ class ScoresInStacked {
         const mainWidth = this.width;
         const mainHeight = this.lineChartHeight;
         this.pieWidth = mainWidth - 350;
-        const labelEnterheight = 50;
-        this.pieAreaWidth = mainWidth - this.pieWidth;
-
         const margin = { top: 30, right: 20, bottom: 30, left: 50 },
             width = this.pieWidth - margin.left - margin.right,
             height = mainHeight - margin.top - margin.bottom;
-
-        // d3
-        //     .select('.stacked-line')
-        //     .append('svg')
-        //     .attr('width', width + margin.left + margin.right)
-        //     .attr('height', height + margin.top + margin.bottom)
-        //     .append('g')
-        //     .attr(
-        //         'transform',
-        //         'translate(' + margin.left + ',' + margin.top + ')',
-        //     );
 
         const parseDate = d3.time.format('%d-%b-%y').parse;
 
@@ -215,10 +185,6 @@ class ScoresInStacked {
         const diff =
             (100 * amountRead - previousRead) / amountRead + previousRead;
         const amountReadPerc = 100 * amountRead / this.totalAmountSumFromAllCat;
-        const totalPrevous = _.sumBy(this.data, 'previous');
-
-        const previousPerc = 100 * previousRead / totalPrevous;
-
         let makeAmoutReadDataForCircle = [];
         if (amountReadPerc < 100) {
             const amountRead = {
@@ -264,25 +230,6 @@ class ScoresInStacked {
                 color: 'lightgreen',
             });
         }
-
-        // svg
-        //     .append('circle')
-        //     .attr('cx', 50)
-        //     .attr('cy', 50)
-        //     .attr('r', 205)
-        //     .attr('fill', 'none')
-        //     .attr('stroke', 'green')
-        //     .attr('stroke-width', '25');
-        //
-        // svg
-        //     .append('circle')
-        //     .attr('cx', 150)
-        //     .attr('cy', 150)
-        //     .attr('r', 100)
-        //     .attr('fill', 'none')
-        //     .attr('stroke', 'lightgreen')
-        //     .attr('stroke-width', '25');
-
         svg
             .append('text')
             .attr('x', 120)
@@ -390,22 +337,10 @@ class ScoresInStacked {
         const difference = sumByAmount - sumByPrevious;
         const perc = 100 * difference / (sumByAmount + sumByPrevious);
 
-        const differenceEl = this.innerBottom
-            .append('div')
-            .classed('colItem readSkimmedDiff', true)
-            .style('display', 'flex')
-            .style('color', () => (difference > 0 ? 'green' : 'red'));
-
         const svg = this.topLabel
             .append('g')
             .classed('readSkimmedDiff', true)
             .attr('transform', `translate(${this.width - 200},${40})`);
-
-        // const triangle = differenceEl
-        //     .append('svg')
-        //     .classed('triangle', true)
-        //     .attr('width', 50)
-        //     .attr('height', 50);
 
         svg
             .append('path')
@@ -414,20 +349,9 @@ class ScoresInStacked {
             .attr('stroke-width', 1)
             .attr('transform', `translate(10,0)`);
 
-        const scores = differenceEl.append('div').classed('scores', true);
-
         const diffText = difference > 0 ? `+ ${difference}` : `${difference}`;
         const percText =
             difference > 0 ? `+ ${perc.toFixed(1)} %` : `${perc.toFixed(1)} %`;
-
-        scores
-            .append('div')
-            .classed('diff', true)
-            .text(diffText);
-        scores
-            .append('div')
-            .classed('perc', true)
-            .text(percText);
 
         svg
             .append('text')
@@ -449,18 +373,6 @@ class ScoresInStacked {
     }
     addTotalSumFromAll() {
         this.totalAmountSumFromAllCat = _.sumBy(this.data, 'amount');
-
-        const totalSumEl = this.innerTop
-            .append('div')
-            .classed('colItem totalSumFromAllCat', true);
-        totalSumEl
-            .append('div')
-            .classed('value', true)
-            .text(this.totalAmountSumFromAllCat);
-        totalSumEl
-            .append('div')
-            .classed('label', true)
-            .text('SENT');
 
         const svg = this.topLabel
             .append('g')
@@ -497,28 +409,6 @@ class ScoresInStacked {
             label: d[0].category,
             sum: _.sumBy(d, 'amount'),
         }));
-
-        totalSum.forEach(item => {
-            const bottomEl = this.bottomSvg
-                .append('div')
-                .classed('colItem', true);
-            bottomEl
-                .append('div')
-                .classed('sum', true)
-                .text(item.sum);
-            bottomEl
-                .append('div')
-                .classed('label', true)
-                .text(item.label);
-            bottomEl
-                .append('div')
-                .classed('perc', true)
-                .text(
-                    `${(100 * item.sum / this.totalAmountSumFromAllCat).toFixed(
-                        1,
-                    )}%`,
-                );
-        });
 
         const binWidth = 250;
         const height = 30;
@@ -582,20 +472,6 @@ class ScoresInStacked {
         );
         const sum = _.sumBy(filter, 'amount');
 
-        const readSkimmedEl = this.innerBottom
-            .append('div')
-            .classed('colItem readSkimmedEl', true);
-
-        readSkimmedEl
-            .append('div')
-            .classed('value', true)
-            .text(`${(100 * sum / this.totalAmountSumFromAllCat).toFixed(1)}%`);
-
-        readSkimmedEl
-            .append('div')
-            .classed('label', true)
-            .text('Reach');
-
         const svg = this.topLabel
             .append('g')
             .classed('readSkimmedEl', true)
@@ -620,32 +496,16 @@ class ScoresInStacked {
     }
 
     addUOpen(sum) {
-        const addUOpenEl = this.innerTop
-            .append('div')
-            .classed('colItem addUOpenEl', true);
-
-        addUOpenEl
-            .append('div')
-            .classed('value', true)
-            .text(`${sum}`);
-
-        addUOpenEl
-            .append('div')
-            .classed('label', true)
-            .text(`u Open`);
-
         const svg = this.topLabel
             .append('g')
             .classed('addUOpenEl', true)
             .attr('transform', `translate(${this.width - 200},${10})`);
-
         svg
             .append('text')
             .classed('value', true)
             .text(sum)
             .style('font-size', '20px')
             .attr('fill', 'black');
-
         svg
             .append('text')
 

@@ -21,8 +21,6 @@ class SingleHeatMap {
             };
         });
 
-        console.error(data)
-
         const width = 700;
         const height = 200;
         const maxPercentage = _.sumBy(data, d => d.value.percentage);
@@ -48,7 +46,6 @@ class SingleHeatMap {
                     (v, i) => i,
                 );
 
-                console.error(previousArrayLength,d,'fafasfafsingle')
                 const width = _.sumBy(
                     previousArrayLength.map(d =>
                         itemScale(data[d].value.percentage),
@@ -64,17 +61,6 @@ class SingleHeatMap {
             .attr('width', d => itemScale(d.value.percentage))
             .attr('height', 0.8 * height)
             .attr('fill', d => d.color);
-
-        const calculateWidth = item => {
-            const clickedWidthScale =
-                itemScale(item.value.percentage) * item.value.clicked / 100;
-            return `${clickedWidthScale}px`;
-        };
-
-        const calculateHeight = item => {
-            const clickedHeight = 0.8 * height * item.value.clicked / 100;
-            return `${clickedHeight}px`;
-        };
 
         gEnter
             .append('rect')
@@ -145,54 +131,5 @@ class SingleHeatMap {
             .text(d => `${d.value.percentage}%`)
             .append('title')
             .text(d => d.label);
-
-        d3
-            .select('.singleHeatmap-container')
-            .style('width', `${width}px`)
-            .style('height', `${height}px`);
-
-        const clickedHeightScale = d3.scale
-            .linear()
-            .range([0, 0.8 * height])
-            .domain([0, maxPercentage]);
-
-        const itemColumn = d3
-            .select('.singleHeatmap-container')
-            .selectAll('div')
-            .data(data)
-            .enter()
-            .append('div')
-            .classed('col', true)
-            .style('width', d => `${itemScale(d.value.percentage)}px`);
-
-        const topContainer = itemColumn
-            .append('div')
-            .classed('top', true)
-            .style('background', d => d.color)
-            .style('height', `${0.8 * height}px`);
-        console.error(itemColumn, data, 'fa');
-        const bottomContainer = itemColumn
-            .append('div')
-            .classed('bottom', true)
-            .style('height', `${0.2 * height}px`)
-            .attr('title', d => `${d.label}(${d.value.percentage}%)`);
-
-        bottomContainer
-            .append('div')
-            .classed('label', true)
-            .text(d => d.label);
-
-        bottomContainer
-            .append('div')
-            .classed('perc', true)
-            .text(d => `${d.value.percentage} %`);
-
-        topContainer
-            .append('div')
-            .classed('inset', true)
-            .style('width', d => calculateWidth(d))
-            .style('height', d => calculateHeight(d))
-            .text(d => `${d.value.clicked}%`)
-            .attr('title', d => `Clicked (${d.value.clicked}%)`);
     }
 }
