@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+    body {
+        font: 12px sans-serif;
+    }
+
+    /* For centering */
+    svg {
+        margin: 0 auto;
+        display: inherit;
+    }
+
+    /*.states path {*/
+        /*stroke-width: 1px;*/
+        /*stroke: white;*/
+        /*fill: #DBDBDB;*/
+        /*cursor: pointer;*/
+    /*}*/
+    /*	.states path:hover, path.highlighted {
+            fill: tomato;
+        }
+    */
+    .arcs path {
+        /*stroke-width: 2px;*/
+        /*stroke: tomato;*/
+      /*//  pointer-events: none;*/
+        fill: none;
+    }
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+
+        padding: 2px;
+        font: 15px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/d3-geo.v1.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
+<script>
+
+    // This is an array of source/target pairs.
+    // Each location array is in the order of longitude and then latitude.
+    // You often see these as lat/lng but since we need this to be in math format we do them in lng/lat, which is x/y.
+    // You could also nest this data and change what object you bind your data to save space. There's no single correct way.
+    // Do what is best for your data and for your deadlines.
+
+    var arcdata = [
+        {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [101.365186, 35.850349],
+            country:'China',
+            students:136.097,
+        },
+        {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [78.221685, 23.520203],
+            country:'India',
+            students:53.568,
+        },
+        {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [108.258306, 14.494816],
+            country:'Vietnam',
+            students:21.807,
+        },
+        {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [127.84087, 36.808447],
+            country:'South Korea',
+            students:20.790,
+        },
+        {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [101.925235, 4.829889],
+            country:'Malaysia',
+            students:20.640,
+        },
+        {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [-58.886157, -9.709944],
+            country:'Brazil',
+            students:17.267,
+        }, {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [102.029778, 4.456913],
+            country:'Thailand',
+            students:17.245,
+        },
+        {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [84.672294, 27.984329],
+            country:'Nepal',
+            students:15.219,
+        }, {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [114.15959, 0.779586],
+            country:'Indonesia',
+            students:14.189,
+        }, {
+            sourceLocation: [134.906184,-24.470587],  // Long / lat
+            targetLocation: [114.048463, 22.532668],
+            country:'Hongkong',
+            students:12.864,
+        },
+    ]
+
+    // Map dimensions (in pixels)
+    var width = 1300,
+        height =809;
+    var center = [0, 50];
+    var scale = 150;
+    // Map projection
+    projection = d3.geoMercator().scale(scale).translate([width / 2, height/2]).center(center);
+    path = d3.geoPath().projection(projection);
+    // Create an SVG
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    // Group for the states
+    // SVG drawing order is based strictly on the order in the DOM
+    // So you can't use something like z-index to make an element appear above or below another object
+    // We have to draw the states group first so that it appears below the arcs
+    // Change the order of these two variables if you want to see how it would look incorrect.
+    var states = svg.append("g")
+        .attr("class","states");
+
+    // Group for the arcs
+    var arcs = svg.append("g")
+        .attr("class","arcs");
+    var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+    // Keeps track of currently zoomed feature
+    var centered;
+
+    queue()
+        .defer(d3.json, 'data.json')
+        .defer(d3.tsv, 'world-country-names.tsv')
+        .await(makeMyMap);
+
+    function makeMyMap(error,world,names) {
+        console.error(world,names)
+
+        if (error) return console.log(error); //unknown error, check the console
+        console.error(world,'data')
+        //Create a path for each map feature in the data
+        states.selectAll("path")
+            .data(topojson.feature(world, world.objects.countries).features) //generate features from TopoJSON
+            .enter()
+            .append("path")
+            .attr("d",path)
+            .attr('fill','#DBDBDB')
+            .on("click",clicked)
+            .on('mouseover',function (d) {
+                d3.select(this).attr('fill','red')
+
+            })
+            .on('mouseout',function (d) {
+                console.error(d,'dd',d3.select(this))
+                d3.select(this).attr('fill','#DBDBDB')
+
+            })
+
+        const maxStudents = d3.extent(arcdata,d=>d.students)
+        const strokeScale = d3.scale.linear().range([1,5]).domain(maxStudents)
+        console.error(maxStudents,'daf')
+        // Create a path for each source/target pair.
+     const arcsd =    arcs.selectAll("path")
+            .data(arcdata)
+            .enter().append("path")
+            .attr('class','arc-path')
+            .attr('d', function(d) {
+                return lngLatToArc(d, 'sourceLocation', 'targetLocation', 2); // A bend of 5 looks nice and subtle, but this will depend on the length of your arcs and the visual look your visualization requires. Higher number equals less bend.
+            })
+         .attr('stroke-width',d=>strokeScale(d.students))
+         .attr('stroke','tomato')
+             .on('click',function (d) {
+
+                console.error(d,'click')
+         })
+            .on('mouseover',function (d) {
+                console.error(d,'arc')
+                d3.selectAll('.arc-path').attr('opacity','0.2')
+                d3.select(this).attr('stroke','red').attr('opacity','1')
+                div.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                div	.html(`Country:${d.country} <br> Students:${d.students}`)
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+
+            })
+            .on('mouseout',function (d) {
+                console.error(d,'ddfasfsad',d3.select(this))
+                d3.selectAll('.arc-path').attr('stroke','tomato').attr('opacity','1')
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            })
+        
+    }
+
+    // Load the basemap data
+    // This function takes an object, the key names where it will find an array of lng/lat pairs, e.g. `[-74, 40]`
+    // And a bend parameter for how much bend you want in your arcs, the higher the number, the less bend.
+    function lngLatToArc(d, sourceName, targetName, bend){
+        // If no bend is supplied, then do the plain square root
+        bend = bend || 1;
+        // `d[sourceName]` and `d[targetname]` are arrays of `[lng, lat]`
+        // Note, people often put these in lat then lng, but mathematically we want x then y which is `lng,lat`
+
+        var sourceLngLat = d[sourceName],
+            targetLngLat = d[targetName];
+
+        if (targetLngLat && sourceLngLat) {
+            var sourceXY = projection( sourceLngLat ),
+                targetXY = projection( targetLngLat );
+
+            // Uncomment this for testing, useful to see if you have any null lng/lat values
+            // if (!targetXY) console.log(d, targetLngLat, targetXY)
+            var sourceX = sourceXY[0],
+                sourceY = sourceXY[1];
+
+            var targetX = targetXY[0],
+                targetY = targetXY[1];
+
+            var dx = targetX - sourceX,
+                dy = targetY - sourceY,
+                dr = Math.sqrt(dx * dx + dy * dy)*bend;
+
+            // To avoid a whirlpool effect, make the bend direction consistent regardless of whether the source is east or west of the target
+            var west_of_source = (targetX - sourceX) < 0;
+            if (west_of_source) return "M" + targetX + "," + targetY + "A" + dr + "," + dr + " 0 0,1 " + sourceX + "," + sourceY;
+            return "M" + sourceX + "," + sourceY + "A" + dr + "," + dr + " 0 0,1 " + targetX + "," + targetY;
+
+        } else {
+            return "M0,0,l0,0z";
+        }
+    }
+
+    // Zoom to feature on click
+    // This is optional but if you use mapstarter.com, you get it for free.
+    function clicked(d,i) {
+
+        console.error(d,'dfdsfa')
+
+
+    }
+
+
+</script>
+</body>
+</html>
