@@ -58,7 +58,7 @@ class CombinedHeatMap {
                 .classed('top', true)
                 .attr('width', d => itemScale(d.percentage))
                 .attr('height', topHeight)
-                .attr('fill', d => this.color[d.category])
+                .attr('fill', d => d.color)
                 .attr('opacity', d => d.opacity);
 
             gEnter
@@ -105,6 +105,7 @@ class CombinedHeatMap {
         const totalSumScore = filteredAndSum.map(d => ({
             label: d[0].category,
             percentage: _.sumBy(d, o => o.percentage),
+            color: d[0].color,
         }));
         const binSize = this.width / totalSumScore.length;
 
@@ -123,8 +124,18 @@ class CombinedHeatMap {
             .classed('top', true)
             .attr('width', (d, i) => binSize)
             .attr('height', bottomHeight)
-            .attr('fill', d => this.color[d.label]);
+            .attr('fill', d => d.color);
 
+        labelEnter
+            .append('foreignObject')
+            .attr('width', (d, i) => binSize)
+            .attr('height', bottomHeight)
+            .append('xhtml:div')
+            .attr('title', d => `${d.label}(${d.percentage}%)`)
+            .classed('foreignObject', true)
+            .html(d => `<div >${d.label}</div><div>${d.percentage}%</div>`);
+
+        /*
         labelEnter
             .append('text')
             .classed('perc', true)
@@ -154,6 +165,7 @@ class CombinedHeatMap {
             .style('text-transform', 'capitalize')
             .append('title')
             .text(d => d.percentage);
+            */
     }
 
     prepareData() {

@@ -330,51 +330,6 @@ const newData = [
     },
 ];
 
-const correctData = [
-    [
-        {
-            label: 'ignored',
-            value: { percentage: 10, clicked: 0 },
-        },
-        {
-            label: 'skimmed',
-            value: { percentage: 37, clicked: 5 },
-        },
-        {
-            label: 'read',
-            value: { percentage: 24, clicked: 10 },
-        },
-    ],
-    [
-        {
-            label: 'ignored',
-            value: { percentage: 50, clicked: 0 },
-        },
-        {
-            label: 'skimmed',
-            value: { percentage: 40, clicked: 10 },
-        },
-        {
-            label: 'read',
-            value: { percentage: 35, clicked: 15 },
-        },
-    ],
-    [
-        {
-            label: 'ignored',
-            value: { percentage: 15, clicked: 0 },
-        },
-        {
-            label: 'skimmed',
-            value: { percentage: 47, clicked: 25 },
-        },
-        {
-            label: 'read',
-            value: { percentage: 34, clicked: 27 },
-        },
-    ],
-];
-
 const stackedData = [
     {
         date: '01-Apr-07',
@@ -617,36 +572,6 @@ const color = {
     'out of office': '#2CC7B4',
     unsubscribed: '#1489c7',
 };
-
-const singleHeatmap = [
-    {
-        label: 'ignored',
-        color: '#B4C3CA',
-        value: { percentage: 4, clicked: 30 },
-    },
-    {
-        label: 'skimmed',
-        color: '#76E49C',
-        value: { percentage: 20, clicked: 5 },
-    },
-    {
-        label: 'read',
-        color: '#3ED772',
-        value: { percentage: 37, clicked: 50 },
-    },
-
-    {
-        label: 'other1',
-        color: '#2CC7B4',
-        value: { percentage: 24, clicked: 20 },
-    },
-
-    {
-        label: 'other2',
-        color: '#2CC7B4',
-        value: { percentage: 15, clicked: 15 },
-    },
-];
 
 const taskPiData = [
     {
@@ -983,13 +908,163 @@ const taskPiData = [
 const width = 900;
 const height = 300;
 
-const singleHeatMap = new SingleHeatMap({ data: newData, width, height });
-singleHeatMap.draw();
-const arrayHeatMap = new CombinedHeatMap({ newData, color, width, height });
-arrayHeatMap.draw();
+const excludeCategoryName = ['ID', 'SentDate', 'ClickCount', 'report_type_id'];
 
-const stackedChart = new StackedChart({ stackedData, color, width, height });
-stackedChart.draw();
+console.error('newdata',newData, stackedData, taskPiData, 'data');
 
-const stackedScore = new ScoresInStacked({ data: taskPiData, width, height });
-stackedScore.draw();
+const getColor = () => {
+    return (
+        '#' +
+        '0123456789abcdef'
+            .split('')
+            .map(function(v, i, a) {
+                return i > 5 ? null : a[Math.floor(Math.random() * 16)];
+            })
+            .join('')
+    );
+};
+const colorbrewer = [
+    '#f7fcfd',
+    '#e5f5f9',
+    '#ccece6',
+    '#99d8c9',
+    '#66c2a4',
+    '#41ae76',
+    '#238b45',
+    '#006d2c',
+    '#00441b',
+];
+const categoriesToRender = [
+    {
+        category: 'Ignored',
+        color: '#e5f5f9',
+        percentage: 'IgnoredRate',
+        clickCount: 'ClickCount',
+    },
+    {
+        category: 'Oof',
+        color: '#ccece6',
+        percentage: 'OofRate',
+        clickCount: 'ClickCount',
+    },
+    {
+        category: 'OpenCount',
+        color: '#99d8c9',
+        percentage: 'OpenRate',
+        clickCount: 'ClickCount',
+    },
+    {
+        category: 'OptOutCount',
+        color: '#66c2a4',
+        percentage: 'OptOutRate',
+        clickCount: 'ClickCount',
+    },
+    {
+        category: 'ReadCount',
+        color: '#41ae76',
+        percentage: 'ReadRate',
+        clickCount: 'ClickCount',
+    },
+    {
+        category: 'Skimmed',
+        color: '#2CC7B4',
+        percentage: 'SkimmedRate',
+        clickCount: 'ClickCount',
+    },
+    {
+        category: 'UndeliverableCount',
+        color: '#238b45',
+        percentage: 'UndeliverableRate',
+        clickCount: 'ClickCount',
+    },
+    {
+        category: 'ReplyCount',
+        color: '#006d2c',
+        percentage: 'ReplyRate',
+        clickCount: 'ClickCount',
+    },
+    {
+        category: 'EngagedReads',
+        color: '#00441b',
+        percentage: 'EngagedReadRate',
+        clickCount: 'ClickCount',
+    },
+];
+
+const trimString = (string, stringWidth, width) => {
+    console.error(stringWidth, string, 'inside', width);
+    if (stringWidth > width) {
+        return 'a';
+    }
+};
+
+d3.csv('data/heatmapdata.csv', function(csvdata) {
+    // const filteredCategories = Object.keys(csvdata[0]).filter(
+    //     d => !excludeCategoryName.includes(d),
+    // );
+
+    console.error(csvdata, 'csg');
+    var strictIsoParse = d3.time.format('%Y-%m-%dT%H:%M:%S');
+    const requiredFormat = d3.time.format('%d-%b-%y');
+    const dateString = '2018-04-23T15:25:52';
+    console.error(
+        Date.parse(dateString),
+        'dateobj',
+        strictIsoParse.parse(dateString),
+        requiredFormat(strictIsoParse.parse(dateString)),
+    );
+    const validDateOnlyData = csvdata
+        .map(item => {
+            const formatDate = strictIsoParse.parse(
+                item.SentDate.split('.')[0],
+            );
+            return {
+                ...item,
+                date: formatDate ? requiredFormat(formatDate) : null,
+            };
+        })
+        .filter(d => d.date);
+
+    console.log(validDateOnlyData, 'fasfsaf');
+    const filteredData = validDateOnlyData.map(item => {
+        const mapObj = categoriesToRender.map(cat => {
+            return {
+                date: item.date,
+                category: cat.category,
+                percentage: parseFloat(item[cat.percentage]),
+                clicked: parseFloat(item[cat.clickCount]),
+                color: cat.color,
+            };
+        });
+
+        return mapObj;
+    });
+
+    const flatten = filteredData.reduce((acc, val) => acc.concat(val), []);
+
+    console.error(filteredData, 'fasfasdas', flatten);
+    const singleHeatMap = new SingleHeatMap({ data: flatten, width, height });
+    singleHeatMap.draw();
+    const arrayHeatMap = new CombinedHeatMap({
+        newData: flatten,
+        color,
+        width,
+        height,
+    });
+    arrayHeatMap.draw();
+
+    const stackedChart = new StackedChart({
+        stackedData,
+        color,
+        width,
+        height,
+    });
+    stackedChart.draw();
+
+    const stackedScore = new ScoresInStacked({
+        data: taskPiData,
+        width,
+        height,
+    });
+    stackedScore.draw();
+});

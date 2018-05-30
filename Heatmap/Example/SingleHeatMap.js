@@ -64,6 +64,28 @@ class SingleHeatMap {
             .text(d => d.value.clicked);
 
         gEnter
+            .append('foreignObject')
+            .attr(
+                'width',
+                d => itemScale(d.value.percentage) * d.value.clicked / 100,
+            )
+            .attr('height', d => topHeight * d.value.clicked / 100)
+            .attr('x', d => {
+                const binWidth =
+                    itemScale(d.value.percentage) * d.value.clicked / 100;
+                return itemScale(d.value.percentage) - binWidth;
+            })
+            .attr('y', d => {
+                const binHeight = topHeight * d.value.clicked / 100;
+                return topHeight - binHeight;
+            })
+            .append('xhtml:div')
+            .attr('title', d => `${d.value.clicked}%`)
+            .classed('foreignObject', true)
+            .text(d => `${d.value.clicked}%`);
+
+        /*
+        gEnter
             .append('text')
             .classed('clickedText', true)
             .attr('x', d => {
@@ -77,6 +99,8 @@ class SingleHeatMap {
             })
             .text(d => `${d.value.clicked}%`);
 
+        */
+
         gEnter
             .append('rect')
             .classed('bottom', true)
@@ -85,6 +109,19 @@ class SingleHeatMap {
             .attr('height', bottomHeight)
             .attr('fill', 'lightgray');
 
+        gEnter
+            .append('foreignObject')
+            .attr('width', d => itemScale(d.value.percentage))
+            .attr('y', topHeight)
+            .attr('height', bottomHeight)
+            .append('xhtml:div')
+            .attr('title', d => `${d.label}(${d.value.percentage}%)`)
+            .classed('foreignObject', true)
+            .html(
+                d => `<div >${d.label}</div><div>${d.value.percentage}%</div>`,
+            );
+
+        /*
         gEnter
             .append('text')
             .classed('percLabel', true)
@@ -111,6 +148,7 @@ class SingleHeatMap {
             .text(d => `${d.value.percentage}%`)
             .append('title')
             .text(d => d.label);
+            */
     }
     prepareData() {
         const groupByHeatmap = _.groupBy(this.data, d => d.category);
@@ -123,7 +161,7 @@ class SingleHeatMap {
             const totalClicked = _.sumBy(item, 'clicked');
             return {
                 label: item[0].category,
-                color: color[item[0].category],
+                color: item[0].color,
                 value: { percentage: totalPerc, clicked: totalClicked },
             };
         });
