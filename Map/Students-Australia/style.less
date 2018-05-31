@@ -29,26 +29,32 @@ body {
     justify-content: center;
     align-items: center;
 
-    .legend {
-        .legend-row {
-            height: 30px;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            .circle {
+    .menu {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .legend {
+            margin-right: 10px;
+            .legend-row {
                 height: 30px;
-                width: 30px;
-                border-radius: 50%;
-                &.in {
-                    background: blue;
+                font-size: 20px;
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+                .circle {
+                    height: 30px;
+                    width: 30px;
+                    border-radius: 50%;
+                    &.in {
+                        background: blue;
+                    }
+                    &.out {
+                        background: red;
+                    }
                 }
-                &.out {
-                    background: red;
+                .legend-label {
+                    padding: 5px;
                 }
-            }
-            .legend-label {
-                padding: 5px;
             }
         }
     }
@@ -107,5 +113,106 @@ body {
         align-self: center;
         margin-top: -4px;
         transform: rotate(45deg);
+    }
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: red;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: '';
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: blue;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px red;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.fa-map-marker {
+    &:before {
+        color: red;
+        font-size: 16px;
+    }
+}
+.bar-chart {
+    display: flex;
+    width: 200px;
+    background: #f2f2f2;
+    flex-direction: column;
+    font-size: 18px;
+    color: white;
+    visibility: hidden;
+    .bar-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: flex-end;
+
+        .inbound-bar {
+            width: 50%;
+            background: red;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .outbound-bar {
+            width: 50%;
+            background: blue;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+    .bar-label {
+        height: 30px;
+        color: black;
+        text-align: center;
     }
 }
