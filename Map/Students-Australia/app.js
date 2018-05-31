@@ -10,8 +10,8 @@
 
 const arcdata = [
     {
-        sourceLocation: [134.906184, -24.470587], // Long / lat
-        targetLocation: [101.365186, 35.850349],
+        sourceLocation: [134.906184, -24.470587], // Long / lat  // Australia
+        targetLocation: [101.365186, 35.850349], // Long and Lat of China
         country: 'China',
         studentsInbound: 136097,
         studentsOutbound: 3524,
@@ -90,39 +90,6 @@ const arcdata = [
         ratio: '6.3:1',
         id: 392,
     },
-
-    // {
-    //     sourceLocation: [134.906184,-24.470587],  // Long / lat
-    //     targetLocation: [-58.886157, -9.709944],
-    //     country:'Brazil',
-    //     studentsInbound:17.267,
-    //     studentsOutbound:70,
-    // }, {
-    //     sourceLocation: [134.906184,-24.470587],  // Long / lat
-    //     targetLocation: [102.029778, 4.456913],
-    //     country:'Thailand',
-    //     studentsInbound:17.245,
-    //     studentsOutbound:70,
-    // },
-    // {
-    //     sourceLocation: [134.906184,-24.470587],  // Long / lat
-    //     targetLocation: [84.672294, 27.984329],
-    //     country:'Nepal',
-    //     studentsInbound:15.219,
-    //     studentsOutbound:70,
-    // }, {
-    //     sourceLocation: [134.906184,-24.470587],  // Long / lat
-    //     targetLocation: [114.15959, 0.779586],
-    //     country:'Indonesia',
-    //     studentsInbound:14.189,
-    //     studentsOutbound:70,
-    // }, {
-    //     sourceLocation: [134.906184,-24.470587],  // Long / lat
-    //     targetLocation: [114.048463, 22.532668],
-    //     country:'Hongkong',
-    //     studentsInbound:12.864,
-    //     studentsOutbound:70,
-    // },
 ];
 
 // Map dimensions (in pixels)
@@ -136,6 +103,7 @@ const projection = d3
     .scale(scale)
     .translate([width / 2, height / 2])
     .center(center);
+
 const path = d3.geoPath().projection(projection);
 
 const svg = d3
@@ -144,6 +112,8 @@ const svg = d3
     .attr('width', width)
     .attr('height', height);
 
+
+// Toggle between inbound and outbound
 d3.select('.selectToggle').on('change', function(e) {
     const checked = d3.select(this).property('checked');
     console.error(checked);
@@ -156,17 +126,19 @@ d3.select('.selectToggle').on('change', function(e) {
         d3.selectAll('.arc-path-outbound').style('visibility', 'hidden');
     }
 });
-const states = svg.append('g').attr('class', 'states');
 
-const arcs = svg.append('g').attr('class', 'arcs');
+const states = svg.append('g').attr('class', 'states');  // Svg containing world map
 
-const markers = svg.append('g').attr('class', 'markers');
+const arcs = svg.append('g').attr('class', 'arcs');  // Svg for arcs
 
-const strokeScaleInBound = d3.scale.linear().range([1, 5]);
+const markers = svg.append('g').attr('class', 'markers');  // svg for markers
 
+const strokeScaleInBound = d3.scale.linear().range([1, 5]);  // thickness of the line
 const strokeScaleOutbound = d3.scale.linear().range([1, 5]);
+
 const maxStudentsInbound = d3.extent(arcdata, d => d.studentsInbound);
 const maxStudentsOutbound = d3.extent(arcdata, d => d.studentsOutbound);
+// Reading map data
 queue()
     .defer(d3.json, 'data.json')
     .defer(d3.tsv, 'world-country-names.tsv')
@@ -178,6 +150,7 @@ function makeMyMap(error, world, names) {
     if (error) return console.log(error);
     console.error(world, 'data');
 
+    // Rendering world map
     states
         .selectAll('path')
         .data(topojson.feature(world, world.objects.countries).features)
@@ -207,6 +180,11 @@ function makeMyMap(error, world, names) {
             return findName.length > 0 ? findName[0].name : '';
         });
 
+
+    // End of Rendering world map
+
+
+
     strokeScaleInBound.domain(maxStudentsInbound);
     strokeScaleOutbound.domain(maxStudentsOutbound);
 
@@ -220,6 +198,8 @@ function makeMyMap(error, world, names) {
         initiallyVisible: true,
     });
 
+
+    // plot for outbound students
     plotArcs({
         arcdata,
         arcClassName: 'arc-path-outbound',
@@ -228,6 +208,7 @@ function makeMyMap(error, world, names) {
         color: 'red',
         initiallyVisible: false,
     });
+
 
     plotMarker({ arcdata });
 }
@@ -252,8 +233,6 @@ function plotMarker({ arcdata }) {
         .classed('fa fa-map-marker', true)
         .attr('title', d => d.country);
 
-    // .attr('r', '4px')
-    // .attr('fill', 'red');
 }
 
 function plotArcs({
