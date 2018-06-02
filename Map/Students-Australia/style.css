@@ -18,6 +18,18 @@ body {
   /*//  pointer-events: none;*/
   fill: none;
 }
+.arcs .arc-path-inbound {
+  opacity: 0;
+}
+.arcs .arc-path-inbound.visible {
+  opacity: 1;
+}
+.arcs .arc-path-outbound {
+  opacity: 0;
+}
+.arcs .arc-path-outbound.visible {
+  opacity: 1;
+}
 .app {
   display: flex;
   width: 100%;
@@ -40,6 +52,10 @@ body {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  cursor: pointer;
+}
+.app .menu .legend .legend-row.hidden {
+  text-decoration: line-through;
 }
 .app .menu .legend .legend-row .circle {
   height: 30px;

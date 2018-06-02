@@ -112,11 +112,9 @@ const svg = d3
     .attr('width', width)
     .attr('height', height);
 
-
 // Toggle between inbound and outbound
 d3.select('.selectToggle').on('change', function(e) {
     const checked = d3.select(this).property('checked');
-    console.error(checked);
     if (!checked) {
         d3.selectAll('.arc-path-inbound').style('visibility', 'hidden');
         d3.selectAll('.arc-path-outbound').style('visibility', 'visible');
@@ -127,13 +125,35 @@ d3.select('.selectToggle').on('change', function(e) {
     }
 });
 
-const states = svg.append('g').attr('class', 'states');  // Svg containing world map
+d3.select('.studentsIn').on('click', function() {
+    const isVisible =
+        d3
+            .select('.arc-path-inbound')
+            .attr('class')
+            .indexOf('visible') > 0;
+    d3.selectAll('.arc-path-inbound').classed('visible', !isVisible);
 
-const arcs = svg.append('g').attr('class', 'arcs');  // Svg for arcs
+    d3.select(this).classed('hidden', isVisible);
+});
 
-const markers = svg.append('g').attr('class', 'markers');  // svg for markers
+d3.select('.studentsOut').on('click', function() {
+    const isVisible =
+        d3
+            .select('.arc-path-outbound')
+            .attr('class')
+            .indexOf('visible') > 0;
+    d3.selectAll('.arc-path-outbound').classed('visible', !isVisible);
 
-const strokeScaleInBound = d3.scale.linear().range([1, 5]);  // thickness of the line
+    d3.select(this).classed('hidden', isVisible);
+});
+
+const states = svg.append('g').attr('class', 'states'); // Svg containing world map
+
+const arcs = svg.append('g').attr('class', 'arcs visible'); // Svg for arcs
+
+const markers = svg.append('g').attr('class', 'markers'); // svg for markers
+
+const strokeScaleInBound = d3.scale.linear().range([1, 5]); // thickness of the line
 const strokeScaleOutbound = d3.scale.linear().range([1, 5]);
 
 const maxStudentsInbound = d3.extent(arcdata, d => d.studentsInbound);
@@ -148,7 +168,6 @@ function makeMyMap(error, world, names) {
     console.error(world, names);
 
     if (error) return console.log(error);
-    console.error(world, 'data');
 
     // Rendering world map
     states
@@ -162,10 +181,15 @@ function makeMyMap(error, world, names) {
         .attr('stroke', 'rebeccapurple')
         .on('click', clicked)
         .on('mouseover', function(d) {
-            //  d3.select(this).attr('fill', 'red');
+            const findCountry = arcdata.filter(
+                ad => ad.id === parseFloat(d.id),
+            );
+            if (findCountry && findCountry.length > 0) {
+                displayToolTip(findCountry[0]);
+            }
         })
         .on('mouseout', function(d) {
-            //  d3.select(this).attr('fill', '#DBDBDB');
+            d3.select('.tooltip2').style('opacity', 0);
         })
         .style('opacity', d => {
             const find =
@@ -180,10 +204,7 @@ function makeMyMap(error, world, names) {
             return findName.length > 0 ? findName[0].name : '';
         });
 
-
     // End of Rendering world map
-
-
 
     strokeScaleInBound.domain(maxStudentsInbound);
     strokeScaleOutbound.domain(maxStudentsOutbound);
@@ -191,24 +212,22 @@ function makeMyMap(error, world, names) {
     // Plot for In Bound Students
     plotArcs({
         arcdata,
-        arcClassName: 'arc-path-inbound',
+        arcClassName: 'arc-path-inbound visible',
         strokeScale: strokeScaleInBound,
         dataPoint: 'studentsInbound',
         color: 'blue',
         initiallyVisible: true,
     });
 
-
     // plot for outbound students
     plotArcs({
         arcdata,
-        arcClassName: 'arc-path-outbound',
+        arcClassName: 'arc-path-outbound visible',
         strokeScale: strokeScaleOutbound,
         dataPoint: 'studentsOutbound',
         color: 'red',
         initiallyVisible: false,
     });
-
 
     plotMarker({ arcdata });
 }
@@ -222,8 +241,6 @@ function plotMarker({ arcdata }) {
         .attr('width', 10)
         .attr('height', 10)
         .attr('x', function(d) {
-            console.error(d, 'circle');
-            console.error(projection([134.906184, -24.470587]), 'sss');
             return -5 + projection(d.targetLocation)[0];
         })
         .attr('y', function(d) {
@@ -232,7 +249,6 @@ function plotMarker({ arcdata }) {
         .append('xhtml:i')
         .classed('fa fa-map-marker', true)
         .attr('title', d => d.country);
-
 }
 
 function plotArcs({
@@ -254,36 +270,37 @@ function plotArcs({
         })
         .attr('stroke-width', d => strokeScale(d[dataPoint]))
         .attr('stroke', color)
+        .attr('data-attr', d => `data-${d.country}`)
         .style('visibility', initiallyVisible ? 'visible' : 'hidden')
         .on('click', function(d) {})
         .on('mouseover', function(d) {
-            console.error(d, 'arc');
             d3.selectAll(`.${arcClassName}`).attr('opacity', '0.2');
             d3
                 .select(this)
                 .attr('stroke', color)
                 .attr('opacity', '1');
-            const toolTip = d3
-                .select('.tooltip2')
-                .style('left', d3.event.pageX - 200 + 'px')
-                .style('top', d3.event.pageY + 20 + 'px')
-                .style('opacity', 1);
-
-            toolTip.select('.country-header').text(d.country);
-            toolTip.select('.source-country-label').text(d.country);
-            toolTip.select('.source-country-number').text(d.studentsInbound);
-            toolTip.select('.target-country-number').text(d.studentsOutbound);
-            toolTip.select('.ratio-number').text(d.ratio);
+            // displayToolTip(d)  comment for now
         })
         .on('mouseout', function(d) {
-            console.error(d, 'ddfasfsad', d3.select(this));
             d3
                 .selectAll(`.${arcClassName}`)
                 .attr('stroke', color)
                 .attr('opacity', '1');
-
-            d3.select('.tooltip2').style('opacity', 0);
         });
+}
+
+function displayToolTip(d) {
+    const toolTip = d3
+        .select('.tooltip2')
+        .style('left', d3.event.pageX - 200 + 'px')
+        .style('top', d3.event.pageY + 20 + 'px')
+        .style('opacity', 1);
+
+    toolTip.select('.country-header').text(d.country);
+    toolTip.select('.source-country-label').text(d.country);
+    toolTip.select('.source-country-number').text(d.studentsInbound);
+    toolTip.select('.target-country-number').text(d.studentsOutbound);
+    toolTip.select('.ratio-number').text(d.ratio);
 }
 
 // Load the basemap data
