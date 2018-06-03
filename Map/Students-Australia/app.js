@@ -92,9 +92,12 @@ const arcdata = [
     },
 ];
 
+const inboundColor = '#3e9cd4';
+const outboundColor = '#ffd700';
+const colorBlack = '#404040';
 // Map dimensions (in pixels)
-const width = 1300,
-    height = 809;
+const width = 1000,
+    height = 600;
 const center = [0, 50];
 const scale = 150;
 // Map projection
@@ -124,7 +127,7 @@ d3.select('.selectToggle').on('change', function(e) {
         d3.selectAll('.arc-path-outbound').style('visibility', 'hidden');
     }
 });
-
+/*
 d3.select('.studentsIn').on('click', function() {
     const isVisible =
         d3
@@ -145,6 +148,27 @@ d3.select('.studentsOut').on('click', function() {
     d3.selectAll('.arc-path-outbound').classed('visible', !isVisible);
 
     d3.select(this).classed('hidden', isVisible);
+});
+
+*/
+d3.select('.chk-inbound').on('change', function() {
+    const checked = d3.select(this).property('checked');
+
+    d3
+        .select('.arc-path-inbound')
+        .attr('class')
+        .indexOf('visible') > 0;
+    d3.selectAll('.arc-path-inbound').classed('visible', checked);
+});
+
+d3.select('.chk-outbound').on('change', function() {
+    const checked = d3.select(this).property('checked');
+
+    d3
+        .select('.arc-path-outbound')
+        .attr('class')
+        .indexOf('visible') > 0;
+    d3.selectAll('.arc-path-outbound').classed('visible', checked);
 });
 
 const states = svg.append('g').attr('class', 'states'); // Svg containing world map
@@ -178,7 +202,7 @@ function makeMyMap(error, world, names) {
         .attr('d', path)
 
         .attr('fill', '#DBDBDB')
-        .attr('stroke', 'rebeccapurple')
+        .attr('stroke', colorBlack)
         .on('click', clicked)
         .on('mouseover', function(d) {
             const findCountry = arcdata.filter(
@@ -215,7 +239,7 @@ function makeMyMap(error, world, names) {
         arcClassName: 'arc-path-inbound visible',
         strokeScale: strokeScaleInBound,
         dataPoint: 'studentsInbound',
-        color: 'blue',
+        color: inboundColor,
         initiallyVisible: true,
     });
 
@@ -225,7 +249,7 @@ function makeMyMap(error, world, names) {
         arcClassName: 'arc-path-outbound visible',
         strokeScale: strokeScaleOutbound,
         dataPoint: 'studentsOutbound',
-        color: 'red',
+        color: outboundColor,
         initiallyVisible: false,
     });
 
@@ -368,7 +392,9 @@ function lngLatToArc(d, sourceName, targetName, bend) {
 }
 function clicked(d) {
     const findItem = arcdata.filter(ad => ad.id === parseFloat(d.id));
-    const barHeight = 100;
+
+    const heightW = document.querySelector('.long-text').clientHeight;
+    const barHeight = heightW - 30;
     if (findItem.length > 0) {
         d3.select('.bar-chart').style('visibility', 'visible');
         const item = findItem[0];
@@ -387,6 +413,6 @@ function clicked(d) {
             .style('height', outbound * barHeight + 'px')
             .text(item.studentsOutbound)
             .attr('title', item.studentsOutbound);
-        d3.select('.bar-label').text(`${item.country} vs Australia`);
+        d3.select('.inbound-bar-label').text(item.country);
     }
 }
