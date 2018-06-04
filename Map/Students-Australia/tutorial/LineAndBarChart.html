@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<style>
+    path{
+        fill: none;
+        stroke: steelblue;
+    }
+    .bar {
+        fill: steelblue;
+    }
+
+    .bar:hover {
+        fill: brown;
+    }
+
+    .axis--x path {
+        display: none;
+    }
+    body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+</style>
+<body>
+<h2>Line Chart showing Day vs Value</h2>
+<svg width="960" height="300" class="lineChart"></svg>
+<h2>Bar Char showing value Range and their Count</h2>
+<svg width="960" height="300" class="barChart"></svg>
+</body>
+
+<script>
+    const data = createRandomData(50);
+    function createRandomData(elements) {
+        const array = Array.from({ length: elements }, (v, i) => i);
+
+        return array.map((d, i) => ({ day: i, value: Math.random() * 100 }));
+    }
+
+    const margin = { top: 20, right: 20, bottom: 30, left: 50 },
+        width = 960 - margin.left - margin.right,
+        height = 300 - margin.top - margin.bottom;
+
+    const x = d3.scaleLinear().range([0, width]);
+    const y = d3.scaleLinear().range([height, 0]);
+
+    const valueline = d3
+        .line()
+        .x(d => x(d.day))
+        .y(d => y(d.value));
+
+    const lineSvg = d3
+        .select('.lineChart')
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    x.domain(d3.extent(data, d => d.day));
+    y.domain([0, d3.max(data, d => d.value)]);
+
+    lineSvg
+        .append('path')
+        .data([data])
+        .attr('class', 'line')
+        .attr('d', valueline);
+
+    lineSvg
+        .append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x))
+        .append('text')
+        .attr('fill', '#000')
+        .attr('y', 20)
+        .attr('dy', '0.71em')
+        .attr('text-anchor', 'end')
+        .attr('x', width / 2)
+        .text('Days');
+
+    lineSvg
+        .append('g')
+        .call(d3.axisLeft(y))
+        .append('text')
+        .attr('fill', '#000')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 6)
+        .attr('dy', '0.71em')
+        .attr('text-anchor', 'end')
+        .text('Values');
+
+    const categories = [
+        {
+            range: '0-20',
+            domain: [0, 20],
+        },
+        {
+            range: '21-40',
+            domain: [21, 40],
+        },
+        {
+            range: '41-60',
+            domain: [41, 60],
+        },
+        {
+            range: '61-80',
+            domain: [61, 80],
+        },
+        {
+            range: '81-100',
+            domain: [80, 100],
+        },
+    ];
+
+    const createCategoricalData = categories.map((c, i) => {
+        const count = data.filter(
+            d => d.value >= c.domain[0] && d.value <= c.domain[1],
+        ).length;
+
+        return {
+            category: c.range,
+            count,
+        };
+    });
+
+    const barSvg = d3.select('.barChart');
+
+    const barXScale = d3
+            .scaleBand()
+            .rangeRound([0, width])
+            .padding(0.1),
+        barYScale = d3.scaleLinear().rangeRound([height, 0]);
+
+    const barGrp = barSvg
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    barXScale.domain(createCategoricalData.map(d => d.category));
+    barYScale.domain([0, d3.max(createCategoricalData, d => d.count)]);
+
+    barGrp
+        .append('g')
+        .attr('class', 'axis axis--x')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(barXScale))
+        .append('text')
+        .attr('fill', '#000')
+        .attr('y', 20)
+        .attr('dy', '0.71em')
+        .attr('text-anchor', 'end')
+        .attr('x', width / 2)
+        .text('Value Ranges');
+
+    barGrp
+        .append('g')
+        .attr('class', 'axis axis--y')
+        .call(d3.axisLeft(barYScale))
+        .append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 6)
+        .attr('dy', '0.71em')
+        .attr('text-anchor', 'end')
+        .text('Count')
+        .attr('fill', 'black');
+
+    barGrp
+        .selectAll('.bar')
+        .data(createCategoricalData)
+        .enter()
+        .append('rect')
+        .attr('class', 'bar')
+        .attr('x', d => barXScale(d.category))
+        .attr('y', d => barYScale(d.count))
+        .attr('width', barXScale.bandwidth())
+        .attr('height', d => height - barYScale(d.count));
+
+
+</script>

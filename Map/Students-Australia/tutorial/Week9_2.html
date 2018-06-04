@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>D3: Week 9, DECO3100</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: auto;
+            padding-top: 50px;
+            position: relative;
+            width: 1000px;
+        }
+
+        #tooltip {
+            position: absolute;
+            width: 200px;
+            height: auto;
+            padding: 10px;
+            background-color: white;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+            -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+            pointer-events: none;
+        }
+
+        #tooltip.hidden {
+            display: none;
+        }
+
+        #tooltip p {
+            margin: 0;
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 20px;
+        }
+
+
+    </style>
+
+</head>
+<body>
+<h1>Bar Chart with multiple data sets</h1>
+<h2>Dataset 1</h2>
+<div id="tooltip" class="hidden">
+    <p><strong>Tooltip</strong></p>
+    <p>$<span id="value">100</span></p>
+</div>
+
+<script>
+
+    var w = 720;
+    var h = 400;
+    var padding = 30;
+
+    var currentSet = 0;
+
+    var dataset = [];
+    for(let i = 0; i < 4; i++){
+        dataset[i] = [];
+        for(let j = 0; j < 20; j++){
+            dataset[i][j] = Math.random() * 100;
+        }
+    }
+
+    //setup scales and axis
+    var xScale = d3.scaleBand()
+        .domain(d3.range(20)) //set the domain to a range
+        .rangeRound([padding,w])
+        .paddingInner(0.05);
+
+
+    var yScale = d3.scaleLinear()
+        .domain([0, 100]) //going with a fixed scale
+        .range([h-padding, padding]);
+
+    var yAxis = d3.axisLeft(yScale).ticks(5);
+
+    var svg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
+
+    //create bars
+    svg.selectAll("rect")
+        .data(dataset[currentSet])
+        .enter()
+        .append("rect")
+        .attr("x", function(d, i){
+            return xScale(i);
+        })
+        .attr("y", function(d) {
+            return yScale(d);
+        })
+        .attr("width", xScale.bandwidth())
+        .attr("height", function(d){
+            return h-yScale(d)-padding;
+        })
+        .attr("fill", function(d){
+            return "rgb(0," + Math.round(d+60) + ",0)";
+        });
+
+    //add a y axis
+    svg.append("g")
+        .attr("class", "leftAxis")
+        .attr("transform", "translate(" + padding + ",0)")
+        .call(yAxis);
+
+    //on click, goto a new dataset
+    svg.on('click', function(){
+        currentSet = (currentSet+1) % 4; //0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3...
+
+        svg.selectAll("rect")
+            .data(dataset[currentSet])
+            .transition().duration(1000).ease(d3.easeExpInOut)
+            .attr("y", function(d) {
+                return yScale(d);
+            })
+            .attr("height", function(d){
+                return h-yScale(d)-padding;
+            })
+            .attr("fill", function(d){
+                return "rgb(0," + Math.round(d+60) + ",0)";
+            });
+
+        d3.select('h2').html('Dataset ' + (currentSet + 1)); //update title
+    });
+
+    svg.selectAll("rect")
+        .on("mouseover", function(d) { //event when we mouseover
+            d3.select(this) //this gives us acess to the particular rectange in the selection
+                .transition()
+                .duration(100)
+                .attr("fill", "rgb(170, 255, 44)"); //hover colour
+
+            //get tooltip location
+            var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
+            var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + h / 2;
+
+            //update tooltip location and value
+            d3.select("#tooltip")
+                .style("left", xPosition + "px")
+                .style("top", yPosition + "px")
+                .select("#value")
+                .text(Math.round(d));
+
+            //use hidden css to hide and show the tooltip
+            d3.select("#tooltip").classed("hidden", false);
+        })
+        .on("mouseout", function(d) { //reset fill on mouse out
+            d3.select(this)
+                .transition()
+                .duration(250)
+                .attr("fill", "rgb(0," + Math.round(d+60) + ",0)");
+            //hide tooltip
+            d3.select("#tooltip").classed("hidden", true);
+        });
+</script>
+</body>
+</html>
