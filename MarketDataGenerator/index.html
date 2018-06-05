@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="generate_new_market_data.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script>
+        //$(document).ready(function(){
+        //    $("p").click(function(){
+        //    alert("The paragraph was clicked.");
+        //   });
+        //});
+
+        // $(document).ready(function () {
+        //     $("button").click(function () {
+        //         var price_time_data = create_d3_data();
+        //         console.log('price_time_data: ', price_time_data)
+        //     });
+        // });
+
+    </script>
+</head>
+
+<body>
+    <div>
+        <H3>Market Data Generator</H3>
+        <form action="javascript:void(0)" id="market-data-generator">
+            Probability:
+            <input type="text" name="probability" id="probability">
+            <br> Prices Set:
+            <input type="text" name="prices set" id="prices-set">
+            <br>
+            <br>
+            <button name="createMarket" value="market_data">Create Market Data</button>
+            <br>
+            <!--input type="submit" value="Submit"-->
+        </form>
+        <p>D3 Line Chart (Price vs 'Time') Here</p>
+        <div class="linechart">
+
+        </div>
+    </div>
+
+    <div>
+        <H3>Long Backtester Server</H3>
+        Size:
+        <input type="number" name="probability">
+        <br> Market Speed:
+        <input type="number" name="probability">
+        <br> Volatility:
+        <input type="number" name="probability">
+        <br>
+        <br>
+        <button value="backtester_send">POST To Backtest Server (Model 1)</button>
+        <p>Filled Trades Table</p>
+        <p>D3 Line Chart (Sum_Pnl vs Price) Here</p>
+        <p>D3 Line Chart (Sum_Pnl vs 'Time') Here</p>
+    </div>
+    <H3>Backtester Results</H3>
+    <p>Performance Comparison Table Here</p>
+    <form>
+        Name:
+        <input type="text" name="save name">
+    </form>
+    <br>
+    <button value="save results">SAVE Market Data and Results</button>
+    <script src="app.js"></script>
+</body>
+
+</html>
