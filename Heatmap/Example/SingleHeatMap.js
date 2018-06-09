@@ -14,7 +14,8 @@ class SingleHeatMap {
         const svg = d3
             .select('#singleheatmap')
             .style('width', `${this.width}px`)
-            .style('height', `${this.height}px`);
+            .style('height', `${this.height}px`)
+            .style('background', 'grey');
 
         const gEnter = svg
             .selectAll('g')
@@ -29,7 +30,7 @@ class SingleHeatMap {
                 );
                 const width = _.sumBy(
                     previousArrayLength.map(d =>
-                        itemScale(data[d].value.percentage),
+                        itemScale(data[d].value.value),
                     ),
                 );
                 return `translate(${width},0)`;
@@ -38,45 +39,49 @@ class SingleHeatMap {
         gEnter
             .append('rect')
             .classed('top', true)
-            .attr('width', d => itemScale(d.value.percentage))
+            .attr('width', d => itemScale(d.value.value))
             .attr('height', topHeight)
             .attr('fill', d => d.color);
+        gEnter
+            .append('path')
+            .attr('d', d => {
+                if (d.hasPercentageLine) {
+                    const availableWidth = itemScale(d.value.value);
+                    return `M${availableWidth *
+                        d.value.percentage},0 L${availableWidth *
+                        d.value.percentage},${topHeight}`;
+                }
+            })
+            .attr('stroke', 'red')
+            .attr('fill', 'none');
 
         gEnter
             .append('rect')
             .classed('inset', true)
-            .attr(
-                'width',
-                d => itemScale(d.value.percentage) * d.value.clicked / 100,
-            )
-            .attr('height', d => topHeight * d.value.clicked / 100)
+            .attr('width', d => itemScale(d.value.value) * d.value.clicked)
+            .attr('height', d => topHeight * d.value.clicked)
             .attr('x', d => {
-                const binWidth =
-                    itemScale(d.value.percentage) * d.value.clicked / 100;
-                return itemScale(d.value.percentage) - binWidth;
+                const binWidth = itemScale(d.value.value) * d.value.clicked;
+                return itemScale(d.value.value) - binWidth;
             })
             .attr('y', d => {
-                const binHeight = topHeight * d.value.clicked / 100;
+                const binHeight = topHeight * d.value.clicked;
                 return topHeight - binHeight;
             })
             .attr('fill', '#1aa4cd')
             .append('title')
             .text(d => d.value.clicked);
-
+        //
         gEnter
             .append('foreignObject')
-            .attr(
-                'width',
-                d => itemScale(d.value.percentage) * d.value.clicked / 100,
-            )
-            .attr('height', d => topHeight * d.value.clicked / 100)
+            .attr('width', d => itemScale(d.value.value) * d.value.clicked)
+            .attr('height', d => topHeight * d.value.clicked)
             .attr('x', d => {
-                const binWidth =
-                    itemScale(d.value.percentage) * d.value.clicked / 100;
-                return itemScale(d.value.percentage) - binWidth;
+                const binWidth = itemScale(d.value.value) * d.value.clicked;
+                return itemScale(d.value.value) - binWidth;
             })
             .attr('y', d => {
-                const binHeight = topHeight * d.value.clicked / 100;
+                const binHeight = topHeight * d.value.clicked;
                 return topHeight - binHeight;
             })
             .append('xhtml:div')
@@ -104,21 +109,24 @@ class SingleHeatMap {
         gEnter
             .append('rect')
             .classed('bottom', true)
-            .attr('width', d => itemScale(d.value.percentage))
+            .attr('width', d => itemScale(d.value.value))
             .attr('y', topHeight)
             .attr('height', bottomHeight)
             .attr('fill', 'lightgray');
 
         gEnter
             .append('foreignObject')
-            .attr('width', d => itemScale(d.value.percentage))
+            .attr('width', d => itemScale(d.value.value))
             .attr('y', topHeight)
             .attr('height', bottomHeight)
             .append('xhtml:div')
-            .attr('title', d => `${d.label}(${d.value.percentage}%)`)
+            .attr('title', d => `${d.label}(${d.value.value}%)`)
             .classed('foreignObject', true)
             .html(
-                d => `<div >${d.label}</div><div>${d.value.percentage}%</div>`,
+                d =>
+                    `<div >${d.label}</div><div>${Math.floor(
+                        d.value.value * 100,
+                    )}%</div>`,
             );
 
         /*
@@ -157,22 +165,27 @@ class SingleHeatMap {
         );
         const data = uniquesHeatmap.map(id => {
             const item = groupByHeatmap[id];
-            const totalPerc = _.sumBy(item, 'percentage');
-            const totalClicked = _.sumBy(item, 'clicked');
+            // const totalPerc = _.sumBy(item, 'percentage');
+            //const totalClicked = _.sumBy(item, 'clicked');
             return {
+                ...item[0],
                 label: item[0].category,
                 color: item[0].color,
-                value: { percentage: totalPerc, clicked: totalClicked },
+                value: {
+                    percentage: item[0].percentage,
+                    clicked: item[0].clicked,
+                    value: item[0].value,
+                },
             };
         });
 
-        const maxPercentage = _.sumBy(data, d => d.value.percentage);
+        const maxPercentage = 1;
 
         const itemScale = d3.scale
             .linear()
             .domain([0, maxPercentage])
             .range([0, this.width]);
-
+console.error(data,'single format')
         return { data, itemScale, maxPercentage };
     }
 }

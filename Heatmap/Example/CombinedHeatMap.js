@@ -79,7 +79,7 @@ class CombinedHeatMap {
                 .text(d => d.clicked);
         });
 
-        const labelSvg = svg
+               const labelSvg = svg
             .append('g')
             .classed('label', true)
             .attr('transform', (d, i) => `translate(0,${0.75 * this.height})`);
@@ -190,11 +190,12 @@ class CombinedHeatMap {
             return item.values.map(d => {
                 return {
                     ...d,
-                    opacity: 1 - opacityAdjust * index,
+                    opacity:opacityAdjust
                 };
             });
         });
 
+        console.error(heatmapData,dataWithColorAdjust)
         return { heatmapData, dataWithColorAdjust };
     }
 }

@@ -1,19 +1,57 @@
 class ScoresInStacked {
-    constructor({ data, height, width }) {
-        this.data = data;
+    constructor({
+        data,
+        height,
+        width,
+        topLine,
+        bottomLine,
+        horLine,
+        yDomain,
+    }) {
         this.height = height;
         this.width = width;
+        this.topLine = topLine;
+        this.bottomLine = bottomLine;
+        this.horLine = horLine;
+        this.data = this.parseData(data);
+        this.yDomain = yDomain;
     }
 
+    parseData(data) {
+
+        const parseDate = d3.time.format('%d-%b-%y').parse;
+        return data
+            .map(d => {
+                return {
+                    ...d,
+                    topLine:
+                        parseFloat(d[this.topLine.name]) >= 0
+                            ? parseFloat(d[this.topLine.name])
+                            : 0,
+                    bottomLine:
+                        parseFloat(d[this.bottomLine.name]) >= 0
+                            ? parseFloat(d[this.bottomLine.name])
+                            : 0,
+                    horLine:
+                        parseFloat(d[this.horLine.name]) >= 0
+                            ? parseFloat(d[this.horLine.name])
+                            : 0,
+                    date: parseDate(d.date),
+                };
+            })
+            .slice()
+            .sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
     draw() {
+
         this.lineChartHeight = this.height;
         this.height = this.height + 150;
         this.labelHeight = 100;
         this.addSvg();
-        this.addTotalSumFromAll();
-        this.addUndeliverable();
-        this.addTotalReadAndSkimmed();
-        this.addSumDiffReadAndSkimmed();
+        // this.addTotalSumFromAll();
+        // this.addUndeliverable();
+        // this.addTotalReadAndSkimmed();
+        // this.addSumDiffReadAndSkimmed();
         this.addLineChart();
         this.addPieChart();
     }
@@ -59,6 +97,7 @@ class ScoresInStacked {
             );
     }
     addLineChart() {
+        console.error(this.data, 'date');
         const mainWidth = this.width;
         const mainHeight = this.lineChartHeight;
         this.pieWidth = mainWidth - 350;
@@ -81,26 +120,21 @@ class ScoresInStacked {
             .orient('left')
             .ticks(5);
 
-        const valuelineAmount = d3.svg
+        const topLine = d3.svg
             .line()
             .x(d => x(d.date))
-            .y(d => yScale(d.amount));
+            .y(d => yScale(d.topLine));
 
-        const valuelinePrevious = d3.svg
+        const bottomLine = d3.svg
             .line()
             .x(d => x(d.date))
-            .y(d => yScale(d.previous));
+            .y(d => yScale(d.bottomLine));
 
-        const {
-            collectData,
-            extentAmount,
-            extentPrevious,
-            totalMean,
-        } = this.getLineChartdata();
-        x.domain(d3.extent(collectData, d => d.date));
-        yScale.domain([0, d3.max([...extentAmount, ...extentPrevious])]);
+        x.domain(d3.extent(this.data, d => d.date));
+        yScale.domain(this.yDomain);
 
-        const topRectHeight = yScale(totalMean);
+        const meanBy = _.meanBy(this.data, 'horLine');
+        const topRectHeight = yScale(meanBy);
 
         this.lineChartSvg
             .append('rect')
@@ -130,14 +164,14 @@ class ScoresInStacked {
             .attr('class', 'amount-line')
             .attr('fill', 'none')
             .attr('stroke', 'green')
-            .attr('d', valuelineAmount(collectData));
+            .attr('d', topLine(this.data));
 
         this.lineChartSvg
             .append('path')
             .attr('class', 'previous-line')
             .attr('fill', 'none')
             .attr('stroke', 'grey')
-            .attr('d', valuelinePrevious(collectData));
+            .attr('d', bottomLine(this.data));
 
         this.lineChartSvg
             .append('g')

@@ -910,8 +910,6 @@ const height = 300;
 
 const excludeCategoryName = ['ID', 'SentDate', 'ClickCount', 'report_type_id'];
 
-console.error('newdata',newData, stackedData, taskPiData, 'data');
-
 const getColor = () => {
     return (
         '#' +
@@ -934,90 +932,162 @@ const colorbrewer = [
     '#006d2c',
     '#00441b',
 ];
+
 const categoriesToRender = [
     {
-        category: 'Ignored',
+        category: 'EngagedReadRate',
         color: '#e5f5f9',
-        percentage: 'IgnoredRate',
-        clickCount: 'ClickCount',
+        percentage: 'PercentRead',
+        clickCount: 'EngagedRead_clickRate',
     },
     {
-        category: 'Oof',
+        category: 'IgnoredRate',
         color: '#ccece6',
-        percentage: 'OofRate',
-        clickCount: 'ClickCount',
+        percentage: 'PercentRead',
+        clickCount: 'ignored_clickRate',
     },
     {
-        category: 'OpenCount',
+        category: 'LeftOpenRate',
         color: '#99d8c9',
-        percentage: 'OpenRate',
-        clickCount: 'ClickCount',
+        percentage: 'PercentRead',
+        clickCount: 'LeftOpen_clickrate',
     },
     {
-        category: 'OptOutCount',
+        category: 'ReadRate',
         color: '#66c2a4',
-        percentage: 'OptOutRate',
-        clickCount: 'ClickCount',
+        percentage: 'PercentRead',
+        clickCount: 'Read_clickRate',
+        hasPercentageLine: true,
     },
     {
-        category: 'ReadCount',
+        category: 'SkimmedRate',
         color: '#41ae76',
-        percentage: 'ReadRate',
-        clickCount: 'ClickCount',
+        percentage: 'PercentRead',
+        clickCount: 'skimmed_clickRate',
     },
-    {
-        category: 'Skimmed',
-        color: '#2CC7B4',
-        percentage: 'SkimmedRate',
-        clickCount: 'ClickCount',
-    },
-    {
-        category: 'UndeliverableCount',
-        color: '#238b45',
-        percentage: 'UndeliverableRate',
-        clickCount: 'ClickCount',
-    },
-    {
-        category: 'ReplyCount',
-        color: '#006d2c',
-        percentage: 'ReplyRate',
-        clickCount: 'ClickCount',
-    },
-    {
-        category: 'EngagedReads',
-        color: '#00441b',
-        percentage: 'EngagedReadRate',
-        clickCount: 'ClickCount',
-    },
+    // {
+    //     category: 'Skimmed',
+    //     color: '#2CC7B4',
+    //     percentage: 'SkimmedRate',
+    //     clickCount: 'ClickCount',
+    // },
+    // {
+    //     category: 'UndeliverableCount',
+    //     color: '#238b45',
+    //     percentage: 'UndeliverableRate',
+    //     clickCount: 'ClickCount',
+    // },
+    // {
+    //     category: 'ReplyCount',
+    //     color: '#006d2c',
+    //     percentage: 'ReplyRate',
+    //     clickCount: 'ClickCount',
+    // },
+    // {
+    //     category: 'EngagedReads',
+    //     color: '#00441b',
+    //     percentage: 'EngagedReadRate',
+    //     clickCount: 'ClickCount',
+    // },
 ];
 
 const trimString = (string, stringWidth, width) => {
-    console.error(stringWidth, string, 'inside', width);
     if (stringWidth > width) {
         return 'a';
     }
 };
+const strictIsoParse = d3.time.format('%Y-%m-%d %H:%M:%S');
+const requiredFormat = d3.time.format('%d-%b-%y');
+const getDay = d3.time.format('%d');
+const dateString = '2018-04-23T15:25:52';
 
-d3.csv('data/heatmapdata.csv', function(csvdata) {
-    // const filteredCategories = Object.keys(csvdata[0]).filter(
-    //     d => !excludeCategoryName.includes(d),
+queue()
+    .defer(d3.csv, 'data/heatdata.csv')
+    .defer(d3.csv, 'data/scoredata.csv')
+    .awaitAll(ready);
+
+function ready(err, results) {
+    console.error(results);
+    const csvdata = results[0];
+    const scoreData = results[1];
+    // console.error(
+    //     Date.parse(dateString),
+    //     'dateobj',
+    //     strictIsoParse.parse(dateString),
+    //     requiredFormat(strictIsoParse.parse(dateString)),
     // );
 
-    console.error(csvdata, 'csg');
-    var strictIsoParse = d3.time.format('%Y-%m-%dT%H:%M:%S');
-    const requiredFormat = d3.time.format('%d-%b-%y');
-    const dateString = '2018-04-23T15:25:52';
-    console.error(
-        Date.parse(dateString),
-        'dateobj',
-        strictIsoParse.parse(dateString),
-        requiredFormat(strictIsoParse.parse(dateString)),
-    );
+    const singleHeatData = createHeatMapData([csvdata[0]]);
+    const multipleHeatmap = createHeatMapData(csvdata);
+
+    console.error(multipleHeatmap, 'flat', singleHeatData);
+
+    // const scoreDataCorrectDate = scoreData
+    //     .map(s => {
+    //         const formatDate = strictIsoParse.parse(s.sentDate.split('.')[0]);
+    //         return {
+    //             ...s,
+    //             date: formatDate ? requiredFormat(formatDate) : null,
+    //             days: formatDate ? getDay(formatDate) : null,
+    //         };
+    //     })
+    //     .filter(f => parseFloat(f.days) % 2 === 0);
+
+    const singleHeatMap = new SingleHeatMap({
+        data: singleHeatData,
+        width,
+        height,
+    });
+    singleHeatMap.draw();
+    const arrayHeatMap = new MultipleHeatmap({
+        data: multipleHeatmap,
+        width,
+        height,
+    });
+    arrayHeatMap.draw();
+
+    // const stackedChart = new StackedChart({
+    //     stackedData,
+    //     color,
+    //     width,
+    //     height,
+    // });
+    // stackedChart.draw();
+    // //
+    // const stackedScore = new ScoresInStacked({
+    //     data: scoreDataCorrectDate,
+    //     width,
+    //     height,
+    //     topLine: {
+    //         name: 'OpenRate',
+    //         color: 'green',
+    //     },
+    //     bottomLine: {
+    //         name: 'IgnoredRate',
+    //         color: 'grey',
+    //     },
+    //     horLine: {
+    //         name: 'OpenRate',
+    //         color: 'orange',
+    //     },
+    //     yDomain:[0,1]
+    // });
+
+    // const stackedScore = new ScoresInStacked({
+    //     data: taskPiData,
+    //     width,
+    //     height,
+    // });
+    //  stackedScore.draw();
+}
+
+function createHeatMapData(csvdata) {
     const validDateOnlyData = csvdata
         .map(item => {
             const formatDate = strictIsoParse.parse(
-                item.SentDate.split('.')[0],
+                item.sentdate.split('.')[0],
             );
+
             return {
                 ...item,
                 date: formatDate ? requiredFormat(formatDate) : null,
@@ -1025,46 +1095,37 @@ d3.csv('data/heatmapdata.csv', function(csvdata) {
         })
         .filter(d => d.date);
 
-    console.log(validDateOnlyData, 'fasfsaf');
     const filteredData = validDateOnlyData.map(item => {
-        const mapObj = categoriesToRender.map(cat => {
+        const id = uid();
+        return categoriesToRender.map(cat => {
             return {
+                ...cat,
                 date: item.date,
                 category: cat.category,
-                percentage: parseFloat(item[cat.percentage]),
-                clicked: parseFloat(item[cat.clickCount]),
+                percentage: Math.min(
+                    Math.abs(parseFloat(item[cat.percentage])),
+                    1,
+                ),
+                clicked: Math.min(
+                    Math.abs(parseFloat(item[cat.clickCount])),
+                    1,
+                ),
                 color: cat.color,
+                value: Math.min(Math.abs(parseFloat(item[cat.category])), 1),
+                hasPercentageLine: (cat && cat.hasPercentageLine) || false,
+                id,
             };
         });
-
-        return mapObj;
     });
 
-    const flatten = filteredData.reduce((acc, val) => acc.concat(val), []);
+    return filteredData.reduce((acc, val) => acc.concat(val), []);
+}
 
-    console.error(filteredData, 'fasfasdas', flatten);
-    const singleHeatMap = new SingleHeatMap({ data: flatten, width, height });
-    singleHeatMap.draw();
-    const arrayHeatMap = new CombinedHeatMap({
-        newData: flatten,
-        color,
-        width,
-        height,
-    });
-    arrayHeatMap.draw();
-
-    const stackedChart = new StackedChart({
-        stackedData,
-        color,
-        width,
-        height,
-    });
-    stackedChart.draw();
-
-    const stackedScore = new ScoresInStacked({
-        data: taskPiData,
-        width,
-        height,
-    });
-    stackedScore.draw();
-});
+function uid() {
+    return (
+        '_' +
+        Math.random()
+            .toString(36)
+            .substr(2, 9)
+    );
+}
