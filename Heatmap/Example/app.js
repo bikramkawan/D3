@@ -997,6 +997,7 @@ const trimString = (string, stringWidth, width) => {
     }
 };
 const strictIsoParse = d3.time.format('%Y-%m-%d %H:%M:%S');
+const strictIsoDate = d3.time.format('%Y-%m-%d');
 const requiredFormat = d3.time.format('%d-%b-%y');
 const getDay = d3.time.format('%d');
 const dateString = '2018-04-23T15:25:52';
@@ -1022,17 +1023,32 @@ function ready(err, results) {
 
     console.error(multipleHeatmap, 'flat', singleHeatData);
 
-    // const scoreDataCorrectDate = scoreData
-    //     .map(s => {
-    //         const formatDate = strictIsoParse.parse(s.sentDate.split('.')[0]);
-    //         return {
-    //             ...s,
-    //             date: formatDate ? requiredFormat(formatDate) : null,
-    //             days: formatDate ? getDay(formatDate) : null,
-    //         };
-    //     })
-    //     .filter(f => parseFloat(f.days) % 2 === 0);
+    const scoreDataCorrectDate = scoreData
+        .map(s => {
+            const formatDate = strictIsoDate.parse(s.SentDate.split('T')[0]);
+            return {
+                ...s,
+                date: formatDate ? requiredFormat(formatDate) : null,
+                days: formatDate ? getDay(formatDate) : null,
+            };
+        })
+        .filter(f => f.date);
 
+    const keys = Object.keys(scoreDataCorrectDate[0])
+        .filter(f => f)
+        .filter(e => e !== 'days' && e !== 'date');
+    const parseScored = scoreDataCorrectDate
+        .map(s => {
+            const obj = {};
+
+            keys.forEach(k => (obj[k] = Math.abs(parseFloat(s[k]))));
+
+            return { ...s, ...obj };
+        })
+        .slice()
+        .sort((a, b) => parseFloat(a.days) - parseFloat(b.days));
+
+    console.error(scoreDataCorrectDate, 'scored', parseScored);
     const singleHeatMap = new SingleHeatMap({
         data: singleHeatData,
         width,
@@ -1054,31 +1070,54 @@ function ready(err, results) {
     // });
     // stackedChart.draw();
     // //
-    // const stackedScore = new ScoresInStacked({
-    //     data: scoreDataCorrectDate,
-    //     width,
-    //     height,
-    //     topLine: {
-    //         name: 'OpenRate',
-    //         color: 'green',
-    //     },
-    //     bottomLine: {
-    //         name: 'IgnoredRate',
-    //         color: 'grey',
-    //     },
-    //     horLine: {
-    //         name: 'OpenRate',
-    //         color: 'orange',
-    //     },
-    //     yDomain:[0,1]
-    // });
+    const stackedScore = new ScoresInStacked({
+        data: parseScored,
+        width,
+        height,
+        topLine: {
+            name: 'OpenRate',
+            color: 'green',
+        },
+        bottomLine: {
+            name: 'IgnoredRate',
+            color: 'grey',
+        },
+        horLine: {
+            name: 'OpenRate',
+            color: 'orange',
+        },
+        yDomain: [0, 1],
+        sent: {
+            name: 'Sent',
+        },
+        reach: {
+            name: 'OpenRate',
+        },
+        uopen: {
+            name: 'OpenCount',
+        },
+        triangle: {
+            top: 'OpenRate',
+            bottom: 'PreviousAttentionRate',
+        },
+        gauge: {
+            outer: 'AttentionRate',
+            inner: 'PreviousAttentionRate',
+        },
+        gaugeNumbers: {
+            number1: 'AttentionRate',
+            number2: 'PreviousAttentionRate',
+            percNumber: 'AttentionRate',
+        },
+        bottomItems :'OpenRate'
+    });
 
+    stackedScore.draw();
     // const stackedScore = new ScoresInStacked({
     //     data: taskPiData,
     //     width,
     //     height,
     // });
-    //  stackedScore.draw();
 }
 
 function createHeatMapData(csvdata) {
