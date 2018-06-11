@@ -15,7 +15,6 @@ class MultipleHeatmap {
             .select('#combinedheatmap')
             .style('width', `${this.width}px`)
             .style('height', `${this.height}px`)
-            .style('background', 'grey');
 
         data.forEach(single => {
             const itemSvg = svg.append('g').classed('col', true);
@@ -25,7 +24,7 @@ class MultipleHeatmap {
         const labelSvg = svg
             .append('g')
             .classed('label', true)
-            .attr('transform', (d, i) => `translate(0,${0.75 * this.height})`);
+            .attr('transform', (d, i) => `translate(5,${0.75 * this.height})`);
         const labels = _.uniqBy(this.data, 'category').map(d => d.category);
         const filterByAndSum = labels.map(u => {
             const filtered = this.data.filter(d => d.category === u);
@@ -39,9 +38,13 @@ class MultipleHeatmap {
                 percentage,
                 clicked,
                 color: filtered[0].color,
+                shortName: filtered[0].shortName ? filtered[0].shortName : u,
             };
         });
         const binSize = this.width / filterByAndSum.length;
+        console.error(filterByAndSum, 'sssssumsmulti');
+        const labelHeight = 0.75 * this.height;
+        const availableLabelHeight = this.height - labelHeight;
 
         const labelEnter = labelSvg
             .selectAll('g')
@@ -53,6 +56,33 @@ class MultipleHeatmap {
                 return `translate(${binSize * i},${0})`;
             });
 
+        labelEnter
+            .append('text')
+            .classed('percLabel', true)
+            .attr('x', d => {
+                return 0;
+            })
+            .attr('y', d => {
+                console.error(d, 'datalabel');
+                return availableLabelHeight / 2;
+            })
+            .text(d => {
+                const shortName = d.shortName ? d.shortName : d.label;
+                const value = Math.floor(d.value * 100);
+                return `${value}% ${shortName}`;
+            })
+            .attr('fill', d => d.color)
+            .style('text-transform', 'capitalize')
+            .append('title')
+            .text(d => {
+                const shortName = d.shortName ? d.shortName : d.label;
+                const value = Math.floor(d.value * 100);
+                return `${value}% ${shortName}`;
+            });
+
+
+
+        /*
         labelEnter
             .append('rect')
             .classed('top', true)
@@ -76,6 +106,8 @@ class MultipleHeatmap {
                         d.percentage * 100,
                     )}%</div>`,
             );
+
+         */
     }
     mapSingleElement({ svg, data, itemScale }) {
         const topHeight = 0.7 * this.height;

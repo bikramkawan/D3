@@ -43,18 +43,21 @@ const categoriesToRender = [
         color: '#e5f5f9',
         percentage: 'PercentRead',
         clickCount: 'EngagedRead_clickRate',
+        shortName: 'Engaged',
     },
     {
         category: 'IgnoredRate',
         color: '#ccece6',
         percentage: 'PercentRead',
         clickCount: 'ignored_clickRate',
+        shortName: 'Ignored',
     },
     {
         category: 'LeftOpenRate',
         color: '#99d8c9',
         percentage: 'PercentRead',
         clickCount: 'LeftOpen_clickrate',
+        shortName: 'LeftOpen',
     },
     {
         category: 'ReadRate',
@@ -62,12 +65,14 @@ const categoriesToRender = [
         percentage: 'PercentRead',
         clickCount: 'Read_clickRate',
         hasPercentageLine: true,
+        shortName: 'Read',
     },
     {
         category: 'SkimmedRate',
         color: '#41ae76',
         percentage: 'PercentRead',
         clickCount: 'skimmed_clickRate',
+        shortName: 'Skim',
     },
 ];
 
@@ -162,12 +167,15 @@ function ready(err, results) {
         yDomain: [0, 1],
         sent: {
             name: 'Sent',
+            label: 'Sent',
         },
         reach: {
             name: 'OpenRate',
+            label: 'Reach',
         },
         uopen: {
             name: 'OpenCount',
+            label: 'u Open',
         },
         triangle: {
             top: 'OpenRate',
@@ -182,7 +190,12 @@ function ready(err, results) {
             number2: 'PreviousAttentionRate',
             percNumber: 'AttentionRate',
         },
-        bottomItems: 'OpenRate',
+        bottomItem: {
+            name: 'OpenRate',
+            read20Domain: [0.2, 0.59],
+            read60Domain: [0.6, 1.49],
+        },
+        enableAxis: false,
     });
 
     stackedScore.draw();

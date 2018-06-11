@@ -39,11 +39,11 @@ class ScoresInStacked {
         this.height = this.height + 150;
         this.labelHeight = 100;
         this.addSvg();
-        this.addTotalSumFromAll();
-        this.addUndeliverable();
-        this.addTotalReadAndSkimmed();
+        this.addSentText();
+        this.bottomItems();
+        this.addReachText();
         this.addUOpen();
-        this.addSumDiffReadAndSkimmed();
+        this.addTopTriangleText();
         this.addLineChart();
         this.addPieChart();
     }
@@ -89,7 +89,6 @@ class ScoresInStacked {
             );
     }
     addLineChart() {
-        console.error(this.data, 'date');
         const mainWidth = this.width;
         const mainHeight = this.lineChartHeight;
         this.pieWidth = mainWidth - 350;
@@ -165,16 +164,17 @@ class ScoresInStacked {
             .attr('stroke', 'grey')
             .attr('d', bottomLine(this.data));
 
-        this.lineChartSvg
+        const xAxisSvg = this.lineChartSvg
             .append('g')
             .attr('class', 'x axis')
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(xAxis);
+            .attr('transform', 'translate(0,' + height + ')');
 
-        this.lineChartSvg
-            .append('g')
-            .attr('class', 'y axis')
-            .call(yAxis);
+        const yAxisSvg = this.lineChartSvg.append('g').attr('class', 'y axis');
+
+        if (this.props && this.props.enableAxis) {
+            xAxisSvg.call(xAxis);
+            yAxisSvg.call(yAxis);
+        }
     }
     addPieChart() {
         const {
@@ -194,7 +194,7 @@ class ScoresInStacked {
             .attr('y', -30 + pieWidth / 2)
             .text(`${100 * amountReadPerc.toFixed(1)}%`)
             .attr('stroke', 'none')
-            .style('font-size', '30px')
+            .classed('bigText',true)
             .attr('fill', 'black');
 
         const diffText =
@@ -278,7 +278,7 @@ class ScoresInStacked {
             .attr('fill', d => d.data.color);
     }
 
-    addSumDiffReadAndSkimmed() {
+    addTopTriangleText() {
         const scale = d3.scale
             .linear()
             .domain([1, 6])
@@ -295,7 +295,7 @@ class ScoresInStacked {
         const { difference, perc } = this.getAddSumDiffReadAndSkimmedData();
         const svg = this.topLabel
             .append('g')
-            .classed('readSkimmedDiff', true)
+            .classed('addTopTriangleText', true)
             .attr('transform', `translate(${this.width - 200},${40})`);
 
         svg
@@ -316,7 +316,7 @@ class ScoresInStacked {
             .classed('diff', true)
             .text(diffText)
             .attr('fill', () => (difference > 0 ? 'green' : 'red'))
-            .style('font-size', '18px');
+
 
         svg
             .append('text')
@@ -325,65 +325,62 @@ class ScoresInStacked {
             .classed('perc', true)
             .text(percText)
             .attr('fill', () => (difference > 0 ? 'green' : 'red'))
-            .style('font-size', '18px');
+
     }
-    addTotalSumFromAll() {
+    addSentText() {
         this.totalAmountSumFromAllCat = _.sumBy(
             this.data,
             this.props.sent.name,
         );
         const svg = this.topLabel
             .append('g')
-            .classed('totalSumFromAllCat', true)
+            .classed('sent', true)
             .attr('transform', `translate(${10},${10})`);
 
         svg
             .append('text')
             .classed('value', true)
-            .text(this.totalAmountSumFromAllCat)
-            .style('font-size', '20px')
-            .attr('fill', 'black');
+            .text(this.totalAmountSumFromAllCat);
 
         svg
             .append('text')
             .classed('label', true)
-            .attr('x', 50)
-            .text('SENT')
-            .style('font-size', '20px')
-            .attr('fill', 'black');
+            .attr('x', 60)
+            .text(this.props.sent.label || 'Sent');
     }
 
-    addUndeliverable() {
-        const bottomCatItems = this.props.bottomItems;
+    bottomItems() {
+        const { name, read20Domain, read60Domain } = this.props.bottomItem;
         let totalSum = [];
         const read20Perc = this.data.filter(
-            d => d.OpenRate >= 0.2 && d[bottomCatItems] <= 0.59,
+            d => d[name] >= read20Domain[0] && d[name] <= read20Domain[1],
         );
         const read60Perc = this.data.filter(
-            d => d.OpenRate >= 0.6 && d[bottomCatItems] <= 1.49,
+            d => d[name] >= read60Domain[0] && d[name] <= read60Domain[1],
         );
 
         const all = {
-            label: bottomCatItems,
-            sum: parseFloat(_.sumBy(this.data, bottomCatItems)),
+            label: name,
+            sum: parseFloat(_.sumBy(this.data, name)),
+            perc: Math.floor(100 * (this.data.length / this.data.length)),
         };
 
         totalSum.push(all);
 
         const read20PerObj = {
-            label: bottomCatItems,
-            sum: parseFloat(_.sumBy(read20Perc, bottomCatItems)),
+            label: 'Read 20',
+            sum: parseFloat(_.sumBy(read20Perc, name)),
+            perc: Math.floor(100 * (read20Perc.length / this.data.length)),
         };
 
         const read60PerObj = {
-            label: bottomCatItems,
-            sum: parseFloat(_.sumBy(read60Perc, bottomCatItems)),
+            label: 'Read 60',
+            sum: parseFloat(_.sumBy(read60Perc, name)),
+            perc: Math.floor(100 * (read60Perc.length / this.data.length)),
         };
 
         totalSum.push(read20PerObj);
         totalSum.push(read60PerObj);
-
-        console.error(totalSum, 'fil', read20Perc, read60Perc, this.data);
 
         const binWidth = 250;
         const height = 30;
@@ -430,34 +427,32 @@ class ScoresInStacked {
             .append('text')
             .attr('x', (d, i) => binWidth - textOffset * 6)
             .classed('perc', true)
-            .text(d => `${(100 * d.sum).toFixed(1)}%`)
+            .text(d => `${d.perc}%`)
             .attr('y', (d, i) => 5 + height / 2)
             .style('text-transform', 'capitalize')
             .style('font-size', '18px');
     }
 
-    addTotalReadAndSkimmed() {
+    addReachText() {
         const meanValue = _.meanBy(this.data, this.props.reach.name);
 
         const svg = this.topLabel
             .append('g')
-            .classed('readSkimmedEl', true)
+            .classed('reach', true)
             .attr('transform', `translate(${10},${50})`);
 
         svg
             .append('text')
             .classed('value', true)
             .text(`${Math.floor(meanValue * 100)}%`)
-            .style('font-size', '35px')
-            .attr('fill', 'black');
+
 
         svg
             .append('text')
             .classed('label', true)
             .attr('x', 100)
-            .text('Reach')
-            .style('font-size', '35px')
-            .attr('fill', 'black');
+            .text(d => this.props.reach.label || 'Reach')
+
     }
 
     addUOpen() {
@@ -471,16 +466,14 @@ class ScoresInStacked {
             .append('text')
             .classed('value', true)
             .text(value)
-            .style('font-size', '20px')
-            .attr('fill', 'black');
+
         svg
             .append('text')
 
             .classed('label', true)
             .attr('x', 50)
             .text(`u Open`)
-            .style('font-size', '20px')
-            .attr('fill', 'black');
+
     }
 
     getPieData() {

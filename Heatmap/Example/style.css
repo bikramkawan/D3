@@ -7,6 +7,30 @@ body {
 body svg {
   margin-top: 50px;
 }
+body #singleheatmap .background-rect {
+  fill: grey;
+}
+body #scorestackchart .sent text {
+  font-size: 20px;
+  fill: black;
+}
+body #scorestackchart .reach {
+  font-size: 35px;
+  fill: black;
+}
+body #scorestackchart .addUOpenEl {
+  font-size: 20px;
+  fill: black;
+}
+body #scorestackchart .addTopTriangleText {
+  font-size: 18px;
+}
+body #scorestackchart .pie .bigText {
+  font-size: 30px;
+}
+body #scorestackchart .pie .diffText {
+  font-size: 15px;
+}
 body .foreignObject {
   font-size: 14px;
   display: flex;

@@ -14,10 +14,16 @@ class SingleHeatMap {
         const svg = d3
             .select('#singleheatmap')
             .style('width', `${this.width}px`)
-            .style('height', `${this.height}px`)
-            .style('background', 'grey');
+            .style('height', `${this.height}px`);
 
-        const gEnter = svg
+        const topSvg = svg.append('g').classed('topheatmap', true);
+
+        topSvg
+            .append('rect')
+            .classed('background-rect', true)
+            .attr('width', this.width)
+            .attr('height', topHeight);
+        const gEnter = topSvg
             .selectAll('g')
             .data(data)
             .enter()
@@ -87,7 +93,7 @@ class SingleHeatMap {
             .append('xhtml:div')
             .attr('title', d => `${d.value.clicked}%`)
             .classed('foreignObject', true)
-            .text(d => `${d.value.clicked}%`);
+            .text(d => `${d.value.clicked*100}%`);
 
         /*
         gEnter
@@ -106,28 +112,72 @@ class SingleHeatMap {
 
         */
 
-        gEnter
-            .append('rect')
-            .classed('bottom', true)
-            .attr('width', d => itemScale(d.value.value))
-            .attr('y', topHeight)
-            .attr('height', bottomHeight)
-            .attr('fill', 'lightgray');
+        const labelHeight = 0.75 * this.height;
+        const availableLabelHeight = this.height - labelHeight;
 
-        gEnter
-            .append('foreignObject')
-            .attr('width', d => itemScale(d.value.value))
-            .attr('y', topHeight)
-            .attr('height', bottomHeight)
-            .append('xhtml:div')
-            .attr('title', d => `${d.label}(${d.value.value}%)`)
-            .classed('foreignObject', true)
-            .html(
-                d =>
-                    `<div >${d.label}</div><div>${Math.floor(
-                        d.value.value * 100,
-                    )}%</div>`,
-            );
+        const labelSvg = svg
+            .append('g')
+            .classed('label', true)
+            .attr('transform', (d, i) => `translate(0,${labelHeight})`);
+
+        const binSize = this.width / data.length;
+
+        const labelEnter = labelSvg
+            .selectAll('g')
+            .data(data)
+            .enter()
+            .append('g')
+            .classed('category', true)
+            .attr('transform', (d, i) => {
+                return `translate(${binSize * i},${0})`;
+            });
+
+        labelEnter
+            .append('text')
+            .classed('percLabel', true)
+            .attr('x', d => {
+                return 0;
+            })
+            .attr('y', d => {
+                console.error(d, 'datalabel');
+                return availableLabelHeight / 2;
+            })
+            .text(d => {
+                const shortName = d.shortName ? d.shortName : d.label;
+                const value = Math.floor(d.value.value * 100);
+                return `${value}% ${shortName}`;
+            })
+            .attr('fill', d => d.color)
+            .style('text-transform', 'capitalize')
+            .append('title')
+            .text(d => {
+                const shortName = d.shortName ? d.shortName : d.label;
+                const value = Math.floor(d.value.value * 100);
+                return `${value}% ${shortName}`;
+            });
+
+        // gEnter
+        //     .append('rect')
+        //     .classed('bottom', true)
+        //     .attr('width', d => itemScale(d.value.value))
+        //     .attr('y', topHeight)
+        //     .attr('height', bottomHeight)
+        //     .attr('fill', 'lightgray');
+
+        // gEnter
+        //     .append('foreignObject')
+        //     .attr('width', d => itemScale(d.value.value))
+        //     .attr('y', topHeight)
+        //     .attr('height', bottomHeight)
+        //     .append('xhtml:div')
+        //     .attr('title', d => `${d.label}(${d.value.value}%)`)
+        //     .classed('foreignObject', true)
+        //     .html(
+        //         d =>
+        //             `<div >${d.label}</div><div>${Math.floor(
+        //                 d.value.value * 100,
+        //             )}%</div>`,
+        //     );
 
         /*
         gEnter
@@ -185,7 +235,7 @@ class SingleHeatMap {
             .linear()
             .domain([0, maxPercentage])
             .range([0, this.width]);
-console.error(data,'single format')
+        console.error(data, 'single format');
         return { data, itemScale, maxPercentage };
     }
 }
