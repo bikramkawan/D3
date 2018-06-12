@@ -14,7 +14,7 @@ class MultipleHeatmap {
         const svg = d3
             .select('#combinedheatmap')
             .style('width', `${this.width}px`)
-            .style('height', `${this.height}px`)
+            .style('height', `${this.height}px`);
 
         data.forEach(single => {
             const itemSvg = svg.append('g').classed('col', true);
@@ -79,8 +79,6 @@ class MultipleHeatmap {
                 const value = Math.floor(d.value * 100);
                 return `${value}% ${shortName}`;
             });
-
-
 
         /*
         labelEnter
@@ -168,26 +166,45 @@ class MultipleHeatmap {
             .attr('fill', '#1aa4cd')
             .style('opacity', 0.2)
             .append('title')
-            .text(d => d.clicked)
+            .text(d => `${Math.floor(d.clicked) * 100}%`)
             .style('opacity', 0.2);
         //
+
         gEnter
-            .append('foreignObject')
-            .attr('width', d => itemScale(d.value) * d.clicked)
-            .attr('height', d => topHeight * d.clicked)
+            .append('text')
+            .classed('multiHeatmapText', true)
+            // .attr('width', d => itemScale(d.value.value) * d.value.clicked)
+            // .attr('height', d => topHeight * d.value.clicked)
             .attr('x', d => {
                 const binWidth = itemScale(d.value) * d.clicked;
-                return itemScale(d.value) - binWidth;
+                return 5 + itemScale(d.value) - binWidth;
             })
             .attr('y', d => {
                 const binHeight = topHeight * d.clicked;
-                return topHeight - binHeight;
+                return topHeight - binHeight / 2;
             })
-            .append('xhtml:div')
-            .attr('title', d => `${Math.floor(d.clicked)}%`)
-            .classed('foreignObject', true)
-            .text(d => `${Math.floor(d.clicked)}%`)
-            .style('opacity', 0.2);
+            // .append('xhtml:div')
+            // .attr('title', d => `${d.value.clicked}%`)
+            // .classed('foreignObject', true)
+            .text(d => `${Math.floor(d.clicked) * 100}%`);
+
+        // gEnter
+        //     .append('foreignObject')
+        //     .attr('width', d => itemScale(d.value) * d.clicked)
+        //     .attr('height', d => topHeight * d.clicked)
+        //     .attr('x', d => {
+        //         const binWidth = itemScale(d.value) * d.clicked;
+        //         return itemScale(d.value) - binWidth;
+        //     })
+        //     .attr('y', d => {
+        //         const binHeight = topHeight * d.clicked;
+        //         return topHeight - binHeight;
+        //     })
+        //     .append('xhtml:div')
+        //     .attr('title', d => `${Math.floor(d.clicked)}%`)
+        //     .classed('foreignObject', true)
+        //     .text(d => `${Math.floor(d.clicked)}%`)
+        //     .style('opacity', 0.2);
     }
 
     prepareData() {

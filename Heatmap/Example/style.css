@@ -10,6 +10,9 @@ body svg {
 body #singleheatmap .background-rect {
   fill: grey;
 }
+body .multiHeatmapText {
+  font-size: 8px;
+}
 body #scorestackchart .sent text {
   font-size: 20px;
   fill: black;

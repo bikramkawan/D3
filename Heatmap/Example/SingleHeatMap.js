@@ -76,24 +76,24 @@ class SingleHeatMap {
             })
             .attr('fill', '#1aa4cd')
             .append('title')
-            .text(d => d.value.clicked);
+            .text(d => `${d.value.clicked * 100}%`);
         //
         gEnter
-            .append('foreignObject')
-            .attr('width', d => itemScale(d.value.value) * d.value.clicked)
-            .attr('height', d => topHeight * d.value.clicked)
+            .append('text')
+            // .attr('width', d => itemScale(d.value.value) * d.value.clicked)
+            // .attr('height', d => topHeight * d.value.clicked)
             .attr('x', d => {
                 const binWidth = itemScale(d.value.value) * d.value.clicked;
-                return itemScale(d.value.value) - binWidth;
+                return 5 + itemScale(d.value.value) - binWidth;
             })
             .attr('y', d => {
                 const binHeight = topHeight * d.value.clicked;
-                return topHeight - binHeight;
+                return topHeight - binHeight / 2;
             })
-            .append('xhtml:div')
-            .attr('title', d => `${d.value.clicked}%`)
-            .classed('foreignObject', true)
-            .text(d => `${d.value.clicked*100}%`);
+            // .append('xhtml:div')
+            // .attr('title', d => `${d.value.clicked}%`)
+            // .classed('foreignObject', true)
+            .text(d => `${d.value.clicked * 100}%`);
 
         /*
         gEnter
