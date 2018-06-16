@@ -99,9 +99,7 @@ function ready(err, results) {
     const singleHeatData = createHeatMapData([csvdata[0]]);
     const multipleHeatmap = createHeatMapData(csvdata);
 
-    console.error(multipleHeatmap, 'flat', singleHeatData);
-
-    const scoreDataCorrectDate = scoreData
+   const scoreDataCorrectDate = scoreData
         .map(s => {
             const formatDate = strictIsoDate.parse(s.SentDate.split('T')[0]);
             return {

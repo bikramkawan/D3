@@ -80,8 +80,6 @@ class SingleHeatMap {
         //
         gEnter
             .append('text')
-            // .attr('width', d => itemScale(d.value.value) * d.value.clicked)
-            // .attr('height', d => topHeight * d.value.clicked)
             .attr('x', d => {
                 const binWidth = itemScale(d.value.value) * d.value.clicked;
                 return 5 + itemScale(d.value.value) - binWidth;
@@ -90,28 +88,7 @@ class SingleHeatMap {
                 const binHeight = topHeight * d.value.clicked;
                 return topHeight - binHeight / 2;
             })
-            // .append('xhtml:div')
-            // .attr('title', d => `${d.value.clicked}%`)
-            // .classed('foreignObject', true)
             .text(d => `${d.value.clicked * 100}%`);
-
-        /*
-        gEnter
-            .append('text')
-            .classed('clickedText', true)
-            .attr('x', d => {
-                const binWidth =
-                    itemScale(d.value.percentage) * d.value.clicked / 100;
-                return itemScale(d.value.percentage) - binWidth + 10;
-            })
-            .attr('y', d => {
-                const binHeight = topHeight * d.value.clicked / 100;
-                return topHeight - binHeight / 2;
-            })
-            .text(d => `${d.value.clicked}%`);
-
-        */
-
         const labelHeight = 0.75 * this.height;
         const availableLabelHeight = this.height - labelHeight;
 
@@ -139,7 +116,6 @@ class SingleHeatMap {
                 return 0;
             })
             .attr('y', d => {
-                console.error(d, 'datalabel');
                 return availableLabelHeight / 2;
             })
             .text(d => {
@@ -155,58 +131,6 @@ class SingleHeatMap {
                 const value = Math.floor(d.value.value * 100);
                 return `${value}% ${shortName}`;
             });
-
-        // gEnter
-        //     .append('rect')
-        //     .classed('bottom', true)
-        //     .attr('width', d => itemScale(d.value.value))
-        //     .attr('y', topHeight)
-        //     .attr('height', bottomHeight)
-        //     .attr('fill', 'lightgray');
-
-        // gEnter
-        //     .append('foreignObject')
-        //     .attr('width', d => itemScale(d.value.value))
-        //     .attr('y', topHeight)
-        //     .attr('height', bottomHeight)
-        //     .append('xhtml:div')
-        //     .attr('title', d => `${d.label}(${d.value.value}%)`)
-        //     .classed('foreignObject', true)
-        //     .html(
-        //         d =>
-        //             `<div >${d.label}</div><div>${Math.floor(
-        //                 d.value.value * 100,
-        //             )}%</div>`,
-        //     );
-
-        /*
-        gEnter
-            .append('text')
-            .classed('percLabel', true)
-            .attr('x', d => {
-                return someOffset + itemScale(d.value.percentage) / 2;
-            })
-            .attr('y', d => {
-                return 0.9 * this.height;
-            })
-            .text(d => d.label)
-            .style('text-transform', 'capitalize')
-            .append('title')
-            .text(d => d.label);
-
-        gEnter
-            .append('text')
-            .classed('perctage', true)
-            .attr('x', d => {
-                return someOffset + itemScale(d.value.percentage) / 2;
-            })
-            .attr('y', d => {
-                return 0.99 * this.height;
-            })
-            .text(d => `${d.value.percentage}%`)
-            .append('title')
-            .text(d => d.label);
-            */
     }
     prepareData() {
         const groupByHeatmap = _.groupBy(this.data, d => d.category);
@@ -215,8 +139,6 @@ class SingleHeatMap {
         );
         const data = uniquesHeatmap.map(id => {
             const item = groupByHeatmap[id];
-            // const totalPerc = _.sumBy(item, 'percentage');
-            //const totalClicked = _.sumBy(item, 'clicked');
             return {
                 ...item[0],
                 label: item[0].category,
@@ -235,7 +157,6 @@ class SingleHeatMap {
             .linear()
             .domain([0, maxPercentage])
             .range([0, this.width]);
-        console.error(data, 'single format');
         return { data, itemScale, maxPercentage };
     }
 }

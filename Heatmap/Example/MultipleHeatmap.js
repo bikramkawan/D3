@@ -42,7 +42,7 @@ class MultipleHeatmap {
             };
         });
         const binSize = this.width / filterByAndSum.length;
-        console.error(filterByAndSum, 'sssssumsmulti');
+
         const labelHeight = 0.75 * this.height;
         const availableLabelHeight = this.height - labelHeight;
 
@@ -63,7 +63,7 @@ class MultipleHeatmap {
                 return 0;
             })
             .attr('y', d => {
-                console.error(d, 'datalabel');
+
                 return availableLabelHeight / 2;
             })
             .text(d => {
@@ -79,33 +79,6 @@ class MultipleHeatmap {
                 const value = Math.floor(d.value * 100);
                 return `${value}% ${shortName}`;
             });
-
-        /*
-        labelEnter
-            .append('rect')
-            .classed('top', true)
-            .attr('width', (d, i) => binSize)
-            .attr('height', bottomHeight)
-            .attr('fill', d => d.color);
-
-        labelEnter
-            .append('foreignObject')
-            .attr('width', (d, i) => binSize)
-            .attr('height', bottomHeight)
-            .append('xhtml:div')
-            .attr(
-                'title',
-                d => `${d.label}(${Math.floor(d.percentage * 100)}%)`,
-            )
-            .classed('foreignObject', true)
-            .html(
-                d =>
-                    `<div >${d.label}</div><div>${Math.floor(
-                        d.percentage * 100,
-                    )}%</div>`,
-            );
-
-         */
     }
     mapSingleElement({ svg, data, itemScale }) {
         const topHeight = 0.7 * this.height;
@@ -173,8 +146,6 @@ class MultipleHeatmap {
         gEnter
             .append('text')
             .classed('multiHeatmapText', true)
-            // .attr('width', d => itemScale(d.value.value) * d.value.clicked)
-            // .attr('height', d => topHeight * d.value.clicked)
             .attr('x', d => {
                 const binWidth = itemScale(d.value) * d.clicked;
                 return 5 + itemScale(d.value) - binWidth;
@@ -183,28 +154,8 @@ class MultipleHeatmap {
                 const binHeight = topHeight * d.clicked;
                 return topHeight - binHeight / 2;
             })
-            // .append('xhtml:div')
-            // .attr('title', d => `${d.value.clicked}%`)
-            // .classed('foreignObject', true)
-            .text(d => `${Math.floor(d.clicked) * 100}%`);
 
-        // gEnter
-        //     .append('foreignObject')
-        //     .attr('width', d => itemScale(d.value) * d.clicked)
-        //     .attr('height', d => topHeight * d.clicked)
-        //     .attr('x', d => {
-        //         const binWidth = itemScale(d.value) * d.clicked;
-        //         return itemScale(d.value) - binWidth;
-        //     })
-        //     .attr('y', d => {
-        //         const binHeight = topHeight * d.clicked;
-        //         return topHeight - binHeight;
-        //     })
-        //     .append('xhtml:div')
-        //     .attr('title', d => `${Math.floor(d.clicked)}%`)
-        //     .classed('foreignObject', true)
-        //     .text(d => `${Math.floor(d.clicked)}%`)
-        //     .style('opacity', 0.2);
+            .text(d => `${Math.floor(d.clicked) * 100}%`);
     }
 
     prepareData() {
