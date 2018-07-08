@@ -1,0 +1,64 @@
+.app {
+    display: flex;
+    flex-direction: column;
+    .col {
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-right: 1px solid;
+
+        &.header {
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid;
+        }
+    }
+    .header {
+        display: flex;
+        cursor: pointer;
+    }
+    .body {
+        display: flex;
+    }
+    .row {
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 3px;
+    }
+    .chart-wrapper {
+        display: flex;
+        .chart {
+            width: 100px;
+            visibility: hidden;
+
+            &:nth-child(even) {
+                background: #ccc;
+            }
+            &:nth-child(odd) {
+                background: #fff;
+            }
+
+            &.visible {
+                visibility: visible;
+            }
+        }
+        .bar-wrapper {
+            width: 100px;
+            display: flex;
+            .bar {
+                fill: grey;
+            }
+        }
+
+        .hist-wrapper {
+            width: 100px;
+            display: flex;
+            .hist {
+                fill: red;
+            }
+        }
+    }
+}
