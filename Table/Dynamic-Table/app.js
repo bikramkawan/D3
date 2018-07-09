@@ -27,7 +27,7 @@ const priority = [
 const width = 95;
 const height = 60;
 function isMissingNumber(v) {
-    return v == null || v.trim().length === 0 || v === 'NaN';
+    return v == null || (v && v.toString().trim().length === 0) || v === 'NaN';
 }
 function guessCategorical(data) {
     const testSize = Math.min(data.length, sampleSize);
@@ -38,7 +38,8 @@ function guessCategorical(data) {
     let validSize = 0;
     for (let i = 0; i < testSize; ++i) {
         const v = data[i];
-        if (v == null || v.trim().length === 0) {
+
+        if (v == null || (v && v.toString().trim().length === 0)) {
             continue; //skip empty samples
         }
         validSize++;
@@ -257,8 +258,22 @@ function renderCharts(data) {
         }
     });
 }
-d3.csv('credit_tran.csv', function(csvdata) {
-    const rawdata = csvdata.slice(0, sampleSize);
+
+function renderApp(parsedData) {
+    d3
+        .select('.chart-wrapper')
+        .selectAll('*')
+        .remove();
+    d3
+        .select('.header')
+        .selectAll('*')
+        .remove();
+    d3
+        .select('.body')
+        .selectAll('*')
+        .remove();
+
+    const rawdata = parsedData.slice(0, sampleSize);
     const headers = getHeaders(rawdata);
     const guessTypes = headers.map(header => {
         const type = guessType(rawdata, header);
@@ -278,4 +293,31 @@ d3.csv('credit_tran.csv', function(csvdata) {
     renderHeader(toRender);
     renderTable(toRender);
     renderCharts(toRender);
-});
+}
+
+const reader = new FileReader();
+let file = null;
+function loadFile() {
+    file = document.querySelector('input[type=file]').files[0];
+
+    reader.addEventListener('load', parseFile, false);
+    if (file) {
+        reader.readAsText(file);
+    }
+}
+
+function parseFile() {
+    if (file && file.type == 'text/csv') {
+        const data = d3.csvParse(reader.result, function(d) {
+            return d;
+        });
+        renderApp(data);
+    }
+
+    if (file && file.type == 'application/json') {
+        const data = JSON.parse(reader.result);
+        renderApp(data);
+    }
+
+    // renderApp(data);
+}
