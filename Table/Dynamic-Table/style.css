@@ -51,6 +51,9 @@
 .app .chart-wrapper .bar-wrapper .bar {
   fill: grey;
 }
+.app .chart-wrapper .bar-wrapper .bar.bar-selected {
+  opacity: 0.5;
+}
 .app .chart-wrapper .hist-wrapper {
   width: 100px;
   display: flex;

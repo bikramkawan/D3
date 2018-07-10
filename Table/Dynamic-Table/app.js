@@ -115,6 +115,11 @@ function guessType(data, header) {
 }
 
 function renderTable(data) {
+    d3
+        .select('.body')
+        .selectAll('div')
+        .remove();
+
     const app = d3
         .select('.body')
         .selectAll('div')
@@ -153,22 +158,23 @@ function renderHeader(data) {
         });
 }
 
-function createBars(selection, rawdata) {
-    const data = rawdata.data;
+const collectClicks = { key: '', array: [] };
+function createBars(selection, itemData, groupedData, rawData) {
+    const data = itemData.data;
     const bar = selection
         .append('div')
         .classed('chart bar-wrapper', true)
-        .attr('data-attr', rawdata.header);
+        .attr('data-attr', itemData.header);
 
     const svg = bar
         .append('svg')
         .attr('width', width)
         .attr('height', height)
-        .attr('data-attr', rawdata.header);
+        .attr('data-attr', itemData.header);
     const categories = _.uniq(data);
 
     const results = categories.map(c => {
-        const f = rawdata.data.filter(d => d === c);
+        const f = itemData.data.filter(d => d === c);
         return { label: c, count: f.length };
     });
 
@@ -192,6 +198,52 @@ function createBars(selection, rawdata) {
         .attr('y', d => y(d.count))
         .attr('width', x.bandwidth())
         .attr('height', d => height - y(d.count))
+        .on('click', function(d) {
+            const className = d3.select(this).attr('class');
+            const isSelected = className.indexOf('bar-selected') > -1;
+            d3.select(this).classed('bar-selected', !isSelected);
+            const ifKeyExist = collectClicks.key === itemData.header;
+            if (!ifKeyExist) {
+                collectClicks.array.length = 0;
+                collectClicks.key = itemData.header;
+                collectClicks.array.push(d);
+            }
+
+            if (ifKeyExist) {
+                const filterClick = collectClicks.array.filter(
+                    f => f.label === d.label,
+                );
+
+                if (filterClick && filterClick.length > 0) {
+                    collectClicks.array = collectClicks.array.filter(
+                        f => f.label !== d.label,
+                    );
+                } else {
+                    collectClicks.array.push(d);
+                }
+            }
+
+            let filtered = rawData;
+            if (collectClicks.array && collectClicks.array.length > 0) {
+                collectClicks.array.forEach(clicked => {
+                    filtered = filtered.filter(
+                        f => f[collectClicks.key] !== clicked.label,
+                    );
+                });
+            }
+
+            const toRender = groupedData.map(fields => {
+                const data = filtered.map(d => d[fields.header]);
+                return {
+                    ...fields,
+                    data,
+                };
+            });
+
+            renderTable(toRender);
+
+            console.error('fi', toRender);
+        })
         .append('title')
         .text(d => `${d.label}(${d.count})`);
 }
@@ -242,18 +294,18 @@ function createHistogram(selection, rawdata) {
         .append('title')
         .text(d => y(d.length));
 }
-function renderCharts(data) {
+function renderCharts(grouppedData, rawData) {
     const container = d3.select('.chart-wrapper');
-    data.forEach(item => {
-        if (item.type === type.categorical) {
-            createBars(container, item);
-        } else if (item.type === type.number) {
-            createHistogram(container, item);
+    grouppedData.forEach(itemData => {
+        if (itemData.type === type.categorical) {
+            createBars(container, itemData, grouppedData, rawData);
+        } else if (itemData.type === type.number) {
+            createHistogram(container, itemData);
         } else {
             container
                 .append('div')
                 .classed('chart', true)
-                .attr('data-attr', item.header)
+                .attr('data-attr', itemData.header)
                 .style('height', '1px');
         }
     });
@@ -282,7 +334,7 @@ function renderApp(parsedData) {
             type,
         };
     });
-
+    console.error(rawdata, 'rawdata');
     const toRender = guessTypes.map(fields => {
         const data = rawdata.map(d => d[fields.header]);
         return {
@@ -292,7 +344,7 @@ function renderApp(parsedData) {
     });
     renderHeader(toRender);
     renderTable(toRender);
-    renderCharts(toRender);
+    renderCharts(toRender, rawdata);
 }
 
 const reader = new FileReader();
