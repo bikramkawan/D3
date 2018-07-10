@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<svg width="960" height="500"></svg>
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script>
+
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = svg.attr("width") - margin.left - margin.right,
+    height = svg.attr("height") - margin.top - margin.bottom;
+
+
+
+var x = d3.scaleTime().range([0, width]),
+    y = d3.scaleLinear().range([height, 0]),
+    z = d3.scaleOrdinal(d3.schemeCategory10);
+const scaleLinear =d3.scaleLinear().range([0, 1]).domain([0,100])
+
+var stack = d3.stack();
+
+var area = d3.area()
+    .x(function(d, i) { 
+      return x(d.data.date); })
+    .y0(function(d) { return y(d[0]); })
+    .y1(function(d) { return y(d[1]); });
+
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+//////////////////////////////////
+
+
+function parsejson(jsondata){
+  var newvar = [];
+
+  for (var i = 0; i < jsondata[0].values.length; i++) {
+
+    var obj = {};
+    for (var j = 0; j< jsondata.length; j++){
+        obj.date = (jsondata[0].values[i].date);
+      obj[jsondata[j].name] = scaleLinear(jsondata[j].values[i].value);
+
+    }
+
+
+      newvar.push(obj);
+  }
+
+
+  var sortedDate = newvar.slice().sort((a,b)=>{
+    return (a.date - b.date);
+  })
+
+
+
+
+var dateFormated = sortedDate.map(function(d){
+
+
+    return {...d,date:new Date(d.date)}
+  });
+  return dateFormated
+}
+
+d3.json("attachment.json", function(error, rawdata) {
+
+  
+  var data = parsejson(rawdata);
+
+
+  if (error) throw error;
+  var keys = rawdata.map(d=>d.name);
+
+  x.domain(d3.extent(data, function(d) {
+   return d.date; }));
+
+
+  z.domain(keys);
+  stack.keys(keys);
+
+  var layer = g.selectAll(".layer")
+    .data(stack(data))
+    .enter().append("g")
+      .attr("class", "layer");
+
+  layer.append("path")
+      .attr("class", "area")
+      .style("fill", function(d,i) {
+
+          return z(d.key); })
+      .attr("d", area);
+
+
+  layer.filter(function(d) { return d[d.length - 1][1] - d[d.length - 1][0] > 0.01; })
+    .append("text")
+      .attr("x", width - 6)
+      .attr("y", function(d) { return y((d[d.length - 1][0] + d[d.length - 1][1]) / 2); })
+      .attr("dy", ".35em")
+      .style("font", "10px sans-serif")
+      .style("text-anchor", "end")
+      .text(function(d) {
+
+          return d.key; });
+
+  g.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  g.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y).ticks(10, "%"));
+});
+
+
+</script>
