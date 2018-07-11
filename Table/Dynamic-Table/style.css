@@ -3,6 +3,7 @@
   flex-direction: column;
 }
 .app .col {
+  min-width: 100px;
   width: 100px;
   white-space: nowrap;
   overflow: hidden;
@@ -34,6 +35,7 @@
 .app .chart-wrapper .chart {
   width: 100px;
   visibility: hidden;
+  min-width: 101px!important;
 }
 .app .chart-wrapper .chart:nth-child(even) {
   background: #ccc;

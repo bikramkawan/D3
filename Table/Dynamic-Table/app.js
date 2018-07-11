@@ -241,11 +241,9 @@ function createBars(selection, itemData, groupedData, rawData) {
             });
 
             renderTable(toRender);
-
-            console.error('fi', toRender);
         })
         .append('title')
-        .text(d => `${d.label}(${d.count})`);
+        .text(d => `Name: ${d.label}, Count:(${d.count})`);
 }
 
 function createHistogram(selection, rawdata) {
@@ -259,6 +257,66 @@ function createHistogram(selection, rawdata) {
         .attr('width', width)
         .attr('height', height)
         .attr('data-attr', rawdata.header);
+
+    // var formatCount = d3.format(',.0f');
+    //
+    // var g = svg1.append('g');
+    //
+    // var values = data;
+    //
+    // var x = d3
+    //     .scaleLinear()
+    //     .domain(d3.extent(values))
+    //     .rangeRound([0, width]);
+    //
+    // var histogram = d3
+    //     .histogram()
+    //     .domain(x.domain())
+    //     .thresholds(d3.range(1, x.domain()[1], (x.domain()[1] - 1) / 6));
+    //
+    // var bins = histogram(values);
+    //
+    // console.error(bins, 'bins', rawdata.header);
+    // var y = d3
+    //     .scaleLinear()
+    //     .domain([
+    //         0,
+    //         d3.max(bins, function(d) {
+    //             return d.length;
+    //         }),
+    //     ])
+    //     .range([height, 0]);
+    //
+    // var bar = g
+    //     .selectAll('.bar')
+    //     .data(bins)
+    //     .enter()
+    //     .append('g')
+    //     .attr('class', 'bar')
+    //     .attr('transform', function(d) {
+    //         return 'translate(' + x(d.x0) + ',' + y(d.length) + ')';
+    //     });
+    //
+    // bar
+    //     .append('rect')
+    //     .attr('x', 1)
+    //     .attr('width', x(bins[0].x1) - x(bins[0].x0) - 2)
+    //     .attr('height', function(d) {
+    //         return height - y(d.length);
+    //     })
+    //     .append('title')
+    //     .text((d,i) => {
+    //         console.error(x(bins[0].x1),i,d)
+    //         return y(d.length);
+    //     });
+
+    // g.append("g")
+    //     .attr("class", "axis axis--x")
+    //     .attr("transform", "translate(0," + height + ")")
+    //     .call(d3.axisBottom(x));
+
+    //
+    //
     const g = svg.append('g');
 
     const x = d3
@@ -266,10 +324,12 @@ function createHistogram(selection, rawdata) {
         .range([0, width])
         .domain(d3.extent(data));
 
-    const bins = d3
+    const histogram = d3
         .histogram()
         .domain(x.domain())
-        .thresholds(x.ticks(20))(data);
+        .thresholds(d3.range(1, x.domain()[1], (x.domain()[1] - 1) / 6));
+
+    const bins = histogram(data);
 
     const y = d3
         .scaleLinear()
@@ -292,7 +352,11 @@ function createHistogram(selection, rawdata) {
         .attr('width', x(bins[0].x1) - x(bins[0].x0) - 1)
         .attr('height', d => height - y(d.length))
         .append('title')
-        .text(d => y(d.length));
+        .text((d, i) => {
+            return `Range:[${d.x0.toFixed(1)},${d.x1.toFixed(1)}] Count:${
+                d.length
+            }`;
+        });
 }
 function renderCharts(grouppedData, rawData) {
     const container = d3.select('.chart-wrapper');
@@ -325,7 +389,7 @@ function renderApp(parsedData) {
         .selectAll('*')
         .remove();
 
-    const rawdata = parsedData.slice(0, sampleSize);
+    const rawdata = parsedData;
     const headers = getHeaders(rawdata);
     const guessTypes = headers.map(header => {
         const type = guessType(rawdata, header);
@@ -334,7 +398,7 @@ function renderApp(parsedData) {
             type,
         };
     });
-    console.error(rawdata, 'rawdata');
+
     const toRender = guessTypes.map(fields => {
         const data = rawdata.map(d => d[fields.header]);
         return {

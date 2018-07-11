@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     .col {
+        min-width: 100px;
         width: 100px;
         white-space: nowrap;
         overflow: hidden;
@@ -33,6 +34,7 @@
         .chart {
             width: 100px;
             visibility: hidden;
+            min-width: 101px!important;
 
             &:nth-child(even) {
                 background: #ccc;
