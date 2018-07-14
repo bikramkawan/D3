@@ -1,6 +1,13 @@
 .app {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background: transparent;
+  /* Safari */
+}
+.app.modal-open {
+  background: lightgrey;
 }
 .app .col {
   min-width: 100px;
@@ -35,7 +42,7 @@
 .app .chart-wrapper .chart {
   width: 100px;
   visibility: hidden;
-  min-width: 101px!important;
+  min-width: 101px !important;
 }
 .app .chart-wrapper .chart:nth-child(even) {
   background: #ccc;
@@ -62,4 +69,98 @@
 }
 .app .chart-wrapper .hist-wrapper .hist {
   fill: red;
+}
+.app .modal-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  min-width: 400px;
+  flex-direction: column;
+  padding: 5px;
+  background: white;
+  box-shadow: 10px 6px 22px 0px #000000;
+  visibility: hidden;
+}
+.app .modal-wrapper.visible {
+  visibility: visible;
+}
+.app .modal-wrapper .mrow {
+  display: flex;
+  flex-basis: 100%;
+  flex-grow: 1;
+  width: 100%;
+  min-height: 40px;
+  justify-content: center;
+  align-items: center;
+}
+.app .modal-wrapper .mrow.item-wrapper {
+  flex-direction: column;
+}
+.app .modal-wrapper .mrow.button-wrapper {
+  justify-content: space-around;
+  align-items: center;
+}
+.app .modal-wrapper .mrow.button-wrapper button {
+  width: 80px;
+  height: 30px;
+  font-size: 15px;
+  background: steelblue;
+  color: white;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+.app .modal-wrapper .mcol {
+  flex-basis: 50%;
+}
+.app .spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%);
+}
+.app .spinner .svgText {
+  margin-top: 10px;
+  display: none;
+}
+.app .spinner .svgText.visible {
+  display: block;
+}
+.app .spinner .readingCSV {
+  margin-top: 10px;
+  display: none;
+}
+.app .spinner .readingCSV.visible {
+  display: block;
+}
+.app .loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  /* Safari */
+  animation: spin 2s linear infinite;
+  display: none;
+}
+.app .loader.visible {
+  display: block;
+}
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

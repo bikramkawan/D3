@@ -2,7 +2,8 @@ const sampleSize = 100;
 const isFloat = /^\s*-?(\d*\.?\d+|\d+\.?\d*)(e[-+]?\d+)?\s*$/i;
 const categoricalConfidence = 0.8;
 const floatConfidence = 0.8;
-
+let toRenderData = [];
+let toRenderRawData = [];
 const type = {
     string: 'string',
     categorical: 'categorical',
@@ -180,7 +181,7 @@ function createBars(selection, itemData, groupedData, rawData) {
 
     const x = d3
             .scaleBand()
-            .rangeRound([0, width])
+            .rangeRound([1, width])
             .padding(0.1),
         y = d3.scaleLinear().rangeRound([height, 0]);
 
@@ -196,7 +197,7 @@ function createBars(selection, itemData, groupedData, rawData) {
         .attr('class', 'bar')
         .attr('x', d => x(d.label))
         .attr('y', d => y(d.count))
-        .attr('width', x.bandwidth())
+        .attr('width', d => (x.bandwidth() === 0 ? 1 : x.bandwidth()))
         .attr('height', d => height - y(d.count))
         .on('click', function(d) {
             const className = d3.select(this).attr('class');
@@ -375,6 +376,91 @@ function renderCharts(grouppedData, rawData) {
     });
 }
 
+function reInitApp() {
+    d3.select('.modal-wrapper').classed('visible', false);
+    d3.select('.app').classed('modal-open', false);
+    d3.select('.loader').classed('visible', true);
+    d3.select('.svgText').classed('visible', true);
+    setTimeout(() => {
+        renderHeader(toRenderData);
+        renderTable(toRenderData);
+        renderCharts(toRenderData, toRenderRawData);
+        d3.select('.loader').classed('visible', false);
+        d3.select('.svgText').classed('visible', false);
+    }, 15);
+}
+
+function updateToRenderData(selectedData) {
+    toRenderData = toRenderData.map(td => {
+        const header = selectedData.header;
+
+        if (header === td.header) {
+            return { ...td, type: selectedData.type };
+        }
+        return td;
+    });
+}
+
+function handleSubmit() {
+    const btnWrapper = d3.select('.button-wrapper');
+
+    btnWrapper
+        .append('button')
+        .text('cancel')
+        .on('click', () => {
+            reInitApp();
+        });
+    btnWrapper
+        .append('button')
+        .text('submit')
+        .on('click', () => {
+            reInitApp();
+        });
+}
+
+function createModal(toRender) {
+    const selectionEnter = d3
+        .select('.item-wrapper')
+        .selectAll('div')
+        .data(toRender)
+        .enter()
+        .append('div')
+        .classed('mrow item', true);
+
+    selectionEnter
+        .append('div')
+        .classed('mcol column-name', true)
+        .text(d => d.header);
+
+    const typeWrapper = selectionEnter
+        .append('div')
+        .classed('mcol select-type', true);
+
+    const options = Object.keys(type).map(t => t);
+
+    const select = typeWrapper
+        .append('select')
+        .attr('class', 'select')
+        .on('change', function(d) {
+            const type = d3.select(this).property('value');
+
+            updateToRenderData({ ...d, type });
+        });
+
+    select
+        .selectAll('option')
+        .data(d => {
+            return options.map(o => ({
+                label: o,
+                selected: o === d.type,
+            }));
+        })
+        .enter()
+        .append('option')
+        .property('selected', d => d.selected === true)
+        .text(d => d.label);
+}
+
 function renderApp(parsedData) {
     d3
         .select('.chart-wrapper')
@@ -388,7 +474,6 @@ function renderApp(parsedData) {
         .select('.body')
         .selectAll('*')
         .remove();
-
     const rawdata = parsedData;
     const headers = getHeaders(rawdata);
     const guessTypes = headers.map(header => {
@@ -406,15 +491,24 @@ function renderApp(parsedData) {
             data,
         };
     });
-    renderHeader(toRender);
-    renderTable(toRender);
-    renderCharts(toRender, rawdata);
+
+    toRenderData = toRender;
+    toRenderRawData = rawdata;
+    d3.select('.loader').classed('visible', false);
+    d3.select('.readingCSV').classed('visible', false);
+    d3.select('.modal-wrapper').classed('visible', true);
+    d3.select('.app').classed('modal-open', true);
+    createModal(toRender);
+    handleSubmit();
 }
 
 const reader = new FileReader();
 let file = null;
 function loadFile() {
     file = document.querySelector('input[type=file]').files[0];
+
+    d3.select('.loader').classed('visible', true);
+    d3.select('.readingCSV').classed('visible', true);
 
     reader.addEventListener('load', parseFile, false);
     if (file) {
@@ -434,6 +528,4 @@ function parseFile() {
         const data = JSON.parse(reader.result);
         renderApp(data);
     }
-
-    // renderApp(data);
 }

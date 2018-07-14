@@ -1,6 +1,12 @@
 .app {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    background: transparent;
+    &.modal-open {
+        background: lightgrey;
+    }
     .col {
         min-width: 100px;
         width: 100px;
@@ -34,7 +40,7 @@
         .chart {
             width: 100px;
             visibility: hidden;
-            min-width: 101px!important;
+            min-width: 101px !important;
 
             &:nth-child(even) {
                 background: #ccc;
@@ -64,6 +70,110 @@
             .hist {
                 fill: red;
             }
+        }
+    }
+
+    .modal-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        min-width: 400px;
+        flex-direction: column;
+        padding: 5px;
+        background: white;
+        box-shadow: 10px 6px 22px 0px rgba(0, 0, 0, 1);
+        visibility: hidden;
+
+        &.visible {
+            visibility: visible;
+        }
+
+        .mrow {
+            display: flex;
+            flex-basis: 100%;
+            flex-grow: 1;
+            width: 100%;
+            min-height: 40px;
+            justify-content: center;
+            align-items: center;
+            &.item-wrapper {
+                flex-direction: column;
+            }
+
+            &.button-wrapper {
+                justify-content: space-around;
+                align-items: center;
+
+                button {
+                    width: 80px;
+                    height: 30px;
+                    font-size: 15px;
+                    background: steelblue;
+                    color: white;
+                    cursor: pointer;
+                    text-transform: capitalize;
+                }
+            }
+        }
+        .mcol {
+            flex-basis: 50%;
+        }
+    }
+    .spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%);
+
+        .svgText {
+            margin-top: 10px;
+            display: none;
+            &.visible {
+                display: block;
+            }
+        }
+
+        .readingCSV {
+            margin-top: 10px;
+            display: none;
+            &.visible {
+                display: block;
+            }
+        }
+    }
+
+    .loader {
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+        display: none;
+        &.visible {
+            display: block;
+        }
+    }
+
+    /* Safari */
+    @-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
         }
     }
 }

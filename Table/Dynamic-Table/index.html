@@ -10,9 +10,49 @@
 <body>
 <div class="app">
     <input type="file" name="fileToUpload" id="fileToUpload" onchange="loadFile()">
-    <div class="chart-wrapper"></div>
-    <div class="header"></div>
-    <div class="body"></div>
+   <div class="chart-container">
+       <div class="chart-wrapper"></div>
+       <div class="header"></div>
+       <div class="body"></div>
+   </div>
+
+   <div class="modal-wrapper">
+
+
+       <div class="mrow mheader">
+           <div class="mcol">Column</div>
+           <div class="mcol">Type</div>
+       </div>
+
+    <div class="mrow item-wrapper">
+        <!--<div class="mrow item">-->
+            <!--<div class="mcol">Column</div>-->
+            <!--<div class="mcol">Type</div>-->
+        <!--</div>-->
+
+        <!--<div class="mrow item">-->
+            <!--<div class="mcol">Column</div>-->
+            <!--<div class="mcol">Type</div>-->
+        <!--</div>-->
+    </div>
+
+       <div class="mrow button-wrapper">
+
+       </div>
+
+
+   </div>
+    <div class="spinner">
+
+        <div class="loader">
+
+        </div>
+        <div class="svgText">Preparing Table. Please Wait !!!</div>
+        <div class="readingCSV">Readiing CSV / JSON . Please Wait !!!</div>
+    </div>
+
+
+
 </div>
 <script src="app.js"></script>
 </body>
