@@ -1,0 +1,226 @@
+.app {
+    .map-wrapper {
+        .map-path {
+            fill: lightgray;
+        }
+    }
+
+    .bar-wrapper {
+        .bar {
+            fill: steelblue;
+        }
+    }
+}
+
+.section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.banner-wrapper {
+    height: 100%;
+    width: 100%;
+    background-image: url(assets/gun-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    .header-wrapper {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 5%;
+        left: 5%;
+        width: 95%;
+
+        h3 {
+            padding: 5px;
+            margin: 0;
+        }
+    }
+}
+
+.about-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url(assets/gun-image2.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    .about-sections {
+        width: 90%;
+    }
+}
+
+.dataset-info-wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .dataset-info-content {
+        width: 50%;
+        justify-content: center;
+        align-items: center;
+        text-align: justify;
+    }
+}
+
+.map-section {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    display: flex;
+}
+
+.bubble-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bar-section-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.finding-section-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .finding-wrapper {
+        width: 50%;
+        position: absolute;
+        top: 5%;
+        left: 5%;
+        text-align: justify;
+    }
+}
+
+.footer-wrapper-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    .footer-wrapper {
+        left: 5%;
+        position: absolute;
+        background: g;
+        background: whitesmoke;
+        top: 5%;
+        padding: 5px;
+    }
+}
+
+.bubble-section {
+    #buttons {
+        display: flex;
+        width: 400px;
+        justify-content: space-between;
+
+        .button {
+            min-width: 150px;
+            font-size: 20px;
+            background: grey;
+            color: white;
+            height: 30px;
+            text-align: center;
+            padding: 1px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.active {
+                background: black;
+            }
+        }
+    }
+
+    .bubble-chart-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.tooltip-map,
+.tooltip-bubble {
+    min-width: 210px;
+    display: none;
+    background: black;
+    flex-direction: column;
+    min-height: 150px;
+    color: white;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    .row {
+        min-height: 30px;
+        padding: 1px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid;
+    }
+    .types {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-around;
+        flex-direction: column;
+        .type-col {
+            width: 100%;
+            border-right: 1px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            border-bottom: 1px solid lightgray;
+            box-sizing: border-box;
+        }
+
+        .type-row {
+            min-height: 20px;
+            padding: 5px;
+        }
+    }
+}
+
+.tooltip-bar {
+    min-width: 210px;
+    display: flex;
+    background: black;
+    min-height: 125px;
+    color: white;
+    position: absolute;
+    justify-content: space-around;
+    align-items: center;
+    .col {
+        padding: 2px;
+        border-right: 1px solid;
+        .col-header {
+            border-bottom: 1px solid;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            div {
+                padding: 2px;
+            }
+        }
+    }
+}

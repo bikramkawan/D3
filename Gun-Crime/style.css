@@ -1,0 +1,203 @@
+.app .map-wrapper .map-path {
+  fill: lightgray;
+}
+.app .bar-wrapper .bar {
+  fill: steelblue;
+}
+.section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.banner-wrapper {
+  height: 100%;
+  width: 100%;
+  background-image: url(assets/gun-bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.banner-wrapper .header-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 95%;
+}
+.banner-wrapper .header-wrapper h3 {
+  padding: 5px;
+  margin: 0;
+}
+.about-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url(assets/gun-image2.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.about-wrapper .about-sections {
+  width: 90%;
+}
+.dataset-info-wrapper {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dataset-info-wrapper .dataset-info-content {
+  width: 50%;
+  justify-content: center;
+  align-items: center;
+  text-align: justify;
+}
+.map-section {
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  display: flex;
+}
+.bubble-wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.bar-section-wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.finding-section-wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.finding-section-wrapper .finding-wrapper {
+  width: 50%;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  text-align: justify;
+}
+.footer-wrapper-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.footer-wrapper-container .footer-wrapper {
+  left: 5%;
+  position: absolute;
+  background: g;
+  background: whitesmoke;
+  top: 5%;
+  padding: 5px;
+}
+.bubble-section #buttons {
+  display: flex;
+  width: 400px;
+  justify-content: space-between;
+}
+.bubble-section #buttons .button {
+  min-width: 150px;
+  font-size: 20px;
+  background: grey;
+  color: white;
+  height: 30px;
+  text-align: center;
+  padding: 1px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bubble-section #buttons .button.active {
+  background: black;
+}
+.bubble-section .bubble-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tooltip-map,
+.tooltip-bubble {
+  min-width: 210px;
+  display: none;
+  background: black;
+  flex-direction: column;
+  min-height: 150px;
+  color: white;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+}
+.tooltip-map .row,
+.tooltip-bubble .row {
+  min-height: 30px;
+  padding: 1px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid;
+}
+.tooltip-map .types,
+.tooltip-bubble .types {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+}
+.tooltip-map .types .type-col,
+.tooltip-bubble .types .type-col {
+  width: 100%;
+  border-right: 1px solid;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  border-bottom: 1px solid lightgray;
+  box-sizing: border-box;
+}
+.tooltip-map .types .type-row,
+.tooltip-bubble .types .type-row {
+  min-height: 20px;
+  padding: 5px;
+}
+.tooltip-bar {
+  min-width: 210px;
+  display: flex;
+  background: black;
+  min-height: 125px;
+  color: white;
+  position: absolute;
+  justify-content: space-around;
+  align-items: center;
+}
+.tooltip-bar .col {
+  padding: 2px;
+  border-right: 1px solid;
+}
+.tooltip-bar .col .col-header {
+  border-bottom: 1px solid;
+}
+.tooltip-bar .col .row {
+  display: flex;
+  justify-content: space-between;
+}
+.tooltip-bar .col .row div {
+  padding: 2px;
+}
