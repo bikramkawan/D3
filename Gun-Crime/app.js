@@ -2,6 +2,7 @@ d3
     .queue()
     .defer(d3.json, 'data/gun-data.json')
     .defer(d3.json, 'data/us-states.json')
+    .defer(d3.csv, 'data/2010.csv')
     .awaitAll(ready);
 
 function ready(err, results) {
@@ -9,6 +10,8 @@ function ready(err, results) {
 
     const gunData = results[0];
     const usMapData = results[1];
+    const year = results[1];
+
     const mapFields = [
         { label: 'Total_murders', isTotal: true },
         { label: 'Handguns', isTotal: false },
@@ -56,9 +59,11 @@ function ready(err, results) {
             ],
         }),
     );
-    console.error(createGroups,reviewsExt);
-    const bubbleColorScale = d3.scaleLinear().domain([0,reviewsExt]).range(['#f9f9f9','#bc2a66'])
-
+    console.error(createGroups, reviewsExt);
+    const bubbleColorScale = d3
+        .scaleLinear()
+        .domain([0, reviewsExt])
+        .range(['#f9f9f9', '#bc2a66']);
 
     const makeCat = createGroups.find((d, i) => 700 <= d.value);
     const createBubble = gunData.map(item => {
@@ -69,30 +74,23 @@ function ready(err, results) {
             murders: value,
             group: createGroups.find((d, i) => value <= d.value).category,
             groupRange: createGroups.find((d, i) => value <= d.value).range,
-            color:bubbleColorScale(colorValue),
-            groupData:createGroups,
-            width:900,
-            height:600
+            color: bubbleColorScale(colorValue),
+            groupData: createGroups,
+            width: 900,
+            height: 600,
         };
     });
 
-    console.error(reviewsExt, 'review', createGroups, makeCat,createBubble);
-
-    makeMyBubble(createBubble)
-
-   // const createBubbleChart = new RenderBubble(createBubble)
-   //  createBubbleChart.setupButtons()
-   //  createBubbleChart.chart();
-
+    console.error(reviewsExt, 'review', createGroups, makeCat, createBubble);
+    renderBubbleChart(createBubble);
     const barProps = {
         data: gunData,
         width: 960,
         height: 500,
-        groups:mapFields.filter(mf=>!mf.isTotal)
+        groups: mapFields.filter(mf => !mf.isTotal),
     };
 
     //
     const createBarDiagram = new BarDiagram(barProps);
     createBarDiagram.render();
-
 }

@@ -55,31 +55,28 @@
         <div class="about-wrapper">
             <div class="about-sections">
                 <h1>About the Visualization</h1>
-                <p>This visualization is an interactive slideshow which takes the user through the Dataset of the 9th
-                    Round of the Yelp Academic
-                    Dataset Challenge. The dataset itself contains the Yelp reviews and aggregated check-ins over time
-                    of 144 thousand businesses
-                    located throughout various metropolitans across the globe. This visualization focuses on the data
-                    from the United States which
-                    includes the following cities: Pittsburgh, Charlotte, Urbana-Champaign, Phoenix, Las Vegas, Madison,
-                    Cleveland.</p>
+                <p>This visualization is an interactive slideshow which walks the user through gun crime statistics by
+                    US state. How high is gun crime across the US - and which states have the worst figures? The
+                    violence debate specifically relating to Gun violence has plagued the urban cities for multiple
+                    decades and states with larger population often has a high rate of gun crimes and other forms of
+                    violence. The reason why I choose this dataset is to bring more awareness that this will continue to
+                    be a major problem in the US if the government fails to pass gun reforms because The US has the
+                    highest gun ownership rate in the world - there are 89 guns for every 100 Americans, compared to 6
+                    in England and Wales.</p>
                 <h2>Recommended Settings</h2>
                 <p>As the visualizations use a preset static canvas of 1024x768 pixels, the viewing size of the
-                    interactive visualization is at
-                    least 1280x800 pixels to accommodate the surrounding text and scene elements.</p>
-                <h2>Managing the Dataset</h2>
-                <p>With such a large dataset, creating a visualization with the raw data turned out to be very
-                    difficult. The first step for created
-                    this visualization was to process the dataset and focus on the data pertaining restaurants in the
-                    United States only.</p>
+                    interactive visualization is at least 1280x800 pixels to accommodate the surrounding text and scene
+                    elements.</p>
+                <h2>Working with the Dataset</h2>
+                <p>The dataset was about 100 MB in size and the challenge was to converting to excel and clean it and
+                    then converting to Json in order to upload the data using D3.Js script and deleting some data that
+                    did not show any relevance to the message that I am trying to convey to the user.</p>
                 <h2>Templates Scene</h2>
                 <p>The use of CSS and FullPage.js allows for a cohesive template look for the interactive visualization.
-                    Each page is transitioned
-                    using the same method and text elements are kept the same (font size and family). Additionally there
-                    is a page navigation bar
-                    on the right side which allows users to skip between different slides. The tooltips which are
-                    triggered when a user moves their
-                    mouse over the navigation alters the display parameters for each navigation menu item.</p>
+                    Each page is transitioned using the same method and text elements are kept the same (font size and
+                    family). Additionally there is a page navigation bar on the right side which allows users to skip
+                    between different slides. The tooltips which are triggered when a user moves their mouse over the
+                    navigation alters the display parameters for each navigation menu item.
                 <h2>Annotations</h2>
                 <p>Annotations have been used in all three visualizations with a similar process of using triggers to
                     change the hidden paramenter of
@@ -122,20 +119,22 @@
         <div class="dataset-info-wrapper">
             <div class="dataset-info-content">
                 <h1>The Gun Dataset</h1>
-                <p>​​The restaurant business is an enormous industry where understanding your clients and their
-                    behavioural patterns may give prospective
-                    new restaurant owners a much needed head start. This interactive slideshow dives into the publicly
-                    available Yelp Academic Dataset
-                    which includes a large set of reviews client interactions across multiple industries and regions. We
-                    will focus on restaurants within
-                    the United States in order to better understand client interactions.</p><br/>
-                <p>Assumptions are made in the positive correlation between the number of reviews and the popularity of
-                    a business. This is then tied with
-                    the assumption of the positive correlation between number of check-ins and the popularity of a
-                    business. By focusing on restaurants
-                    which have large number of reviews, check-ins and high star rating, we will be able to understand
-                    the type of restaurant to invest
-                    into.</p>
+                <p>​​The latest data from the FBI's uniform crime reports provides a fascinating picture of the use of
+                    firearms in crimes across America. The Gun crime dataset really gives in depth information on
+                    different types of crimes which involved: Handgun, Rifles, Shotguns, Firearms (type unknown), Knives
+                    or cutting instruments, Other weapons Hands, fists, feet, etc.2. You (the user) as you interact with
+                    the slideshow, you will quickly find out that Handguns and Firearms are among the deadliest in the
+                    US. Furthermore, you will see a trend in murders from 2009 to 2011 where crimes in the US continue
+                    to rise and the data will vary based on the population in each state. President Barack Obama was
+                    under pressure to tighten gun laws after following the disclosure by police that the Newtown gunman
+                    used a semi-automatic assault rifle equipped with "numerous" high-capacity magazines holding
+                    hundreds of bullets to carry out his massacre of young children. Unfortunately, Congress failed to
+                    act and The National Rifle Association, the largest and most influential of the gun rights lobby
+                    groups, has been similarly silent after each massacre and the murder figures themselves are
+                    astounding for Br its used to around 550 murders per year. In 2011 - the latest year for which
+                    detailed statistics are available - there were 12,664 murders in the US. Of those, 8,583 were caused
+                    by firearms. The FBI crime statistics are based on reports to FBI bureau and local law
+                    enforcement. </p>
             </div>
         </div>
     </div>
@@ -169,59 +168,74 @@
         </div>
     </div>
     <div class="section">
-      <div class="finding-section-wrapper">
-          <div class="finding-wrapper">
-              <h1>Findings</h1>
-              <p>​The initial analysis based on the Yelp Academic Dataset shows that a prospective restaurant owner should choose to open an
-                  <span>American New</span> styled restaurant. The location should be in <span>NV</span> where
-                  there were the most amount of reviews logged. The restaurant should focus of the <span>evening</span> and
-                  <span>weekend</span> crowds with possibly reducing staffing during the day as the amount of people tapers off.</p>
-          </div>
-      </div>
+        <div class="finding-section-wrapper">
+            <div class="finding-wrapper">
+                <h1>Findings</h1>
+                <p>​The initial analysis based on the Yelp Academic Dataset shows that a prospective restaurant owner
+                    should choose to open an
+                    <span>American New</span> styled restaurant. The location should be in <span>NV</span> where
+                    there were the most amount of reviews logged. The restaurant should focus of the
+                    <span>evening</span> and
+                    <span>weekend</span> crowds with possibly reducing staffing during the day as the amount of people
+                    tapers off.</p>
+            </div>
+        </div>
     </div>
     <div class="section">
-      <div class="footer-wrapper-container">
-          <div class="footer-wrapper">
-              <h1>References and Resources</h1>
-              <h2>Github Project</h2>
-              <ul>
-                  <li><a href='https://github.com/stanleykylee/cs498-ddv-final' target='_blank'>CS498 DDV Final Project</a></li>
-              </ul>
-              <h2>Dataset</h2>
-              <ul>
-                  <li><a href='https://www.yelp.com/academic_dataset' target='_blank'>Yelp Academic Dataset Round 9</a></li>
-              </ul>
-              <h2>Stock Images</h2>
-              <ul>
-                  <li><a href='https://www.pexels.com/photo/analytics-text-185576/' target='_blank'>Pexels - Analytics</a></li>
-                  <li><a href='https://www.pexels.com/photo/store-with-red-and-white-stripe-awnings-492803/' target='_blank'
-                  >Pexels - Store with Awnings</a></li>
-                  <li><a href='https://www.pexels.com/photo/person-answering-test-paper-159353/' target='_blank'>Pexels - Answering Test Paper</a></li>
-                  <li><a href='https://www.pexels.com/photo/tea-coffee-restaurant-smartphone-481021/' target='_blank'>Pexels - Tea Coffee Restaunt</a></li>
-                  <li><a href='https://www.pexels.com/photo/wood-texture-background-pine-82256/' target='_blank'>Pexels - Wood Texture Background</a></li>
-                  <li><a href='https://www.pexels.com/photo/lunch-vegetables-healthy-meal-8844/' target='_blank'>Pexels - Healthy Meal</a></li>
-              </ul>
-              <h2>Bubble Chart</h2>
-              <ul>
-                  <li><a href='https://bl.ocks.org/john-guerra/0d81ccfd24578d5d563c55e785b3b40a' target='_blank'>
-                      Bubble Chart d3 v4 Github Gist by John Alexis Guerra Gomez</a></li>
-                  <li><a href='https://github.com/vlandham/bubble_chart_v4' target='_blank'>Animated Bubble Chart by Jim Vallandingham</a></li>
-                  <li><a href='https://github.com/d3/d3-hierarchy/blob/master/README.md#pack' target='_blank'>d3 API documents on d3-hierarchy - packs</a></li>
-              </ul>
-              <h2>Zoomable Sunburst</h2>
-              <ul>
-                  <li><a href='https://gist.github.com/mchelen/1481545d38d0304b4d54' target='_blank'>d3.js hierarchical object from csv by Mike Chelen</a></li>
-                  <li><a href='https://gist.github.com/mbostock/4348373' target='_blank'>Zoomable Sunburst by Mike Bostock</a></li>
-                  <li><a href='https://gist.github.com/denjn5/3b74baf5edc4ac93d5e487136481c601' target='_blank'>
-                      Smooth Updates and Sorting by David Richards</a></li>
-              </ul>
-              <h2>Line Chart</h2>
-              <ul>
-                  <li><a href='https://gist.github.com/DStruths/9c042e3a6b66048b5bd4' target='_blank'>
-                      d3.js Multi-series line chart interactive by DStruths</a></li>
-              </ul>
-          </div>
-      </div>
+        <div class="footer-wrapper-container">
+            <div class="footer-wrapper">
+                <h1>References and Resources</h1>
+                <h2>Github Project</h2>
+                <ul>
+                    <li><a href='https://github.com/stanleykylee/cs498-ddv-final' target='_blank'>CS498 DDV Final
+                        Project</a></li>
+                </ul>
+                <h2>Dataset</h2>
+                <ul>
+                    <li><a href='https://www.yelp.com/academic_dataset' target='_blank'>Yelp Academic Dataset Round
+                        9</a></li>
+                </ul>
+                <h2>Stock Images</h2>
+                <ul>
+                    <li><a href='https://www.pexels.com/photo/analytics-text-185576/' target='_blank'>Pexels -
+                        Analytics</a></li>
+                    <li><a href='https://www.pexels.com/photo/store-with-red-and-white-stripe-awnings-492803/'
+                           target='_blank'
+                    >Pexels - Store with Awnings</a></li>
+                    <li><a href='https://www.pexels.com/photo/person-answering-test-paper-159353/' target='_blank'>Pexels
+                        - Answering Test Paper</a></li>
+                    <li><a href='https://www.pexels.com/photo/tea-coffee-restaurant-smartphone-481021/' target='_blank'>Pexels
+                        - Tea Coffee Restaunt</a></li>
+                    <li><a href='https://www.pexels.com/photo/wood-texture-background-pine-82256/' target='_blank'>Pexels
+                        - Wood Texture Background</a></li>
+                    <li><a href='https://www.pexels.com/photo/lunch-vegetables-healthy-meal-8844/' target='_blank'>Pexels
+                        - Healthy Meal</a></li>
+                </ul>
+                <h2>Bubble Chart</h2>
+                <ul>
+                    <li><a href='https://bl.ocks.org/john-guerra/0d81ccfd24578d5d563c55e785b3b40a' target='_blank'>
+                        Bubble Chart d3 v4 Github Gist by John Alexis Guerra Gomez</a></li>
+                    <li><a href='https://github.com/vlandham/bubble_chart_v4' target='_blank'>Animated Bubble Chart by
+                        Jim Vallandingham</a></li>
+                    <li><a href='https://github.com/d3/d3-hierarchy/blob/master/README.md#pack' target='_blank'>d3 API
+                        documents on d3-hierarchy - packs</a></li>
+                </ul>
+                <h2>Zoomable Sunburst</h2>
+                <ul>
+                    <li><a href='https://gist.github.com/mchelen/1481545d38d0304b4d54' target='_blank'>d3.js
+                        hierarchical object from csv by Mike Chelen</a></li>
+                    <li><a href='https://gist.github.com/mbostock/4348373' target='_blank'>Zoomable Sunburst by Mike
+                        Bostock</a></li>
+                    <li><a href='https://gist.github.com/denjn5/3b74baf5edc4ac93d5e487136481c601' target='_blank'>
+                        Smooth Updates and Sorting by David Richards</a></li>
+                </ul>
+                <h2>Line Chart</h2>
+                <ul>
+                    <li><a href='https://gist.github.com/DStruths/9c042e3a6b66048b5bd4' target='_blank'>
+                        d3.js Multi-series line chart interactive by DStruths</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
