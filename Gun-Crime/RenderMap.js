@@ -1,9 +1,18 @@
 class RenderMap {
     constructor(props) {
         this.props = props;
+        this.data = props.data;
     }
 
-    draw() {}
+    update(newData) {
+        this.data = newData.data;
+
+        d3
+            .select('.map-wrapper')
+            .selectAll('svg')
+            .remove();
+        this.render();
+    }
 
     render() {
         const totalFieldName = this.props.fields.find(f => f.isTotal).label;
@@ -22,45 +31,37 @@ class RenderMap {
             .attr('height', this.props.height);
 
         const dataArray = [];
-        for (let d = 0; d < this.props.data.length; d++) {
-            dataArray.push(parseFloat(this.props.data[d][totalFieldName]));
+        for (let d = 0; d < this.data.length; d++) {
+            dataArray.push(parseFloat(this.data[d][totalFieldName]));
         }
-        const minVal = d3.min(dataArray);
-        const maxVal = d3.max(dataArray);
+
+        const minVal = d3.min(this.data, d => d[totalFieldName]);
+        const maxVal = d3.max(this.data, d => d[totalFieldName]);
         const ramp = d3
             .scaleLinear()
             .domain([minVal, maxVal])
             .range([this.props.color.min, this.props.color.max]);
 
-        // Loop through each state data value in the .csv file
-        for (let i = 0; i < this.props.data.length; i++) {
-            // Grab State Name
-            const dataState = this.props.data[i].State;
-
-            // Grab data value
-            const dataValue = parseFloat(this.props.data[i][totalFieldName]);
+        for (let i = 0; i < this.data.length; i++) {
+            const dataState = this.data[i].State;
             const putDataToMap = this.props.fields.map(gt => ({
                 ...gt,
-                value: parseFloat(this.props.data[i][gt.label]),
+                value: parseFloat(this.data[i][gt.label]),
             }));
-            // Find the corresponding state inside the GeoJSON
+
             for (let j = 0; j < this.props.map.features.length; j++) {
                 let jsonState = this.props.map.features[j].properties.name;
 
                 if (dataState == jsonState) {
-                    // Copy the data value into the JSON
-
                     putDataToMap.forEach(item => {
                         this.props.map.features[j].properties[item.label] =
                             item.value;
                     });
-                    // Stop looking through the JSON
+
                     break;
                 }
             }
         }
-
-        // Bind the data to the SVG and create one path per GeoJSON feature
 
         const states = this.svg.append('g').classed('states-group', true);
 

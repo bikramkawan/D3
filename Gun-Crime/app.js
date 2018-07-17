@@ -1,30 +1,100 @@
+function splitDataByYear({ completeData, allKeys, mainKeys }) {
+    const years = ['2009', '2010', '2011'];
+    const fields = [];
+    const dataByYear = years.map((year, index) => {
+        const fieldKeys = allKeys.filter(k => k.indexOf(year) > -1);
+        const data = completeData.map((data, i) => {
+            const object = {};
+            fieldKeys.forEach(k => {
+                const label = k.split(`_${year}`)[0];
+                if (index === 0 && i === 0) fields.push(label);
+
+                object[label] = parseFloat(data[k]);
+            });
+
+            mainKeys.forEach(mk => {
+                object[mk] = data[mk];
+            });
+
+            return object;
+        });
+
+        return { year, data, fields };
+    });
+
+    return dataByYear;
+}
+
+function createBubbleData(data) {
+    const state = {
+        1: 'South',
+        2: 'West',
+        3: 'Northeast',
+        4: 'Midwest',
+    };
+    const reviewsExt = d3.extent(data, d => d['Total_murders'])[1];
+    const createGroups = Array.from({ length: 7 }, (v, i) => i + 1).map(
+        (d, i) => ({
+            value: Math.floor(reviewsExt / 7 * d),
+            category: state[i + 1],
+            range: [
+                Math.floor(reviewsExt / 7 * (d - 1)),
+                Math.floor(reviewsExt / 7 * d),
+            ],
+        }),
+    );
+
+    const bubbleColorScale = d3
+        .scaleLinear()
+        .domain([0, reviewsExt])
+        .range(['#f9f9f9', '#bc2a66']);
+
+    return data.map(item => {
+        const value = parseFloat(item['Total_murders']);
+        const colorValue = createGroups.find((d, i) => value <= d.value).value;
+        return {
+            ...item,
+            murders: value,
+            group: createGroups.find((d, i) => value <= d.value).category,
+            groupRange: createGroups.find((d, i) => value <= d.value).range,
+            color: bubbleColorScale(colorValue),
+            groupData: createGroups,
+            width: 900,
+            height: 600,
+        };
+    });
+}
+
 d3
     .queue()
     .defer(d3.json, 'data/gun-data.json')
     .defer(d3.json, 'data/us-states.json')
-    .defer(d3.csv, 'data/2010.csv')
+    .defer(d3.csv, 'data/gun-data.csv')
     .awaitAll(ready);
 
 function ready(err, results) {
     console.error(results, err, 'results');
-
-    const gunData = results[0];
     const usMapData = results[1];
-    const year = results[1];
+    const completeData = results[2];
 
-    const mapFields = [
-        { label: 'Total_murders', isTotal: true },
-        { label: 'Handguns', isTotal: false },
-        { label: 'Rifles', isTotal: false },
-        { label: 'Shotguns', isTotal: false },
-        { label: 'Firearms', isTotal: false },
-        { label: 'Knives_or_cutting_instruments', isTotal: false },
-        { label: 'Other_weapons', isTotal: false },
-        { label: 'Hands_fist_feet_etc', isTotal: false },
-    ];
+    const allKeys = Object.keys(completeData[0]);
+
+    const mainKeys = allKeys.filter(k => {
+        return (
+            k.indexOf('2009') < 0 &&
+            k.indexOf('2010') < 0 &&
+            k.indexOf('2011') < 0
+        );
+    });
+
+    const dataByYear = splitDataByYear({ completeData, allKeys, mainKeys });
+
+    const mapFields = dataByYear[0].fields.map(f => {
+        return { label: f, isTotal: f === 'Total_murders' };
+    });
     const mapProps = {
         map: usMapData,
-        data: gunData,
+        data: dataByYear[0].data,
         height: 500,
         width: 960,
         legendOffset: 100,
@@ -39,58 +109,116 @@ function ready(err, results) {
     const createMap = new RenderMap(mapProps);
     createMap.render();
 
-    const state = {
-        1: 'G1',
-        2: 'G2',
-        3: 'G3',
-        4: 'G4',
-        5: 'G5',
-        6: 'G6',
-        7: 'G7',
-    };
-    const reviewsExt = d3.extent(gunData, d => d['Total_murders'])[1];
-    const createGroups = Array.from({ length: 7 }, (v, i) => i + 1).map(
-        (d, i) => ({
-            value: Math.floor(reviewsExt / 7 * d),
-            category: state[i + 1],
-            range: [
-                Math.floor(reviewsExt / 7 * (d - 1)),
-                Math.floor(reviewsExt / 7 * d),
-            ],
-        }),
+    const uniqueStates = _.uniqBy(dataByYear[0].data, 'US_Regions').map(
+        s => s.US_Regions,
     );
-    console.error(createGroups, reviewsExt);
-    const bubbleColorScale = d3
-        .scaleLinear()
-        .domain([0, reviewsExt])
-        .range(['#f9f9f9', '#bc2a66']);
 
-    const makeCat = createGroups.find((d, i) => 700 <= d.value);
-    const createBubble = gunData.map(item => {
-        const value = parseFloat(item['Total_murders']);
-        const colorValue = createGroups.find((d, i) => value <= d.value).value;
-        return {
-            ...item,
-            murders: value,
-            group: createGroups.find((d, i) => value <= d.value).category,
-            groupRange: createGroups.find((d, i) => value <= d.value).range,
-            color: bubbleColorScale(colorValue),
-            groupData: createGroups,
-            width: 900,
-            height: 600,
-        };
-    });
+    const bubbleData = createBubbleData(dataByYear[0].data);
 
-    console.error(reviewsExt, 'review', createGroups, makeCat, createBubble);
-    renderBubbleChart(createBubble);
+    renderBubbleChart(bubbleData);
     const barProps = {
-        data: gunData,
+        data: dataByYear[0].data,
         width: 960,
         height: 500,
         groups: mapFields.filter(mf => !mf.isTotal),
     };
 
-    //
     const createBarDiagram = new BarDiagram(barProps);
     createBarDiagram.render();
+
+    const mapBtnData = {
+        selector: 'map-btns',
+        data: [
+            {
+                label: '2009',
+                className: 'btn',
+                id: 0,
+                class: createMap,
+            },
+            {
+                label: '2010',
+                className: 'btn',
+                id: 1,
+                class: createMap,
+            },
+            {
+                label: '2011',
+                className: 'btn',
+                id: 2,
+                class: createMap,
+            },
+        ],
+    };
+
+    const bubbleBtnData = {
+        selector: 'bubble-btns',
+        data: [
+            {
+                label: '2009',
+                className: 'btn',
+                id: 0,
+                isFunction: true,
+            },
+            {
+                label: '2010',
+                className: 'btn',
+                id: 1,
+                isFunction: true,
+            },
+            {
+                label: '2011',
+                className: 'btn',
+                id: 2,
+                isFunction: true,
+            },
+        ],
+    };
+
+    const barBtnData = {
+        selector: 'bar-btns',
+        data: [
+            {
+                label: '2009',
+                className: 'btn',
+                id: 0,
+                class: createBarDiagram,
+            },
+            {
+                label: '2010',
+                className: 'btn',
+                id: 1,
+                class: createBarDiagram,
+            },
+            {
+                label: '2011',
+                className: 'btn',
+                id: 2,
+                class: createBarDiagram,
+            },
+        ],
+    };
+    attachBtnEvents(mapBtnData);
+    attachBtnEvents(bubbleBtnData);
+    attachBtnEvents(barBtnData);
+
+    function attachBtnEvents(mapBtnData) {
+        const container = d3.select(`.${mapBtnData.selector}`);
+        container
+            .selectAll('button')
+            .data(mapBtnData.data)
+            .enter()
+            .append('button')
+            .attr('class', d => d.className)
+            .text(d => d.label)
+            .on('click', function(buttton) {
+                if (buttton.isFunction) {
+                    const bubbleData = createBubbleData(
+                        dataByYear[buttton.id].data,
+                    );
+                    renderBubbleChart(bubbleData);
+                } else {
+                    buttton.class.update(dataByYear[buttton.id]);
+                }
+            });
+    }
 }

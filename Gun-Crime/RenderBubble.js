@@ -7,39 +7,17 @@ const height = 600;
 let bubbleSVGContainer;
 const center = { x: width / 2, y: height / 2 };
 const groupCentroids = {
-    G1: { x: 3 * width / 16, y: height / 3 },
-    G2: { x: width / 3, y: 2 * height / 3 },
-    G3: { x: 3 * width / 8, y: height / 3 },
-    G4: { x: width / 2, y: 2 * height / 3 },
-    G5: { x: 5 * width / 8, y: height / 3 },
-    G6: { x: 2 * width / 3, y: 2 * height / 3 },
-    G7: { x: 13 * width / 16, y: height / 3 },
-};
-
-const starCenters = {
-    1: { x: width / 3, y: 2 * height / 3 },
-    2: { x: 3 * width / 8, y: height / 3 },
-    3: { x: width / 2, y: 2 * height / 3 },
-    4: { x: 5 * width / 8, y: height / 3 },
-    5: { x: 2 * width / 3, y: 2 * height / 3 },
+    South: { x: 450 + 3 * width / 16, y: height / 3 },
+    West: { x: 350 + width / 3, y: 50 + 2 * height / 3 },
+    Northeast: { x: 3 * width / 8, y: height / 3 },
+    Midwest: { x: -100 + width / 2, y: 50 + 2 * height / 3 },
 };
 
 const stateTitle = {
-    G1: { x: width / 10, y: height / 8 },
-    G2: { x: 9 * width / 40, y: 9 * height / 20 },
-    G3: { x: 7 * width / 20, y: height / 8 },
-    G4: { x: width / 2, y: 9 * height / 20 },
-    G5: { x: 13 * width / 20, y: height / 8 },
-    G6: { x: 31 * width / 40, y: 9 * height / 20 },
-    G7: { x: 9 * width / 10, y: height / 8 },
-};
-
-const starTitle = {
-    1: { x: width / 5, y: 8 * height / 20 },
-    2: { x: 13 * width / 40, y: height / 9 },
-    3: { x: width / 2, y: 8 * height / 20 },
-    4: { x: 27 * width / 40, y: height / 9 },
-    5: { x: 4 * width / 5, y: 8 * height / 20 },
+    South: { x: 550 + width / 10, y: height / 8 },
+    West: { x: 450 + 9 * width / 40, y: 50 + 9 * height / 20 },
+    Northeast: { x: 7 * width / 20, y: height / 8 },
+    Midwest: { x: -150 + width / 2, y: 50 + 9 * height / 20 },
 };
 
 let simulation;
@@ -122,7 +100,7 @@ function createNodes(rawData) {
         state: d.State,
         radius: radiusScale(+d.murders),
         murders: +d.murders,
-        group: d.group,
+        group: d.US_Regions,
         x: Math.random() * 900,
         y: Math.random() * 800,
         groupRange: d.groupRange,
@@ -156,25 +134,27 @@ function createToolTip(object) {
 
     selector.select('.state-name').text(object.state);
     selector.select('.totals').text(`Total Murders : ${object.murders}`);
-    selector
-        .select('.types')
-        .selectAll('div')
-        .remove();
-    selector
-        .select('.types')
-        .append('div')
-        .classed('type-col', true)
-        .text(`Group Name : ${object.group}`);
-    selector
-        .select('.types')
-        .append('div')
-        .classed('type-col', true)
-        .text(
-            `Group Range : [${object.groupRange[0]},${object.groupRange[1]}]`,
-        );
+    // selector
+    //     .select('.types')
+    //     .selectAll('div')
+    //     .remove();
+    // selector
+    //     .select('.types')
+    //     .append('div')
+    //     .classed('type-col', true)
+    //     .text(`Group Name : ${object.group}`);
+    // selector
+    //     .select('.types')
+    //     .append('div')
+    //     .classed('type-col', true)
+    //     .text(
+    //         `Group Range : [${object.groupRange[0]},${object.groupRange[1]}]`,
+    //     );
 }
 
-const nodeGroupX = d => groupCentroids[d.group].x;
+const nodeGroupX = d => {
+    return groupCentroids[d.group].x;
+};
 
 const nodeGroupY = d => groupCentroids[d.group].y;
 
@@ -238,7 +218,7 @@ function showGroupNames(title, titleClass) {
         .text(d => {
             const range = nodes[0].groupData.find(gd => gd.category === d)
                 .range;
-            return `${d}: [${range[0]},${range[1]}]`;
+            return d;
         });
 }
 
@@ -256,8 +236,10 @@ function createButtons() {
 }
 
 function renderBubbleChart(data) {
-    console.error(data, 'datacustom');
-
+    d3
+        .select('.bubble-wrapper')
+        .selectAll('svg')
+        .remove();
     createBubbles('.bubble-wrapper', data);
 }
 

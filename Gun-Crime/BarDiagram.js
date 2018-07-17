@@ -1,10 +1,20 @@
 class BarDiagram {
     constructor(props) {
         this.props = props;
+        this.data = props.data;
+    }
+
+    update(newData) {
+        this.data = newData.data;
+        d3
+            .select('.bar-wrapper')
+            .select('svg')
+            .remove();
+        this.render();
     }
 
     getTopAndBottomThree(label) {
-        const sorted = this.props.data
+        const sorted = this.data
             .slice()
             .sort((a, b) => b[label] - a[label])
             .filter(f => f[label] > 0);
@@ -23,7 +33,7 @@ class BarDiagram {
             .domain(this.props.groups.map(d => d.label));
         return this.props.groups.map(gt => ({
             label: gt.label,
-            count: _.sumBy(this.props.data, gt.label),
+            count: _.sumBy(this.data, gt.label),
             color: fillColor(gt.label),
             topThree: this.getTopAndBottomThree(gt.label),
         }));
@@ -75,11 +85,12 @@ class BarDiagram {
             .attr('class', 'axis axis--y')
             .call(d3.axisLeft(y))
             .append('text')
-            .attr('transform', 'rotate(-90)')
+            .attr('transform', 'translate(20,-20)')
             .attr('y', 6)
             .attr('dy', '0.71em')
             .attr('text-anchor', 'end')
-            .text('Count');
+            .attr('fill', 'black')
+            .text('Total Murders');
 
         g
             .selectAll('.bar')
@@ -107,7 +118,6 @@ class BarDiagram {
     }
 
     createToolTip(object) {
-
         d3
             .select('.tooltip-bar')
             .style('left', d3.event.pageX - 200 + 'px')
