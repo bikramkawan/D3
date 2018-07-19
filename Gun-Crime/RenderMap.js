@@ -160,6 +160,10 @@ class RenderMap {
             .text(`Total : ${object.properties[totalFieldName]}`);
 
         const types = this.props.fields.filter(f => !f.isTotal);
+        selector
+            .select('.types')
+            .selectAll('div')
+            .remove();
 
         const typeRow = selector
             .select('.types')
