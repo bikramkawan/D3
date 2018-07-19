@@ -126,6 +126,8 @@ class BarDiagram {
 
         const topThree = d3.select('.top-three').select('.row-content');
         const bottomThree = d3.select('.bottom-three').select('.row-content');
+        topThree.selectAll('div').remove();
+        bottomThree.selectAll('div').remove();
 
         const topRow = topThree
             .selectAll('div')

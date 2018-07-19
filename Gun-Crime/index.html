@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="style.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.2/d3.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript" src="lib/fullpage.js"></script>
 
     <script type="text/javascript">
@@ -41,9 +41,10 @@
     <div class="section">
         <div class="banner-wrapper">
             <div class="header-wrapper">
-                <h1 class="heading">Diving into the Business</h1>
-                <h3 class="sub-heading">a d3.js data visualization project using the Gun Dataset</h3>
-                <h3 class="sub-heading">Stanley Lee - UIUC CS498 Data Visualization</h3>
+                <h1 class="heading">Gun Crimes in the United States</h1>
+                <h3 class="sub-heading">This is a  data visualization project using Gun Crimes Dataset in the US
+                    from 2009-2011</h3>
+                <h3 class="sub-heading">UIUC CS 498 Data Visualization-Sandro Tanis powered by Professor John C. Hart</h3>
             </div>
 
         </div>
@@ -62,53 +63,40 @@
                     violence. The reason why I choose this dataset is to bring more awareness that this will continue to
                     be a major problem in the US if the government fails to pass gun reforms because The US has the
                     highest gun ownership rate in the world - there are 89 guns for every 100 Americans, compared to 6
-                    in England and Wales.</p>
-                <h2>Recommended Settings</h2>
-                <p>As the visualizations use a preset static canvas of 1024x768 pixels, the viewing size of the
-                    interactive visualization is at least 1280x800 pixels to accommodate the surrounding text and scene
-                    elements.</p>
+                    in England and Wales. Moreover, the dataset will show data that I have pulled from 2009-2011 and
+                    it will show in detail about murder trends in the United States.</p>
                 <h2>Working with the Dataset</h2>
                 <p>The dataset was about 100 MB in size and the challenge was to converting to excel and clean it and
                     then converting to Json in order to upload the data using D3.Js script and deleting some data that
                     did not show any relevance to the message that I am trying to convey to the user.</p>
-                <h2>Templates Scene</h2>
-                <p>The use of CSS and FullPage.js allows for a cohesive template look for the interactive visualization.
-                    Each page is transitioned using the same method and text elements are kept the same (font size and
-                    family). Additionally there is a page navigation bar on the right side which allows users to skip
-                    between different slides. The tooltips which are triggered when a user moves their mouse over the
-                    navigation alters the display parameters for each navigation menu item.
-                <h2>Annotations</h2>
-                <p>Annotations have been used in all three visualizations with a similar process of using triggers to
-                    change the hidden paramenter of
-                    the annotation. For example, the Line Chart Visualization has an initial state of the hidden
-                    parameter which controls the display
-                    of the annotations set to false. As a user uses the brush bar to trigger changes to the line chart
-                    visualization x-axis
-                    parameters, it also changes this hidden parameter to true. In turn the annotations disappear until
-                    the user resets the brush bar
-                    to zero - thus zooming out back to the default visualization parameters.</p>
-                <h2>Parameters and Triggers</h2>
-                <p>Both parameters and triggers are used in all of the three visualizations. For the Bubble Chart
-                    Visualization, parameters for the
-                    x,y co-ordinates of each bubble are set to an initial central position for the All Reviews
-                    Visualization. As a user selects menu
-                    items to chose between All Reviews, Reviews by State and Reviews by Stars, it triggers the change of
-                    bubble’s x,y co-ordinates
-                    parameter to their respective groupings.</p><br/>
-                <p>In Zoomable Sunburst Visualization, each mouse click on a region is a trigger for the path and arc
-                    parameters. By clicking within
-                    a region, you can zoom into the data to take a look at the information underneath. Clicking the
-                    centre circle will trigger the
-                    parameters to return to its values one up in the hierarchy.</p><br/>
-                <p>For Line Chart Visualization, parameters are set for each Restaurant Category. These parameters are
-                    triggered to be updated as the
-                    mouse moves over the visualization, providing the user with a snapshot of the amount of check-ins in
-                    a given time. A secondary
-                    parameter and trigger set is the brush bar below the line chart. This bar allows the user to zoom
-                    into the data to show a closer
-                    look of the data. By clicking a set space on the brush bar, it triggers the x-axis parameter of the
-                    line chart to be updated to a
-                    ratio of the same selected section of the brush bar.</p>
+                <h2>Elements of Narration</h2>
+                <h2>Website Scene Overview</h2>
+                <p>I used ccs and JavaScript to develop this static site and I chose to do interactive slideshow.
+                    Furthermore, I used scroll to transition between each page and I kept the content of the text element
+                    the same as far as font size.  Moreover, as you navigate the bar on the right side,
+                    the page will transition to each slide which will display the charts that I have selected for my overall
+                    project. I have used the following 3 types of charts: MAP, BUBBLE, BAR and tooltips are used on e
+                    very chart for the user to mouseover and gain significant information on the statistics that I have gathered.</p>
+                <h2>1. Annotations</h2>
+                <p>Various tooltips, Filters, and labels were used for my data visualization; the charts will show 3 areas
+                    where the user can focus based on the filtered year from 2009-2011 for each type of charts as you mouseover,
+                    you will discover that the tooltip will give you more insight on the data.</p>
+                <h2>2. Parameters and Triggers</h2>
+                <p>The main parameters of this story are total number of murders by state, region, and by the type of weapons
+                    for examples handguns has caused a lot more murders than knives and other types of weapons and the tooltips
+                    will outline my findings.</p><br/>
+                <p>For the USA Map, I used colors red and filters and tooltips to display the data, the darker the color the greater
+                    the total number of murders associated with to each state for example New York and California will have a greater number of
+                    murders because their population is greater, and this also goes for the types of weapons that is used to commit crimes,
+                    handguns vs robberies are more accessible to these states.</p><br/>
+                <p>In Zoomable Sunburst Visualization, there are 2 categories total murders which will display all of the states together and as
+                    you mouse over the bubble, it will display tool tips with the name of the state and other types of data associated with it and
+                    the bigger the bubble the greater the number of murders for that state. Murder by Region is another type which I
+                    thought would be interesting to group the states regionally: Northeast, South,  Midwest, and West so the user can drill-down deeper.</p><br/>
+                <p>For the bar Chart Visualization, X and Y axis are properly labeled showing types of weapons that were used
+                    and total number of murders relating to these various weapons. I also added filter, so the user can choose between
+                    the years 2009-2011. The tooltip will be used to show the 3 states that I have chosen to show the highest number murders vs
+                    the lower number of murders on each bar on the chart.</p>
 
             </div>
         </div>
@@ -119,7 +107,7 @@
         <div class="dataset-info-wrapper">
             <div class="dataset-info-content">
                 <h1>The Gun Dataset</h1>
-                <p>​​The latest data from the FBI's uniform crime reports provides a fascinating picture of the use of
+                <p class="long-text">​​The latest data from the FBI's uniform crime reports provides a fascinating picture of the use of
                     firearms in crimes across America. The Gun crime dataset really gives in depth information on
                     different types of crimes which involved: Handgun, Rifles, Shotguns, Firearms (type unknown), Knives
                     or cutting instruments, Other weapons Hands, fists, feet, etc.2. You (the user) as you interact with
@@ -131,17 +119,14 @@
                     hundreds of bullets to carry out his massacre of young children. Unfortunately, Congress failed to
                     act and The National Rifle Association, the largest and most influential of the gun rights lobby
                     groups, has been similarly silent after each massacre and the murder figures themselves are
-                    astounding for Br its used to around 550 murders per year. In 2011 - the latest year for which
-                    detailed statistics are available - there were 12,664 murders in the US. Of those, 8,583 were caused
-                    by firearms. The FBI crime statistics are based on reports to FBI bureau and local law
-                    enforcement. </p>
+                    astounding comparing to the United kingdom whose murder average is around 550 per year.</p>
             </div>
         </div>
     </div>
 
     <div class="section">
         <div class="map-section">
-            <h1>Overview of Gun Dataset</h1>
+            <h1>Overview of Gun Dataset based on USA Map</h1>
             <div class="btn-wrapper map-btns">
 
             </div>
@@ -177,49 +162,33 @@
         </div>
     </div>
     <div class="section">
-        <div class="finding-section-wrapper">
-            <div class="finding-wrapper">
-                <h1>Findings</h1>
-                <p>​The initial analysis based on the Yelp Academic Dataset shows that a prospective restaurant owner
-                    should choose to open an
-                    <span>American New</span> styled restaurant. The location should be in <span>NV</span> where
-                    there were the most amount of reviews logged. The restaurant should focus of the
-                    <span>evening</span> and
-                    <span>weekend</span> crowds with possibly reducing staffing during the day as the amount of people
-                    tapers off.</p>
+        <div class="dataset-info-wrapper">
+            <div class="dataset-info-content">
+                <h1>Discovery</h1>
+                <p class="long-text">​In 2011, the latest year for which detailed statistics are available - there were 12, 664 murders in the US.
+                    Of those murders 8,583 were caused by firearms.
+                    <span>The FBI crime statistics </span> are based on reports to FBI bureau and local law enforcement. <span>In conclusion,</span> I am very passionate about the gun debate
+                    and this is why I chose this dataset in order to show that if we have that we need to have gun
+                    <span>reforms</span> in the
+                    <span>United states.</span> This is not a matter of the second amendment rights but rather a matter of life and death, and we need to keep the guns out
+                    of the hands of the bad guys.</p>
             </div>
         </div>
     </div>
     <div class="section">
         <div class="footer-wrapper-container">
             <div class="footer-wrapper">
-                <h1>References and Resources</h1>
+                <h1>References</h1>
                 <h2>Github Project</h2>
                 <ul>
-                    <li><a href='https://github.com/stanleykylee/cs498-ddv-final' target='_blank'>CS498 DDV Final
-                        Project</a></li>
+                    <li><a href='https://stani300.github.io/CS498DatavizFinalProject/index.html' target='_blank'>CS498 DataViz Project
+                    </a></li>
                 </ul>
                 <h2>Dataset</h2>
                 <ul>
-                    <li><a href='https://www.yelp.com/academic_dataset' target='_blank'>Yelp Academic Dataset Round
-                        9</a></li>
+                    <li><a href='https://catalog.data.gov/dataset?tags=crime' target='_blank'>Gun Crime dataset by DataGov</a></li>
                 </ul>
-                <h2>Stock Images</h2>
-                <ul>
-                    <li><a href='https://www.pexels.com/photo/analytics-text-185576/' target='_blank'>Pexels -
-                        Analytics</a></li>
-                    <li><a href='https://www.pexels.com/photo/store-with-red-and-white-stripe-awnings-492803/'
-                           target='_blank'
-                    >Pexels - Store with Awnings</a></li>
-                    <li><a href='https://www.pexels.com/photo/person-answering-test-paper-159353/' target='_blank'>Pexels
-                        - Answering Test Paper</a></li>
-                    <li><a href='https://www.pexels.com/photo/tea-coffee-restaurant-smartphone-481021/' target='_blank'>Pexels
-                        - Tea Coffee Restaunt</a></li>
-                    <li><a href='https://www.pexels.com/photo/wood-texture-background-pine-82256/' target='_blank'>Pexels
-                        - Wood Texture Background</a></li>
-                    <li><a href='https://www.pexels.com/photo/lunch-vegetables-healthy-meal-8844/' target='_blank'>Pexels
-                        - Healthy Meal</a></li>
-                </ul>
+
                 <h2>Bubble Chart</h2>
                 <ul>
                     <li><a href='https://bl.ocks.org/john-guerra/0d81ccfd24578d5d563c55e785b3b40a' target='_blank'>
@@ -229,19 +198,11 @@
                     <li><a href='https://github.com/d3/d3-hierarchy/blob/master/README.md#pack' target='_blank'>d3 API
                         documents on d3-hierarchy - packs</a></li>
                 </ul>
-                <h2>Zoomable Sunburst</h2>
+
+                <h2>Bar Chart</h2>
                 <ul>
-                    <li><a href='https://gist.github.com/mchelen/1481545d38d0304b4d54' target='_blank'>d3.js
-                        hierarchical object from csv by Mike Chelen</a></li>
-                    <li><a href='https://gist.github.com/mbostock/4348373' target='_blank'>Zoomable Sunburst by Mike
-                        Bostock</a></li>
-                    <li><a href='https://gist.github.com/denjn5/3b74baf5edc4ac93d5e487136481c601' target='_blank'>
-                        Smooth Updates and Sorting by David Richards</a></li>
-                </ul>
-                <h2>Line Chart</h2>
-                <ul>
-                    <li><a href='https://gist.github.com/DStruths/9c042e3a6b66048b5bd4' target='_blank'>
-                        d3.js Multi-series line chart interactive by DStruths</a></li>
+                    <li><a href='https://bikramkawan.github.io/D3/' target='_blank'>
+                        d3.js Multi-series Bar chart interactive by bikramkawan</a></li>
                 </ul>
             </div>
         </div>

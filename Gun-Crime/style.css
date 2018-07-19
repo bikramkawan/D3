@@ -54,6 +54,9 @@
   align-items: center;
   text-align: justify;
 }
+.dataset-info-wrapper .dataset-info-content .long-text {
+  line-height: 1.5;
+}
 .map-section {
   width: 100%;
   height: 100%;
