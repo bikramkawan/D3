@@ -184,7 +184,7 @@ class ScoresInStacked {
             makePreviousReadDataForCircle,
         } = this.getPieData();
 
-        console.error(this.getPieData(), 'pe');
+
         const pieWidth = 250;
         const outerRadius = pieWidth - 150;
         const innerRadius = outerRadius - 25;
@@ -488,14 +488,14 @@ class ScoresInStacked {
             _.sumBy(this.data, this.props.gauge.inner),
             1,
         );
-        console.error(outervalue, 'ssvalue');
+
         //sum off col I - sum of col j and div by sum of col j
         const number1 = _.sumBy(this.data, this.props.gaugeNumbers.number1);
         const number2 = _.sumBy(this.data, this.props.gaugeNumbers.number2);
         const diff = (number1 - number2) / number2;
 
         const amountReadPerc = number1;
-        console.error(amountReadPerc, 'ddd');
+
         let makeAmountReadDataForCircle = [];
 
         const amountGreen = {

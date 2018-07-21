@@ -99,7 +99,7 @@ function ready(err, results) {
     const singleHeatData = createHeatMapData([csvdata[0]]);
     const multipleHeatmap = createHeatMapData(csvdata);
 
-   const scoreDataCorrectDate = scoreData
+    const scoreDataCorrectDate = scoreData
         .map(s => {
             const formatDate = strictIsoDate.parse(s.SentDate.split('T')[0]);
             return {
@@ -135,6 +135,9 @@ function ready(err, results) {
         data: multipleHeatmap,
         width,
         height,
+        opt: {
+            color: 'blue',
+        },
     });
     arrayHeatMap.draw();
 
