@@ -58,7 +58,7 @@ export default class SvgGenerator {
     attachResizer(props) {
         const { heatMap, tablePies, lineChart, barChart, pieCharts } = props;
 
-        window.addEventListener('resize', function(d) {
+        window.addEventListener('resize', d => {
             const updateHeight = this.lineEl.clientHeight;
             const updateWidth = this.lineEl.clientWidth;
             lineChart.updateDimension(updateHeight, updateWidth);

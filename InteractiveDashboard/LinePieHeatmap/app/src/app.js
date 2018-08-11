@@ -19,9 +19,24 @@ import './style.less';
 import * as d3 from 'd3';
 import DatePicker from './renderers/DatePicker';
 import SvgGenerator from './renderers/SvgGenerator';
+import axios from 'axios';
 
-d3.json('data/newdata.json', (err, rawData) => {
-    console.error(rawData, 'dafafasjfalsf');
+const DEVICE_URL = 'https://ebs-granite.bigbang.io/api/v1/devices';
+
+axios.get(DEVICE_URL).then(response => {
+    console.error(response);
+});
+
+d3
+    .queue()
+    .defer(d3.json, 'data/new/oneDayExample.json')
+    .defer(d3.json, 'data/new/getDeviceIdExample.json')
+    .defer(d3.json, 'data/newdata.json')
+    .awaitAll(ready);
+
+function ready(error, results) {
+    console.error(results, 'dafafasjfalsf');
+    const rawData = results[2];
     const data = formatInitialData(rawData);
     //Replace data with randomdata inside the format raw data
     const formattedData = formatRawData(data);
@@ -144,4 +159,15 @@ d3.json('data/newdata.json', (err, rawData) => {
         tablePies,
     });
     datePicker.appendDatePicker();
-});
+}
+
+const data = {
+    id: 'granite1',
+    namespace: 'deviceCountByTimeInterval',
+    message: {
+        beaconReaderId: 'device-id-8f373a31-a510-4a3f-9472-4a0f5bb56245',
+        timeInterval: 60,
+        startDateTime: '2018-07-15T00:00:00Z',
+        endDateTime: '2018-07-15T23:59:00Z',
+    },
+};
