@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.min.js"></script>
+<style>
+
+    .focus{
+        fill:orange;
+    }
+
+    .foreign-tooltip {
+      display: none;
+    }
+    .foreign-tooltip.visible{
+        display:block
+    }
+
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        font: 12px sans-serif;
+        pointer-events: none;
+        background: white;
+        color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 30px;
+        width: 100px;
+        margin-left: 3px;
+        border: 1px solid;
+    }
+
+.foreignObjectWrapper{
+    background: white;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    margin-left: 3px;
+    border: 1px solid;
+}
+    .arrow{
+        height: 10px;
+        width: 10px;
+        background: white;
+        position: absolute;
+        top: -5px;
+        left: 5px;
+        transform: rotate(45deg);
+        border: 1px solid;
+        z-index: -1;
+    }
+    .chart{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+    }
+    .title{
+        border-bottom: 1px solid;
+    }
+
+
+</style>
+</head>
+<body>
+<div class="chart">
+    <div class="title">Previous</div>
+    <div class="previous"></div>
+</div>
+<div class="chart">
+    <div class="title">Recent</div>
+<div class="recent"></div>
+</div>
+<script src="BarDiagram.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
