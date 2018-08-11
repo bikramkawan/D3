@@ -11,6 +11,11 @@ class SingleHeatMap {
         const bottomHeight = 0.2 * this.height;
         const someOffset = -30;
         const { data, itemScale, maxPercentage } = this.prepareData();
+
+        d3
+            .select('#singleheatmap')
+            .selectAll('*')
+            .remove();
         const svg = d3
             .select('#singleheatmap')
             .style('width', `${this.width}px`)

@@ -1,86 +1,134 @@
-const color = {
-    ignored: '#B4C3CA',
-    skimmed: '#76E49C',
-    read: '#3ED772',
-    other1: '#2CC7B4',
-    other2: '#2CC7B4',
-    undeliverable: '#2CC7B4',
-    'out of office': '#2CC7B4',
-    unsubscribed: '#1489c7',
-};
+const createThemes = [
+    {
+        key: 'Theme 1',
+        colors: [
+            {
+                categoryName: 'Engaged',
+                color: '#e5f5f9',
+            },
+            {
+                categoryName: 'Ignored',
+                color: '#ccece6',
+            },
+            {
+                categoryName: 'LeftOpen',
+                color: '#99d8c9',
+            },
+            {
+                categoryName: 'Read',
+                color: '#66c2a4',
+            },
+            {
+                categoryName: 'Skim',
+                color: '#41ae76',
+            },
+        ],
+    },
+    {
+        key: 'Theme 2',
+
+        colors: [
+            {
+                categoryName: 'Engaged',
+                color: '#fff7fb',
+            },
+            {
+                categoryName: 'Ignored',
+                color: '#ece7f2',
+            },
+            {
+                categoryName: 'LeftOpen',
+                color: '#d0d1e6',
+            },
+            {
+                categoryName: 'Read',
+                color: '#a6bddb',
+            },
+            {
+                categoryName: 'Skim',
+                color: '#74a9cf',
+            },
+        ],
+    },
+    {
+        key: 'Theme 3',
+        colors: [
+            {
+                categoryName: 'Engaged',
+                color: '#fff7ec',
+            },
+            {
+                categoryName: 'Ignored',
+                color: '#fee8c8',
+            },
+            {
+                categoryName: 'LeftOpen',
+                color: '#fdd49e',
+            },
+            {
+                categoryName: 'Read',
+                color: '#fdbb84',
+            },
+            {
+                categoryName: 'Skim',
+                color: '#fc8d59',
+            },
+        ],
+    },
+];
 
 const width = 900;
 const height = 300;
 
-const excludeCategoryName = ['ID', 'SentDate', 'ClickCount', 'report_type_id'];
+function getColor(colors, shortName) {
+    const filter = colors.filter(c => c.categoryName === shortName);
+    return (filter && filter.length > 0 && filter[0].color) || undefined;
+}
 
-const getColor = () => {
-    return (
-        '#' +
-        '0123456789abcdef'
-            .split('')
-            .map(function(v, i, a) {
-                return i > 5 ? null : a[Math.floor(Math.random() * 16)];
-            })
-            .join('')
-    );
-};
-const colorbrewer = [
-    '#f7fcfd',
-    '#e5f5f9',
-    '#ccece6',
-    '#99d8c9',
-    '#66c2a4',
-    '#41ae76',
-    '#238b45',
-    '#006d2c',
-    '#00441b',
-];
+function getCategoriesToRender(theme) {
+    const currentTheme = createThemes.filter(ct => ct.key === theme);
+    const colors = currentTheme[0].colors;
+    console.error(currentTheme, colors);
+    return [
+        {
+            category: 'EngagedReadRate',
+            color: getColor(colors, 'Engaged') || '#e5f5f9',
+            percentage: 'PercentRead',
+            clickCount: 'EngagedRead_clickRate',
+            shortName: 'Engaged',
+        },
+        {
+            category: 'IgnoredRate',
+            color: getColor(colors, 'Ignored') || '#ccece6',
+            percentage: 'PercentRead',
+            clickCount: 'ignored_clickRate',
+            shortName: 'Ignored',
+        },
+        {
+            category: 'LeftOpenRate',
+            color: getColor(colors, 'LeftOpen') || '#99d8c9',
+            percentage: 'PercentRead',
+            clickCount: 'LeftOpen_clickrate',
+            shortName: 'LeftOpen',
+        },
+        {
+            category: 'ReadRate',
+            color: getColor(colors, 'Read') || '#66c2a4',
+            percentage: 'PercentRead',
+            clickCount: 'Read_clickRate',
+            hasPercentageLine: true,
+            shortName: 'Read',
+        },
+        {
+            category: 'SkimmedRate',
+            color: getColor(colors, 'Skim') || '#41ae76',
+            percentage: 'PercentRead',
+            clickCount: 'skimmed_clickRate',
+            shortName: 'Skim',
+        },
+    ];
+}
 
-const categoriesToRender = [
-    {
-        category: 'EngagedReadRate',
-        color: '#e5f5f9',
-        percentage: 'PercentRead',
-        clickCount: 'EngagedRead_clickRate',
-        shortName: 'Engaged',
-    },
-    {
-        category: 'IgnoredRate',
-        color: '#ccece6',
-        percentage: 'PercentRead',
-        clickCount: 'ignored_clickRate',
-        shortName: 'Ignored',
-    },
-    {
-        category: 'LeftOpenRate',
-        color: '#99d8c9',
-        percentage: 'PercentRead',
-        clickCount: 'LeftOpen_clickrate',
-        shortName: 'LeftOpen',
-    },
-    {
-        category: 'ReadRate',
-        color: '#66c2a4',
-        percentage: 'PercentRead',
-        clickCount: 'Read_clickRate',
-        hasPercentageLine: true,
-        shortName: 'Read',
-    },
-    {
-        category: 'SkimmedRate',
-        color: '#41ae76',
-        percentage: 'PercentRead',
-        clickCount: 'skimmed_clickRate',
-        shortName: 'Skim',
-    },
-];
-
-const trimString = (string, stringWidth, width) => {
-    if (stringWidth > width) {
-        return 'a';
-    }
-};
 const strictIsoParse = d3.time.format('%Y-%m-%d %H:%M:%S');
 const strictIsoDate = d3.time.format('%Y-%m-%d');
 const requiredFormat = d3.time.format('%d-%b-%y');
@@ -96,8 +144,29 @@ function ready(err, results) {
     console.error(results);
     const csvdata = results[0];
     const scoreData = results[1];
-    const singleHeatData = createHeatMapData([csvdata[0]]);
-    const multipleHeatmap = createHeatMapData(csvdata);
+
+    const select = d3.select('.color-theme').on('change', function() {
+        const selectValue = d3.select('.color-theme').property('value');
+        console.log('faasfsafa', selectValue);
+        initApp({ csvdata, scoreData, theme: selectValue });
+    });
+
+    select
+        .selectAll('option')
+        .data(createThemes)
+        .enter()
+        .append('option')
+        .text(function(d) {
+            return d.key;
+        });
+
+    console.log(createThemes[0].key, 'afasfa');
+    initApp({ csvdata, scoreData, theme: createThemes[0].key });
+}
+
+function initApp({ csvdata, scoreData, theme }) {
+    const singleHeatData = createHeatMapData([csvdata[0]], theme);
+    const multipleHeatmap = createHeatMapData(csvdata, theme);
 
     const scoreDataCorrectDate = scoreData
         .map(s => {
@@ -207,7 +276,8 @@ function ready(err, results) {
     // });
 }
 
-function createHeatMapData(csvdata) {
+function createHeatMapData(csvdata, theme) {
+    console.log(theme, 'theme');
     const validDateOnlyData = csvdata
         .map(item => {
             const formatDate = strictIsoParse.parse(
@@ -221,6 +291,7 @@ function createHeatMapData(csvdata) {
         })
         .filter(d => d.date);
 
+    const categoriesToRender = getCategoriesToRender(theme);
     const filteredData = validDateOnlyData.map(item => {
         const id = uid();
         return categoriesToRender.map(cat => {
