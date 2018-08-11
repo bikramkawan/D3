@@ -13,6 +13,8 @@ d3.json('data.json').then(function(rawdata) {
         selector: '.previous',
         barClass: 'previous-bar',
         widthOffSet: 110,
+        foreignHeight: 30,
+        foreignWidth: 150,
     };
     const recentProps = {
         margin,
@@ -23,6 +25,8 @@ d3.json('data.json').then(function(rawdata) {
         selector: '.recent',
         barClass: 'recent-bar',
         widthOffSet: 110,
+        foreignHeight: 30,
+        foreignWidth: 150,
     };
     const previousBar = new BarDiagram(previousProps);
     previousBar.draw();
@@ -47,72 +51,64 @@ d3.json('data.json').then(function(rawdata) {
 
     d3
         .selectAll('.previous-bar')
-        .on('mouseover', function(d) {
+        .on('mouseover', function(data, index) {
             d3.select(this).classed('focus', true);
             previousToolTip.style('opacity', 1);
             previousToolTip
-                .text(d[1])
+                .text(`${data[0]}, ${data[1]}`)
                 .style('left', d3.event.pageX + 'px')
                 .style('top', d3.event.pageY - 28 + 'px');
 
-            return recentDispatchEvt.focus(d);
+            return recentDispatchEvt.focus(data, index);
         })
-        .on('mouseleave', function(d) {
+        .on('mouseleave', function(data, index) {
             d3.select(this).classed('focus', false);
             previousToolTip.style('opacity', 0);
-            return recentDispatchEvt.blur(d);
+            return recentDispatchEvt.blur(data, index);
         });
 
     d3
         .selectAll('.recent-bar')
-        .on('mouseover', function(d) {
+        .on('mouseover', function(data, index) {
             d3.select(this).classed('focus', true);
             recentToolTip.style('opacity', 1);
             recentToolTip
-                .text(d[1])
+                .text(`${data[0]}, ${data[1]}`)
                 .style('left', d3.event.pageX + 'px')
                 .style('top', d3.event.pageY - 28 + 'px');
-            return previousDispatchEvt.focus(d);
+            return previousDispatchEvt.focus(data, index);
         })
-        .on('mouseleave', function(d) {
+        .on('mouseleave', function(d, index) {
             d3.select(this).classed('focus', false);
             recentToolTip.style('opacity', 0);
-            return previousDispatchEvt.blur(d);
+            return previousDispatchEvt.blur(d, index);
         });
 
-    previousDispatchEvt.focus = function(data) {
+    previousDispatchEvt.focus = function(data, index) {
+        d3.selectAll(`[data-attr="${index}"]`).classed('focus', true);
         d3
-            .select(`[data-attr="${Number(data[0]) - 100}"]`)
-            .classed('focus', true);
-        d3
-            .select(`[tool-attr-previous-bar="${Number(data[0]) - 100}"]`)
+            .selectAll(`[tool-attr-previous-bar="${index}"]`)
             .classed('visible', true);
     };
-    previousDispatchEvt.blur = function(data) {
+    previousDispatchEvt.blur = function(data, index) {
+        d3.selectAll(`[data-attr="${index}"]`).classed('focus', false);
         d3
-            .select(`[data-attr="${Number(data[0]) - 100}"]`)
-            .classed('focus', false);
-        d3
-            .select(`[tool-attr-previous-bar="${Number(data[0]) - 100}"]`)
+            .selectAll(`[tool-attr-previous-bar="${index}"]`)
             .classed('visible', false);
     };
 
-    recentDispatchEvt.focus = function(data) {
-        d3
-            .select(`[data-attr="${Number(data[0]) + 100}"]`)
-            .classed('focus', true);
+    recentDispatchEvt.focus = function(data, index) {
+        d3.selectAll(`[data-attr="${index}"]`).classed('focus', true);
 
         d3
-            .select(`[tool-attr-recent-bar="${Number(data[0]) + 100}"]`)
+            .selectAll(`[tool-attr-recent-bar="${index}"]`)
             .classed('visible', true);
     };
-    recentDispatchEvt.blur = function(data) {
-        d3
-            .select(`[data-attr="${Number(data[0]) + 100}"]`)
-            .classed('focus', false);
+    recentDispatchEvt.blur = function(data, index) {
+        d3.selectAll(`[data-attr="${index}"]`).classed('focus', false);
 
         d3
-            .select(`[tool-attr-recent-bar="${Number(data[0]) + 100}"]`)
+            .selectAll(`[tool-attr-recent-bar="${index}"]`)
             .classed('visible', false);
     };
 });
