@@ -1,9 +1,11 @@
 class MultipleHeatmap {
-    constructor({ data, width, height, opt }) {
+    constructor({ data, width, height, clickedWidth, clickedColor, opt }) {
         this.data = data;
         this.height = height;
         this.width = width;
         this.clickColor = opt.clickColor;
+        this.clickedWidth = clickedWidth;
+        this.clickedColor = clickedColor;
     }
 
     draw() {
@@ -17,31 +19,67 @@ class MultipleHeatmap {
             .style('width', `${this.width}px`)
             .style('height', `${this.height}px`);
 
+        const clickedArea = svg.append('g').classed('clickedArea', true);
+        clickedArea
+            .append('rect')
+            .classed('clickedArea', true)
+            .attr('x', this.width * (1 - this.clickedWidth))
+            .attr('width', this.width * this.clickedWidth)
+            .attr('height', 0.7 * this.height)
+            .attr('fill', this.clickedColor);
+
         data.forEach(single => {
             const itemSvg = svg.append('g').classed('col', true);
             this.mapSingleElement({ svg: itemSvg, data: single, itemScale });
         });
+
+        const collectReadPercentageItems = this.data.filter(
+            d => d.hasPercentageLine,
+        );
+        const readPercentAverage =
+            _.sumBy(collectReadPercentageItems, 'percentage') /
+            collectReadPercentageItems.length;
+
+        svg
+            .append('path')
+            .attr('d', () => {
+                const availableWidth = this.width * (1 - this.clickedWidth);
+                return `M${availableWidth *
+                    readPercentAverage},0 L${availableWidth *
+                    readPercentAverage},${0.7 * this.height}`;
+            })
+            .attr('stroke', 'red')
+            .attr('fill', 'none');
 
         const labelSvg = svg
             .append('g')
             .classed('label', true)
             .attr('transform', (d, i) => `translate(0,${0.75 * this.height})`);
         const labels = _.uniqBy(this.data, 'category').map(d => d.category);
-        const filterByAndSum = labels.map(u => {
-            const filtered = this.data.filter(d => d.category === u);
-            const value = _.sumBy(filtered, 'value');
-            const percentage = _.sumBy(filtered, 'percentage');
-            const clicked = _.sumBy(filtered, 'clicked');
+        const totalValue = _.sumBy(this.data, 'value');
+        const totalPercentage = _.sumBy(this.data, 'percentage');
+        const totalClicked = _.sumBy(this.data, 'clicked');
 
-            return {
-                label: u,
-                value,
-                percentage,
-                clicked,
-                color: filtered[0].color,
-                shortName: filtered[0].shortName ? filtered[0].shortName : u,
-            };
-        });
+        const filterByAndSum = labels
+            .map(u => {
+                const filtered = this.data.filter(d => d.category === u);
+                const value = _.sumBy(filtered, 'value') / totalValue;
+                const percentage =
+                    _.sumBy(filtered, 'percentage') / totalPercentage;
+                const clicked = _.sumBy(filtered, 'clicked') / totalClicked;
+
+                return {
+                    label: u,
+                    value,
+                    percentage,
+                    clicked,
+                    color: filtered[0].color,
+                    shortName: filtered[0].shortName
+                        ? filtered[0].shortName
+                        : u,
+                };
+            })
+            .filter(l => l.value > 0);
 
         const labelHeight = 0.75 * this.height;
         const availableLabelHeight = this.height - labelHeight;
@@ -54,13 +92,14 @@ class MultipleHeatmap {
         total = total + click;
         const obj = { label: 'clicked', value: click, color: this.clickColor };
         filterByAndSum.push(obj);
-        const binSize = this.width / filterByAndSum.length;
+        const binSize =
+            this.width * (1 - this.clickedWidth) / filterByAndSum.length;
 
         const offset = 2;
         const widthScale = d3.scale
             .linear()
             .domain([0, total])
-            .range([0, this.width]);
+            .range([0, this.width * (1 - this.clickedWidth)]);
 
         const labelEnter = labelSvg
             .selectAll('g')
@@ -145,18 +184,6 @@ class MultipleHeatmap {
             .attr('height', topHeight)
             .attr('fill', d => d.color)
             .style('opacity', 0.2);
-        gEnter
-            .append('path')
-            .attr('d', d => {
-                if (d.hasPercentageLine) {
-                    const availableWidth = itemScale(d.value);
-                    return `M${availableWidth *
-                        d.percentage},0 L${availableWidth *
-                        d.percentage},${topHeight}`;
-                }
-            })
-            .attr('stroke', 'red')
-            .attr('fill', 'none');
 
         gEnter
             .append('rect')
@@ -200,7 +227,7 @@ class MultipleHeatmap {
         const itemScale = d3.scale
             .linear()
             .domain([0, maxPercentage])
-            .range([0, this.width]);
+            .range([0, this.width * (1 - this.clickedWidth)]);
         this.itemScale = itemScale;
         return { data, itemScale, maxPercentage };
     }

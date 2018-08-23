@@ -1,8 +1,10 @@
 class SingleHeatMap {
-    constructor({ data, width, height }) {
+    constructor({ data, width, height, clickedWidth, clickedColor }) {
         this.data = data;
         this.height = height;
         this.width = width;
+        this.clickedWidth = clickedWidth;
+        this.clickedColor = clickedColor;
     }
 
     draw() {
@@ -23,10 +25,19 @@ class SingleHeatMap {
 
         const topSvg = svg.append('g').classed('topheatmap', true);
 
+        const clickedArea = svg.append('g').classed('clickedArea', true);
+        clickedArea
+            .append('rect')
+            .classed('clickedArea', true)
+            .attr('x', this.width * (1 - this.clickedWidth))
+            .attr('width', this.width * this.clickedWidth)
+            .attr('height', topHeight)
+            .attr('fill', this.clickedColor);
+
         topSvg
             .append('rect')
             .classed('background-rect', true)
-            .attr('width', this.width)
+            .attr('width', this.width * (1 - this.clickedWidth))
             .attr('height', topHeight);
         const gEnter = topSvg
             .selectAll('g')
@@ -53,18 +64,6 @@ class SingleHeatMap {
             .attr('width', d => itemScale(d.value.value))
             .attr('height', topHeight)
             .attr('fill', d => d.color);
-        gEnter
-            .append('path')
-            .attr('d', d => {
-                if (d.hasPercentageLine) {
-                    const availableWidth = itemScale(d.value.value);
-                    return `M${availableWidth *
-                        d.value.percentage},0 L${availableWidth *
-                        d.value.percentage},${topHeight}`;
-                }
-            })
-            .attr('stroke', 'red')
-            .attr('fill', 'none');
 
         gEnter
             .append('rect')
@@ -94,6 +93,19 @@ class SingleHeatMap {
                 return topHeight - binHeight / 2;
             })
             .text(d => `${d.value.clicked * 100}%`);
+
+        topSvg
+            .append('path')
+            .attr('d', () => {
+                const d = data[0];
+                const availableWidth = this.width * (1 - this.clickedWidth);
+                return `M${availableWidth *
+                    d.value.percentage},0 L${availableWidth *
+                    d.value.percentage},${topHeight}`;
+            })
+            .attr('stroke', 'red')
+            .attr('fill', 'none');
+
         const labelHeight = 0.75 * this.height;
         const availableLabelHeight = this.height - labelHeight;
 
@@ -102,7 +114,7 @@ class SingleHeatMap {
             .classed('label', true)
             .attr('transform', (d, i) => `translate(0,${labelHeight})`);
 
-        const binSize = this.width / data.length;
+        const binSize = this.width * (1 - this.clickedWidth) / data.length;
 
         const labelEnter = labelSvg
             .selectAll('g')
@@ -142,26 +154,28 @@ class SingleHeatMap {
         const uniquesHeatmap = _.uniqBy(this.data, d => d.category).map(
             d => d.category,
         );
-        const data = uniquesHeatmap.map(id => {
-            const item = groupByHeatmap[id];
-            return {
-                ...item[0],
-                label: item[0].category,
-                color: item[0].color,
-                value: {
-                    percentage: item[0].percentage,
-                    clicked: item[0].clicked,
-                    value: item[0].value,
-                },
-            };
-        });
+        const data = uniquesHeatmap
+            .map(id => {
+                const item = groupByHeatmap[id];
+                return {
+                    ...item[0],
+                    label: item[0].category,
+                    color: item[0].color,
+                    value: {
+                        percentage: item[0].percentage,
+                        clicked: item[0].clicked,
+                        value: item[0].value,
+                    },
+                };
+            })
+            .filter(d => d.value.value > 0);
 
         const maxPercentage = 1;
 
         const itemScale = d3.scale
             .linear()
             .domain([0, maxPercentage])
-            .range([0, this.width]);
+            .range([0, this.width * (1 - this.clickedWidth)]);
         return { data, itemScale, maxPercentage };
     }
 }

@@ -198,12 +198,16 @@ function initApp({ csvdata, scoreData, theme }) {
         data: singleHeatData,
         width,
         height,
+        clickedWidth: 0.2,
+        clickedColor: 'blue',
     });
     singleHeatMap.draw();
     const arrayHeatMap = new MultipleHeatmap({
         data: multipleHeatmap,
         width,
         height,
+        clickedWidth: 0.2,
+        clickedColor: 'blue',
         opt: {
             color: 'blue',
         },
@@ -277,7 +281,6 @@ function initApp({ csvdata, scoreData, theme }) {
 }
 
 function createHeatMapData(csvdata, theme) {
-    console.log(theme, 'theme');
     const validDateOnlyData = csvdata
         .map(item => {
             const formatDate = strictIsoParse.parse(
