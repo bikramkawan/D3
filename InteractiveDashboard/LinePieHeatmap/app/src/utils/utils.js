@@ -65,10 +65,12 @@ export const times = [
 ];
 
 export function formatInitialData(rawData) {
+
+    console.error(rawData,'raw')
     const dateFormat = d3.timeParse('%Y-%m-%dT%H:%M:%S');
     return rawData.message.results.map(d => ({
         time: dateFormat(d.time.split('.')[0]),
-        count: d.count,
+        count: Number(d.count),
     }));
 }
 

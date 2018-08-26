@@ -20,7 +20,7 @@ import * as d3 from 'd3';
 import DatePicker from './renderers/DatePicker';
 import SvgGenerator from './renderers/SvgGenerator';
 import axios from 'axios';
-
+import PieContainer from './htmlCreator/PieContainer';
 const DEVICE_URL = 'https://ebs-granite.bigbang.io/api/v1/devices';
 
 const beaconReaderId = 'device-id-8f373a31-a510-4a3f-9472-4a0f5bb56245';
@@ -81,7 +81,7 @@ axios
                 intervalType.map(it =>
                     fetchDeviceData({
                         beaconReaderId: device.id,
-                        timeInterval: 60,
+                        timeInterval: it.timeInterval,
                         type: it.type,
                     }),
                 ),
@@ -89,55 +89,63 @@ axios
             .reduce((a, b) => a.concat(b), []);
         Promise.all(promises).then(response => {
             console.log(response);
-            const day = response
-                .filter(r => r.type === 'day')
-                .filter(d => d.data.message.results.length > 0);
-            const week = response
-                .filter(r => r.type === 'week')
-                .filter(d => d.data.message.results.length > 0);
-            const month = response
-                .filter(r => r.type === 'month')
-                .filter(d => d.data.message.results.length > 0);
 
-            console.error(day, week, month);
+            ready(null,[response])
 
-            initApp({day,week,month})
+            //   initApp({ day, week, month });
         });
-        console.log(devices, 'devices  list', promises);
     })
     .catch(e => {
         console.log(e, 'Error occured');
     });
 
-d3
-    .queue()
-    .defer(d3.json, 'data/new/oneDayExample.json')
-    .defer(d3.json, 'data/new/getDeviceIdExample.json')
-    .defer(d3.json, 'data/newdata.json')
-    .awaitAll(ready);
+function mapDayWeekYear(data) {
+    console.error(data, 'day');
+    const day = data
+        .filter(r => r.type === 'day')
+        .filter(d => d.data.message.results.length > 0);
 
+    const week = data
+        .filter(r => r.type === 'week')
+        .filter(d => d.data.message.results.length > 0);
+    const month = data
+        .filter(r => r.type === 'month')
+        .filter(d => d.data.message.results.length > 0);
 
-function initApp({day,week,month}) {
-
-
-
-
+    return { day, week, month };
 }
 
+// d3
+//     .queue()
+//     .defer(d3.json, 'data/new/data.json')
+//     .awaitAll(ready);
 
+function initApp({ day, week, month }) {
+    const results = day.map(d => d.data);
+    console.log(day, week, month, results);
+
+    ready(null, [[], [], results]);
+}
 
 function ready(error, results) {
-    console.error(results, 'dafafasjfalsf');
-    const rawData = results[2];
-    const data = formatInitialData(rawData);
-    //Replace data with randomdata inside the format raw data
-    const formattedData = formatRawData(data);
+    const { day, week, month } = mapDayWeekYear(results[0]);
+    console.error(results, 'dafafasjfalsf', day, week, month);
 
-    const multipleData = [rawData, rawData, rawData, rawData];
+    // const data = formatInitialData(rawData);
+
+    //Replace data with randomdata inside the format raw data
+
+    const multipleData = day;
     const formattedMultipleDataSource = multipleData
-        .map(d => formatInitialData(d))
+        .map(d => formatInitialData(d.data))
         .map(d => formatRawData(d));
 
+    const pieContainer = new PieContainer(formattedMultipleDataSource);
+    pieContainer.draw();
+
+    const data = formattedMultipleDataSource[0];
+    const formattedData = formatRawData(data);
+    console.log(multipleData, formattedMultipleDataSource);
     const svg = new SvgGenerator();
     const {
         width,
@@ -151,18 +159,18 @@ function ready(error, results) {
     } = svg.getDimension();
 
     const { lineSVG, barSVG } = svg.getSvg();
-
+    //
     const heatConfig = {
         margin: heatMapMargin,
         width: heatWidth,
         height: heatHeight,
         data: formattedData,
     };
-    //
+
     const heatMap = new HeatMap(heatConfig);
     heatMap.draw();
     const getHeatData = heatMap.getData();
-
+    //
     const randomDataForLine = data.map(d => ({
         time: d.time,
         count: 0.8 * d.count,
@@ -201,6 +209,7 @@ function ready(error, results) {
             };
         },
     );
+    console.error(pieChartConfig, 'pie');
     const pieCharts = [];
     pieChartConfig.forEach(pie => {
         const pieChart = new PieChart(pie);
@@ -248,14 +257,3 @@ function ready(error, results) {
     });
     datePicker.appendDatePicker();
 }
-
-const data = {
-    id: 'granite1',
-    namespace: 'deviceCountByTimeInterval',
-    message: {
-        beaconReaderId: 'device-id-8f373a31-a510-4a3f-9472-4a0f5bb56245',
-        timeInterval: 60,
-        startDateTime: '2018-07-15T00:00:00Z',
-        endDateTime: '2018-07-15T23:59:00Z',
-    },
-};
