@@ -164,6 +164,10 @@ function ready(err, results) {
     initApp({ csvdata, scoreData, theme: createThemes[0].key });
 }
 
+function getAverageTotalCR(data) {
+    return _.sum(data.map(d => Number(d['TotalClickRate']))) / data.length;
+}
+
 function initApp({ csvdata, scoreData, theme }) {
     const singleHeatData = createHeatMapData([csvdata[0]], theme);
     const multipleHeatmap = createHeatMapData(csvdata, theme);
@@ -200,6 +204,12 @@ function initApp({ csvdata, scoreData, theme }) {
         height,
         clickedWidth: 0.2,
         clickedColor: 'blue',
+        totalClickedRate:
+            (csvdata &&
+                Array.isArray(csvdata) &&
+                csvdata[0] &&
+                csvdata[0].TotalClickRate) ||
+            null,
     });
     singleHeatMap.draw();
     const arrayHeatMap = new MultipleHeatmap({
@@ -208,6 +218,7 @@ function initApp({ csvdata, scoreData, theme }) {
         height,
         clickedWidth: 0.2,
         clickedColor: 'blue',
+        totalClickedRate: getAverageTotalCR(csvdata),
         opt: {
             color: 'blue',
         },

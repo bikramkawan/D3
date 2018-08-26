@@ -1,10 +1,18 @@
 class SingleHeatMap {
-    constructor({ data, width, height, clickedWidth, clickedColor }) {
+    constructor({
+        data,
+        width,
+        height,
+        clickedWidth,
+        clickedColor,
+        totalClickedRate,
+    }) {
         this.data = data;
         this.height = height;
         this.width = width;
         this.clickedWidth = clickedWidth;
         this.clickedColor = clickedColor;
+        this.totalClickedRate = totalClickedRate;
     }
 
     draw() {
@@ -14,6 +22,7 @@ class SingleHeatMap {
         const someOffset = -30;
         const { data, itemScale, maxPercentage } = this.prepareData();
 
+        console.log(this.totalClickedRate);
         d3
             .select('#singleheatmap')
             .selectAll('*')
@@ -113,6 +122,18 @@ class SingleHeatMap {
             .append('g')
             .classed('label', true)
             .attr('transform', (d, i) => `translate(0,${labelHeight})`);
+        console.log(data);
+        const labelTotalClickedRate = labelSvg
+            .append('text')
+            .classed('labelTotalClickedRate', true)
+            .attr('fill',this.clickedColor)
+            .text(d => `${this.totalClickedRate*100}% Total CR`)
+            .attr(
+                'transform',
+                (d, i) =>
+                    `translate(${this.width *
+                        (1 - this.clickedWidth)},${availableLabelHeight / 2})`,
+            );
 
         const binSize = this.width * (1 - this.clickedWidth) / data.length;
 

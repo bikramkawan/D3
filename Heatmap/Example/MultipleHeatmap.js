@@ -1,11 +1,20 @@
 class MultipleHeatmap {
-    constructor({ data, width, height, clickedWidth, clickedColor, opt }) {
+    constructor({
+        data,
+        width,
+        height,
+        clickedWidth,
+        clickedColor,
+        opt,
+        totalClickedRate,
+    }) {
         this.data = data;
         this.height = height;
         this.width = width;
         this.clickColor = opt.clickColor;
         this.clickedWidth = clickedWidth;
         this.clickedColor = clickedColor;
+        this.totalClickedRate = totalClickedRate;
     }
 
     draw() {
@@ -40,6 +49,8 @@ class MultipleHeatmap {
             _.sumBy(collectReadPercentageItems, 'percentage') /
             collectReadPercentageItems.length;
 
+        const labelHeight = 0.75 * this.height;
+        const availableLabelHeight = this.height - labelHeight;
         svg
             .append('path')
             .attr('d', () => {
@@ -55,6 +66,29 @@ class MultipleHeatmap {
             .append('g')
             .classed('label', true)
             .attr('transform', (d, i) => `translate(0,${0.75 * this.height})`);
+
+        const totalClickedBar = labelSvg
+            .append('rect')
+            .classed('totalClickedBar', true)
+            .attr('x', this.width * (1 - this.clickedWidth))
+            .attr('height', '30')
+            .attr('width', (d, i) => {
+                return this.width * this.clickedWidth;
+            })
+            .attr('fill', this.clickedColor);
+
+        labelSvg
+            .append('text')
+            .classed('labelTotalClickedRate', true)
+            .attr('fill', this.clickedColor)
+            .text(d => `${this.totalClickedRate.toFixed(2) * 100}% Total CR`)
+            .attr('x', d => {
+                return 5 + this.width * (1 - this.clickedWidth);
+            })
+            .attr('y', d => {
+                return 10 + availableLabelHeight / 2;
+            });
+
         const labels = _.uniqBy(this.data, 'category').map(d => d.category);
         const totalValue = _.sumBy(this.data, 'value');
         const totalPercentage = _.sumBy(this.data, 'percentage');
@@ -81,8 +115,6 @@ class MultipleHeatmap {
             })
             .filter(l => l.value > 0);
 
-        const labelHeight = 0.75 * this.height;
-        const availableLabelHeight = this.height - labelHeight;
         let total = 0;
         let click = 0;
         for (let i = 0; i < filterByAndSum.length; i++) {
