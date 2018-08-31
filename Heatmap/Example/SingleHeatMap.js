@@ -22,7 +22,6 @@ class SingleHeatMap {
         const someOffset = -30;
         const { data, itemScale, maxPercentage } = this.prepareData();
 
-        console.log(this.totalClickedRate);
         d3
             .select('#singleheatmap')
             .selectAll('*')
@@ -122,7 +121,7 @@ class SingleHeatMap {
             .append('g')
             .classed('label', true)
             .attr('transform', (d, i) => `translate(0,${labelHeight})`);
-        console.log(data);
+
         const labelTotalClickedRate = labelSvg
             .append('text')
             .classed('labelTotalClickedRate', true)

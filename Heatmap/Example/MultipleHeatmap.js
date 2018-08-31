@@ -7,6 +7,7 @@ class MultipleHeatmap {
         clickedColor,
         opt,
         totalClickedRate,
+        categories,
     }) {
         this.data = data;
         this.height = height;
@@ -15,6 +16,7 @@ class MultipleHeatmap {
         this.clickedWidth = clickedWidth;
         this.clickedColor = clickedColor;
         this.totalClickedRate = totalClickedRate;
+        this.categories = categories;
     }
 
     draw() {
@@ -22,7 +24,12 @@ class MultipleHeatmap {
         const topHeight = 0.8 * this.height;
         const bottomHeight = 0.2 * this.height;
         const someOffset = -30;
-        const { data, itemScale, maxPercentage } = this.prepareData();
+        const {
+            data,
+            itemScale,
+            maxPercentage,
+            maxValues,
+        } = this.prepareData();
         const svg = d3
             .select('#combinedheatmap')
             .style('width', `${this.width}px`)
@@ -36,10 +43,21 @@ class MultipleHeatmap {
             .attr('width', this.width * this.clickedWidth)
             .attr('height', 0.7 * this.height)
             .attr('fill', this.clickedColor);
-
-        data.forEach(single => {
-            const itemSvg = svg.append('g').classed('col', true);
-            this.mapSingleElement({ svg: itemSvg, data: single, itemScale });
+        const maxArray = Object.keys(maxValues).map(k => ({
+            category: k,
+            value: maxValues[k],
+        }));
+        data.forEach((single, index) => {
+            const itemSvg = svg
+                .append('g')
+                .classed('col row-items ' + index, true);
+            this.mapSingleElement({
+                svg: itemSvg,
+                data: single,
+                itemScale,
+                maxArray,
+                maxValues,
+            });
         });
 
         const collectReadPercentageItems = this.data.filter(
@@ -186,7 +204,7 @@ class MultipleHeatmap {
                 return `${value}% ${shortName}`;
             });
     }
-    mapSingleElement({ svg, data, itemScale }) {
+    mapSingleElement({ svg, data, itemScale, maxArray, maxValues }) {
         const topHeight = 0.7 * this.height;
         const bottomHeight = 0.2 * this.height;
         const someOffset = -30;
@@ -196,14 +214,18 @@ class MultipleHeatmap {
             .enter()
             .append('g')
             .classed('col', true)
+            .attr('data-attr', d => d.category)
             .attr('transform', (d, i) => {
                 const previousArrayLength = Array.from(
                     { length: i },
                     (v, i) => i,
                 );
                 const width = _.sumBy(
-                    previousArrayLength.map(e => itemScale(data[e].value)),
+                    previousArrayLength.map((e, index) =>
+                        itemScale(maxArray[index].value),
+                    ),
                 );
+
                 return `translate(${width},0)`;
             });
 
@@ -249,18 +271,28 @@ class MultipleHeatmap {
                 return topHeight - binHeight / 2;
             })
 
-            .text(d => `${Math.floor(d.clicked) * 100}%`);
+            .text(d => `${d.clicked.toFixed(1) * 100}%`);
     }
 
     prepareData() {
         const groupByHeatmap = _.groupBy(this.data, d => d.id);
+
+        let maxValues = {};
+        this.categories.forEach(c => {
+            const g = this.data.filter(df => df.category === c.category);
+            const value = d3.max(g, d => d.value);
+            maxValues[c.category] = value;
+        });
+
+        const totalSum = _.sum(Object.keys(maxValues).map(d => maxValues[d]));
+
         let data = Object.keys(groupByHeatmap).map(d => groupByHeatmap[d]);
         const maxPercentage = 1;
         const itemScale = d3.scale
             .linear()
-            .domain([0, maxPercentage])
+            .domain([0, totalSum])
             .range([0, this.width * (1 - this.clickedWidth)]);
         this.itemScale = itemScale;
-        return { data, itemScale, maxPercentage };
+        return { data, itemScale, maxPercentage, maxValues };
     }
 }

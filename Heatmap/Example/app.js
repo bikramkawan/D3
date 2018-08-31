@@ -4,23 +4,23 @@ const createThemes = [
         colors: [
             {
                 categoryName: 'Engaged',
-                color: '#e5f5f9',
+                color: '#e41a1c',
             },
             {
                 categoryName: 'Ignored',
-                color: '#ccece6',
+                color: '#377eb8',
             },
             {
                 categoryName: 'LeftOpen',
-                color: '#99d8c9',
+                color: '#4daf4a',
             },
             {
                 categoryName: 'Read',
-                color: '#66c2a4',
+                color: '#984ea3',
             },
             {
                 categoryName: 'Skim',
-                color: '#41ae76',
+                color: '#ff7f00',
             },
         ],
     },
@@ -88,7 +88,6 @@ function getColor(colors, shortName) {
 function getCategoriesToRender(theme) {
     const currentTheme = createThemes.filter(ct => ct.key === theme);
     const colors = currentTheme[0].colors;
-    console.error(currentTheme, colors);
     return [
         {
             category: 'EngagedReadRate',
@@ -147,7 +146,7 @@ function ready(err, results) {
 
     const select = d3.select('.color-theme').on('change', function() {
         const selectValue = d3.select('.color-theme').property('value');
-        console.log('faasfsafa', selectValue);
+
         initApp({ csvdata, scoreData, theme: selectValue });
     });
 
@@ -160,7 +159,6 @@ function ready(err, results) {
             return d.key;
         });
 
-    console.log(createThemes[0].key, 'afasfa');
     initApp({ csvdata, scoreData, theme: createThemes[0].key });
 }
 
@@ -197,7 +195,6 @@ function initApp({ csvdata, scoreData, theme }) {
         .slice()
         .sort((a, b) => parseFloat(a.days) - parseFloat(b.days));
 
-    console.error(scoreDataCorrectDate, 'scored', parseScored);
     const singleHeatMap = new SingleHeatMap({
         data: singleHeatData,
         width,
@@ -222,6 +219,7 @@ function initApp({ csvdata, scoreData, theme }) {
         opt: {
             color: 'blue',
         },
+        categories: getCategoriesToRender(theme),
     });
     arrayHeatMap.draw();
 
@@ -322,7 +320,7 @@ function createHeatMapData(csvdata, theme) {
                     1,
                 ),
                 color: cat.color,
-                value: Math.min(Math.abs(parseFloat(item[cat.category])), 1),
+                value: Math.abs(Number(item[cat.category])),
                 hasPercentageLine: (cat && cat.hasPercentageLine) || false,
                 id,
             };
