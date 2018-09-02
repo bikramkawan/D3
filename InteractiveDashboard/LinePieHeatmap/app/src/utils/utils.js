@@ -64,10 +64,17 @@ export const times = [
     '12p',
 ];
 
-export function formatInitialData(rawData) {
-
-    console.error(rawData,'raw')
+export function formatInitialData(rawData, withOutResults) {
+    console.error(rawData, 'raw');
     const dateFormat = d3.timeParse('%Y-%m-%dT%H:%M:%S');
+
+    if (withOutResults) {
+        return rawData.map(d => ({
+            time: dateFormat(d.time.split('.')[0]),
+            count: Number(d.count),
+        }));
+    }
+
     return rawData.message.results.map(d => ({
         time: dateFormat(d.time.split('.')[0]),
         count: Number(d.count),
@@ -101,4 +108,25 @@ export function formatRawData(data) {
                 .reduce((acc, cur) => acc.concat(cur), []);
         })
         .reduce((acc, cur) => acc.concat(cur), []);
+}
+
+export function mergeByDayAndHour(flattenData) {
+    const groupBydays = days
+        .map((d, i) => flattenData.filter(e => e.day === i))
+        .filter(f => f.length > 0)
+        .map((perday, i) => {
+            return times
+                .map((d, i) => {
+                    const f = perday.filter(gbd => gbd.hour === i);
+                    if (f && f.length > 0) {
+                        let obj = f[0];
+                        return { ...obj, count: _.sumBy(f, 'count') };
+                    }
+                    return null;
+                })
+                .filter(f => f);
+        })
+        .reduce((a, b) => a.concat(b), []);
+
+    return groupBydays;
 }

@@ -13,7 +13,11 @@ import HeatMap from './renderers/HeatMap';
 import PieChart from './renderers/PieChart';
 import Table from './renderers/Table';
 import TopScore from './renderers/TopScore';
-import { formatInitialData, formatRawData } from './utils/utils';
+import {
+    formatInitialData,
+    formatRawData,
+    mergeByDayAndHour,
+} from './utils/utils';
 import 'bootstrap/dist/css/bootstrap.css';
 import './style.less';
 import * as d3 from 'd3';
@@ -21,12 +25,22 @@ import DatePicker from './renderers/DatePicker';
 import SvgGenerator from './renderers/SvgGenerator';
 import axios from 'axios';
 import PieContainer from './htmlCreator/PieContainer';
+import sampleResponse from '../data/new/sampleResponse';
+
 const DEVICE_URL = 'https://ebs-granite.bigbang.io/api/v1/devices';
 
 const beaconReaderId = 'device-id-8f373a31-a510-4a3f-9472-4a0f5bb56245';
+//put the start and end time in title
+// Bar call week interval and start tme as 1 week- from
+const timeFormat = d3.timeFormat('%Y-%m-%dT%H:%M:%SZ');
+console.log(timeFormat(new Date(), 'daate'));
 const timeInterval = 60;
-const startDateTime = '2018-08-09T05:00:00Z';
-const endDateTime = '2018-08-11T23:44:19Z';
+//const startDateTime = '2018-08-09T05:00:00Z';  // to do  previous day
+let startDateTime = new Date();
+startDateTime.setDate(startDateTime.getDate() - 2); // to do  previous day
+startDateTime = startDateTime.toISOString();
+//const endDateTime = '2018-08-11T23:44:19Z'; // current day
+const endDateTime = new Date().toISOString(); // current day
 const intervalType = [
     {
         type: 'day',
@@ -34,13 +48,16 @@ const intervalType = [
     },
     {
         type: 'week',
-        timeInterval: 10080,
+        timeInterval: 10080, //1440
     },
     {
         type: 'month',
         timeInterval: 43800,
     },
 ];
+
+//ready(null, [sampleResponse]);
+
 function fetchDeviceData({ beaconReaderId, timeInterval, type }) {
     return new Promise((resolve, reject) => {
         axios({
@@ -90,7 +107,7 @@ axios
         Promise.all(promises).then(response => {
             console.log(response);
 
-            ready(null,[response])
+            ready(null, [response]);
 
             //   initApp({ day, week, month });
         });
@@ -127,9 +144,23 @@ function initApp({ day, week, month }) {
     ready(null, [[], [], results]);
 }
 
+function formatDateString(date) {
+    console.log(date);
+    const dateObj = new Date(date);
+    return `${dateObj.toLocaleDateString()} ${dateObj.toLocaleTimeString()}`;
+}
+
 function ready(error, results) {
     const { day, week, month } = mapDayWeekYear(results[0]);
     console.error(results, 'dafafasjfalsf', day, week, month);
+    formatDateString(startDateTime);
+    console.log(formatDateString(startDateTime), 'ssss');
+
+    d3
+        .select('.start-date')
+        .text(`Start Date ${formatDateString(startDateTime)}`);
+
+    d3.select('.end-date').text(`End Date ${formatDateString(endDateTime)}`);
 
     // const data = formatInitialData(rawData);
 
@@ -140,12 +171,20 @@ function ready(error, results) {
         .map(d => formatInitialData(d.data))
         .map(d => formatRawData(d));
 
+    const flatten = formattedMultipleDataSource.reduce(
+        (a, b) => a.concat(b),
+        [],
+    );
+
+    const newData = mergeByDayAndHour(flatten);
+    console.error(formattedMultipleDataSource, 'result', newData);
+
     const pieContainer = new PieContainer(formattedMultipleDataSource);
     pieContainer.draw();
 
     const data = formattedMultipleDataSource[0];
     const formattedData = formatRawData(data);
-    console.log(multipleData, formattedMultipleDataSource);
+    console.log(multipleData, formattedData, formattedMultipleDataSource);
     const svg = new SvgGenerator();
     const {
         width,
@@ -164,7 +203,7 @@ function ready(error, results) {
         margin: heatMapMargin,
         width: heatWidth,
         height: heatHeight,
-        data: formattedData,
+        data: newData,
     };
 
     const heatMap = new HeatMap(heatConfig);
@@ -177,7 +216,7 @@ function ready(error, results) {
     }));
 
     const lineChartConfig = {
-        data,
+        data: formattedMultipleDataSource,
         lineSVG,
         width,
         height,

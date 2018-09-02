@@ -71,7 +71,12 @@ export default class BarChart {
     draw() {
         this.svg.selectAll('g').remove();
         const that = this;
+
+        console.error(this.data,'bar')
+
+
         const svg = this.svg
+
             .append('g')
             .attr(
                 'transform',
@@ -180,6 +185,8 @@ function formatData(groupData) {
                 ...item,
             })),
         );
+
+    console.error(groupedData,'dagar')
 
     return DAYS.map(day => {
         const filter = groupedData.map(
