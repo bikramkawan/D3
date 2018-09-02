@@ -65,7 +65,7 @@ export const times = [
 ];
 
 export function formatInitialData(rawData, withOutResults) {
-    console.error(rawData, 'raw');
+
     const dateFormat = d3.timeParse('%Y-%m-%dT%H:%M:%S');
 
     if (withOutResults) {

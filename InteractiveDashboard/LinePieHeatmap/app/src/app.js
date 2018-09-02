@@ -33,7 +33,6 @@ const beaconReaderId = 'device-id-8f373a31-a510-4a3f-9472-4a0f5bb56245';
 //put the start and end time in title
 // Bar call week interval and start tme as 1 week- from
 const timeFormat = d3.timeFormat('%Y-%m-%dT%H:%M:%SZ');
-console.log(timeFormat(new Date(), 'daate'));
 const timeInterval = 60;
 //const startDateTime = '2018-08-09T05:00:00Z';  // to do  previous day
 let startDateTime = new Date();
@@ -145,16 +144,14 @@ function initApp({ day, week, month }) {
 }
 
 function formatDateString(date) {
-    console.log(date);
+
     const dateObj = new Date(date);
     return `${dateObj.toLocaleDateString()} ${dateObj.toLocaleTimeString()}`;
 }
 
 function ready(error, results) {
     const { day, week, month } = mapDayWeekYear(results[0]);
-    console.error(results, 'dafafasjfalsf', day, week, month);
-    formatDateString(startDateTime);
-    console.log(formatDateString(startDateTime), 'ssss');
+      formatDateString(startDateTime);
 
     d3
         .select('.start-date')
@@ -177,14 +174,12 @@ function ready(error, results) {
     );
 
     const newData = mergeByDayAndHour(flatten);
-    console.error(formattedMultipleDataSource, 'result', newData);
-
     const pieContainer = new PieContainer(formattedMultipleDataSource);
     pieContainer.draw();
 
     const data = formattedMultipleDataSource[0];
     const formattedData = formatRawData(data);
-    console.log(multipleData, formattedData, formattedMultipleDataSource);
+
     const svg = new SvgGenerator();
     const {
         width,
@@ -248,7 +243,7 @@ function ready(error, results) {
             };
         },
     );
-    console.error(pieChartConfig, 'pie');
+
     const pieCharts = [];
     pieChartConfig.forEach(pie => {
         const pieChart = new PieChart(pie);

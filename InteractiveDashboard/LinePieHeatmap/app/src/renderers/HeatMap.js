@@ -18,7 +18,6 @@ export default class HeatMap {
     /**/
     setScale() {
         this.gridSize = Math.floor(this.width / 24);
-        console.log(this.gridSize,'afasfasf')
         this.legendElementWidth = this.gridSize * 2;
         const maxValue = d3.max(this.data, d => d.count);
         this.colorScale = d3

@@ -1,7 +1,7 @@
 /**
  * Created by bikramkawan on 12/13/17.
  */
-import * as d3 from 'd3'
+import * as d3 from 'd3';
 export default class BarChart {
     constructor(params) {
         this.data = formatData(params.data);
@@ -72,9 +72,6 @@ export default class BarChart {
         this.svg.selectAll('g').remove();
         const that = this;
 
-        console.error(this.data,'bar')
-
-
         const svg = this.svg
 
             .append('g')
@@ -113,7 +110,7 @@ export default class BarChart {
                 return that.zScale(d.key);
             })
             .append('title')
-            .text(d=>d.value.toFixed(2))
+            .text(d => d.value.toFixed(2));
 
         svg
             .append('g')
@@ -185,8 +182,6 @@ function formatData(groupData) {
                 ...item,
             })),
         );
-
-    console.error(groupedData,'dagar')
 
     return DAYS.map(day => {
         const filter = groupedData.map(

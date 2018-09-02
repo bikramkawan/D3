@@ -28,10 +28,7 @@ export default class LineChart {
     }
 
     setScale() {
-        console.log(this.data, 'dat');
-
         const mergedData = this.data.reduce((a, b) => a.concat(b), []);
-
         this.xScale = d3
             .scaleTime()
             .rangeRound([0, this.width])

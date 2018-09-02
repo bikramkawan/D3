@@ -62,7 +62,6 @@ export default class TopScore {
                 })),
             },
         ];
-        console.log(mapData, 'map');
 
         d3.select('.infoPanel').style('height',`${(getFormattedData.length*25) +50}`)
 

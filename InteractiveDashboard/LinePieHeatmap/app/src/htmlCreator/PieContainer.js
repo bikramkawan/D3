@@ -7,12 +7,8 @@ class PieContainer {
 
     draw() {
         const select = d3.select('.chartContainer').select('.left');
-        console.log(this.props.length, select);
-
         const rows = Math.round(this.props.length / 4);
         const array = Array.from({ length: rows }, (v, i) => i);
-        console.log(array, rows);
-
         array.forEach((d, i) => {
             const childRow = select.append('div').classed('childRow', true);
             const index = 4 * i + 1;
