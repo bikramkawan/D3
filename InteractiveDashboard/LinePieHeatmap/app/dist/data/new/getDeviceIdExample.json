@@ -1,0 +1,70 @@
+{
+    "devices": [
+        {
+            "id": "device-id-46003fea-f734-4d70-a9c2-0a64d3629470",
+            "tags": ["reader"],
+            "virtual": false,
+            "status": { "connected": true }
+        },
+        {
+            "id": "device-id-8451759d-969d-4434-833b-82069da244b7",
+            "tags": ["reader", "granite-3"],
+            "virtual": false,
+            "status": {
+                "connected": true,
+                "sessionId": "8298f1fe-efee-4742-b0bf-9aea428bf347"
+            }
+        },
+        {
+            "id": "device-id-23eb6427-a6d5-4890-9917-555ad39536fb",
+            "tags": ["reader", "granite-4"],
+            "virtual": false,
+            "status": {
+                "connected": true,
+                "sessionId": "3f931e0e-f1db-4844-8056-89d9cc4e920b"
+            }
+        },
+        {
+            "id": "device-id-06e23b7d-7302-4800-885f-b0c23a251075",
+            "tags": ["reader", "granite-7"],
+            "virtual": false,
+            "status": { "connected": true }
+        },
+        {
+            "id": "device-id-8f373a31-a510-4a3f-9472-4a0f5bb56245",
+            "tags": ["reader", "granite-1"],
+            "virtual": false,
+            "status": {
+                "connected": true,
+                "sessionId": "a0ab59e5-bdf9-416f-acb6-177405a5f31a"
+            }
+        },
+        {
+            "id": "device-id-be4eeea7-e2ea-40c3-b070-288224f9023e",
+            "tags": ["reader", "granite-2"],
+            "virtual": false,
+            "status": {
+                "connected": true,
+                "sessionId": "3df03331-064e-4395-aad7-cd045fc6fc72"
+            }
+        },
+        {
+            "id": "device-id-c30e5e06-5b07-468a-8dc5-0a1efa0d17d6",
+            "tags": ["reader", "granite-5"],
+            "virtual": false,
+            "status": { "connected": true }
+        },
+        {
+            "id": "device-id-796c5ba6-0032-49ed-af6c-468764090385",
+            "tags": ["reader", "granite-9"],
+            "virtual": false,
+            "status": { "connected": true }
+        },
+        {
+            "id": "device-id-c7765b74-b242-46f2-8efb-1f152219cc7d",
+            "tags": ["reader", "granite-8"],
+            "virtual": false,
+            "status": { "connected": true }
+        }
+    ]
+}

@@ -11,12 +11,12 @@
 }
 .container .main .lineFilter {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
 }
 .container .main .lineFilter > div {
-  padding: 5px;
+  padding: 30px;
   font-size: 18px;
-  color: white;
+  color: black;
   cursor: pointer;
 }
 .container .main .lineFilter .weekday {
@@ -29,7 +29,8 @@
   overflow: hidden;
   display: flex;
   width: 95vw;
-  height: 80vh;
+  height: 95vh;
+  flex-direction: column;
 }
 .container .main .chartContainer .col {
   display: flex;
@@ -39,9 +40,10 @@
   height: 100%;
   width: 100%;
   overflow: auto;
+  margin-bottom: 50px;
 }
 .container .main .chartContainer .col.right {
-  flex-direction: column;
+  flex-direction: row;
 }
 .container .main .chartContainer .col .childRow {
   display: flex;
@@ -55,22 +57,45 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 25%;
 }
 .container .main .chartContainer .col .childRow .childCol .dataSource {
   text-align: center;
   text-transform: capitalize;
 }
 .container .main .chartContainer .col .line {
-  flex-basis: 100%;
+  flex-basis: 50%;
   flex-grow: 1;
   height: 100%;
-  width: 100%;
+  width: 50%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.container .main .chartContainer .col .line .line-legends {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.container .main .chartContainer .col .line .line-legends .line-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 120px;
+  cursor: pointer;
+}
+.container .main .chartContainer .col .line .line-legends .line-row.selected {
+  color: orange;
+}
+.container .main .chartContainer .col .line .line-legends .line-row .color {
+  width: 20px;
+  height: 20px;
 }
 .container .main .chartContainer .col .bar {
-  flex-basis: 100%;
+  flex-basis: 50%;
   flex-grow: 1;
   fill: orange;
+  width: 50%;
 }
 .container .main .chartContainer .col .pie {
   flex-basis: 100%;
@@ -162,7 +187,7 @@
 }
 .container .mainBottom .heatmap {
   width: 100%;
-  height: 70%;
+  height: 450px;
 }
 .container .mainBottom .heatFilter {
   display: flex;

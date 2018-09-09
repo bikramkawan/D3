@@ -36,7 +36,7 @@ const timeFormat = d3.timeFormat('%Y-%m-%dT%H:%M:%SZ');
 const timeInterval = 60;
 //const startDateTime = '2018-08-09T05:00:00Z';  // to do  previous day
 let startDateTime = new Date();
-startDateTime.setDate(startDateTime.getDate() - 2); // to do  previous day
+startDateTime.setDate(startDateTime.getDate() - 7); // to do  previous day
 startDateTime = startDateTime.toISOString();
 //const endDateTime = '2018-08-11T23:44:19Z'; // current day
 const endDateTime = new Date().toISOString(); // current day
