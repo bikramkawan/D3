@@ -97,7 +97,13 @@ class Legends {
         const topLabelGroup = this.svg
             .append('g')
             .classed('top-label-grp', true);
-        const { mobilePerc, desktopPerc } = this.prepareData();
+        const {
+            mobilePerc,
+            desktopPerc,
+            isDesktopDiffPositive,
+            isMobDiffPositive
+        } = this.prepareData();
+
         const mobileGroup = topLabelGroup
             .append('g')
             .classed('mobile-grp', true);
@@ -111,6 +117,7 @@ class Legends {
             selector: mobileGroup,
             percent: mobilePerc,
             label: 'Mobile',
+            difference: isMobDiffPositive,
             color: this.props.color.mobile,
             ...params
         };
@@ -121,6 +128,7 @@ class Legends {
             selector: desktopGroup,
             percent: desktopPerc,
             label: 'Desktop',
+            difference: isDesktopDiffPositive,
             color: this.props.color.desktop,
             ...params
         };
@@ -136,7 +144,8 @@ class Legends {
             fontSizeSmall,
             marginBottom,
             symbolLeftMargin,
-            color
+            color,
+            difference
         } = params;
 
         selector
@@ -159,19 +168,41 @@ class Legends {
         const triangleUp = d3.svg
             .symbol()
             .type('triangle-up')
-            .size(d => scale(2.5));
+            .size(d => scale(2));
+
+        const triangleDown = d3.svg
+            .symbol()
+            .type('triangle-down')
+            .size(d => scale(2));
 
         selector
             .append('path')
-            .attr('d', triangleUp)
-            .attr('fill', 'green')
+            .attr('d', difference > 0 ? triangleUp : triangleDown)
+            .attr('fill', difference > 0 ? 'green' : 'red')
             .attr('stroke-width', 1)
             .attr(
                 'transform',
                 `translate(${symbolLeftMargin},${marginBottom * 1.7})`
             );
+
+        const diffText = selector
+            .append('text')
+            .text(
+                difference > 0
+                    ? `+ ${Math.abs(difference).toFixed(1)}%`
+                    : `- ${Math.abs(difference).toFixed(1)}%`
+            )
+            .attr('fill', difference > 0 ? 'green' : 'red')
+            .style('font-size', 19)
+            .attr(
+                'transform',
+                `translate(${symbolLeftMargin + 15},${marginBottom * 1.8})`
+            );
     }
 
+    calcPercentage(part, total) {
+        return (100 * Number(part / total)).toFixed(2);
+    }
     prepareData() {
         const mobilePerc = (
             100 *
@@ -182,6 +213,32 @@ class Legends {
             (this.desktop.length / this.props.data.length)
         ).toFixed(1);
 
-        return { mobilePerc, desktopPerc };
+        const countSumMobile = _.sumBy(this.mobile, 'Count');
+        const countSumDesktop = _.sumBy(this.desktop, 'Count');
+        const countSumTotal = _.sumBy(this.props.data, 'Count');
+        const prevSumMobile = _.sumBy(this.mobile, 'Previous');
+        const prevSumDesktop = _.sumBy(this.desktop, 'Previous');
+        const prevSumTotal = _.sumBy(this.props.data, 'Previous');
+        const mobileDiffCount = this.calcPercentage(
+            countSumMobile,
+            countSumTotal
+        );
+        const desktopDiffCount = this.calcPercentage(
+            countSumDesktop,
+            countSumTotal
+        );
+
+        const mobileDiffPrev = this.calcPercentage(prevSumMobile, prevSumTotal);
+        const desktopDiffPrev = this.calcPercentage(
+            prevSumDesktop,
+            prevSumTotal
+        );
+
+        return {
+            mobilePerc,
+            desktopPerc,
+            isMobDiffPositive: mobileDiffCount - mobileDiffPrev,
+            isDesktopDiffPositive: desktopDiffCount - desktopDiffPrev
+        };
     }
 }

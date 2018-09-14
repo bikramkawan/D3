@@ -62,8 +62,10 @@ class Circle {
         const offset = Math.max(...params.domain);
         const innerCircleRadius = params.radius - offset;
         const outerCircleRadius = params.radius;
-        const circleOriginX = originX + outerCircleRadius * Math.sin(0);
-        const circleOriginY = originY - outerCircleRadius * Math.cos(0);
+        const circleOriginX =
+            originX + offset + outerCircleRadius * Math.sin(0);
+        const circleOriginY =
+            originY - offset - outerCircleRadius * Math.cos(0);
         const svg = this.svg.append('g').classed(params.className, true);
         const extents = d3.extent(params.data, d => d.Count);
         const radiusScale = d3.scale
@@ -87,7 +89,7 @@ class Circle {
             class: 'innerCircle',
             cx: originX,
             cy: originY,
-            r: innerCircleRadius,
+            r: outerCircleRadius,
             fill: params.color
         });
 
@@ -104,15 +106,10 @@ class Circle {
             .attr('data-index', (d, i) => i)
             .style('fill', params.color)
             .attr('transform', (d, i) => {
-                return (
-                    'rotate(' +
-                    360 / params.data.length * i +
-                    ', ' +
-                    originX +
-                    ',' +
-                    originY +
-                    ')'
-                );
+                const degree = params.position === 'right' ? -200 : 360;
+                return `rotate(${degree /
+                    params.data.length *
+                    i},${originX},${originY})`;
             });
     }
 }

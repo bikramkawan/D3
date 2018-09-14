@@ -3,7 +3,11 @@ queue()
     .awaitAll(ready);
 
 function ready(err, results) {
-    const rawData = results[0].map(d => ({ ...d, Count: Number(d.Count) }));
+    const rawData = results[0].map(d => ({
+        ...d,
+        Count: Number(d.Count),
+        Previous: Number(d.Previous)
+    }));
     console.log(rawData, 'resultsss');
 
     const width = 1100;
@@ -19,8 +23,8 @@ function ready(err, results) {
     };
     const config = {
         data: rawData,
-        width: width - 300,
-        height: height - 60,
+        width: width - 200,
+        height: height,
         color
     };
     const circle = new Circle(config);
