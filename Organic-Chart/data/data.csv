@@ -1,0 +1,12 @@
+﻿ID,Browser,IsMobile,MobileDeviceManufacturer,Count
+1856,Android,TRUE,Android,5
+1857,Android,TRUE,Android,1
+1886,Android,TRUE,Android,1
+1929,Android,TRUE,Android,1
+1946,Android,TRUE,Android,1
+1948,Android,TRUE,Android,1
+1984,Android,TRUE,Android,1
+2012,Android,TRUE,Android,1
+2012,Chrome,FALSE,,5
+2012,Outlook,FALSE,,2
+2012,Apple,TRUE,,3
