@@ -37924,33 +37924,37 @@ function fetchDeviceData(_ref) {
         });
     });
 }
+/* Disable for production
+axios
+    .get(DEVICE_URL)
+    .then(response => {
+        console.error(response);
+        const devices = response.data && response.data.devices;
 
-_axios2.default.get(DEVICE_URL).then(function (response) {
-    console.error(response);
-    var devices = response.data && response.data.devices;
+        const promises = devices
+            .map(device =>
+                intervalType.map(it =>
+                    fetchDeviceData({
+                        beaconReaderId: device.id,
+                        timeInterval: it.timeInterval,
+                        type: it.type,
+                    }),
+                ),
+            )
+            .reduce((a, b) => a.concat(b), []);
+        Promise.all(promises).then(response => {
+            console.log(response);
 
-    var promises = devices.map(function (device) {
-        return intervalType.map(function (it) {
-            return fetchDeviceData({
-                beaconReaderId: device.id,
-                timeInterval: it.timeInterval,
-                type: it.type
-            });
+            ready(null, [response]);
+
+            //   initApp({ day, week, month });
         });
-    }).reduce(function (a, b) {
-        return a.concat(b);
-    }, []);
-    Promise.all(promises).then(function (response) {
-        console.log(response);
-
-        ready(null, [response]);
-
-        //   initApp({ day, week, month });
+    })
+    .catch(e => {
+        console.log(e, 'Error occured');
     });
-}).catch(function (e) {
-    console.log(e, 'Error occured');
-});
 
+*/
 function mapDayWeekYear(data) {
     console.error(data, 'day');
     var day = data.filter(function (r) {
@@ -37973,10 +37977,7 @@ function mapDayWeekYear(data) {
     return { day: day, week: week, month: month };
 }
 
-// d3
-//     .queue()
-//     .defer(d3.json, 'data/new/data.json')
-//     .awaitAll(ready);
+d3.queue().defer(d3.json, 'data/apiResponse/data.json').awaitAll(ready);
 
 function initApp(_ref2) {
     var day = _ref2.day,

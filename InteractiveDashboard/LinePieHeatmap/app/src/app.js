@@ -85,7 +85,7 @@ function fetchDeviceData({ beaconReaderId, timeInterval, type }) {
             .catch(e => reject(e));
     });
 }
-
+/* Disable for production
 axios
     .get(DEVICE_URL)
     .then(response => {
@@ -115,6 +115,7 @@ axios
         console.log(e, 'Error occured');
     });
 
+*/
 function mapDayWeekYear(data) {
     console.error(data, 'day');
     const day = data
@@ -131,10 +132,10 @@ function mapDayWeekYear(data) {
     return { day, week, month };
 }
 
-// d3
-//     .queue()
-//     .defer(d3.json, 'data/new/data.json')
-//     .awaitAll(ready);
+d3
+    .queue()
+    .defer(d3.json, 'data/apiResponse/data.json')
+    .awaitAll(ready);
 
 function initApp({ day, week, month }) {
     const results = day.map(d => d.data);
