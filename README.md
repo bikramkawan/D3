@@ -46,7 +46,7 @@ Below are the some dashboards with different charts with interaction.
 * [Web Application](https://bikramkawan.github.io/D3/InteractiveDashboard/History/map.html) - Web Application with slide shows
 * [Pie Chart](https://bikramkawan.github.io/D3/InteractiveDashboard/ProductWithPieChart/Susane.html) - Product Dashboard with pie chart
 * [Map and Barchart](https://bikramkawan.github.io/D3/InteractiveDashboard/BarChartWithUSMap/index.html) - Us map and bar chart
-* [Line,Pie,Bar and Heatmap](https://bikramkawan.github.io/D3/InteractiveDashboard/LinePieHeatmap/app/dist/index.html) - Wifi Count monitoring dashboard built with node.js. It has Line chart based on daily, Pie chart based on daily , Weekly based on Bar chart and All time with Heatmap
+* [Line,Pie,Bar and Heatmap](https://bikramkawan.github.io/D3/InteractiveDashboard/LinePieHeatmap/app/dist/index.html) - Wifi Count monitoring dashboard built with node.js. It has Line chart based on daily, Pie chart based on daily , Weekly based on Bar chart and All time with Heatmap. The chart is responsive. 
 
 ## Line Area Chart
 
