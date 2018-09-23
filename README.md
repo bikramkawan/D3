@@ -4,7 +4,7 @@ Different Reusable Data visualization using D3.js
 
 ## Angular Bar Chart Component
 
-* [Vertical Bar Chart](https://bikramkawan.github.io/D3/Angular-Bar-Chart/Angular-Bar-Chart/dist/d3Test/index.html) - Vertical Bar chart with top and bottom chart data connection
+* [Vertical Bar Chart](https://bikramkawan.github.io/D3/Angular-Bar-Chart/dist/d3Test/index.html) - Vertical Bar chart with top and bottom chart data connection
 
 ## Bar Diagrams
 
@@ -37,7 +37,7 @@ Different Reusable Data visualization using D3.js
 
 * [Simple Static Heatmap ](https://bikramkawan.github.io/D3/Heatmap/Simple-Static-Heatmap.html) - Simple Static Heatmap
 * [Mutli Colored Heatmap](https://bikramkawan.github.io/D3/Heatmap/heatmap.html) - Heatmap with multi color grid
-* [Complext Single and Multi Heatmap](https://bikramkawan.github.io/D3/Heatmap/Example/index.html) - Single and Complex heatmap with Multiple layer
+* [Complex Single and Multi Heatmap](https://bikramkawan.github.io/D3/Heatmap/Example/index.html) - Single and Complex heatmap with Multiple layer
 
 ## Dashboards
 
