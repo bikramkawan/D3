@@ -8,8 +8,12 @@ function ready(err, results) {
         Count: Number(d.Count),
         Previous: Number(d.Previous)
     }));
-    console.log(rawData, 'resultsss');
 
+    const totalCount = _.sumBy(rawData, 'Count');
+    const withPercentage = rawData.map(d => ({
+        ...d,
+        percentage: 100 * (d.Count / totalCount)
+    }));
     const width = 1100;
     const height = 500;
 
@@ -22,14 +26,15 @@ function ready(err, results) {
         mobile: '#2C93D9'
     };
     const config = {
-        data: rawData,
+        data: withPercentage,
         width: width - 200,
         height: height,
-        color
+        color,
+        rotateRightCircle: -200,
+        rotateLeftCircle: 400
     };
     const circle = new Circle(config);
     circle.draw();
-
-    const legends = new Legends({ width, height, data: rawData, color });
+    const legends = new Legends({ width, height, data: withPercentage, color });
     legends.draw();
 }

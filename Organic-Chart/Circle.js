@@ -27,6 +27,7 @@ class Circle {
             color: this.props.color.desktop,
             domain: [5, 13],
             offset: 0,
+            extent: [0, 100],
             className: 'desktop'
         };
         const mobileConfig = {
@@ -37,6 +38,7 @@ class Circle {
             color: this.props.color.mobile,
             domain: [10, 25],
             offset: 100,
+            extent: [0, 100],
             className: 'mobile'
         };
 
@@ -67,10 +69,9 @@ class Circle {
         const circleOriginY =
             originY - offset - outerCircleRadius * Math.cos(0);
         const svg = this.svg.append('g').classed(params.className, true);
-        const extents = d3.extent(params.data, d => d.Count);
         const radiusScale = d3.scale
             .linear()
-            .domain(extents)
+            .domain(params.extent)
             .range(params.domain);
 
         const innerAndOuterCircleGroup = svg
@@ -102,11 +103,15 @@ class Circle {
             .append('circle')
             .attr('cx', circleOriginX)
             .attr('cy', circleOriginY)
-            .attr('r', (d, i) => radiusScale(d.Count))
+            .attr('r', (d, i) => radiusScale(d.percentage))
             .attr('data-index', (d, i) => i)
             .style('fill', params.color)
+            .style('opacity', (d, i) => (100 - 8 * (i + 1)) / 100)
             .attr('transform', (d, i) => {
-                const degree = params.position === 'right' ? -200 : 360;
+                const degree =
+                    params.position === 'right'
+                        ? this.props.rotateRightCircle
+                        : this.props.rotateLeftCircle;
                 return `rotate(${degree /
                     params.data.length *
                     i},${originX},${originY})`;
