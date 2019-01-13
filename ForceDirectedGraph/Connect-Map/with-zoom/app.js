@@ -21,7 +21,8 @@ d3.csv('connect-data.csv', function(err, csv) {
         if (!targetNode) targetNode = sourceNode;
         return {
             source: sourceNode.id,
-            target: targetNode.id
+            target: targetNode.id,
+            hasTarget: !!ld.Target
         };
     });
 
@@ -97,8 +98,9 @@ d3.csv('connect-data.csv', function(err, csv) {
             .attr('stroke', function(d) {
                 return d3.color('#9cf');
             })
-            .attr('marker-end', 'url(#arrow)');
-
+            .attr('marker-end', d => {
+                return d.hasTarget ? 'url(#arrow)' : '';
+            });
 
         text = g
             .append('g')
