@@ -99,6 +99,22 @@ d3.csv('connect-data.csv', function(err, csv) {
             })
             .attr('marker-end', 'url(#arrow)');
 
+
+        text = g
+            .append('g')
+            .attr('class', 'labels')
+            .selectAll('g')
+            .data(graph.nodes)
+            .enter()
+            .append('g')
+            .append('text')
+            .attr('x', 14)
+            .attr('y', '.31em')
+            .style('font-family', 'sans-serif')
+            .style('font-size', '0.7em')
+            .text(function(d) {
+                return d.label;
+            });
         node = g
             .append('g')
             .attr('class', 'nodes')
@@ -140,22 +156,8 @@ d3.csv('connect-data.csv', function(err, csv) {
             .on('end', drag_end);
 
         drag_handler(node);
-
-        text = g
-            .append('g')
-            .attr('class', 'labels')
-            .selectAll('g')
-            .data(graph.nodes)
-            .enter()
-            .append('g')
-            .append('text')
-            .attr('x', 14)
-            .attr('y', '.31em')
-            .style('font-family', 'sans-serif')
-            .style('font-size', '0.7em')
-            .text(function(d) {
-                return d.label;
-            });
+        drag_handler(text);
+        drag_handler(link);
 
         node.on('click', function(d) {
             d3.event.stopImmediatePropagation();
