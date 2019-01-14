@@ -1,4 +1,4 @@
-d3.csv('connect-data.csv', function(err, csv) {
+d3.csv('connect-data-large.csv', function(err, csv) {
     console.error(csv, err);
     const uniquGT = _.uniqBy(csv, 'Group').map((g, i) => ({
         groupID: i + 1,
@@ -99,8 +99,13 @@ d3.csv('connect-data.csv', function(err, csv) {
                 return d3.color('#9cf');
             })
             .attr('marker-end', d => {
-                return d.hasTarget ? 'url(#arrow)' : '';
-            });
+                let arrowVisible = d.hasTarget;
+                if (d.source.name === d.target.name) {
+                    arrowVisible = false;
+                }
+                return arrowVisible ? 'url(#arrow)' : '';
+            })
+            .attr('data-attr', d => d.target.name);
 
         text = g
             .append('g')
