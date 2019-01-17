@@ -1,4 +1,4 @@
-d3.csv('connect-data-large.csv', function(err, csv) {
+d3.csv('connect-data.csv', function(err, csv) {
     console.error(csv, err);
     const uniquGT = _.uniqBy(csv, 'Group').map((g, i) => ({
         groupID: i + 1,
@@ -43,7 +43,7 @@ d3.csv('connect-data-large.csv', function(err, csv) {
         nodes,
         links
     };
-    let node, link, text, g, lines, symbols, marker;
+    let node, link, text, g, lines, shareholders, marker;
 
     let simulation = d3.forceSimulation().nodes(graph.nodes);
     updateChart(simulationConfig);
@@ -78,14 +78,14 @@ d3.csv('connect-data-large.csv', function(err, csv) {
             .append('defs')
             .append('marker')
             .attr('id', 'arrow')
-            .attr("viewBox", "0 -5 10 10")
+            .attr('viewBox', '0 -5 10 10')
             .attr('refX', 20)
             .attr('refY', 0)
             .attr('markerWidth', 8)
             .attr('markerHeight', 8)
             .attr('orient', 'auto')
             .append('svg:path')
-            .attr("d", "M0,-5L10,0L0,5");
+            .attr('d', 'M0,-5L10,0L0,5');
 
         link = g.append('g').attr('class', 'links');
         const linksEnter = link
@@ -106,6 +106,15 @@ d3.csv('connect-data-large.csv', function(err, csv) {
                 return arrowVisible ? 'url(#arrow)' : '';
             })
             .attr('data-attr', d => d.target.name);
+
+        shareholders = linksEnter
+            .append('text')
+            .text(d => {
+                if (d.hasTarget) return 'shareholder';
+                return '';
+            })
+            .attr('font-size', 10)
+            .attr('fill', 'black');
 
         text = g
             .append('g')
@@ -240,7 +249,26 @@ d3.csv('connect-data-large.csv', function(err, csv) {
             return 'translate(' + d.x + ',' + d.y + ')';
         });
 
+        shareholders
+            .attr('x', function(d) {
+                const midpoint = d.source.x - d.target.x;
+                let x = d.source.x;
+                if (midpoint > 0) {
+                    x = d.target.x;
+                }
 
+                return Math.abs(midpoint) / 2 + x;
+            })
+            .attr('y', function(d) {
+                const midpoint = d.source.y - d.target.y;
+
+                let y = d.source.y;
+                if (midpoint > 0) {
+                    y = d.target.y;
+                }
+
+                return Math.abs(midpoint) / 2 + y;
+            });
         d3.select('#arrow').attr('refX', 20 + simulationConfig.circleRadius);
     }
 
