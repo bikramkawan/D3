@@ -10,7 +10,7 @@ d3.csv('connect-data-large.csv', function(err, csv) {
         return {
             name: d.Code,
             group: findGroupID.groupID,
-            label: d.Label,
+            label: d.Code,
             id: i
         };
     });
@@ -43,7 +43,7 @@ d3.csv('connect-data-large.csv', function(err, csv) {
         nodes,
         links
     };
-    let node, link, text, g;
+    let node, link, text, g, lines, symbols, marker;
 
     let simulation = d3.forceSimulation().nodes(graph.nodes);
     updateChart(simulationConfig);
@@ -74,26 +74,26 @@ d3.csv('connect-data-large.csv', function(err, csv) {
         g = svg.append('g').attr('class', 'everything');
 
         //Create deffinition for the arrow markers showing relationship directions
-
-        g
+        marker = g
             .append('defs')
             .append('marker')
             .attr('id', 'arrow')
-            .attr('viewBox', '0 -3 10 10')
+            .attr("viewBox", "0 -5 10 10")
             .attr('refX', 20)
             .attr('refY', 0)
             .attr('markerWidth', 8)
             .attr('markerHeight', 8)
             .attr('orient', 'auto')
             .append('svg:path')
-            .attr('d', 'M0,-5L10,0L0,5');
+            .attr("d", "M0,-5L10,0L0,5");
 
-        link = g
-            .append('g')
-            .attr('class', 'links')
+        link = g.append('g').attr('class', 'links');
+        const linksEnter = link
             .selectAll('line')
             .data(graph.links)
-            .enter()
+            .enter();
+
+        lines = linksEnter
             .append('line')
             .attr('stroke', function(d) {
                 return d3.color('#9cf');
@@ -222,7 +222,7 @@ d3.csv('connect-data-large.csv', function(err, csv) {
             });
 
         //update link positions
-        link
+        lines
             .attr('x1', function(d) {
                 return d.source.x;
             })
@@ -239,6 +239,9 @@ d3.csv('connect-data-large.csv', function(err, csv) {
         text.attr('transform', function(d) {
             return 'translate(' + d.x + ',' + d.y + ')';
         });
+
+
+        d3.select('#arrow').attr('refX', 20 + simulationConfig.circleRadius);
     }
 
     d3.select('#edge-length').on('change', function() {
