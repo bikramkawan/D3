@@ -8,17 +8,21 @@ body {
 }
 .app {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 .handle-bar {
     margin-top: 20px;
     display: flex;
-    min-width: 300px;
-    justify-content: space-around;
-    width: 80%;
     font-size: 30px;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+.controls {
+    width: 300px;
+    margin-right: 25px;
 }
 text {
     pointer-events: none;
@@ -28,7 +32,7 @@ text {
 
 @thumb-radius: 8px;
 @thumb-height: 30px;
-@thumb-width: 30px;
+@thumb-width: 10px;
 @thumb-shadow-size: 1px;
 @thumb-shadow-blur: 1px;
 @thumb-shadow-color: #111;
