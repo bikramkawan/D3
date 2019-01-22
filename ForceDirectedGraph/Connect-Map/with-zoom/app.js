@@ -43,7 +43,15 @@ d3.csv('connect-data.csv', function(err, csv) {
         nodes,
         links
     };
-    let node, link, text, g, lines, shareholders, marker;
+    let node,
+        link,
+        text,
+        g,
+        lines,
+        shareholders,
+        marker,
+        circleGroup,
+        circleEnter;
 
     let simulation = d3.forceSimulation().nodes(graph.nodes);
     updateChart(simulationConfig);
@@ -131,21 +139,32 @@ d3.csv('connect-data.csv', function(err, csv) {
             .text(function(d) {
                 return d.label;
             });
-        node = g
-            .append('g')
-            .attr('class', 'nodes')
-            .selectAll('circle')
+        circleGroup = g.append('g').attr('class', 'nodes');
+
+        circleEnter = circleGroup
+            .selectAll('g')
             .data(graph.nodes)
             .enter()
+            .append('g');
+        circleEnter
             .append('circle')
             .attr('data-attr', d => d.label)
             .attr('r', props.circleRadius)
-            .attr('fill', function(d) {
-                return d3.color('#FFFF2F');
+            .attr('fill', 'none')
+
+        circleEnter
+            .append('image')
+            .attr('xlink:href', d => {
+                const filter = links.find(l => l.source.name === d.name);
+                if (filter && filter.hasTarget) {
+                    return 'source.jpg';
+                }
+                return 'target.jpg';
             })
-            .style('stroke', function(d) {
-                return d3.color('#FF8D2F');
-            });
+            .attr('x', -8)
+            .attr('y', -8)
+            .attr('width', 16)
+            .attr('height', 16);
         // .on('mouseover', function(d) {
         //     link.style('opacity', 0.1);
         //     node.style('opacity', 0.1);
@@ -171,16 +190,16 @@ d3.csv('connect-data.csv', function(err, csv) {
             .on('drag', drag_drag)
             .on('end', drag_end);
 
-        drag_handler(node);
+        drag_handler(circleEnter);
         drag_handler(text);
         drag_handler(link);
 
-        node.on('click', function(d) {
+        circleEnter.on('click', function(d) {
             d3.event.stopImmediatePropagation();
             self.onNodeClicked.emit(d.id);
         });
 
-        node.append('title').text(function(d) {
+        circleEnter.append('title').text(function(d) {
             return d.label;
         });
     }
@@ -222,13 +241,9 @@ d3.csv('connect-data.csv', function(err, csv) {
 
     function ticked() {
         //update circle positions each tick of the simulation
-        node
-            .attr('cx', function(d) {
-                return d.x;
-            })
-            .attr('cy', function(d) {
-                return d.y;
-            });
+        circleEnter.attr('transform', function(d) {
+            return 'translate(' + d.x + ',' + d.y + ')';
+        });
 
         //update link positions
         lines
