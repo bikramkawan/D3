@@ -6,7 +6,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.js"></script>
 </head>
+<style>
+    .bar {
+        fill: steelblue;
+    }
+
+    .bar:hover {
+        fill: brown;
+    }
+    body{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    #select-view{
+        margin-bottom: 30px;
+    }
+</style>
 <body>
-<script src="app.js"></script>
+<select id="select-view"></select>
+<div id="description">What is your gender ?</div>
+<svg class="app" ></svg>
+<script src="solar-app.js"></script>
 </body>
 </html>

@@ -145,7 +145,13 @@ d3.csv('connect-data.csv', function(err, csv) {
             .selectAll('g')
             .data(graph.nodes)
             .enter()
-            .append('g');
+            .append('g')
+            .attr('data-attr',(d)=>{
+
+                console.error(d);
+                return d.label;
+
+            })
         circleEnter
             .append('circle')
             .attr('data-attr', d => d.label)
