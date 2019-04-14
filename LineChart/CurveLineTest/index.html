@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>D3 Curve Explorer</title>
+</head>
+
+<style>
+    body {
+        font-family: "Helvetica Neue", Helvetica, sans-serif;
+        font-size: 12px;
+        user-select: none;
+    }
+    svg {
+        box-shadow: 0px 0px 40px -5px rgba(0,0,0,0.3);
+        border-radius: 5px;
+        margin: 20px;
+    }
+    svg path {
+        fill: none;
+    }
+    svg circle {
+        fill: white;
+        stroke: #aaa;
+        cursor: move;
+    }
+    svg .points-menu g {
+        opacity: 0.2;
+    }
+    svg .points-menu g.active {
+        cursor: pointer;
+        opacity: 1;
+    }
+    svg .points-menu line {
+        stroke: #777;
+        stroke-width: 3;
+    }
+    svg .points-menu rect {
+        fill: white;
+    }
+    .sidebar {
+        display: inline-block;
+        position: relative;
+        vertical-align: top;
+        margin-top: 20px;
+        width: 530px;
+        color: #444;
+    }
+    .sidebar .header {
+        font-size: 14px;
+        font-weight: bold;
+        text-align: right;
+        color: #aaa;
+        width: 100%;
+    }
+    .menu .item {
+        padding: 5px;
+        border: 1px solid #ddd;
+        margin: 4px 2px;
+        float: left;
+        cursor: pointer;
+        border-radius: 8px;
+        width: 160px;
+        text-align: center;
+    }
+    .sidebar .info {
+        float: left;
+        margin-top: 20px;
+        line-height: 1.5em;
+    }
+</style>
+
+<body>
+<svg width="700" height="400">
+    <g>
+        <path></path>
+        <g class="points-menu" transform="translate(660, 380)">
+            <g class="remove-point">
+                <rect x="-6" y="-6" width="12" height="12"></rect>
+                <line x1="-6" x2="6"></line>
+            </g>
+            <g class="add-point" transform="translate(20,0)">
+                <rect x="-6" y="-6" width="12" height="12"></rect>
+                <line x1="-6" x2="6"></line><line y1="-6" y2="6"></line>
+            </g>
+        </g>
+    </g>
+</svg>
+
+<div class="sidebar">
+    <div class="header">D3 CURVE EXPLORER</div>
+    <div class="menu"></div>
+    <div class="info">
+        <span class="default">The JavaScript library <a href="http://d3js.org">D3</a> provides a number of <a href="https://github.com/d3/d3-shape#curves">curve types</a> to interpolate (or approximate) a set of points. Toggle each of the curve types using the buttons above. You can also add/remove/drag the points to change the shape of the curve.</span>
+        <span class="text"></span>
+    </div>
+</div>
+<!--http://bl.ocks.org/d3indepth/raw/b6d4845973089bc1012dec1674d3aff8/-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+<script src="app.js">
+
+</script>
+</body>
+</html>
